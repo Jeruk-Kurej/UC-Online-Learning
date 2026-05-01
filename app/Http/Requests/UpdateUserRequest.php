@@ -26,7 +26,8 @@ class UpdateUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|in:user,admin',
+            // role should match create form values
+            'role' => 'required|in:student,alumni,admin',
             'is_visible' => 'boolean',
             
             // CSV: Identity

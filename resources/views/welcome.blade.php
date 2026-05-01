@@ -134,6 +134,20 @@
                                     class="w-full py-3 bg-soft-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-soft-gray-800 hover:shadow-lg transition-all duration-200">
                                 Sign in to Dashboard
                             </button>
+
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-soft-gray-200"></div>
+                                </div>
+                                <div class="relative flex justify-center text-xs">
+                                    <span class="bg-white px-2 text-soft-gray-500">or</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('auth.google.redirect') }}"
+                               class="w-full py-3 text-center bg-white text-soft-gray-800 text-sm font-semibold rounded-xl border border-soft-gray-200 hover:bg-soft-gray-50 hover:border-soft-gray-300 transition-all duration-200">
+                                Continue with Google
+                            </a>
                         </form>
                         
                         {{-- Back to Home Button --}}

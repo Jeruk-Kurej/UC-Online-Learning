@@ -18,6 +18,13 @@
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
+
+                    @if(auth()->user() && auth()->user()->isAdmin())
+                        <a href="{{ route('users.create') }}" class="inline-flex items-center px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition shadow-sm">
+                            <i class="bi bi-person-plus-fill mr-2"></i>
+                            Create User
+                        </a>
+                    @endif
                 </div>
             </div>
         </section>

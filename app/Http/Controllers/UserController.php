@@ -20,10 +20,21 @@ class UserController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isAdmin()) {
+        $this->ensureAdmin();
+        return view('users.create');
+    }
+
+    /**
+     * Ensure the current user is an admin.
+     * Annotate the local variable so static analyzers understand the type.
+     */
+    private function ensureAdmin(): void
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+        if (! $user || ! $user->isAdmin()) {
             abort(403);
         }
-        return view('users.create');
     }
 
     /**
@@ -31,24 +42,32 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureAdmin();
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|in:admin,user',
-            'student_status' => 'nullable|in:student,alumni',
+            // role can be 'student', 'alumni', or 'admin' per the create form
+            'role' => 'required|in:student,alumni,admin',
+            // student_status stored in DB is one of: active, inactive, cuti, alumni
+            'student_status' => 'nullable|in:active,inactive,cuti,alumni',
         ]);
+
+        // Map frontend role values to DB role enum ('user' or 'admin')
+        $inputRole = $validated['role'];
+        $dbRole = $inputRole === 'admin' ? 'admin' : 'user';
+
+        // Determine student_status: map frontend choices to DB enum
+        // If the form explicitly provided a valid DB status, use it. Otherwise, if role is 'alumni' mark as 'alumni', else default to 'active'.
+        $studentStatus = $validated['student_status'] ?? ($inputRole === 'alumni' ? 'alumni' : 'active');
 
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'student_status' => $validated['student_status'] ?? 'student',
+            'role' => $dbRole,
+            'student_status' => $studentStatus,
             'is_visible' => true,
         ]);
 
@@ -60,9 +79,7 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureAdmin();
 
         $search = $request->get('search');
         $query = User::withCount('businesses');
@@ -90,9 +107,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureAdmin();
 
         $user->load(['businesses.category', 'companies.category', 'skills']);
         return view('users.show', compact('user'));
@@ -103,9 +118,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureAdmin();
         $userToEdit = $user;
         return view('users.edit', compact('userToEdit'));
     }
@@ -115,9 +128,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        if (!Auth::user()->isAdmin()) {
-            abort(403);
-        }
+        $this->ensureAdmin();
 
         $data = $request->validated();
         
@@ -127,8 +138,22 @@ class UserController extends Controller
             unset($data['password']);
         }
 
+        // Map frontend role values to DB role enum ('user' or 'admin') if present
+        if (isset($data['role'])) {
+            $data['role'] = $data['role'] === 'admin' ? 'admin' : 'user';
+        }
+
         // Boolean handling
         $data['is_visible'] = $request->has('is_visible');
+
+        // Map student_status when role selection implies it (e.g., 'alumni' or 'student')
+        if (!isset($data['student_status']) && $request->filled('role')) {
+            if ($request->input('role') === 'alumni') {
+                $data['student_status'] = 'alumni';
+            } elseif ($request->input('role') === 'student') {
+                $data['student_status'] = 'active';
+            }
+        }
 
         $user->update($data);
 
@@ -140,7 +165,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if (!Auth::user()->isAdmin() || Auth::id() === $user->id) {
+        $this->ensureAdmin();
+        if (Auth::id() === $user->id) {
             abort(403);
         }
 

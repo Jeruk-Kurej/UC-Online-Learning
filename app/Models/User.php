@@ -14,6 +14,7 @@ class User extends Authenticatable
         // System
         'email',
         'password',
+        'google_id',
         'role',
         'email_verified_at',
 

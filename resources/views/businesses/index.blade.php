@@ -20,6 +20,11 @@
                                 <i class="bi bi-cloud-upload mr-2"></i>
                                 Import CSV
                             </button>
+
+                            <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-5 py-3 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-sm">
+                                <i class="bi bi-plus-lg mr-2"></i>
+                                Create Business
+                            </a>
                         </div>
                     @endif
                 @endauth
