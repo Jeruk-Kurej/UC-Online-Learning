@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     
     Route::resource('users', UserController::class);
     Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
+    Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
     
     Route::get('/businesses/create', [BusinessController::class, 'create'])->name('businesses.create');
     Route::post('/businesses/import', [BusinessController::class, 'import'])->name('businesses.import');
@@ -64,6 +65,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/businesses/{business}/edit', [BusinessController::class, 'edit'])->name('businesses.edit');
     Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
+    Route::post('/businesses/{business}/toggle-featured', [BusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
 });
 
 // This must be LAST to avoid matching static routes like 'create'

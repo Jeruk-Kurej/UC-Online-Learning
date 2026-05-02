@@ -52,6 +52,7 @@ class Business extends Model
         return [
             'established_date' => 'date',
             'is_visible' => 'boolean',
+            'is_featured' => 'boolean',
         ];
     }
 

@@ -193,25 +193,14 @@ class UserController extends Controller
             session()->flash('success', "Success! The user '{$newUser->name}' has been created, and {$businessCount} business(es) have been transferred.");
         }
 
-        // Add user as team member to businesses if selected
-        if ($request->has('team_member')) {
-            foreach ($request->team_member as $assignment) {
-                if (!empty($assignment['enabled']) && !empty($assignment['business_id'])) {
-                    User_Businesses_Detail::create([
-                        'user_id' => $newUser->id,
-                        'business_id' => $assignment['business_id'],
-                        'role_type' => $assignment['role_type'] ?? 'employee',
-                        'Position_name' => $assignment['Position_name'] ?? null,
-                        'Working_Date' => $assignment['Working_Date'] ?? now(),
-                        'is_current' => !empty($assignment['is_current']),
-                    ]);
-                }
-            }
-        }
+        // Calculate stats for the view
+        $totalUsers = User::count();
+        $totalEntrepreneurs = User::whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur'))->count();
+        $totalIntrapreneurs = User::whereHas('companies')->count();
+        $totalAlumni = User::where('student_status', 'alumni')->count();
+        $featuredUserCount = User::where('is_featured', true)->count();
 
-        return redirect()
-            ->route('users.index')
-            ->with('success', session('success') ?? "Success! The user '{$newUser->name}' has been registered.");
+        return view('users.index', compact('users', 'totalUsers', 'totalEntrepreneurs', 'totalIntrapreneurs', 'totalAlumni', 'featuredUserCount'));
     }
 
     /**
@@ -397,7 +386,28 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified user from storage.
+     * Toggle the featured status of a user (admin only, max 4 featured at once).
+     */
+    public function toggleFeatured(User $user)
+    {
+        $this->ensureAdmin();
+
+        if ($user->is_featured) {
+            $user->update(['is_featured' => false]);
+            return back()->with('success', "\"{$user->name}\" removed from featured.");
+        }
+
+        $featuredCount = User::where('is_featured', true)->count();
+        if ($featuredCount >= 4) {
+            return back()->withErrors(['featured' => 'Maximum of 4 featured users reached. Un-feature one first.']);
+        }
+
+        $user->update(['is_featured' => true]);
+        return back()->with('success', "\"{$user->name}\" is now featured.");
+    }
+
+    /**
+     * Remove the specified user.
      */
     public function destroy(User $user)
     {

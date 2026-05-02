@@ -16,6 +16,10 @@
                 @auth
                     @if (auth()->user()->isAdmin())
                         <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-black rounded-xl">
+                                <i class="bi bi-star-fill text-uco-yellow-500"></i>
+                                {{ $featuredBusinessCount }}/8 Featured
+                            </span>
                             <button @click="showImportModal = true" class="inline-flex items-center px-5 py-3 bg-white border border-gray-300 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition shadow-sm">
                                 <i class="bi bi-cloud-upload mr-2"></i>
                                 Import CSV
@@ -42,6 +46,12 @@
                 <i class="bi bi-building mr-1"></i> Intrapreneurs
             </a>
         </div>
+
+        @if(session('success'))
+            <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold px-4 py-3 rounded-xl">
+                {{ session('success') }}
+            </div>
+        @endif
 
         {{-- Filters --}}
         <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-10 shadow-sm">
@@ -79,9 +89,31 @@
         </div>
 
         {{-- Grid --}}
+        @if(auth()->user()?->isAdmin() && $errors->has('featured'))
+            <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl">
+                {{ $errors->first('featured') }}
+            </div>
+        @endif
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse ($businesses as $business)
                 <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:border-uco-orange-200 hover:shadow-2xl transition-all duration-500 group relative">
+                    @auth
+                        @if(auth()->user()->isAdmin())
+                            <div class="absolute top-3 right-3 z-10">
+                                <form action="{{ route('businesses.toggle-featured', $business) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        title="{{ $business->is_featured ? 'Remove from featured' : 'Add to featured' }}"
+                                        class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm border
+                                            {{ $business->is_featured
+                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' }}">
+                                        <i class="bi bi-star-fill text-xs"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        @endif
+                    @endauth
                     <a href="{{ $viewType === 'entrepreneur' ? route('businesses.show', $business) : route('intrapreneurs.show', $business) }}" class="block p-6">
                         <div class="flex items-start gap-5">
                             <div class="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 group-hover:border-uco-orange-100 transition-colors overflow-hidden flex-shrink-0 shadow-inner">
