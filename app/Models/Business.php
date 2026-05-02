@@ -43,6 +43,7 @@ class Business extends Model
 
         // Platform management
         'is_visible',
+        'is_featured',
         'type',
     ];
 

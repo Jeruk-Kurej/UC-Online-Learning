@@ -1,30 +1,108 @@
 <x-app-layout>
     <div class="relative overflow-hidden bg-white">
+        <style>
+            @media (min-width: 1024px) {
+                .hero-grid-container { 
+                    display: grid !important; 
+                    grid-template-columns: repeat(12, minmax(0, 1fr)) !important; 
+                }
+                .hero-left-content { grid-column: span 7 / span 7 !important; }
+                .hero-grid-preview { 
+                    display: block !important; 
+                    grid-column: span 5 / span 5 !important;
+                }
+            }
+            .hero-grid-container { display: block; }
+            .hero-grid-preview { display: none; }
+        </style>
         {{-- Hero Section --}}
         <section class="relative pt-20 pb-32 overflow-hidden">
-            <div class="uco-hero-mesh"></div>
-            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                <div class="text-center max-w-4xl mx-auto space-y-8">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-uco-orange-50 border border-uco-orange-100 text-uco-orange-700 text-xs font-bold uppercase tracking-widest">
-                        <i class="bi bi-rocket-takeoff-fill"></i>
-                        UC Online Learning
-                    </div>
-                    <h1 class="text-6xl md:text-8xl font-black text-gray-900 leading-[1.1] tracking-tighter">
-                        Discover our
-                        <span class="text-uco-orange-500 inline-block drop-shadow-sm" x-data="{ words: ['Mahasiswa', 'Businesses', 'Innovators', 'Creators'], current: 0 }" x-init="setInterval(() => current = (current + 1) % words.length, 2500)">
-                            <span x-text="words[current]" class="transition-all duration-500"></span>
+            <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 items-center gap-12 hero-grid-container">
+                    {{-- Left Content --}}
+                    <div x-data="{
+                            words: ['Innovative', 'Local', 'Student-Led', 'Alumni-Built'],
+                            current: 0,
+                            timer: null,
+                            reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+                            startRotation() {
+                                if (this.reducedMotion) return;
+                                this.timer = setInterval(() => {
+                                    this.current = (this.current + 1) % this.words.length;
+                                }, 3400);
+                            },
+                            stopRotation() {
+                                if (this.timer) clearInterval(this.timer);
+                            }
+                        }" x-init="startRotation();
+                        window.addEventListener('beforeunload', () => stopRotation(), { once: true })" 
+                        class="space-y-6 hero-left-content">
+                        
+                        <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-uco-orange-700">
+                            UCO Business Showcase
                         </span>
-                    </h1>
-                    <p class="text-xl text-gray-500 font-medium leading-relaxed max-w-2xl mx-auto">
-                        Connecting student founders, alumni mentors, and industry partners in one powerful ecosystem.
-                    </p>
-                    <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
-                        <a href="{{ route('businesses.index') }}" class="px-8 py-4 bg-gray-900 text-white rounded-2xl font-bold hover:bg-black transition-all hover:-translate-y-1 shadow-xl">
-                            Explore Entrepreneurs
-                        </a>
-                        <a href="{{ route('about') }}" class="px-8 py-4 bg-white text-gray-900 border-2 border-gray-100 rounded-2xl font-bold hover:border-uco-orange-500 transition-all hover:-translate-y-1">
-                            Learn More
-                        </a>
+
+                        <div class="space-y-3">
+                            <h1 class="text-4xl font-extrabold text-gray-900 md:text-6xl tracking-tight">
+                                <span class="block leading-tight">Discover</span>
+                                <span class="relative mt-1 block h-[1.1em] min-w-[12ch] overflow-hidden leading-none text-uco-orange-600 md:min-w-[13ch]">
+                                    <template x-for="(word, index) in words" :key="word">
+                                        <span x-show="index === current"
+                                            x-transition:enter="transition ease-out duration-420"
+                                            x-transition:enter-start="opacity-0 translate-y-2 blur-[1px]"
+                                            x-transition:enter-end="opacity-100 translate-y-0 blur-0"
+                                            x-transition:leave="transition ease-in duration-300"
+                                            x-transition:leave-start="opacity-100 translate-y-0 blur-0"
+                                            x-transition:leave-end="opacity-0 -translate-y-2 blur-[1px]"
+                                            class="absolute inset-0 leading-none" x-text="word"></span>
+                                    </template>
+                                </span>
+                                <span class="mt-1 block leading-tight">from UCO Students & Alumni</span>
+                            </h1>
+                            <p class="max-w-2xl text-base leading-relaxed text-gray-600 md:text-lg">
+                                Explore a vibrant ecosystem of product and service ventures built by our community — from
+                                first launch to growing brands.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="{{ route('businesses.index') }}"
+                                class="inline-flex items-center gap-2 rounded-xl bg-uco-orange-500 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-uco-orange-200 transition hover:-translate-y-0.5 hover:bg-uco-orange-600">
+                                Explore Directory
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    {{-- Right Featured Preview --}}
+                    <div class="lg:col-span-5 hero-grid-preview">
+                        <div class="grid grid-cols-2 gap-4">
+                            @foreach ($spotlightBusinesses as $business)
+                                <a href="{{ route('businesses.show', $business) }}"
+                                    class="group relative overflow-hidden rounded-[2rem] bg-gray-50 p-4 transition-all hover:bg-white hover:shadow-2xl hover:-translate-y-1.5 border border-transparent hover:border-uco-orange-100">
+                                    <div class="aspect-square w-full overflow-hidden rounded-2xl bg-white shadow-inner mb-3 flex items-center justify-center p-4">
+                                        @if ($business->logo_url)
+                                            <img src="{{ $business->logo_url }}" class="max-h-full max-w-full object-contain transition duration-500 group-hover:scale-110">
+                                        @else
+                                            <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-uco-orange-50 to-uco-yellow-50">
+                                                <i class="bi bi-shop text-3xl text-uco-orange-500"></i>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="px-1">
+                                        <h4 class="truncate text-sm font-black text-gray-900 leading-none mb-1">{{ $business->name }}</h4>
+                                        <p class="truncate text-[9px] font-black uppercase tracking-widest text-uco-orange-500/60">{{ $business->category->name ?? 'Business' }}</p>
+                                    </div>
+                                </a>
+                            @endforeach
+                            @if($spotlightBusinesses->count() < 4)
+                                @for($i = 0; $i < (4 - $spotlightBusinesses->count()); $i++)
+                                    <div class="rounded-[2rem] bg-gray-50/50 border border-dashed border-gray-200 flex items-center justify-center aspect-square">
+                                        <i class="bi bi-plus-circle text-gray-200 text-2xl"></i>
+                                    </div>
+                                @endfor
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
