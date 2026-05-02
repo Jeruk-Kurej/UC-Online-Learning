@@ -163,12 +163,19 @@
                                  x-transition:leave="transition ease-in duration-300"
                                  x-transition:leave-start="opacity-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                                 x-init="setTimeout(() => show = false, 5000)" 
-                                 class="pointer-events-auto max-w-sm w-full bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
+                                 x-init="setTimeout(() => show = false, 7000)" 
+                                 class="pointer-events-auto max-w-md w-full bg-red-600 text-white px-4 py-4 rounded-lg shadow-lg flex items-start justify-between gap-3" 
                                  role="alert">
-                                <div class="flex items-center gap-2">
-                                    <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-                                    <span class="text-sm font-medium">Validation Error! Please check the form for details.</span>
+                                <div class="flex flex-col gap-2 flex-1">
+                                    <div class="flex items-center gap-2">
+                                        <i class="bi bi-exclamation-triangle-fill text-lg"></i>
+                                        <span class="text-sm font-bold">Validation Error:</span>
+                                    </div>
+                                    <ul class="text-xs space-y-1 ml-6">
+                                        @foreach ($errors->all() as $error)
+                                            <li class="list-disc">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                                 <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
                                     <i class="bi bi-x-lg"></i>

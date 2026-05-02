@@ -16,6 +16,21 @@ use Maatwebsite\Excel\Facades\Excel;
 class BusinessController extends Controller
 {
     /**
+     * Get authenticated user as User instance.
+     */
+    private function getAuthUser(): User
+    {
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (!$user) {
+            abort(401, 'Unauthenticated.');
+        }
+
+        return $user;
+    }
+
+    /**
      * Display a listing of the businesses.
      */
     public function index(Request $request)
@@ -70,7 +85,7 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        if (!Auth::user()->isAdmin()) {
+        if (!$this->getAuthUser()->isAdmin()) {
             abort(403);
         }
 
@@ -102,7 +117,7 @@ class BusinessController extends Controller
      */
     public function edit(Business $business)
     {
-        if (!Auth::user()->isAdmin()) {
+        if (!$this->getAuthUser()->isAdmin()) {
             abort(403);
         }
         
@@ -130,7 +145,7 @@ class BusinessController extends Controller
      */
     public function update(UpdateBusinessRequest $request, Business $business)
     {
-        if (!Auth::user()->isAdmin()) {
+        if (!$this->getAuthUser()->isAdmin()) {
             abort(403);
         }
 
@@ -153,6 +168,7 @@ class BusinessController extends Controller
         if (isset($validated['instagram_handle'])) {
             $data['instagram'] = $validated['instagram_handle'];
         }
+        $data['is_featured'] = $request->boolean('is_featured');
         
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
@@ -229,7 +245,7 @@ class BusinessController extends Controller
      */
     public function destroy(Business $business)
     {
-        if (!Auth::user()->isAdmin()) {
+        if (!$this->getAuthUser()->isAdmin()) {
             abort(403);
         }
 
@@ -246,7 +262,7 @@ class BusinessController extends Controller
         ]);
 
         try {
-            $importId = 'import_' . time();
+            $importId = (string) Str::uuid();
             $file = $request->file('file');
 
             // Store file to local temp disk so queue worker can access it

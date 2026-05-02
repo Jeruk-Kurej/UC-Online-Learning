@@ -119,17 +119,35 @@
 
         {{-- Import Modal --}}
         <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false">
+            <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
+                 x-data="{
+                    isDragging: false,
+                    handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
+                    handleDragLeave() { this.isDragging = false; },
+                    handleDrop(e) {
+                        e.preventDefault();
+                        this.isDragging = false;
+                        if (e.dataTransfer.files.length > 0) {
+                            const file = e.dataTransfer.files[0];
+                            document.getElementById('csv_file').files = e.dataTransfer.files;
+                            document.getElementById('file_name').textContent = file.name;
+                        }
+                    }
+                 }">
                 <h3 class="text-2xl font-black text-gray-900 mb-2">Import Data</h3>
                 <p class="text-sm text-gray-500 mb-6">Upload the UC Online Form Responses CSV file to sync profiles.</p>
                 
                 <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
-                    <div class="border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center hover:border-uco-orange-300 transition group">
+                    <div class="border-2 border-dashed rounded-2xl p-10 text-center transition group"
+                         :class="isDragging ? 'border-uco-orange-500 bg-orange-50' : 'border-gray-200 hover:border-uco-orange-300'"
+                         @dragover="handleDragOver"
+                         @dragleave="handleDragLeave"
+                         @drop="handleDrop">
                         <input type="file" name="file" required class="hidden" id="csv_file" onchange="document.getElementById('file_name').textContent = this.files[0].name">
                         <label for="csv_file" class="cursor-pointer">
                             <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
-                            <p class="mt-4 text-sm font-bold text-gray-600" id="file_name">Click to select CSV/Excel file</p>
+                            <p class="mt-4 text-sm font-bold text-gray-600" id="file_name">Click to select or drag CSV/Excel file here</p>
                         </label>
                     </div>
 
@@ -141,9 +159,8 @@
             </div>
         </div>
 
-        {{-- Import Progress Tracker --}}
-        @if(session('importId') || session('active_import'))
-        <div x-data="importProgress()" x-init="startPolling()" class="fixed bottom-6 right-6 z-50 w-96">
+        {{-- Import Progress Tracker (Always rendered, fetches active import on load) --}}
+        <div x-data="importProgress()" x-init="checkActiveImport().then(() => startPolling())" class="fixed bottom-6 right-6 z-50 w-96">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
                 {{-- Header --}}
                 <div class="px-5 py-4 flex items-center justify-between" :class="status === 'completed' ? 'bg-emerald-50' : 'bg-gray-50'">
@@ -191,22 +208,44 @@
         <script>
         function importProgress() {
             return {
-                importId: '{{ session("importId") ?: session("active_import") }}',
+                importId: '',
                 status: 'processing',
                 total: 0,
                 current: 0,
                 success: 0,
                 skipped: 0,
                 percent: 0,
-                visible: true,
+                visible: false,
                 polling: null,
 
+                async checkActiveImport() {
+                    try {
+                        const res = await fetch('/import-progress/check', {
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                            }
+                        });
+                        const data = await res.json();
+                        
+                        if (data.importId) {
+                            this.importId = data.importId;
+                            this.visible = true;
+                        }
+                    } catch (e) {
+                        console.error('Check active import error:', e);
+                    }
+                },
+
                 startPolling() {
+                    if (!this.importId) return;
+                    
                     this.poll(); // immediate first call
                     this.polling = setInterval(() => this.poll(), 2000);
                 },
 
                 async poll() {
+                    if (!this.importId) return;
+                    
                     try {
                         const res = await fetch(`/import-progress/${this.importId}`);
                         const data = await res.json();
@@ -238,6 +277,7 @@
 
                 dismiss() {
                     this.visible = false;
+                    this.importId = '';
                     clearInterval(this.polling);
                     // Clear server-side session
                     fetch('/clear-active-import', {
@@ -252,7 +292,6 @@
             }
         }
         </script>
-        @endif
     </div>
 
 </x-app-layout>
