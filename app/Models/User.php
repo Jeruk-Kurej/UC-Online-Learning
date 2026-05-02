@@ -46,6 +46,7 @@ class User extends Authenticatable
 
         // Platform management
         'is_visible',
+        'is_featured',
         'student_status',
     ];
 
@@ -61,6 +62,7 @@ class User extends Authenticatable
             'submitted_at' => 'datetime',
             'password' => 'hashed',
             'is_visible' => 'boolean',
+            'is_featured' => 'boolean',
         ];
     }
 

@@ -98,8 +98,9 @@ class UserController extends Controller
         $totalEntrepreneurs = User::whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur'))->count();
         $totalIntrapreneurs = User::whereHas('companies')->count();
         $totalAlumni = User::where('student_status', 'alumni')->count();
+        $featuredUserCount = User::where('is_featured', true)->count();
 
-        return view('users.index', compact('users', 'totalUsers', 'totalEntrepreneurs', 'totalIntrapreneurs', 'totalAlumni'));
+        return view('users.index', compact('users', 'totalUsers', 'totalEntrepreneurs', 'totalIntrapreneurs', 'totalAlumni', 'featuredUserCount'));
     }
 
     /**
@@ -158,6 +159,27 @@ class UserController extends Controller
         $user->update($data);
 
         return redirect()->route('users.show', $user)->with('success', 'User updated successfully!');
+    }
+
+    /**
+     * Toggle the featured status of a user (admin only, max 4 featured at once).
+     */
+    public function toggleFeatured(User $user)
+    {
+        $this->ensureAdmin();
+
+        if ($user->is_featured) {
+            $user->update(['is_featured' => false]);
+            return back()->with('success', "\"{$user->name}\" removed from featured.");
+        }
+
+        $featuredCount = User::where('is_featured', true)->count();
+        if ($featuredCount >= 4) {
+            return back()->withErrors(['featured' => 'Maximum of 4 featured users reached. Un-feature one first.']);
+        }
+
+        $user->update(['is_featured' => true]);
+        return back()->with('success', "\"{$user->name}\" is now featured.");
     }
 
     /**

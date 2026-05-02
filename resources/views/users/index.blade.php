@@ -14,6 +14,10 @@
                 </div>
 
                 <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 px-4 py-3 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-black rounded-2xl">
+                        <i class="bi bi-star-fill text-uco-yellow-500"></i>
+                        {{ $featuredUserCount }}/4 Featured
+                    </span>
                     <button @click="showImportModal = true" class="inline-flex items-center px-6 py-4 bg-white border border-gray-300 text-gray-700 text-sm font-bold rounded-2xl hover:bg-gray-50 transition shadow-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
@@ -59,6 +63,18 @@
             </form>
         </div>
 
+        {{-- Flash messages --}}
+        @if(session('success'))
+            <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold px-4 py-3 rounded-xl">
+                {{ session('success') }}
+            </div>
+        @endif
+        @if($errors->has('featured'))
+            <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl">
+                {{ $errors->first('featured') }}
+            </div>
+        @endif
+
         {{-- Users Table --}}
         <div class="bg-white border rounded-[2.5rem] overflow-hidden shadow-sm">
             <table class="w-full text-left">
@@ -69,6 +85,7 @@
                         <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
                         <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Peminatan</th>
                         <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Visible</th>
+                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Featured</th>
                         <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Businesses</th>
                         <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
                     </tr>
@@ -86,6 +103,19 @@
                             <td class="px-6 py-4 text-sm text-gray-500">{{ $user->major }}</td>
                             <td class="px-6 py-4 text-center">
                                 <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        title="{{ $user->is_featured ? 'Remove from featured' : 'Add to featured' }}"
+                                        class="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
+                                            {{ $user->is_featured
+                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' }}">
+                                        <i class="bi bi-star-fill text-[10px]"></i>
+                                    </button>
+                                </form>
                             </td>
                             <td class="px-6 py-4 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
                             <td class="px-6 py-4 text-right">
@@ -106,7 +136,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-20 text-center text-gray-400 italic">No users found.</td>
+                            <td colspan="8" class="px-6 py-20 text-center text-gray-400 italic">No users found.</td>
                         </tr>
                     @endforelse
                 </tbody>

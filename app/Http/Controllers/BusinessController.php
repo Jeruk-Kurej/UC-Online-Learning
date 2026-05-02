@@ -61,8 +61,9 @@ class BusinessController extends Controller
         
         $availableCities = Business::visible()->whereNotNull('city')->distinct()->pluck('city')->sort();
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
+        $featuredBusinessCount = Business::where('is_featured', true)->count();
 
-        return view('businesses.index', compact('businesses', 'businessTypes', 'availableCities', 'availableProvinces', 'viewType'));
+        return view('businesses.index', compact('businesses', 'businessTypes', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount'));
     }
 
     /**
@@ -222,6 +223,31 @@ class BusinessController extends Controller
         }
 
         return redirect()->route('businesses.my')->with('success', 'Business created successfully!');
+    }
+
+    /**
+     * Toggle the featured status of a business (admin only, max 8 featured at once).
+     */
+    public function toggleFeatured(Business $business)
+    {
+        /** @var \App\Models\User|null $user */
+        $user = Auth::user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403);
+        }
+
+        if ($business->is_featured) {
+            $business->update(['is_featured' => false]);
+            return back()->with('success', "\"{$business->name}\" removed from featured.");
+        }
+
+        $featuredCount = Business::where('is_featured', true)->count();
+        if ($featuredCount >= 8) {
+            return back()->withErrors(['featured' => 'Maximum of 8 featured businesses reached. Un-feature one first.']);
+        }
+
+        $business->update(['is_featured' => true]);
+        return back()->with('success', "\"{$business->name}\" is now featured.");
     }
 
     /**
