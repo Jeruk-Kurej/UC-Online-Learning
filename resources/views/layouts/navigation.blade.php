@@ -9,11 +9,11 @@
                 </a>
             </div>
 
-            {{-- Navigation Links (Desktop) --}}
             <div class="hidden md:flex items-center space-x-8">
-                <a href="{{ route('featured') }}" class="text-sm font-medium {{ request()->routeIs('featured') ? 'text-soft-gray-900 font-bold border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Home</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-medium {{ request()->routeIs('businesses.*') ? 'text-soft-gray-900 font-bold border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Directory</a>
-                
+                <a href="{{ route('featured') }}" class="text-sm font-black {{ request()->routeIs('featured') ? 'text-uco-orange-600' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
+                <a href="{{ route('businesses.index') }}" class="text-sm font-medium {{ request()->routeIs('businesses.*') ? 'text-uco-orange-600' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Businesses</a>
+                <a href="#" class="text-sm font-medium text-soft-gray-600 hover:text-soft-gray-900">Testimonies</a>
+                <a href="{{ route('about') }}" class="text-sm font-medium {{ request()->routeIs('about') ? 'text-uco-orange-600' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About Us</a>
 
                 @auth
                     @if(auth()->user()->isAdmin())

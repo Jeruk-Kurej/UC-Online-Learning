@@ -13,16 +13,14 @@ use Illuminate\Support\Facades\Route;
 // PUBLIC ROUTES
 // ============================================================
 
-Route::get('/ping', function () {
-    return response()->json(['status' => 'ok'], 200);
-});
-
 Route::get('/', function () {
     if (Auth::check()) {
         return redirect('/dashboard');
     }
     return redirect('/featured');
 })->name('home');
+
+// Home route - redirect to appropriate page based on auth status
 
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
