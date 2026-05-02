@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\UcTestimonyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\ProfileController;
@@ -26,6 +27,7 @@ Route::get('/about', AboutController::class)->name('about');
 Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
 Route::get('/businesses', [BusinessController::class, 'index'])->name('businesses.index');
 Route::get('/intrapreneurs/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
+Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
 
 // ============================================================
 // AUTHENTICATED ROUTES
@@ -35,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/import-progress/{sessionId}', [DashboardController::class, 'importProgress'])->name('import.progress');
+    Route::get('/import-progress/check', [DashboardController::class, 'checkActiveImport'])->name('import.check');
     Route::post('/clear-active-import', [DashboardController::class, 'clearActiveImport'])->name('import.clear');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -42,6 +45,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/my-businesses', [BusinessController::class, 'my'])->name('businesses.my');
+
+    Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 });
 
 // ============================================================

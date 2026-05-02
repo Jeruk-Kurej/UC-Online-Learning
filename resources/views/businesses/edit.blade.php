@@ -99,6 +99,25 @@ placeholder="e.g., Warung Kopi Senja">
 <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
 @enderror
 </div>
+
+{{-- Feature Toggle --}}
+<div class="rounded-2xl border border-yellow-200 bg-yellow-50/70 p-4">
+    <div class="flex items-start gap-3">
+        <input type="checkbox"
+               name="is_featured"
+               id="is_featured"
+               value="1"
+               {{ old('is_featured', $business->is_featured) ? 'checked' : '' }}
+               class="mt-1 h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-400">
+        <div class="min-w-0">
+            <label for="is_featured" class="block text-sm font-semibold text-gray-900">Feature this business</label>
+            <p class="mt-1 text-xs leading-relaxed text-gray-600">
+                Featured businesses are prioritized on the homepage showcase and marked with a featured badge.
+            </p>
+        </div>
+    </div>
+</div>
+
 {{-- Position --}}
 <div>
 <label for="position" class="block text-sm font-medium text-gray-700 mb-2">

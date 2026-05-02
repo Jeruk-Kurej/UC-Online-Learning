@@ -62,6 +62,24 @@ class DashboardController extends Controller
     }
 
     /**
+     * Check if there's an active import and return its ID.
+     */
+    public function checkActiveImport()
+    {
+        // Check all possible session keys where import IDs might be stored
+        $importId = session('active_import') 
+            ?: session('importId') 
+            ?: session('active_business_import_id') 
+            ?: session('active_user_import_id');
+        
+        if ($importId) {
+            return response()->json(['importId' => $importId]);
+        }
+        
+        return response()->json(['importId' => null]);
+    }
+
+    /**
      * Clear the active import session after completion or manual dismiss.
      */
     public function clearActiveImport(Request $request)
