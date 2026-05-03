@@ -4,24 +4,6 @@
     @php
         $canManageBusiness = auth()->check() && $business->canBeManagedBy(auth()->user());
     @endphp
-    @php
-        $businessTypeName = $business->businessType?->name ?? ucfirst(str_replace('_', ' ', $business->offering_type ?? 'business'));
-        $businessMode = $business->offering_type ?? 'product';
-        $isProductMode = $businessMode === 'product';
-        $isServiceMode = $businessMode === 'service';
-        $isBothMode = $businessMode === 'both';
-        $businessModeLabel = $isBothMode ? 'Products & Services' : ($isProductMode ? 'Product-Based' : 'Service-Based');
-        $businessModeShortLabel = $isBothMode ? 'Both' : ($isProductMode ? 'Product' : 'Service');
-        $businessProducts = collect($business->products ?? []);
-        $businessPhotos = collect($business->photos ?? []);
-        $businessServices = collect();
-        $businessContacts = collect();
-        $hasProducts = $businessProducts->isNotEmpty();
-        $hasGallery = $businessPhotos->isNotEmpty();
-        $hasContacts = $businessContacts->isNotEmpty();
-        $visibleSectionCount = collect([$hasProducts, $hasGallery, $hasContacts])->filter()->count();
-        $activeTabDefault = $hasProducts ? 'products' : ($hasGallery ? 'photos' : ($hasContacts ? 'contacts' : 'products'));
-    @endphp
     <div x-data="{
         showUserModal: false,
         fullscreenOpen: false,
@@ -46,7 +28,7 @@
 
                     // Admin manages ALL businesses → always back to the general index
                     // Owner manages THEIR businesses → back to their own portfolio
-                    $isOwner = auth()->check() && !auth()->user()->isAdmin() && $business->user_id === auth()->id();
+                    $isOwner = auth()->check() && !auth()->user()->isAdmin() && $business->isOwnedBy(auth()->user());
 
                     if ($isOwner && ($isFromManagement || $backUrl === url()->current())) {
                         $backUrl = route('businesses.my');
@@ -82,21 +64,21 @@
                         <div class="flex flex-wrap items-center gap-2 mb-2">
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 bg-soft-gray-100 text-soft-gray-700 text-xs font-semibold rounded-xl max-w-[220px]"
-                                title="{{ $businessTypeName }}">
+                                title="{{ $business->businessType->name }}">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                                 </svg>
-                                <span class="truncate">{{ $businessTypeName }}</span>
+                                <span class="truncate">{{ $business->businessType->name }}</span>
                             </span>
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-xl
-                            {{ $isBothMode ? 'bg-purple-100 text-purple-700' : ($isProductMode ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700') }}">
+                            {{ $business->isBothMode() ? 'bg-purple-100 text-purple-700' : ($business->isProductMode() ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700') }}">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    @if ($isBothMode)
+                                    @if ($business->isBothMode())
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
-                                    @elseif($isProductMode)
+                                    @elseif($business->isProductMode())
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                     @else
@@ -104,8 +86,10 @@
                                             d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                                     @endif
                                 </svg>
-                                <span class="hidden sm:inline">{{ $businessModeLabel }}</span>
-                                <span class="sm:hidden">{{ $businessModeShortLabel }}</span>
+                                <span
+                                    class="hidden sm:inline">{{ $business->isBothMode() ? 'Products & Services' : ($business->isProductMode() ? 'Product-Based' : 'Service-Based') }}</span>
+                                <span
+                                    class="sm:hidden">{{ $business->isBothMode() ? 'Both' : ($business->isProductMode() ? 'Product' : 'Service') }}</span>
                             </span>
                         </div>
                         <h1 class="text-2xl sm:text-3xl font-bold text-soft-gray-900 tracking-tight leading-tight">
@@ -133,7 +117,7 @@
             <div class="bg-white shadow-lg sm:rounded-2xl overflow-hidden border border-soft-gray-100">
                 {{-- Hero Photo Carousel (Dynamic & Premium) --}}
                 <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden group"
-                    @php $heroPhotosCount = $businessPhotos->count(); @endphp x-data="{
+                    @php $heroPhotosCount = $business->photos->count(); @endphp x-data="{
                         activeHeroSlide: 0,
                         heroSlidesCount: {{ $heroPhotosCount }},
                         heroTimer: null,
@@ -150,7 +134,7 @@
                     }"
                     x-init="startHeroTimer()" @mouseenter="stopHeroTimer()" @mouseleave="startHeroTimer()">
 
-                    @forelse($businessPhotos as $index => $photo)
+                    @forelse($business->photos as $index => $photo)
                         <div x-show="activeHeroSlide === {{ $index }}"
                             x-transition:enter="transition ease-out duration-1000"
                             x-transition:enter-start="opacity-0 scale-105"
@@ -192,7 +176,7 @@
 
                         {{-- Hero Dots indicator (centered) --}}
                         <div class="absolute bottom-8 left-0 right-0 flex justify-center gap-2.5 z-20">
-                            @foreach ($businessPhotos as $index => $photo)
+                            @foreach ($business->photos as $index => $photo)
                                 <button @click="activeHeroSlide = {{ $index }}"
                                     class="h-1.5 rounded-full transition-all duration-500 shadow-lg"
                                     :class="activeHeroSlide === {{ $index }} ? 'w-10 bg-white' :
@@ -286,7 +270,7 @@
                             @endif
                             @php
                                 $additionalOwners = $business
-                                    ->members()
+                                    ->owners()
                                     ->where('users.id', '!=', $business->user_id)
                                     ->get();
                             @endphp
@@ -626,14 +610,13 @@
 
             {{-- Tabs Navigation - Elegant Design --}}
             <div id="business-tabs" x-data="{
-                activeTab: '{{ session('activeTab', $activeTabDefault) }}'
+                activeTab: '{{ session('activeTab', $business->isProductMode() ? 'products' : 'services') }}'
             }"
                 class="mt-10 bg-white shadow-lg sm:rounded-2xl border border-soft-gray-100">
                 <div class="border-b-2 border-soft-gray-100">
                     <nav class="flex -mb-px px-6 overflow-x-auto">
-                        @if ($isProductMode || $isBothMode)
+                        @if ($business->isProductMode())
                             <button @click="activeTab = 'products'"
-                                @if (! $hasProducts) style="display: none;" @endif
                                 :class="activeTab === 'products' ? 'border-soft-gray-900 text-soft-gray-900' :
                                     'border-transparent text-soft-gray-500 hover:text-soft-gray-700 hover:border-soft-gray-300'"
                                 class="flex items-center gap-2 py-4 px-4 border-b-2 font-semibold text-sm transition duration-150 whitespace-nowrap">
@@ -645,11 +628,11 @@
                                 <span
                                     :class="activeTab === 'products' ? 'bg-soft-gray-900 text-white' :
                                         'bg-soft-gray-100 text-soft-gray-600'"
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $businessProducts->count() }}</span>
+                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $business->products->count() }}</span>
                             </button>
                         @endif
 
-                        @if ($isServiceMode || $isBothMode)
+                        @if ($business->isServiceMode())
                             <button @click="activeTab = 'services'"
                                 :class="activeTab === 'services' ? 'border-soft-gray-900 text-soft-gray-900' :
                                     'border-transparent text-soft-gray-500 hover:text-soft-gray-700 hover:border-soft-gray-300'"
@@ -662,12 +645,11 @@
                                 <span
                                     :class="activeTab === 'services' ? 'bg-soft-gray-900 text-white' :
                                         'bg-soft-gray-100 text-soft-gray-600'"
-                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $businessServices->count() }}</span>
+                                    class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $business->services->count() }}</span>
                             </button>
                         @endif
 
                         <button @click="activeTab = 'photos'"
-                            @if (! $hasGallery) style="display: none;" @endif
                             :class="activeTab === 'photos' ? 'border-soft-gray-900 text-soft-gray-900' :
                                 'border-transparent text-soft-gray-500 hover:text-soft-gray-700 hover:border-soft-gray-300'"
                             class="flex items-center gap-2 py-4 px-4 border-b-2 font-semibold text-sm transition duration-150 whitespace-nowrap">
@@ -676,11 +658,10 @@
                             <span
                                 :class="activeTab === 'photos' ? 'bg-soft-gray-900 text-white' :
                                     'bg-soft-gray-100 text-soft-gray-600'"
-                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $businessPhotos->count() }}</span>
+                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $business->photos->count() }}</span>
                         </button>
 
                         <button @click="activeTab = 'contacts'"
-                            @if (! $hasContacts) style="display: none;" @endif
                             :class="activeTab === 'contacts' ? 'border-soft-gray-900 text-soft-gray-900' :
                                 'border-transparent text-soft-gray-500 hover:text-soft-gray-700 hover:border-soft-gray-300'"
                             class="flex items-center gap-2 py-4 px-4 border-b-2 font-semibold text-sm transition duration-150 whitespace-nowrap">
@@ -692,19 +673,18 @@
                             <span
                                 :class="activeTab === 'contacts' ? 'bg-soft-gray-900 text-white' :
                                     'bg-soft-gray-100 text-soft-gray-600'"
-                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $businessContacts->count() }}</span>
+                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold transition-colors">{{ $business->contacts->count() }}</span>
                         </button>
                     </nav>
                 </div>
 
-                @if ($visibleSectionCount > 0)
-                    {{-- Tab: Products --}}
-                    @if ($hasProducts)
+                {{-- Tab: Products --}}
+                @if ($business->isProductMode())
                     <div x-show="activeTab === 'products'" class="p-6">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-semibold text-gray-900">Products</h3>
                             @auth
-                                @if ($canManageBusiness && $businessProducts->count() > 0)
+                                @if ($canManageBusiness && $business->products->count() > 0)
                                     <div class="flex items-center gap-2">
                                         <a href="{{ route('businesses.product-categories.index', $business) }}"
                                             class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-orange-500 hover:bg-uco-orange-600 text-white text-sm font-semibold rounded-xl transition">
@@ -721,9 +701,9 @@
                             @endauth
                         </div>
 
-                        @if ($businessProducts->count() > 0)
+                        @if ($business->products->count() > 0)
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                @foreach ($businessProducts as $product)
+                                @foreach ($business->products as $product)
                                     <div @click="if(!event.target.closest('button') && !event.target.closest('a')) window.location='{{ route('businesses.products.show', [$business, $product]) }}'"
                                         class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer bg-white">
                                         {{-- Product Image / Carousel --}}
@@ -756,7 +736,8 @@
                                                             x-transition:leave="transition ease-in duration-300"
                                                             x-transition:leave-start="opacity-100"
                                                             x-transition:leave-end="opacity-0"
-                                                            class="absolute inset-0 cursor-pointer">
+                                                            class="absolute inset-0 cursor-pointer"
+                                                            >
                                                             <img src="{{ storage_image_url($photo->photo_url, 'gallery_thumb') }}"
                                                                 alt="{{ $product->name }}"
                                                                 class="w-full h-full object-cover">
@@ -777,10 +758,12 @@
                                                         </button>
 
                                                         {{-- Indicator Dots --}}
-                                                        <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
+                                                        <div
+                                                            class="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
                                                             @foreach ($product->photos as $index => $photo)
                                                                 <button @click="currentIndex = {{ $index }}"
-                                                                    :class="currentIndex === {{ $index }} ? 'bg-white w-4' : 'bg-white/50 w-1.5'"
+                                                                    :class="currentIndex === {{ $index }} ?
+                                                                        'bg-white w-4' : 'bg-white/50 w-1.5'"
                                                                     class="h-1.5 rounded-full transition-all duration-300 shadow-sm">
                                                                 </button>
                                                             @endforeach
@@ -788,7 +771,8 @@
                                                     @endif
                                                 </div>
                                             @else
-                                                <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                                                <div
+                                                    class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                                                     <i class="bi bi-image text-5xl text-gray-400"></i>
                                                 </div>
                                             @endif
@@ -798,7 +782,8 @@
                                         <div class="p-4">
                                             <div class="flex items-start justify-between mb-2">
                                                 <div class="flex-1">
-                                                    <h4 class="font-semibold text-gray-900 mb-1">{{ $product->name }}</h4>
+                                                    <h4 class="font-semibold text-gray-900 mb-1">{{ $product->name }}
+                                                    </h4>
                                                     <p class="text-xs text-gray-500 mb-2">
                                                         <i class="bi bi-tag me-1"></i>
                                                         {{ $product->productCategory?->name ?? 'Uncategorized' }}
@@ -847,15 +832,15 @@
                             </div>
                         @endif
                     </div>
-                    @endif
+                @endif
 
                 {{-- Tab: Services --}}
-                @if ($isServiceMode || $isBothMode)
+                @if ($business->isServiceMode())
                     <div x-show="activeTab === 'services'" class="p-6" style="display: none;">
                         <div class="flex items-center justify-between mb-6">
                             <h3 class="text-lg font-semibold text-gray-900">Services</h3>
                             @auth
-                                @if ($canManageBusiness && $businessServices->count() > 0)
+                                @if ($canManageBusiness && $business->services->count() > 0)
                                     <a href="{{ route('businesses.services.create', $business) }}"
                                         class="inline-flex items-center px-3 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg shadow-sm transition duration-150">
                                         <i class="bi bi-plus-lg me-2"></i>
@@ -865,9 +850,9 @@
                             @endauth
                         </div>
 
-                        @if ($businessServices->count() > 0)
+                        @if ($business->services->count() > 0)
                             <div class="space-y-3">
-                                @foreach ($businessServices as $service)
+                                @foreach ($business->services as $service)
                                     <div @click="if(!event.target.closest('button') && !event.target.closest('a')) window.location='{{ route('businesses.services.show', [$business, $service]) }}'"
                                         class="group border border-gray-200 rounded-lg p-5 hover:bg-gray-50 hover:shadow-md transition-all duration-300 cursor-pointer bg-white">
                                         <div class="flex items-start justify-between">
@@ -891,7 +876,8 @@
                                                             title="Edit Service">
                                                             <i class="bi bi-pencil"></i>
                                                         </a>
-                                                        <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
+                                                        <form
+                                                            action="{{ route('businesses.services.destroy', [$business, $service]) }}"
                                                             method="POST"
                                                             onsubmit="return confirm('Delete {{ $service->name }}?');"
                                                             class="inline">
@@ -930,12 +916,11 @@
                 @endif
 
                 {{-- Tab: Gallery (previously Photos) --}}
-                @if ($hasGallery)
                 <div x-show="activeTab === 'photos'" class="p-6" style="display: none;">
                     <div class="flex items-center justify-between mb-8">
                         <h3 class="text-xl font-bold text-gray-900">Business Gallery</h3>
                         @auth
-                            @if ($canManageBusiness && $businessPhotos->count() > 0)
+                            @if ($canManageBusiness && $business->photos->count() > 0)
                                 <div class="flex items-center gap-3">
                                     <a href="{{ route('businesses.photos.index', $business) }}"
                                         class="inline-flex items-center px-4 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all shadow-sm">
@@ -952,9 +937,9 @@
                         @endauth
                     </div>
 
-                    @if ($businessPhotos->count() > 0)
+                    @if ($business->photos->count() > 0)
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                            @foreach ($businessPhotos as $photo)
+                            @foreach ($business->photos as $photo)
                                 <div
                                     class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col">
                                     {{-- Photo --}}
@@ -1002,15 +987,13 @@
                         </div>
                     @endif
                 </div>
-                @endif
 
                 {{-- Tab: Contacts --}}
-                @if ($hasContacts)
                 <div x-show="activeTab === 'contacts'" class="p-6" style="display: none;">
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900">Contact Information</h3>
                         @auth
-                                @if ($canManageBusiness && $businessContacts->count() > 0)
+                            @if ($canManageBusiness && $business->contacts->count() > 0)
                                 <a href="{{ route('businesses.contacts.create', $business) }}"
                                     class="inline-flex items-center px-3 py-2 bg-gray-900 hover:bg-gray-800 text-white text-sm font-medium rounded-lg shadow-sm transition duration-150">
                                     <i class="bi bi-plus-lg me-2"></i>
@@ -1020,9 +1003,9 @@
                         @endauth
                     </div>
 
-                    @if ($businessContacts->count() > 0)
+                    @if ($business->contacts->count() > 0)
                         <div class="space-y-3">
-                            @foreach ($businessContacts as $contact)
+                            @foreach ($business->contacts as $contact)
                                 <div
                                     class="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150">
                                     <div
@@ -1087,20 +1070,6 @@
                         </div>
                     @endif
                 </div>
-                @else
-                    <div class="p-6">
-                        <div class="text-center py-14 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-                                <i class="bi bi-inbox text-3xl text-gray-300"></i>
-                            </div>
-                            <h4 class="text-lg font-bold text-gray-900 mb-2">Nothing to show yet</h4>
-                            <p class="text-sm text-gray-500 max-w-md mx-auto">
-                                This business doesn’t have products, gallery photos, or contact entries yet.
-                            </p>
-                        </div>
-                    </div>
-                @endif
-                @endif
 
             </div>
         </div>
