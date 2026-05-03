@@ -94,7 +94,7 @@
                                     {{ $category->name }}
                                 </option>
                             @empty
-                                <option value="" disabled>No categories available for {{ $business->businessType->name }}</option>
+                                <option value="" disabled>No categories available for {{ optional($business->category)->name }}</option>
                             @endforelse
                         </select>
                         @error('product_category_id')

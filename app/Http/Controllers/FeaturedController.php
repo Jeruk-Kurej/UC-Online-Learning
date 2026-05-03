@@ -40,7 +40,7 @@ class FeaturedController extends Controller
             ->get();
 
         // Categories
-        $businessTypes = Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
+        $categories = Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
             ->orderByDesc('businesses_count')
             ->take(8)
             ->get();
@@ -59,7 +59,7 @@ class FeaturedController extends Controller
             'topEntrepreneurs',
             'topIntrapreneurs',
             'spotlightBusinesses',
-            'businessTypes',
+            'categories',
             'testimonies',
         ));
     }

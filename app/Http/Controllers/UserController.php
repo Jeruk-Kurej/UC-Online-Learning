@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Business;
 use App\Models\Province;
-use App\Models\User_Businesses_Detail;
 use App\Imports\FormResponseImport;
 use App\Imports\UCOStudentImport;
 use Illuminate\Http\Request;
@@ -86,7 +85,7 @@ class UserController extends Controller
         }
 
         // Get available businesses for ownership transfer
-        $availableBusinesses = Business::with('user', 'businessType')->get();
+        $availableBusinesses = Business::with('user', 'category')->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
         return view('users.create', compact('availableBusinesses', 'provinces'));
@@ -102,85 +101,76 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            // Basic Required
-            'username' => 'required|string|max:255|unique:users',
-            'name' => 'required|string|max:255',
+            // Auth / Required
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:student,alumni,admin',
-            'is_active' => 'nullable|boolean',
-            
-            // Core Personal
-            'birth_date' => 'nullable|date',
-            'birth_city' => 'nullable|string|max:255',
-            'religion' => 'nullable|string|max:255',
-            'phone_number' => 'nullable|string|max:50',
-            'mobile_number' => 'nullable|string|max:50',
-            'whatsapp' => 'nullable|string|max:50',
-            
-            // Core Student
-            'NIS' => 'nullable|string|max:255',
-            'Student_Year' => 'nullable|string|max:50',
-            'Major' => 'nullable|string|max:255',
-            'Is_Graduate' => 'nullable|boolean',
-            'CGPA' => 'nullable|numeric|min:0|max:4',
-            
-            // Employment & Extra (Virtual fields packed into JSON)
-            'current_employment_status' => 'nullable|string|max:100',
-            'has_side_business' => 'nullable|boolean',
-            'profile_photo_url' => 'nullable|string|max:2048',
+            'role' => 'required|in:user,admin',
+            'student_status' => 'required|in:active,inactive,cuti,alumni',
+            'is_visible' => 'nullable|boolean',
 
-            // JSON Fields
-            'personal_data' => 'nullable|array',
-            'academic_data' => 'nullable|array',
-            'father_data' => 'nullable|array',
-            'mother_data' => 'nullable|array',
-            'graduation_data' => 'nullable|array',
-            
+            // CSV: Identity
+            'prefix_title' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'suffix_title' => 'nullable|string|max:255',
+            'personal_email' => 'nullable|string|email|max:255',
+
+            // CSV: Contact
+            'phone_number' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:255',
+            'whatsapp' => 'nullable|string|max:255',
+            'linkedin' => 'nullable|string|max:255',
+
+            // CSV: Academic
+            'current_status' => 'nullable|string|max:255',
+            'nis' => 'nullable|string|max:255',
+            'year_of_enrollment' => 'nullable|string|max:255',
+            'graduate_year' => 'nullable|string|max:255',
+            'major' => 'nullable|string|max:255',
+
+            // CSV: Extra
+            'testimony' => 'nullable|string',
+            'cv_url' => 'nullable|file|mimes:pdf|max:10240',
+            'profile_photo_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'activities_doc_url' => 'nullable|file|mimes:pdf|max:10240',
+
             // Business Assignments
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
-            'team_member' => 'nullable|array',
         ]);
+
+        $cvPath = $request->hasFile('cv_url') ? $request->file('cv_url')->store('users/cvs', 'public') : null;
+        $profilePhotoPath = $request->hasFile('profile_photo_url') ? $request->file('profile_photo_url')->store('users/photos', 'public') : null;
+        $activitiesDocPath = $request->hasFile('activities_doc_url') ? $request->file('activities_doc_url')->store('users/activities', 'public') : null;
 
         // Prepare user data
         $userData = [
-            'username' => $validated['username'],
-            'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'is_active' => $request->has('is_active'),
+            'student_status' => $validated['student_status'],
+            'is_visible' => true,
             'email_verified_at' => now(),
-            
-            // Core fields
-            'birth_date' => $validated['birth_date'] ?? null,
-            'birth_city' => $validated['birth_city'] ?? null,
-            'religion' => $validated['religion'] ?? null,
+
+            'prefix_title' => $validated['prefix_title'] ?? null,
+            'name' => $validated['name'],
+            'suffix_title' => $validated['suffix_title'] ?? null,
+            'personal_email' => $validated['personal_email'] ?? null,
+
             'phone_number' => $validated['phone_number'] ?? null,
             'mobile_number' => $validated['mobile_number'] ?? null,
             'whatsapp' => $validated['whatsapp'] ?? null,
-            'NIS' => $validated['NIS'] ?? null,
-            'Student_Year' => $validated['Student_Year'] ?? null,
-            'Major' => $validated['Major'] ?? null,
-            'Is_Graduate' => $request->has('Is_Graduate'),
-            'CGPA' => $validated['CGPA'] ?? null,
-            
-            // JSON fields
-            'personal_data' => (function() use ($validated) {
-                $data = !empty($validated['personal_data']) ? array_filter($validated['personal_data']) : [];
-                if (isset($validated['profile_photo_url'])) $data['profile_photo_url'] = $validated['profile_photo_url'];
-                return !empty($data) ? $data : null;
-            })(),
-            'academic_data' => !empty($validated['academic_data']) ? array_filter($validated['academic_data']) : null,
-            'father_data' => !empty($validated['father_data']) ? array_filter($validated['father_data']) : null,
-            'mother_data' => !empty($validated['mother_data']) ? array_filter($validated['mother_data']) : null,
-            'graduation_data' => (function() use ($validated, $request) {
-                $data = !empty($validated['graduation_data']) ? array_filter($validated['graduation_data']) : [];
-                if (isset($validated['current_employment_status'])) $data['current_employment_status'] = $validated['current_employment_status'];
-                if ($request->has('has_side_business')) $data['has_side_business'] = (bool)$request->has_side_business;
-                return !empty($data) ? $data : null;
-            })(),
+            'linkedin' => $validated['linkedin'] ?? null,
+
+            'current_status' => $validated['current_status'] ?? null,
+            'nis' => $validated['nis'] ?? null,
+            'year_of_enrollment' => $validated['year_of_enrollment'] ?? null,
+            'graduate_year' => $validated['graduate_year'] ?? null,
+            'major' => $validated['major'] ?? null,
+
+            'testimony' => $validated['testimony'] ?? null,
+            'cv_url' => $cvPath,
+            'profile_photo_url' => $profilePhotoPath,
+            'activities_doc_url' => $activitiesDocPath,
         ];
 
         // Create the user
@@ -226,29 +216,22 @@ class UserController extends Controller
         }
 
         // Get available businesses for ownership transfer (excluding businesses owned by this user)
-        $availableBusinesses = Business::with('user', 'businessType')
+        $availableBusinesses = Business::with('user', 'category')
             ->where('user_id', '!=', $user->id)
             ->get();
 
         // Get businesses currently owned by this user
         $ownedBusinesses = $user->businesses()->pluck('id')->toArray();
-
-        // Get team member details for this user
-        $teamMemberDetails = User_Businesses_Detail::where('user_id', $user->id)->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
         return view('users.edit', [
             'userToEdit' => $user,
             'availableBusinesses' => $availableBusinesses,
             'ownedBusinesses' => $ownedBusinesses,
-            'teamMemberDetails' => $teamMemberDetails,
             'provinces' => $provinces,
         ]);
     }
 
-    /**
-     * Update the specified user in storage.
-     */
     public function update(Request $request, User $user)
     {
         if (!$this->getAuthUser()->isAdmin()) {
@@ -256,83 +239,74 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            // Basic Required
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
-            'name' => 'required|string|max:255',
+            // Auth / Required
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:student,alumni,admin',
-            'is_active' => 'nullable|boolean',
-            
-            // Core Personal
-            'birth_date' => 'nullable|date',
-            'birth_city' => 'nullable|string|max:255',
-            'religion' => 'nullable|string|max:255',
-            'phone_number' => 'nullable|string|max:50',
-            'mobile_number' => 'nullable|string|max:50',
-            'whatsapp' => 'nullable|string|max:50',
-            
-            // Core Student
-            'NIS' => 'nullable|string|max:255',
-            'Student_Year' => 'nullable|string|max:50',
-            'Major' => 'nullable|string|max:255',
-            'Is_Graduate' => 'nullable|boolean',
-            'CGPA' => 'nullable|numeric|min:0|max:4',
-            
-            // Employment & Extra (Virtual fields packed into JSON)
-            'current_employment_status' => 'nullable|string|max:100',
-            'has_side_business' => 'nullable|boolean',
-            'profile_photo_url' => 'nullable|string|max:2048',
+            'role' => 'required|in:user,admin',
+            'student_status' => 'required|in:active,inactive,cuti,alumni',
+            'is_visible' => 'nullable|boolean',
 
-            // JSON Fields
-            'personal_data' => 'nullable|array',
-            'academic_data' => 'nullable|array',
-            'father_data' => 'nullable|array',
-            'mother_data' => 'nullable|array',
-            'graduation_data' => 'nullable|array',
-            
+            // CSV: Identity
+            'prefix_title' => 'nullable|string|max:255',
+            'name' => 'required|string|max:255',
+            'suffix_title' => 'nullable|string|max:255',
+            'personal_email' => 'nullable|string|email|max:255',
+
+            // CSV: Contact
+            'phone_number' => 'nullable|string|max:255',
+            'mobile_number' => 'nullable|string|max:255',
+            'whatsapp' => 'nullable|string|max:255',
+            'linkedin' => 'nullable|string|max:255',
+
+            // CSV: Academic
+            'current_status' => 'nullable|string|max:255',
+            'nis' => 'nullable|string|max:255',
+            'year_of_enrollment' => 'nullable|string|max:255',
+            'graduate_year' => 'nullable|string|max:255',
+            'major' => 'nullable|string|max:255',
+
+            // CSV: Extra
+            'testimony' => 'nullable|string',
+            'cv_url' => 'nullable|file|mimes:pdf|max:10240',
+            'profile_photo_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:5120',
+            'activities_doc_url' => 'nullable|file|mimes:pdf|max:10240',
+
             // Business Assignments
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
-            'team_member' => 'nullable|array',
         ]);
+
+        $cvPath = $request->hasFile('cv_url') ? $request->file('cv_url')->store('users/cvs', 'public') : $user->cv_url;
+        $profilePhotoPath = $request->hasFile('profile_photo_url') ? $request->file('profile_photo_url')->store('users/photos', 'public') : $user->profile_photo_url;
+        $activitiesDocPath = $request->hasFile('activities_doc_url') ? $request->file('activities_doc_url')->store('users/activities', 'public') : $user->activities_doc_url;
 
         // Prepare user data
         $userData = [
-            'username' => $validated['username'],
-            'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
-            'is_active' => $request->has('is_active'),
-            
-            // Core fields
-            'birth_date' => $validated['birth_date'] ?? null,
-            'birth_city' => $validated['birth_city'] ?? null,
-            'religion' => $validated['religion'] ?? null,
+            'student_status' => $validated['student_status'],
+            'is_visible' => true,
+
+            'prefix_title' => $validated['prefix_title'] ?? null,
+            'name' => $validated['name'],
+            'suffix_title' => $validated['suffix_title'] ?? null,
+            'personal_email' => $validated['personal_email'] ?? null,
+
             'phone_number' => $validated['phone_number'] ?? null,
             'mobile_number' => $validated['mobile_number'] ?? null,
             'whatsapp' => $validated['whatsapp'] ?? null,
-            'NIS' => $validated['NIS'] ?? null,
-            'Student_Year' => $validated['Student_Year'] ?? null,
-            'Major' => $validated['Major'] ?? null,
-            'Is_Graduate' => $request->has('Is_Graduate'),
-            'CGPA' => $validated['CGPA'] ?? null,
-            
-            // JSON fields
-            'personal_data' => (function() use ($validated) {
-                $data = !empty($validated['personal_data']) ? array_filter($validated['personal_data']) : [];
-                if (isset($validated['profile_photo_url'])) $data['profile_photo_url'] = $validated['profile_photo_url'];
-                return !empty($data) ? $data : null;
-            })(),
-            'academic_data' => !empty($validated['academic_data']) ? array_filter($validated['academic_data']) : null,
-            'father_data' => !empty($validated['father_data']) ? array_filter($validated['father_data']) : null,
-            'mother_data' => !empty($validated['mother_data']) ? array_filter($validated['mother_data']) : null,
-            'graduation_data' => (function() use ($validated, $request) {
-                $data = !empty($validated['graduation_data']) ? array_filter($validated['graduation_data']) : [];
-                if (isset($validated['current_employment_status'])) $data['current_employment_status'] = $validated['current_employment_status'];
-                if ($request->has('has_side_business')) $data['has_side_business'] = (bool)$request->has_side_business;
-                return !empty($data) ? $data : null;
-            })(),
+            'linkedin' => $validated['linkedin'] ?? null,
+
+            'current_status' => $validated['current_status'] ?? null,
+            'nis' => $validated['nis'] ?? null,
+            'year_of_enrollment' => $validated['year_of_enrollment'] ?? null,
+            'graduate_year' => $validated['graduate_year'] ?? null,
+            'major' => $validated['major'] ?? null,
+
+            'testimony' => $validated['testimony'] ?? null,
+            'cv_url' => $cvPath,
+            'profile_photo_url' => $profilePhotoPath,
+            'activities_doc_url' => $activitiesDocPath,
         ];
 
         // Only update password if provided
@@ -357,26 +331,6 @@ class UserController extends Controller
             }
         }
 
-        // Update team member assignments
-        if ($request->has('team_member')) {
-            // Remove existing team assignments for this user
-            User_Businesses_Detail::where('user_id', $user->id)->delete();
-            
-            // Add new team assignments
-            foreach ($request->team_member as $assignment) {
-                if (!empty($assignment['enabled']) && !empty($assignment['business_id'])) {
-                    User_Businesses_Detail::create([
-                        'user_id' => $user->id,
-                        'business_id' => $assignment['business_id'],
-                        'role_type' => $assignment['role_type'] ?? 'employee',
-                        'Position_name' => $assignment['Position_name'] ?? null,
-                        'Working_Date' => $assignment['Working_Date'] ?? now(),
-                        'is_current' => !empty($assignment['is_current']),
-                    ]);
-                }
-            }
-        }
-
         return redirect()
             ->route('users.index')
             ->with('success', "Success! The profile for '{$user->name}' has been updated.");
@@ -387,7 +341,9 @@ class UserController extends Controller
      */
     public function toggleFeatured(User $user)
     {
-        $this->ensureAdmin();
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can feature users.');
+        }
 
         if ($user->is_featured) {
             $user->update(['is_featured' => false]);

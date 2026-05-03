@@ -65,7 +65,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <select name="category" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-uco-orange-500/20 transition-all text-sm">
                         <option value="">All Categories</option>
-                        @foreach($businessTypes as $type)
+                        @foreach($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>

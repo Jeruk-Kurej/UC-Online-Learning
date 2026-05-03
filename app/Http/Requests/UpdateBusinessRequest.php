@@ -38,7 +38,7 @@ class UpdateBusinessRequest extends FormRequest
             // Basic fields
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
-            'business_type_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'business_mode' => 'required|in:product,service,both',
             'user_id' => 'nullable|exists:users,id',
             'owner_ids' => 'nullable|array',

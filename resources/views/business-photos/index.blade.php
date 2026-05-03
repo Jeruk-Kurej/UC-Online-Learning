@@ -39,7 +39,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="font-semibold text-gray-900 truncate">{{ $business->name }}</h3>
-                    <p class="text-sm text-gray-500">{{ $business->businessType->name }} &bull; {{ $business->address ?? 'No address set' }}</p>
+                    <p class="text-sm text-gray-500">{{ optional($business->category)->name }} &bull; {{ $business->address ?? 'No address set' }}</p>
                 </div>
                 <div class="text-right flex-shrink-0">
                     <p class="text-xs text-gray-400 uppercase tracking-wider">Total Gallery Photos</p>
