@@ -39,7 +39,7 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'username' => strtolower(str_replace(' ', '_', $request->name)) . rand(100, 999), 
-            'role' => 'student',
+            'role' => 'user',
             'password' => Hash::make($request->password),
         ]);
 
