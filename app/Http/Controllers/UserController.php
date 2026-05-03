@@ -105,7 +105,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
-            'student_status' => 'required|in:active,inactive,cuti,alumni',
+            'student_status' => 'required|string|max:100',
             'is_visible' => 'nullable|boolean',
 
             // CSV: Identity
@@ -240,7 +240,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
-            'student_status' => 'required|in:active,inactive,cuti,alumni',
+            'student_status' => 'required|string|max:100',
             'is_visible' => 'nullable|boolean',
 
             // CSV: Identity

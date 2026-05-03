@@ -97,7 +97,7 @@
                     </div>
                 </div>
 
-                {{-- Products Section (only if products exist) --}}
+                {{-- Products Section --}}
                 @if($business->products->count() > 0)
                     <div class="space-y-6">
                         <h2 class="text-lg font-bold text-gray-900 tracking-tight flex items-center gap-3">
@@ -180,7 +180,7 @@
                     @endif
                 </div>
 
-                {{-- Legal & Certifications (only if data exists) --}}
+                {{-- Legal & Certifications --}}
                 @if($business->legalDocuments->count() > 0 || $business->certifications->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @if($business->legalDocuments->count() > 0)
@@ -268,19 +268,7 @@
                             @endif
                         </div>
 
-                        {{-- Core Competencies --}}
-                        @if($business->user->skills->count() > 0)
-                            <div class="mt-6 pt-5 border-t border-gray-100">
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Core Competencies</p>
-                                <div class="flex flex-wrap gap-2">
-                                    @foreach($business->user->skills as $skill)
-                                        <span class="px-2.5 py-1 bg-gray-50 text-gray-600 rounded-lg text-[9px] font-medium border border-gray-100 transition-all cursor-default">{{ $skill->name }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-
-                        {{-- Additional Owners / Team (from pivot table, Tokopedia Style layout) --}}
+                        {{-- Additional Owners / Team --}}
                         @if($business->members->where('id', '!=', $business->user_id)->count() > 0)
                             <div class="mt-6 pt-5 border-t border-gray-100">
                                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Additional Owners / Team</p>
@@ -307,6 +295,40 @@
                                                 </div>
                                             </a>
                                         @endif
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- Relevant / Recommended Students section --}}
+                        @php
+                            $recommendedUsers = \App\Models\User::where('is_visible', true)
+                                ->where('id', '!=', $business->user_id)
+                                ->whereHas('businesses', fn($q) => $q->where('is_visible', true))
+                                ->inRandomOrder()
+                                ->take(3)
+                                ->get();
+                        @endphp
+                        @if($recommendedUsers->count() > 0)
+                            <div class="mt-6 pt-5 border-t border-gray-100">
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Recommended Students</p>
+                                <div class="grid grid-cols-1 gap-3">
+                                    @foreach($recommendedUsers as $recUser)
+                                        <a href="{{ route('users.show', $recUser) }}" class="p-3 bg-gray-50/50 border border-gray-100 rounded-xl flex items-center gap-3 hover:border-gray-200 hover:shadow-sm transition-all duration-300 group">
+                                            <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-gray-100 flex items-center justify-center flex-shrink-0">
+                                                @if($recUser->profile_photo_url)
+                                                    <img src="{{ $recUser->profile_photo_url }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 text-gray-400 text-xs font-bold select-none">
+                                                        {{ substr($recUser->name, 0, 1) }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="overflow-hidden flex-1">
+                                                <p class="text-xs font-bold text-gray-800 truncate group-hover:text-gray-900 transition">{{ $recUser->name }}</p>
+                                                <p class="text-[9px] font-medium text-gray-400 truncate mt-0.5">{{ $recUser->major ?: 'UCO Student' }}</p>
+                                            </div>
+                                        </a>
                                     @endforeach
                                 </div>
                             </div>

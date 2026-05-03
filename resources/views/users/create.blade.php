@@ -128,10 +128,12 @@
                         Student Status <span class="text-red-500">*</span>
                     </label>
                     <select name="student_status" id="student_status" required class="block w-full">
-                        <option value="active" {{ old('student_status', 'active') === 'active' ? 'selected' : '' }}>Active</option>
-                        <option value="inactive" {{ old('student_status') === 'inactive' ? 'selected' : '' }}>Inactive</option>
-                        <option value="cuti" {{ old('student_status') === 'cuti' ? 'selected' : '' }}>Cuti</option>
-                        <option value="alumni" {{ old('student_status') === 'alumni' ? 'selected' : '' }}>Alumni</option>
+                        <option value="student aktif" {{ old('student_status', 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
+                        <option value="student non aktif" {{ old('student_status') === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
+                        <option value="student cuti" {{ old('student_status') === 'student cuti' ? 'selected' : '' }}>Student Cuti</option>
+                        <option value="alumni aktif" {{ old('student_status') === 'alumni aktif' ? 'selected' : '' }}>Alumni Aktif</option>
+                        <option value="alumni non aktif" {{ old('student_status') === 'alumni non aktif' ? 'selected' : '' }}>Alumni Non Aktif</option>
+                        <option value="alumni cuti" {{ old('student_status') === 'alumni cuti' ? 'selected' : '' }}>Alumni Cuti</option>
                     </select>
                     @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
@@ -235,7 +237,7 @@
 
                 {{-- Major --}}
                 <div>
-                    <label for="major" class="block text-sm font-medium text-gray-700 mb-2">Major</label>
+                    <label for="major" class="block text-sm font-medium text-gray-700 mb-2">Peminatan</label>
                     <input type="text" name="major" id="major" value="{{ old('major') }}"
                            class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
                 </div>

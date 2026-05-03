@@ -2,25 +2,24 @@
 <x-app-layout>
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false }">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
-            <div class="uco-hero-mesh"></div>
+        <section class="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-uco-orange-700">
+                    <span class="inline-flex items-center rounded-full border border-gray-100 bg-gray-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-600">
                         UCO Directory
                     </span>
-                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Business Directory</h1>
-                    <p class="text-sm text-soft-gray-600 mt-1">Explore businesses and startups from our student and alumni network.</p>
+                    <h1 class="text-3xl font-extrabold text-gray-900 md:text-4xl">Business Directory</h1>
+                    <p class="text-sm text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
                 </div>
 
                 @auth
                     @if (auth()->user()->isAdmin())
                         <div class="flex items-center gap-3">
-                            <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-black rounded-xl">
-                                <i class="bi bi-star-fill text-uco-yellow-500"></i>
+                            <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-black rounded-xl">
+                                <i class="bi bi-star-fill text-yellow-500"></i>
                                 {{ $featuredBusinessCount }}/8 Featured
                             </span>
-                            <button @click="showImportModal = true" class="inline-flex items-center px-5 py-3 bg-white border border-gray-300 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition shadow-sm">
+                            <button @click="showImportModal = true" class="inline-flex items-center px-5 py-3 bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition shadow-sm">
                                 <i class="bi bi-cloud-upload mr-2"></i>
                                 Import CSV
                             </button>
@@ -54,39 +53,55 @@
         @endif
 
         {{-- Filters --}}
-        <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-10 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm">
             <form action="{{ route('businesses.index') }}" method="GET" class="flex flex-col lg:flex-row gap-3">
                 <input type="hidden" name="view" value="{{ $viewType }}">
                 <div class="flex-1 relative">
                     <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, category, or description..." 
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-uco-orange-500/20 focus:border-uco-orange-500 transition-all">
+                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, category, or highlight..." 
+                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all">
                 </div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <select name="category" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-uco-orange-500/20 transition-all text-sm">
+                    <select name="category" id="category_select" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm">
                         <option value="">All Categories</option>
                         @foreach($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
-                    <select name="province" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-uco-orange-500/20 transition-all text-sm hidden md:block">
+                    <select name="province" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm hidden md:block">
                         <option value="">All Provinces</option>
                         @foreach($availableProvinces as $p)
                             <option value="{{ $p }}" {{ request('province') == $p ? 'selected' : '' }}>{{ $p }}</option>
                         @endforeach
                     </select>
-                    <select name="city" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-uco-orange-500/20 transition-all text-sm">
+                    <select name="city" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm">
                         <option value="">All Cities</option>
                         @foreach($availableCities as $c)
                             <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="bg-uco-orange-500 text-white px-6 py-3 rounded-xl font-bold hover:bg-uco-orange-600 transition-all shadow-lg shadow-uco-orange-500/20 active:scale-95">
+                <button type="submit" class="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all shadow-lg active:scale-95">
                     Apply Filters
                 </button>
             </form>
         </div>
+
+        {{-- Scrollable Quick Tags for Categories --}}
+        @if($categories->count() > 0)
+            <div class="flex overflow-x-auto gap-2 pb-3 mb-8 scrollbar-hide select-none">
+                <a href="{{ route('businesses.index', ['view' => $viewType]) }}" 
+                   class="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 hover:bg-gray-50 {{ !request('category') ? 'border-gray-900 bg-gray-50 text-gray-900' : 'text-gray-600' }}">
+                   All Categories
+                </a>
+                @foreach($categories as $cat)
+                    <a href="{{ route('businesses.index', ['view' => $viewType, 'category' => $cat->id]) }}" 
+                       class="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 hover:bg-gray-50 {{ request('category') == $cat->id ? 'border-gray-900 bg-gray-50 text-gray-900' : 'text-gray-600' }}">
+                       {{ $cat->name }}
+                    </a>
+                @endforeach
+            </div>
+        @endif
 
         {{-- Grid --}}
         @if(auth()->user()?->isAdmin() && $errors->has('featured'))
@@ -96,7 +111,7 @@
         @endif
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse ($businesses as $business)
-                <div class="bg-white border border-gray-100 rounded-3xl overflow-hidden hover:border-uco-orange-200 hover:shadow-2xl transition-all duration-500 group relative">
+                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full">
                     @auth
                         @if(auth()->user()->isAdmin())
                             <div class="absolute top-3 right-3 z-10">
@@ -106,66 +121,75 @@
                                         title="{{ $business->is_featured ? 'Remove from featured' : 'Add to featured' }}"
                                         class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm border
                                             {{ $business->is_featured
-                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' }}">
+                                                ? 'bg-yellow-400 border-yellow-500 text-white hover:bg-yellow-500'
+                                                : 'bg-white border-gray-200 text-gray-300 hover:text-yellow-400 hover:border-yellow-300' }}">
                                         <i class="bi bi-star-fill text-xs"></i>
                                     </button>
                                 </form>
                             </div>
                         @endif
                     @endauth
-                    <a href="{{ $viewType === 'entrepreneur' ? route('businesses.show', $business) : route('intrapreneurs.show', $business) }}" class="block p-6">
+                    <a href="{{ $viewType === 'entrepreneur' ? route('businesses.show', $business) : route('intrapreneurs.show', $business) }}" class="block p-6 flex flex-col justify-between h-full">
                         <div class="flex items-start gap-5">
-                            <div class="w-20 h-20 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 group-hover:border-uco-orange-100 transition-colors overflow-hidden flex-shrink-0 shadow-inner">
+                            <div class="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-gray-200 transition-colors overflow-hidden flex-shrink-0 shadow-sm">
                                 @if($business->logo_url)
-                                    <img src="{{ $business->logo_url }}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                                    <img src="{{ $business->logo_url }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
                                 @else
-                                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-                                        <i class="bi bi-building text-3xl text-gray-300"></i>
+                                    <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-300 select-none">
+                                        <span class="text-2xl font-black opacity-30 select-none">{{ substr($business->name, 0, 1) }}</span>
                                     </div>
                                 @endif
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="flex flex-col gap-1 mb-3">
-                                    <h3 class="font-black text-gray-900 text-lg leading-tight group-hover:text-uco-orange-500 transition-colors line-clamp-2">{{ $business->name }}</h3>
+                                <div class="flex flex-col gap-1 mb-2">
+                                    <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">
+                                        {{ $viewType === 'entrepreneur' ? 'Entrepreneur' : 'Intrapreneur' }}
+                                    </span>
+                                    <h3 class="font-extrabold text-gray-900 text-xl md:text-2xl leading-tight group-hover:text-gray-700 transition-colors line-clamp-2">
+                                        {{ $business->name }}
+                                    </h3>
                                     @if($business->category)
-                                        <span class="text-[10px] font-black uppercase tracking-widest text-blue-600">{{ $business->category->name }}</span>
+                                        <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-0.5">
+                                            {{ $business->category->name }}
+                                        </span>
                                     @endif
                                 </div>
-                                <p class="text-sm text-gray-500 line-clamp-2 mb-4 leading-relaxed font-medium">
-                                    {{ $viewType === 'entrepreneur' ? $business->description : $business->job_description }}
-                                </p>
-                                <div class="flex items-end justify-between gap-4 pt-4 border-t border-gray-50">
-                                    <div class="space-y-3 min-w-0 flex-1">
-                                        @if($viewType === 'entrepreneur' && $business->city)
-                                            <span class="flex items-center gap-1 text-[11px] font-bold text-gray-400">
-                                                <i class="bi bi-geo-alt-fill text-uco-orange-400"></i>
-                                                {{ $business->city }}
-                                            </span>
-                                        @endif
-
-                                        @if($business->user)
-                                            <div class="flex items-center gap-3 min-w-0">
-                                                <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center flex-shrink-0 shadow-sm">
-                                                    @if($business->user->profile_photo_url)
-                                                        <img src="{{ $business->user->profile_photo_url }}" alt="{{ $business->user->name }}" class="w-full h-full object-cover">
-                                                    @else
-                                                        <span class="text-xs font-black text-gray-400">{{ strtoupper(substr($business->user->name, 0, 1)) }}</span>
-                                                    @endif
-                                                </div>
-                                                <div class="min-w-0">
-                                                    <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Founder Profile</p>
-                                                    <p class="truncate text-[11px] font-bold text-gray-700 flex items-center gap-1">
-                                                        <i class="bi bi-person-fill text-gray-400"></i>
-                                                        {{ $business->user->name }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <i class="bi bi-arrow-right-circle-fill text-gray-200 group-hover:text-uco-orange-500 text-2xl transition-all group-hover:translate-x-1"></i>
-                                </div>
+                                @if($business->unique_value_proposition || $business->description)
+                                    <p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed font-normal">
+                                        {{ $business->unique_value_proposition ?? $business->description }}
+                                    </p>
+                                @endif
                             </div>
+                        </div>
+
+                        <div class="flex items-end justify-between gap-4 pt-4 border-t border-gray-100 mt-auto">
+                            <div class="space-y-3 min-w-0 flex-1">
+                                @if($viewType === 'entrepreneur' && $business->city)
+                                    <span class="flex items-center gap-1 text-[11px] font-semibold text-gray-500">
+                                        <i class="bi bi-geo-alt text-gray-400"></i>
+                                        {{ $business->city }}
+                                    </span>
+                                @endif
+
+                                @if($business->user)
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-9 h-9 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                            @if($business->user->profile_photo_url)
+                                                <img src="{{ $business->user->profile_photo_url }}" alt="{{ $business->user->name }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-xs font-black text-gray-300">{{ strtoupper(substr($business->user->name, 0, 1)) }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="text-[9px] font-black uppercase tracking-widest text-gray-400">UCO Student</p>
+                                            <p class="truncate text-xs font-bold text-gray-800">
+                                                {{ $business->user->name }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                            <i class="bi bi-arrow-right-circle text-gray-300 group-hover:text-gray-900 text-2xl transition-all group-hover:translate-x-1"></i>
                         </div>
                     </a>
                 </div>
@@ -181,7 +205,7 @@
         {{-- Import Modal --}}
         @if (auth()->user()?->isAdmin())
             <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-                <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
+                <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
                      x-data="{
                         isDragging: false,
                         handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
@@ -201,14 +225,14 @@
                     
                     <form action="{{ route('businesses.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                         @csrf
-                        <div class="border-2 border-dashed rounded-2xl p-10 text-center transition group"
-                             :class="isDragging ? 'border-uco-orange-500 bg-orange-50' : 'border-gray-200 hover:border-uco-orange-300'"
+                        <div class="border-2 border-dashed rounded-xl p-10 text-center transition group"
+                             :class="isDragging ? 'border-gray-900 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
                              @dragover="handleDragOver"
                              @dragleave="handleDragLeave"
                              @drop="handleDrop">
                             <input type="file" name="file" required class="hidden" id="biz_csv_file" onchange="document.getElementById('biz_file_name').textContent = this.files[0].name">
                             <label for="biz_csv_file" class="cursor-pointer">
-                                <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
+                                <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-gray-900 transition"></i>
                                 <p class="mt-4 text-sm font-bold text-gray-600" id="biz_file_name">Click to select or drag CSV/Excel file here</p>
                             </label>
                         </div>
@@ -222,10 +246,9 @@
             </div>
         @endif
 
-        {{-- Import Progress Tracker (Always rendered, fetches active import on load) --}}
+        {{-- Import Progress Tracker --}}
         <div x-data="importProgress()" x-init="checkActiveImport().then(() => startPolling())" class="fixed bottom-6 right-6 z-50 w-96">
             <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
-                {{-- Header --}}
                 <div class="px-5 py-4 flex items-center justify-between" :class="status === 'completed' ? 'bg-emerald-50' : 'bg-gray-50'">
                     <div class="flex items-center gap-3">
                         <template x-if="status !== 'completed'">
@@ -241,7 +264,6 @@
                     </button>
                 </div>
 
-                {{-- Progress Bar --}}
                 <div class="px-5 pb-4 pt-2">
                     <div class="w-full bg-gray-100 rounded-full h-2.5 mb-3 overflow-hidden">
                         <div class="h-2.5 rounded-full transition-all duration-500 ease-out"
@@ -249,7 +271,6 @@
                              :style="'width: ' + percent + '%'"></div>
                     </div>
 
-                    {{-- Stats --}}
                     <div class="grid grid-cols-3 gap-2 text-center">
                         <div class="bg-gray-50 rounded-xl p-2">
                             <p class="text-xs text-gray-500">Processed</p>
@@ -301,14 +322,12 @@
 
                 startPolling() {
                     if (!this.importId) return;
-                    
-                    this.poll(); // immediate first call
+                    this.poll();
                     this.polling = setInterval(() => this.poll(), 2000);
                 },
 
                 async poll() {
                     if (!this.importId) return;
-                    
                     try {
                         const res = await fetch(`/import-progress/${this.importId}`);
                         const data = await res.json();

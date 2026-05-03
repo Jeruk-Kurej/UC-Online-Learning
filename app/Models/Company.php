@@ -43,7 +43,7 @@ class Company extends Model
     public function getNameAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
+        return strtoupper(trim(strip_tags($cleaned)));
     }
 
     public function getJobDescriptionAttribute($value)
