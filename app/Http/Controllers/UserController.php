@@ -195,15 +195,12 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        // ✅ SIMPLIFIED: Admin can view any user
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403, 'Only administrators can view user details.');
-        }
+        $user->load(['businesses.products', 'memberOfBusinesses.products', 'skills']);
 
-        $user->load('businesses.products');
-
-        // Pass both variable names to be safe for views that expect either
-        return view('users.show', ['userToShow' => $user, 'user' => $user]);
+        return view('users.show', [
+            'user' => $user,
+            'userToShow' => $user,
+        ]);
     }
 
     /**

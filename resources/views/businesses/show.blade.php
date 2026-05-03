@@ -219,7 +219,7 @@
                     <div class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm transition hover:shadow-md duration-300 group">
                         <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-5">UCO Student Founder</h3>
                         <div class="flex flex-col items-center text-center gap-3 mb-6">
-                            <div class="w-20 h-20 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center group-hover:scale-105 transition-transform duration-500 shadow-sm">
+                            <a href="{{ route('users.show', $business->user) }}" class="w-20 h-20 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center hover:scale-105 transition-transform duration-500 shadow-sm">
                                 @if($business->user->profile_photo_url)
                                     <img src="{{ $business->user->profile_photo_url }}" class="w-full h-full object-cover">
                                 @else
@@ -227,9 +227,11 @@
                                         <span class="text-3xl font-black opacity-20 select-none">{{ substr($business->user->name, 0, 1) }}</span>
                                     </div>
                                 @endif
-                            </div>
+                            </a>
                             <div>
-                                <h4 class="font-bold text-gray-900 text-lg leading-tight">{{ $business->user->name }}</h4>
+                                <a href="{{ route('users.show', $business->user) }}" class="font-bold text-gray-900 text-lg leading-tight hover:text-gray-700 transition">
+                                    {{ $business->user->name }}
+                                </a>
                                 @if($business->user->major)
                                     <p class="text-xs text-gray-400 font-medium tracking-wider mt-1">{{ $business->user->major }}</p>
                                 @endif
@@ -285,7 +287,7 @@
                                 <div class="grid grid-cols-1 gap-3">
                                     @foreach($business->members as $member)
                                         @if($member->id !== $business->user_id)
-                                            <div class="p-3 bg-gray-50/50 border border-gray-100 rounded-xl flex items-center gap-3 hover:border-gray-200 hover:shadow-sm transition-all duration-300">
+                                            <a href="{{ route('users.show', $member) }}" class="p-3 bg-gray-50/50 border border-gray-100 rounded-xl flex items-center gap-3 hover:border-gray-200 hover:shadow-sm transition-all duration-300 group">
                                                 <div class="w-8 h-8 rounded-lg overflow-hidden bg-white border border-gray-100 flex items-center justify-center flex-shrink-0">
                                                     @if($member->profile_photo_url)
                                                         <img src="{{ $member->profile_photo_url }}" class="w-full h-full object-cover">
@@ -295,15 +297,15 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                                <div class="overflow-hidden">
-                                                    <p class="text-xs font-bold text-gray-800 truncate">{{ $member->name }}</p>
+                                                <div class="overflow-hidden flex-1">
+                                                    <p class="text-xs font-bold text-gray-800 truncate group-hover:text-gray-900 transition">{{ $member->name }}</p>
                                                     @if($member->pivot && $member->pivot->position)
                                                         <p class="text-[9px] font-medium text-gray-400 truncate mt-0.5">{{ $member->pivot->position }}</p>
                                                     @elseif($member->major)
                                                         <p class="text-[9px] font-medium text-gray-400 truncate mt-0.5">{{ $member->major }}</p>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </a>
                                         @endif
                                     @endforeach
                                 </div>
