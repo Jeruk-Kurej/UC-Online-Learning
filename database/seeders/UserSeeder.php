@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 class UserSeeder extends Seeder
 {
     /**
-     * Seed the users table with 3 specific users.
+     * Seed the users table.
      */
     public function run(): void
     {
@@ -17,34 +17,33 @@ class UserSeeder extends Seeder
 
         // Admin User
         User::create([
-            'username' => 'admin',
             'name' => 'Admin UCO',
             'email' => 'admin@uco.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'is_active' => true,
+            'is_visible' => true,
             'email_verified_at' => now(),
         ]);
 
         // Student User
         User::create([
-            'username' => 'student',
             'name' => 'Student UCO',
             'email' => 'student@uco.com',
             'password' => Hash::make('password'),
-            'role' => 'student',
-            'is_active' => true,
+            'role' => 'user',
+            'student_status' => 'active',
+            'is_visible' => true,
             'email_verified_at' => now(),
         ]);
 
         // Alumni User
         User::create([
-            'username' => 'alumni',
             'name' => 'Alumni UCO',
             'email' => 'alumni@uco.com',
             'password' => Hash::make('password'),
-            'role' => 'alumni',
-            'is_active' => true,
+            'role' => 'user',
+            'student_status' => 'alumni',
+            'is_visible' => true,
             'email_verified_at' => now(),
         ]);
 

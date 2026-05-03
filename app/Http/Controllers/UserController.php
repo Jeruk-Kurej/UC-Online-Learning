@@ -64,13 +64,15 @@ class UserController extends Controller
         $totalEntrepreneurs = User::whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count();
         $totalIntrapreneurs = User::whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
         $totalAlumni = User::where('role', 'alumni')->count();
+        $featuredUserCount = User::where('is_featured', true)->count();
 
         return view('users.index', compact(
             'users',
             'totalUsers',
             'totalEntrepreneurs',
             'totalIntrapreneurs',
-            'totalAlumni'
+            'totalAlumni',
+            'featuredUserCount'
         ));
     }
 
@@ -193,14 +195,9 @@ class UserController extends Controller
             session()->flash('success', "Success! The user '{$newUser->name}' has been created, and {$businessCount} business(es) have been transferred.");
         }
 
-        // Calculate stats for the view
-        $totalUsers = User::count();
-        $totalEntrepreneurs = User::whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur'))->count();
-        $totalIntrapreneurs = User::whereHas('companies')->count();
-        $totalAlumni = User::where('student_status', 'alumni')->count();
-        $featuredUserCount = User::where('is_featured', true)->count();
-
-        return view('users.index', compact('users', 'totalUsers', 'totalEntrepreneurs', 'totalIntrapreneurs', 'totalAlumni', 'featuredUserCount'));
+        return redirect()
+            ->route('users.index')
+            ->with('success', "Success! The user '{$newUser->name}' has been created successfully.");
     }
 
     /**

@@ -175,6 +175,24 @@
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 	}
+
+	.uco-placeholder-mesh {
+		position: relative;
+		overflow: hidden;
+		background: #f8fafc;
+	}
+
+	.uco-placeholder-mesh::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: 
+			radial-gradient(circle at 30% 30%, rgba(247, 147, 30, 0.08), transparent 40%),
+			radial-gradient(circle at 70% 60%, rgba(255, 214, 51, 0.08), transparent 40%),
+			radial-gradient(circle at 50% 40%, rgba(247, 147, 30, 0.04), transparent 60%);
+		filter: blur(20px);
+		animation: ucoGradientShift 8s ease-in-out infinite;
+	}
 }
 
 @keyframes ucoGradientShift {

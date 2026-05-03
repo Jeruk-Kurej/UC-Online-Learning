@@ -33,7 +33,7 @@ class FeaturedController extends Controller
         // Spotlight businesses
         $spotlightBusinesses = Business::visible()
             ->entrepreneur()
-            ->orderByDesc('is_featured')
+            ->where('is_featured', true)
             ->latest()
             ->with(['category', 'user'])
             ->take(4)

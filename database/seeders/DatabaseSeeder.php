@@ -10,19 +10,19 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->command->info('🚀 Seeding Admin Account...');
+        // 1. Locations (IndoRegion)
+        $this->command->info('🚀 Seeding IndoRegion Data...');
+        $this->call(IndoRegionSeeder::class);
 
-        // Create Default Admin
-        User::updateOrCreate(
-            ['email' => 'admin@uco.com'],
-            [
-                'name' => 'UCO Administrator',
-                'password' => Hash::make('password'),
-                'role' => 'admin',
-                'email_verified_at' => now(),
-            ]
-        );
+        // 2. Categories
+        $this->call(CategorySeeder::class);
 
-        $this->command->info('✅ Admin seeded: admin@uco.com / password');
+        // 3. Users
+        $this->call(UserSeeder::class);
+
+        // 4. Businesses (depends on Users and Categories)
+        $this->call(EnhancedBusinessSeeder::class);
+
+        $this->command->info('✨ Database seeding completed successfully!');
     }
 }

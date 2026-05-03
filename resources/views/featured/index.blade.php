@@ -74,8 +74,11 @@
                                             @if ($coverImage)
                                                 <img src="{{ $coverImage }}" class="h-full w-full object-cover">
                                             @else
-                                                <div class="flex h-full w-full items-center justify-center bg-uco-orange-50/50">
-                                                    <i class="bi bi-images text-xl text-uco-orange-200"></i>
+                                                <div class="uco-placeholder-mesh flex h-full w-full items-center justify-center">
+                                                    <div class="relative">
+                                                        <div class="absolute inset-0 blur-xl bg-uco-orange-200/20 rounded-full"></div>
+                                                        <i class="bi bi-rocket-takeoff text-2xl text-uco-orange-300/60 relative z-10"></i>
+                                                    </div>
                                                 </div>
                                             @endif
 
@@ -115,7 +118,7 @@
         </section>
 
         {{-- Featured Students & Testimonies --}}
-        <section class="max-w-[95rem] mx-auto px-8 md:px-12 space-y-12">
+        <section class="max-w-[95rem] mx-auto px-8 md:px-12 py-24 space-y-16">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
                     <h2 class="text-5xl font-[900] text-slate-950 tracking-tighter">Featured Students</h2>
@@ -168,13 +171,29 @@
                         </div>
                     </article>
                 @empty
-                    <div class="lg:col-span-3 rounded-[2.5rem] border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center text-slate-500">
-                        No featured students are available yet.
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-20 text-center">
+                        <div class="relative z-10 space-y-4">
+                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                                <i class="bi bi-people text-2xl text-uco-orange-400"></i>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-lg font-black text-slate-900">No Featured Students</p>
+                                <p class="text-sm font-medium text-slate-500">We're currently curating our top student entrepreneurs.</p>
+                            </div>
+                        </div>
                     </div>
                 @endforelse
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {{-- Community Testimonies Header --}}
+            <div class="reveal-on-scroll pt-8 pb-4">
+                <div class="flex items-center gap-4">
+                    <h3 class="text-2xl font-[900] text-slate-950 tracking-tight">Community Voices</h3>
+                    <div class="h-[1px] flex-1 bg-slate-100"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($testimonies as $testimony)
                     <article class="reveal-on-scroll rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="transition-delay: {{ $loop->index * 60 }}ms">
                         <div class="flex items-center gap-3">
@@ -196,8 +215,16 @@
                         <p class="mt-4 text-sm leading-relaxed text-slate-600 line-clamp-5">“{{ $testimony->testimony }}”</p>
                     </article>
                 @empty
-                    <div class="md:col-span-2 xl:col-span-3 rounded-[2rem] border border-dashed border-slate-200 bg-slate-50 px-6 py-10 text-center text-slate-500">
-                        No testimonies have been featured yet.
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-20 text-center">
+                        <div class="relative z-10 space-y-4">
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
+                                <i class="bi bi-chat-quote text-xl text-uco-orange-400"></i>
+                            </div>
+                            <div class="space-y-1">
+                                <p class="text-base font-black text-slate-900">No Testimonies Yet</p>
+                                <p class="text-xs font-medium text-slate-500">Testimonies from our community will appear here soon.</p>
+                            </div>
+                        </div>
                     </div>
                 @endforelse
             </div>
@@ -219,7 +246,7 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                @foreach($spotlightBusinesses as $index => $business)
+                @forelse($spotlightBusinesses as $index => $business)
                 <div class="reveal-on-scroll group" style="transition-delay: {{ $index * 100 }}ms">
                     <a href="{{ route('businesses.show', $business) }}"
                         class="uco-glass-light block overflow-hidden rounded-[3rem] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.04)] transition-all duration-700 hover:-translate-y-4 hover:shadow-3xl hover:border-uco-orange-200/50">
@@ -233,8 +260,11 @@
                             @if ($coverImage)
                                 <img src="{{ $coverImage }}" class="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110">
                             @else
-                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-uco-orange-50 to-uco-orange-100/30">
-                                    <i class="bi bi-images text-5xl text-uco-orange-200/50"></i>
+                                <div class="uco-placeholder-mesh flex h-full w-full items-center justify-center">
+                                    <div class="relative">
+                                        <div class="absolute inset-0 blur-2xl bg-uco-orange-300/20 rounded-full"></div>
+                                        <i class="bi bi-lightning-charge text-5xl text-uco-orange-200/40 relative z-10"></i>
+                                    </div>
                                 </div>
                             @endif
 
@@ -289,7 +319,19 @@
                         </div>
                     </a>
                 </div>
-                @endforeach
+                @empty
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-24 text-center">
+                        <div class="relative z-10 space-y-6">
+                            <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm">
+                                <i class="bi bi-rocket-takeoff text-3xl text-uco-orange-400 animate-pulse"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <p class="text-2xl font-[900] text-slate-950 tracking-tight">Venture Pipeline Empty</p>
+                                <p class="text-base font-medium text-slate-500 max-w-md mx-auto">Our next generation of featured ventures is currently under review. Check back soon for new arrivals.</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforelse
             </div>
         </section>
     </div>
