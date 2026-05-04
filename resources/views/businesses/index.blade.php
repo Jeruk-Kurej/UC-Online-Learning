@@ -46,62 +46,39 @@
             </a>
         </div>
 
-        @if(session('success'))
-            <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold px-4 py-3 rounded-xl">
-                {{ session('success') }}
-            </div>
-        @endif
-
         {{-- Filters --}}
         <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm">
-            <form action="{{ route('businesses.index') }}" method="GET" class="flex flex-col lg:flex-row gap-3">
+            <form action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
                 <input type="hidden" name="view" value="{{ $viewType }}">
-                <div class="flex-1 relative">
+                <div class="relative w-full">
                     <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, category, or highlight..." 
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all">
+                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all text-sm">
                 </div>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    <select name="category" id="category_select" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm">
+                <div class="grid grid-cols-3 gap-2 w-full">
+                    <select name="category" id="category_select" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Categories</option>
                         @foreach($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
-                    <select name="province" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm hidden md:block">
+                    <select name="province" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Provinces</option>
                         @foreach($availableProvinces as $p)
                             <option value="{{ $p }}" {{ request('province') == $p ? 'selected' : '' }}>{{ $p }}</option>
                         @endforeach
                     </select>
-                    <select name="city" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-sm">
+                    <select name="city" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Cities</option>
                         @foreach($availableCities as $c)
                             <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
                         @endforeach
                     </select>
                 </div>
-                <button type="submit" class="bg-gray-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all shadow-lg active:scale-95">
-                    Apply Filters
-                </button>
             </form>
         </div>
 
         {{-- Scrollable Quick Tags for Categories --}}
-        @if($categories->count() > 0)
-            <div class="flex overflow-x-auto gap-2 pb-3 mb-8 scrollbar-hide select-none">
-                <a href="{{ route('businesses.index', ['view' => $viewType]) }}" 
-                   class="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 hover:bg-gray-50 {{ !request('category') ? 'border-gray-900 bg-gray-50 text-gray-900' : 'text-gray-600' }}">
-                   All Categories
-                </a>
-                @foreach($categories as $cat)
-                    <a href="{{ route('businesses.index', ['view' => $viewType, 'category' => $cat->id]) }}" 
-                       class="px-4 py-2 bg-white border border-gray-100 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex-shrink-0 hover:bg-gray-50 {{ request('category') == $cat->id ? 'border-gray-900 bg-gray-50 text-gray-900' : 'text-gray-600' }}">
-                       {{ $cat->name }}
-                    </a>
-                @endforeach
-            </div>
-        @endif
 
         {{-- Grid --}}
         @if(auth()->user()?->isAdmin() && $errors->has('featured'))
