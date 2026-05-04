@@ -13,12 +13,6 @@
             <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
                 {{-- Left Content --}}
                 <div class="space-y-10">
-                    <div class="inline-flex items-center rounded-full border border-uco-orange-200/50 bg-white/40 px-6 py-2 backdrop-blur-md shadow-sm">
-                        <span class="flex h-2 w-2 rounded-full bg-uco-orange-500 mr-3 animate-pulse"></span>
-                        <span class="text-[12px] font-black uppercase tracking-[0.25em] text-uco-orange-700">
-                            UCO Premium Showcase
-                        </span>
-                    </div>
 
                     <div class="space-y-8">
                         <h1 class="text-4xl font-[900] text-slate-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.05] max-w-4xl flex flex-wrap items-baseline gap-4"
