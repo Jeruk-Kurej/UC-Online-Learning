@@ -138,47 +138,49 @@
                 @endif
 
                 {{-- Business Contact --}}
-                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm transition hover:shadow-md duration-300">
-                    <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Business Contacts</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        @if($business->phone_number)
-                            <a href="tel:{{ $business->phone_number }}" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone Line</span>
-                                <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">{{ $business->phone_number }}</span>
-                            </a>
-                        @endif
-                        @if($business->whatsapp)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Direct WhatsApp</span>
-                                <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">{{ $business->whatsapp }}</span>
-                            </a>
-                        @endif
-                        @if($business->email)
-                            <a href="mailto:{{ $business->email }}" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Corporate Email</span>
-                                <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors truncate">{{ $business->email }}</span>
-                            </a>
-                        @endif
-                        @if($business->website)
-                            <a href="{{ $business->website }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Official Website</span>
-                                <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-all truncate">{{ parse_url($business->website, PHP_URL_HOST) ?? $business->website }}</span>
-                            </a>
-                        @endif
-                        @if($business->instagram)
-                            <a href="https://instagram.com/{{ ltrim($business->instagram, '@') }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
-                                <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Social Feed</span>
-                                <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">@ {{ ltrim($business->instagram, '@') }}</span>
-                            </a>
+                @if($business->phone_number || $business->whatsapp || $business->email || $business->website || $business->instagram || $business->address)
+                    <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm transition hover:shadow-md duration-300">
+                        <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-6">Business Contacts</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            @if($business->phone_number)
+                                <a href="tel:{{ $business->phone_number }}" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Phone Line</span>
+                                    <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">{{ $business->phone_number }}</span>
+                                </a>
+                            @endif
+                            @if($business->whatsapp)
+                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Direct WhatsApp</span>
+                                    <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">{{ $business->whatsapp }}</span>
+                                </a>
+                            @endif
+                            @if($business->email)
+                                <a href="mailto:{{ $business->email }}" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Corporate Email</span>
+                                    <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors truncate">{{ $business->email }}</span>
+                                </a>
+                            @endif
+                            @if($business->website)
+                                <a href="{{ $business->website }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Official Website</span>
+                                    <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-all truncate">{{ parse_url($business->website, PHP_URL_HOST) ?? $business->website }}</span>
+                                </a>
+                            @endif
+                            @if($business->instagram)
+                                <a href="https://instagram.com/{{ ltrim($business->instagram, '@') }}" target="_blank" class="flex flex-col p-4 bg-gray-50/50 border border-gray-100 rounded-xl hover:border-gray-200 transition duration-300 group">
+                                    <span class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Social Feed</span>
+                                    <span class="font-bold text-gray-800 text-sm group-hover:text-gray-900 transition-colors">@ {{ ltrim($business->instagram, '@') }}</span>
+                                </a>
+                            @endif
+                        </div>
+                        @if($business->address)
+                            <div class="mt-6 pt-5 border-t border-gray-100">
+                                <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Headquarters</p>
+                                <p class="text-sm text-gray-600 font-medium leading-relaxed">{{ $business->address }}</p>
+                            </div>
                         @endif
                     </div>
-                    @if($business->address)
-                        <div class="mt-6 pt-5 border-t border-gray-100">
-                            <p class="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">Headquarters</p>
-                            <p class="text-sm text-gray-600 font-medium leading-relaxed">{{ $business->address }}</p>
-                        </div>
-                    @endif
-                </div>
+                @endif
 
                 {{-- Legal & Certifications --}}
                 @if($business->legalDocuments->count() > 0 || $business->certifications->count() > 0)
