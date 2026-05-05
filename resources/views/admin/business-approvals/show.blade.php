@@ -45,7 +45,7 @@
                             <div>
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider">
-                                        {{ $business->businessType->name }}
+                                        {{ optional($business->category)->name }}
                                     </span>
                                     <span class="px-2.5 py-1 rounded-lg bg-soft-gray-900 text-white text-[10px] font-bold uppercase tracking-wider">
                                         {{ $business->status_label }}
@@ -69,7 +69,7 @@
                         <dl class="space-y-4">
                             <div>
                                 <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Business Mode</p>
-                                <dd class="text-sm font-semibold text-gray-700 capitalize">{{ $business->business_mode }}</dd>
+                                <dd class="text-sm font-semibold text-gray-700 capitalize">{{ $business->offering_type }}</dd>
                             </div>
                             <div>
                                 <dt class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Established Date</dt>
@@ -101,10 +101,10 @@
                                 <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Location</p>
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->city ?: 'N/A' }}, {{ $business->province ?: 'N/A' }}</dd>
                             </div>
-                            @if($business->phone)
+                            @if($business->phone_number)
                             <div>
                                 <dt class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phone</dt>
-                                <dd class="text-sm font-semibold text-gray-700">{{ $business->phone }}</dd>
+                                <dd class="text-sm font-semibold text-gray-700">{{ $business->phone_number }}</dd>
                             </div>
                             @endif
                         </dl>

@@ -55,10 +55,4 @@
         </button>
     </form>
 
-    <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-        <p class="text-sm text-gray-600">
-            Don't have an account?
-            <a href="{{ route('register') }}" class="font-medium text-gray-900 hover:underline">Sign up</a>
-        </p>
-    </div>
 </x-guest-layout>

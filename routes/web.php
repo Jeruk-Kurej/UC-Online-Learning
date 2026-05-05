@@ -55,7 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     
-    Route::resource('users', UserController::class);
+    Route::resource('users', UserController::class)->except(['show']);
     Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
     Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
     
@@ -70,6 +70,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
 
 // This must be LAST to avoid matching static routes like 'create'
 Route::get('/businesses/{business}', [BusinessController::class, 'show'])->name('businesses.show');
+Route::get('/users/{user}', [UserController::class, 'show'])->name('users.show');
 
 
 

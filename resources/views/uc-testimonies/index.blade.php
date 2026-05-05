@@ -111,7 +111,6 @@
                     <p class="font-medium text-soft-gray-800">You can browse testimonies publicly, but posting requires an account.</p>
                     <div class="mt-4 flex flex-wrap gap-3">
                         <a href="{{ route('login') }}" class="inline-flex items-center rounded-xl bg-uco-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-uco-orange-600">Log in</a>
-                        <a href="{{ route('register') }}" class="inline-flex items-center rounded-xl border border-soft-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-soft-gray-700 hover:bg-soft-gray-50">Register</a>
                     </div>
                 </div>
             </section>

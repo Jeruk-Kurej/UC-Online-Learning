@@ -123,11 +123,8 @@ class User extends Authenticatable
         return trim(($this->prefix_title ?? '') . ' ' . $this->name . ' ' . ($this->suffix_title ?? ''));
     }
 
-    /**
-     * Public-facing status: "Student" or "Alumni" only.
-     */
     public function getDisplayStatusAttribute(): string
     {
-        return $this->student_status === 'alumni' ? 'Alumni' : 'Student';
+        return str_contains(strtolower($this->student_status ?? ''), 'alumni') ? 'Alumni' : 'Student';
     }
 }

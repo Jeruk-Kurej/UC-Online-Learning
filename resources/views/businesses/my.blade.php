@@ -65,7 +65,7 @@
                         <div class="p-6 flex-1 flex flex-col">
                             <div class="mb-4 text-left">
                                 <span class="inline-block px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                    {{ optional($b->businessType)->name ?? 'Uncategorized' }}
+                                    {{ optional(optional($b->category))->name ?? 'Uncategorized' }}
                                 </span>
                                 <h3 class="text-xl font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-1">{{ $b->name }}</h3>
                             </div>

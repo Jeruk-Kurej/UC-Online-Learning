@@ -72,13 +72,13 @@ class BusinessController extends Controller
         }
         
         $businesses = $query->latest()->paginate(12)->withQueryString();
-        $businessTypes = Category::all();
+        $categories = Category::all();
         
         $availableCities = Business::visible()->whereNotNull('city')->distinct()->pluck('city')->sort();
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
         $featuredBusinessCount = Business::where('is_featured', true)->count();
 
-        return view('businesses.index', compact('businesses', 'businessTypes', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount'));
+        return view('businesses.index', compact('businesses', 'categories', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount'));
     }
 
     /**
@@ -90,9 +90,11 @@ class BusinessController extends Controller
             abort(403);
         }
 
-        $businessTypes = Category::all();
+        $categories = Category::all();
         $users = User::orderBy('name')->get();
-        return view('businesses.create', compact('businessTypes', 'users'));
+        $availableCities = \App\Models\Regency::pluck('name')->sort();
+        $availableProvinces = \App\Models\Province::pluck('name')->sort();
+        return view('businesses.create', compact('categories', 'users', 'availableCities', 'availableProvinces'));
     }
 
     /**
@@ -125,8 +127,10 @@ class BusinessController extends Controller
         // Load existing relationships
         $business->load(['user', 'category', 'products', 'members', 'legalDocuments', 'certifications']);
         
-        $businessTypes = Category::all();
+        $categories = Category::all();
         $users = User::orderBy('name')->get();
+        $availableCities = \App\Models\Regency::pluck('name')->sort();
+        $availableProvinces = \App\Models\Province::pluck('name')->sort();
         
         // Prepare variables for the view
         $existingServices = []; // Placeholder as services are not yet separated in DB
@@ -134,10 +138,12 @@ class BusinessController extends Controller
 
         return view('businesses.edit', compact(
             'business', 
-            'businessTypes', 
+            'categories', 
             'users', 
             'existingServices', 
-            'legalDocs'
+            'legalDocs',
+            'availableCities',
+            'availableProvinces'
         ));
     }
 
@@ -154,20 +160,26 @@ class BusinessController extends Controller
         
         // Map form fields to database columns
         $data = $validated;
+        // category_id is now sent directly from the form
         if (isset($validated['business_type_id'])) {
             $data['category_id'] = $validated['business_type_id'];
+            unset($data['business_type_id']);
         }
         if (isset($validated['business_mode'])) {
             $data['offering_type'] = $validated['business_mode'];
+            unset($data['business_mode']);
         }
         if (isset($validated['phone'])) {
             $data['phone_number'] = $validated['phone'];
+            unset($data['phone']);
         }
         if (isset($validated['whatsapp_number'])) {
             $data['whatsapp'] = $validated['whatsapp_number'];
+            unset($data['whatsapp_number']);
         }
         if (isset($validated['instagram_handle'])) {
             $data['instagram'] = $validated['instagram_handle'];
+            unset($data['instagram_handle']);
         }
         $data['is_featured'] = $request->boolean('is_featured');
         
@@ -206,20 +218,22 @@ class BusinessController extends Controller
         
         // Map form fields to database columns
         $data = $validated;
-        if (isset($validated['business_type_id'])) {
-            $data['category_id'] = $validated['business_type_id'];
-        }
+        // category_id is now sent directly from the form
         if (isset($validated['business_mode'])) {
             $data['offering_type'] = $validated['business_mode'];
+            unset($data['business_mode']);
         }
         if (isset($validated['phone'])) {
             $data['phone_number'] = $validated['phone'];
+            unset($data['phone']);
         }
         if (isset($validated['whatsapp_number'])) {
             $data['whatsapp'] = $validated['whatsapp_number'];
+            unset($data['whatsapp_number']);
         }
         if (isset($validated['instagram_handle'])) {
             $data['instagram'] = $validated['instagram_handle'];
+            unset($data['instagram_handle']);
         }
         
         $data['user_id'] = Auth::id();
