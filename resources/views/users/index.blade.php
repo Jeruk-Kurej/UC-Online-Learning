@@ -54,12 +54,105 @@
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm">
-            <form action="{{ route('users.index') }}" method="GET" class="flex gap-4">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, email, or NIS..." class="flex-1 border-gray-200 bg-gray-50 rounded-2xl px-6 py-4 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                <button type="submit" class="bg-gray-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-black transition">
-                    Search
-                </button>
+        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm"
+            x-data="{
+                isSubmitting: false,
+                debounceTimer: null,
+                submitNow() {
+                    if (this.debounceTimer) {
+                        clearTimeout(this.debounceTimer);
+                    }
+                    if (this.isSubmitting) {
+                        return;
+                    }
+                    this.isSubmitting = true;
+                    this.$refs.filterForm.submit();
+                },
+                submitDebounced() {
+                    if (this.debounceTimer) {
+                        clearTimeout(this.debounceTimer);
+                    }
+                    this.debounceTimer = setTimeout(() => {
+                        this.submitNow();
+                    }, 500);
+                }
+            }">
+            <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
+                @submit="isSubmitting = true">
+                <div class="flex flex-col gap-4 lg:flex-row">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ request('search') }}"
+                        placeholder="Search name, email, username, or NIS..."
+                        @input="submitDebounced()"
+                        @keydown.enter.prevent="submitNow()"
+                        class="flex-1 border-gray-200 bg-gray-50 rounded-2xl px-6 py-4 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all"
+                    >
+                    <div class="flex gap-3">
+                        <a href="{{ route('users.index') }}" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition whitespace-nowrap">
+                            Reset
+                        </a>
+                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-uco-orange-700 bg-uco-orange-50 border border-uco-orange-200 rounded-2xl">
+                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
+                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            </svg>
+                            Updating results...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+                    <div>
+                        <label for="sort_name" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Name</label>
+                        <select id="sort_name" name="sort_name" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                            <option value="">Default</option>
+                            <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
+                            <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="sort_year" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Angkatan</label>
+                        <select id="sort_year" name="sort_year" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                            <option value="">Default</option>
+                            <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
+                            <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="student_status" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</label>
+                        <select id="student_status" name="student_status" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                            <option value="">Semua Status</option>
+                            <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
+                            <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
+                            <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
+                            <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="major" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Jurusan</label>
+                        <select id="major" name="major" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                            <option value="">Semua Jurusan</option>
+                            @foreach($availableMajors as $majorOption)
+                                <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="year_of_enrollment" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Tahun Angkatan</label>
+                        <select id="year_of_enrollment" name="year_of_enrollment" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                            <option value="">Semua Tahun</option>
+                            @foreach($availableEnrollmentYears as $yearOption)
+                                <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
             </form>
         </div>
 
@@ -136,7 +229,28 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-20 text-center text-gray-400 italic">No users found.</td>
+                            <td colspan="8" class="px-6 py-16 text-center">
+                                <div class="space-y-3">
+                                    @php
+                                        $hasActiveFilters = request()->filled('search')
+                                            || request()->filled('sort_name')
+                                            || request()->filled('sort_year')
+                                            || request()->filled('student_status')
+                                            || request()->filled('major')
+                                            || request()->filled('year_of_enrollment');
+                                    @endphp
+
+                                    <p class="text-gray-400 italic">
+                                        {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
+                                    </p>
+
+                                    @if($hasActiveFilters)
+                                        <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+                                            Clear all filters
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -144,7 +258,7 @@
         </div>
 
         <div class="mt-8">
-            {{ $users->links() }}
+            {{ $users->appends(request()->query())->links() }}
         </div>
 
         {{-- Import Modal --}}
