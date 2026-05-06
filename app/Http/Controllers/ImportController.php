@@ -5,34 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-class DashboardController extends Controller
+class ImportController extends Controller
 {
-    /**
-     * Display the administrative dashboard.
-     */
-    public function index(Request $request)
-    {
-        if (!auth()->user()->isAdmin()) {
-            return app(FeaturedController::class)->index($request);
-        }
-
-        $stats = [
-            'total_users' => \App\Models\User::count(),
-            'total_businesses' => \App\Models\Business::count(),
-            'total_companies' => \App\Models\Company::count(),
-            'pending_visibility' => \App\Models\Business::where('is_visible', false)->count(),
-        ];
-
-        $recentUsers = \App\Models\User::latest()->take(5)->get();
-        $recentBusinesses = \App\Models\Business::with('category')->latest()->take(5)->get();
-
-        return view('dashboard', compact('stats', 'recentUsers', 'recentBusinesses'));
-    }
-
     /**
      * Track import progress by session ID.
      */
-    public function importProgress($importId)
+    public function progress($importId)
     {
         $prefix = "import_{$importId}";
         
@@ -64,7 +42,7 @@ class DashboardController extends Controller
     /**
      * Check if there's an active import and return its ID.
      */
-    public function checkActiveImport()
+    public function checkActive()
     {
         // Check all possible session keys where import IDs might be stored
         $importId = session('active_import') 
@@ -82,7 +60,7 @@ class DashboardController extends Controller
     /**
      * Clear the active import session after completion or manual dismiss.
      */
-    public function clearActiveImport(Request $request)
+    public function clearActive(Request $request)
     {
         // Clear all possible session keys used for imports
         session()->forget([

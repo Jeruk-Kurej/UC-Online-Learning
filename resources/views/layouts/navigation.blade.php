@@ -36,7 +36,6 @@
                             @if(auth()->user()->isAdmin())
                             <div class="px-4 py-2 border-b border-gray-50 bg-gray-50">
                                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
-                                <a href="{{ route('dashboard') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Command Center</a>
                                 <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
                             </div>
                             @endif
@@ -81,7 +80,6 @@
                     @if(auth()->user()->isAdmin())
                         <div class="mb-3 bg-gray-50 rounded-lg p-3">
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Tools</p>
-                            <a href="{{ route('dashboard') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('dashboard') ? 'text-uco-orange-500' : 'text-gray-700' }}">Command Center</a>
                             <a href="{{ route('users.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
                         </div>
                     @endif

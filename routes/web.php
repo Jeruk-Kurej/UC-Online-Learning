@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\BusinessController;
 use App\Http\Controllers\UcTestimonyController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ImportController;
 use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -15,9 +15,6 @@ use Illuminate\Support\Facades\Route;
 // ============================================================
 
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect('/dashboard');
-    }
     return redirect('/featured');
 })->name('home');
 
@@ -35,10 +32,9 @@ Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc
 
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/import-progress/{sessionId}', [DashboardController::class, 'importProgress'])->name('import.progress');
-    Route::get('/import-progress/check', [DashboardController::class, 'checkActiveImport'])->name('import.check');
-    Route::post('/clear-active-import', [DashboardController::class, 'clearActiveImport'])->name('import.clear');
+    Route::get('/import-progress/{sessionId}', [ImportController::class, 'progress'])->name('import.progress');
+    Route::get('/import-progress/check', [ImportController::class, 'checkActive'])->name('import.check');
+    Route::post('/clear-active-import', [ImportController::class, 'clearActive'])->name('import.clear');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
