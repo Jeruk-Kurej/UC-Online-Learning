@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Business;
 use App\Models\Province;
-use App\Models\User_Businesses_Detail;
+
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -250,21 +250,7 @@ class UserController extends Controller
             session()->flash('success', "Success! The user '{$newUser->name}' has been created, and {$businessCount} business(es) have been transferred.");
         }
 
-        // Add user as team member to businesses if selected
-        if ($request->has('team_member')) {
-            foreach ($request->team_member as $assignment) {
-                if (!empty($assignment['enabled']) && !empty($assignment['business_id'])) {
-                    User_Businesses_Detail::create([
-                        'user_id' => $newUser->id,
-                        'business_id' => $assignment['business_id'],
-                        'role_type' => $assignment['role_type'] ?? 'employee',
-                        'Position_name' => $assignment['Position_name'] ?? null,
-                        'Working_Date' => $assignment['Working_Date'] ?? now(),
-                        'is_current' => !empty($assignment['is_current']),
-                    ]);
-                }
-            }
-        }
+
 
         return redirect()
             ->route('users.index')
@@ -304,15 +290,12 @@ class UserController extends Controller
         // Get businesses currently owned by this user
         $ownedBusinesses = $user->businesses()->pluck('id')->toArray();
 
-        // Get team member details for this user
-        $teamMemberDetails = User_Businesses_Detail::where('user_id', $user->id)->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
         return view('users.edit', [
             'userToEdit' => $user,
             'availableBusinesses' => $availableBusinesses,
             'ownedBusinesses' => $ownedBusinesses,
-            'teamMemberDetails' => $teamMemberDetails,
             'provinces' => $provinces,
         ]);
     }
@@ -428,25 +411,7 @@ class UserController extends Controller
             }
         }
 
-        // Update team member assignments
-        if ($request->has('team_member')) {
-            // Remove existing team assignments for this user
-            User_Businesses_Detail::where('user_id', $user->id)->delete();
-            
-            // Add new team assignments
-            foreach ($request->team_member as $assignment) {
-                if (!empty($assignment['enabled']) && !empty($assignment['business_id'])) {
-                    User_Businesses_Detail::create([
-                        'user_id' => $user->id,
-                        'business_id' => $assignment['business_id'],
-                        'role_type' => $assignment['role_type'] ?? 'employee',
-                        'Position_name' => $assignment['Position_name'] ?? null,
-                        'Working_Date' => $assignment['Working_Date'] ?? now(),
-                        'is_current' => !empty($assignment['is_current']),
-                    ]);
-                }
-            }
-        }
+
 
         return redirect()
             ->route('users.index')
