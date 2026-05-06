@@ -16,7 +16,7 @@
                     ['label' => 'Intrapreneurs', 'value' => $stats['total_companies'], 'icon' => 'bi-building-fill-check', 'color' => 'text-purple-600', 'bg' => 'bg-purple-50'],
                     ['label' => 'Awaiting Review', 'value' => $stats['pending_visibility'], 'icon' => 'bi-shield-exclamation', 'color' => 'text-emerald-600', 'bg' => 'bg-emerald-50'],
                 ] as $card)
-                    <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                    <div class="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden reveal-on-scroll" style="transition-delay: {{ $loop->index * 100 }}ms">
                         <div class="absolute -right-4 -bottom-4 w-24 h-24 {{ $card['bg'] }} opacity-20 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700"></div>
                         <div class="relative z-10 space-y-4">
                             <div class="w-12 h-12 {{ $card['bg'] }} rounded-2xl flex items-center justify-center {{ $card['color'] }} text-xl border border-white shadow-sm">
@@ -35,7 +35,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 
                 {{-- Recent Onboarding --}}
-                <section class="space-y-6">
+                <section class="space-y-6 reveal-on-scroll" style="transition-delay: 400ms;">
                     <div class="flex items-center justify-between px-2">
                         <h4 class="text-xs font-black uppercase tracking-widest text-gray-400">New Talent</h4>
                         <a href="{{ route('users.index') }}" class="text-[10px] font-black uppercase text-uco-orange-500 hover:tracking-widest transition-all">View All</a>
@@ -59,7 +59,7 @@
                 </section>
 
                 {{-- Recent Ventures --}}
-                <section class="space-y-6">
+                <section class="space-y-6 reveal-on-scroll" style="transition-delay: 500ms;">
                     <div class="flex items-center justify-between px-2">
                         <h4 class="text-xs font-black uppercase tracking-widest text-gray-400">Latest Ventures</h4>
                         <a href="{{ route('businesses.index') }}" class="text-[10px] font-black uppercase text-uco-orange-500 hover:tracking-widest transition-all">Explore</a>

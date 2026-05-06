@@ -3,7 +3,7 @@
         {{-- Hero Section --}}
         <section class="relative pt-24 pb-32 px-6 overflow-hidden">
             <div class="uco-hero-mesh"></div>
-            <div class="max-w-[1600px] mx-auto text-center relative z-10">
+            <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-uco-orange-600 mb-8 animate-fade-in">
                     Our Vision
                 </span>
@@ -21,21 +21,21 @@
         <section class="py-24 bg-white px-6">
             <div class="max-w-[1600px] mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div class="space-y-6">
+                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 100ms;">
                         <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
                             <i class="bi bi-rocket-takeoff"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Rapid Launch</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.</p>
                     </div>
-                    <div class="space-y-6">
+                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 200ms;">
                         <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-blue-100">
                             <i class="bi bi-people"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Global Network</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.</p>
                     </div>
-                    <div class="space-y-6">
+                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 300ms;">
                         <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-purple-100">
                             <i class="bi bi-graph-up-arrow"></i>
                         </div>
@@ -51,7 +51,7 @@
             <div class="absolute inset-0 opacity-10 pointer-events-none">
                 <div class="w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px]"></div>
             </div>
-            <div class="max-w-[1600px] mx-auto relative z-10 text-center">
+            <div class="max-w-[1600px] mx-auto relative z-10 text-center reveal-on-scroll">
                 <h2 class="text-4xl font-black text-white mb-20 tracking-tight">Driving Community Impact</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
                     <div class="space-y-2">
@@ -76,7 +76,7 @@
 
         {{-- CTA Section --}}
         <section class="py-32 px-6">
-            <div class="max-w-5xl mx-auto bg-uco-orange-500 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl">
+            <div class="max-w-5xl mx-auto bg-uco-orange-500 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden shadow-2xl reveal-on-scroll">
                 <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
                 <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/10 rounded-full blur-3xl -ml-32 -mb-32"></div>
                 

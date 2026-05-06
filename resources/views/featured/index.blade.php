@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="space-y-24 pb-32 bg-white">
         {{-- High-Fidelity "Better" Hero Section --}}
-        <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-10 py-24 md:px-24 md:py-32 lg:px-32 mx-4 mt-4">
+        <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-10 py-24 md:px-24 md:py-32 lg:px-32 mx-4 mt-4 reveal-on-scroll">
             {{-- Background Effects --}}
             <div class="uco-hero-mesh opacity-90"></div>
             <div class="uco-noise-overlay"></div>
@@ -333,26 +333,20 @@
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-
-            document.querySelectorAll('.reveal-on-scroll').forEach(el => observer.observe(el));
-            
             // Subtle Mouse Tracking for Hero
             const hero = document.querySelector('section');
-            hero.addEventListener('mousemove', (e) => {
-                const orbs = document.querySelectorAll('.uco-float-orb');
-                const x = (e.clientX / window.innerWidth - 0.5) * 40;
-                const y = (e.clientY / window.innerHeight - 0.5) * 40;
-                
-                orbs[0].style.transform = `translate(${x}px, ${y}px)`;
-                orbs[1].style.transform = `translate(${-x}px, ${-y}px)`;
-            });
+            if (hero) {
+                hero.addEventListener('mousemove', (e) => {
+                    const orbs = document.querySelectorAll('.uco-float-orb');
+                    if (orbs.length >= 2) {
+                        const x = (e.clientX / window.innerWidth - 0.5) * 40;
+                        const y = (e.clientY / window.innerHeight - 0.5) * 40;
+                        
+                        orbs[0].style.transform = `translate(${x}px, ${y}px)`;
+                        orbs[1].style.transform = `translate(${-x}px, ${-y}px)`;
+                    }
+                });
+            }
         });
     </script>
     @endpush

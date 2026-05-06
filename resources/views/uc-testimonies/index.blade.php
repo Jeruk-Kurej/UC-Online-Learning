@@ -1,10 +1,10 @@
 <x-app-layout>
-    <div class="space-y-8 pb-8">
-        <section class="relative overflow-hidden rounded-3xl border border-uco-orange-100 bg-white px-6 py-10 shadow-sm md:px-10 md:py-12">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-8">
+        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
-            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-uco-orange-700">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Community Voices
                     </span>
                     <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">UC Online Learning Testimonies</h1>

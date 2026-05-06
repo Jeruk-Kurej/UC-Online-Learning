@@ -16,13 +16,13 @@
             return ['bg' => 'bg-orange-50', 'text' => 'text-orange-600'];
         };
     @endphp
-    <div class="space-y-6">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
+        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-uco-orange-700">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         Admin Dashboard
                     </span>
                     <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Contact Type Management</h1>
@@ -44,7 +44,7 @@
         </section>
 
         {{-- Contact Types Table Card --}}
-        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden reveal-on-scroll" style="transition-delay: 150ms;">
             <div class="overflow-x-auto">
                 <table class="w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
@@ -156,7 +156,7 @@
 
         {{-- Stats Summary --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 200ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Type</p>
@@ -168,7 +168,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 250ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Contact</p>
@@ -180,7 +180,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-emerald-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-emerald-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 300ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Avg per Type</p>

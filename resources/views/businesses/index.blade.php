@@ -2,10 +2,11 @@
 <x-app-layout>
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false, isLoading: false }">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8" :class="{ 'opacity-50 pointer-events-none': isLoading }">
+        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
+            <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
-                    <span class="inline-flex items-center rounded-full border border-gray-100 bg-gray-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-600">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory
                     </span>
                     <h1 class="text-3xl font-extrabold text-gray-900 md:text-4xl">Business Directory</h1>
@@ -35,7 +36,7 @@
         </section>
 
         {{-- Entrepreneur / Intrapreneur Tabs --}}
-        <div class="flex gap-2 mb-8 flex-wrap" :class="{ 'opacity-50 pointer-events-none': isLoading }">
+        <div class="flex gap-2 mb-8 flex-wrap reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
                class="px-6 py-3 rounded-xl font-bold text-sm transition {{ $viewType === 'entrepreneur' && !request('status') ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50' }}">
                 <i class="bi bi-briefcase mr-1"></i> Entrepreneurs
@@ -55,7 +56,7 @@
         </div>
 
         {{-- Filters --}}
-        <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm">
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
                 <input type="hidden" name="view" value="{{ $viewType }}">
                 <div class="relative w-full">
@@ -102,7 +103,7 @@
         @endif
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             @forelse ($businesses as $business)
-                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full">
+                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
                     @auth
                         @if(auth()->user()->isAdmin())
                             <div class="absolute top-3 right-3 z-10 flex flex-col gap-2">

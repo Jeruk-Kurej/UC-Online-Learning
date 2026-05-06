@@ -2,7 +2,7 @@
     <div class="users-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false }">
         
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
+        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2">
@@ -35,26 +35,26 @@
 
         {{-- Statistics --}}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Users</p>
                 <p class="text-4xl font-black text-gray-900">{{ $totalUsers }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 150ms;">
                 <p class="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Entrepreneurs</p>
                 <p class="text-4xl font-black text-blue-600">{{ $totalEntrepreneurs }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 200ms;">
                 <p class="text-[10px] font-black text-green-400 uppercase tracking-[0.2em] mb-1">Intrapreneurs</p>
                 <p class="text-4xl font-black text-green-600">{{ $totalIntrapreneurs }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500">
+            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 250ms;">
                 <p class="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] mb-1">Alumni</p>
                 <p class="text-4xl font-black text-purple-600">{{ $totalAlumni }}</p>
             </div>
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm"
+        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;"
             x-data="{
                 isSubmitting: false,
                 debounceTimer: null,
@@ -169,7 +169,7 @@
         @endif
 
         {{-- Users Table --}}
-        <div class="bg-white border rounded-[2.5rem] overflow-hidden shadow-sm">
+        <div class="bg-white border rounded-[2.5rem] overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
             <table class="w-full text-left">
                 <thead class="bg-gray-50 border-b">
                     <tr>
