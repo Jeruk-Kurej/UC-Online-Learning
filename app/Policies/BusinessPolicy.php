@@ -31,7 +31,7 @@ class BusinessPolicy
 
     public function create(User $user): bool
     {
-        return in_array($user->role, ['admin', 'student', 'alumni']);
+        return true;
     }
 
     public function update(User $user, Business $business): bool

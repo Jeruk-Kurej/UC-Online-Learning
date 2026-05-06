@@ -41,7 +41,18 @@ class BusinessController extends Controller
         if ($viewType === 'intrapreneur') {
             $query = \App\Models\Company::visible()->with(['user', 'category']);
         } else {
-            $query = Business::visible()->with(['user', 'category', 'products'])->entrepreneur();
+            // If admin and explicitly asking for pending, show only invisible
+            if (auth()->check() && auth()->user()->isAdmin() && $request->status === 'pending') {
+                $query = Business::where('is_visible', false)->with(['user', 'category', 'products'])->entrepreneur();
+            } 
+            // If admin but not filtering for pending, show all (so they can see what needs approval in the main list)
+            elseif (auth()->check() && auth()->user()->isAdmin()) {
+                $query = Business::with(['user', 'category', 'products'])->entrepreneur();
+            }
+            // Default for students/public: only visible
+            else {
+                $query = Business::visible()->with(['user', 'category', 'products'])->entrepreneur();
+            }
         }
 
         if ($search) {
@@ -78,7 +89,13 @@ class BusinessController extends Controller
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
         $featuredBusinessCount = Business::where('is_featured', true)->count();
 
-        return view('businesses.index', compact('businesses', 'categories', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount'));
+        // If admin, also get count of businesses waiting for approval
+        $pendingCount = 0;
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            $pendingCount = Business::where('is_visible', false)->count();
+        }
+
+        return view('businesses.index', compact('businesses', 'categories', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount', 'pendingCount'));
     }
 
     /**
@@ -86,9 +103,7 @@ class BusinessController extends Controller
      */
     public function create()
     {
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403);
-        }
+        // Removed admin check to allow students to create businesses
 
         $categories = Category::all();
         $users = User::orderBy('name')->get();
@@ -120,9 +135,7 @@ class BusinessController extends Controller
      */
     public function edit(Business $business)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('update', $business);
         
         // Load existing relationships
         $business->load(['user', 'category', 'products', 'members', 'legalDocuments', 'certifications']);
@@ -152,14 +165,17 @@ class BusinessController extends Controller
      */
     public function update(UpdateBusinessRequest $request, Business $business)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403);
-        }
+        $this->authorize('update', $business);
 
         $validated = $request->validated();
         
         // Map form fields to database columns
         $data = $validated;
+
+        // Security: only admins can change visibility or featured status or primary owner
+        if (!auth()->user()->isAdmin()) {
+            unset($data['is_visible'], $data['is_featured'], $data['user_id']);
+        }
         // category_id is now sent directly from the form
         if (isset($validated['business_type_id'])) {
             $data['category_id'] = $validated['business_type_id'];
@@ -239,6 +255,13 @@ class BusinessController extends Controller
         $data['user_id'] = Auth::id();
         $data['type'] = 'entrepreneur';
 
+        // Student-created businesses are invisible until approved by admin
+        if (!auth()->user()->isAdmin()) {
+            $data['is_visible'] = false;
+        } else {
+            $data['is_visible'] = true;
+        }
+
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('logos', 'public');
@@ -252,7 +275,25 @@ class BusinessController extends Controller
             $business->members()->sync($request->owner_ids);
         }
 
-        return redirect()->route('businesses.my')->with('success', 'Business created successfully!');
+        $message = auth()->user()->isAdmin() 
+            ? 'Business created successfully!' 
+            : 'Business submitted for approval! An admin will review it soon.';
+
+        return redirect()->route('businesses.my')->with('success', $message);
+    }
+
+    /**
+     * Approve a business (admin only).
+     */
+    public function approve(Business $business)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $business->update(['is_visible' => true]);
+
+        return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
     }
 
     /**

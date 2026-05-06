@@ -75,6 +75,16 @@ class Business extends Model
         return trim(strip_tags($cleaned));
     }
 
+    public function getStatusAttribute(): string
+    {
+        return $this->is_visible ? 'approved' : 'pending';
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->is_visible ? 'Approved' : 'Pending Approval';
+    }
+
     public function getProfileQualityScoreAttribute()
     {
         $score = 0;

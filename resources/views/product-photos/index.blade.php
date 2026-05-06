@@ -29,7 +29,7 @@
         {{-- Success / Error flash --}}
 
         {{-- Product Info Card --}}
-        <div class="mb-6 bg-white border border-slate-200 shadow-sm rounded-xl p-4">
+        <div class="mb-6 bg-white border border-gray-200 shadow-sm rounded-xl p-4">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-400 to-yellow-400 flex items-center justify-center text-white flex-shrink-0 shadow-sm">
                     <i class="bi bi-box-seam text-2xl"></i>
@@ -46,7 +46,7 @@
         </div>
 
         {{-- Photos Grid --}}
-        <div class="bg-white border border-slate-200 shadow-sm rounded-xl">
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl">
             @if($photos->count() > 0)
                 <div class="p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

@@ -45,6 +45,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/my-businesses', [BusinessController::class, 'my'])->name('businesses.my');
+    Route::get('/businesses/create', [BusinessController::class, 'create'])->name('businesses.create');
+    Route::post('/businesses', [BusinessController::class, 'store'])->name('businesses.store');
+    Route::get('/businesses/{business}/edit', [BusinessController::class, 'edit'])->name('businesses.edit');
+    Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
 
     Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 });
@@ -59,13 +63,10 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
     Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
     
-    Route::get('/businesses/create', [BusinessController::class, 'create'])->name('businesses.create');
     Route::post('/businesses/import', [BusinessController::class, 'import'])->name('businesses.import');
-    Route::post('/businesses', [BusinessController::class, 'store'])->name('businesses.store');
-    Route::get('/businesses/{business}/edit', [BusinessController::class, 'edit'])->name('businesses.edit');
-    Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
     Route::post('/businesses/{business}/toggle-featured', [BusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
+    Route::post('/businesses/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
 });
 
 // This must be LAST to avoid matching static routes like 'create'

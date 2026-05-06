@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12 bg-gray-50/50 min-h-screen">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-12">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             
             {{-- Platform Health: 50mm Focal Point --}}
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">

@@ -503,7 +503,7 @@
                     </div>
 
                     {{-- Business Insights - Professional Dossier Metadata (REDESIGNED) --}}
-                    <div class="flex flex-wrap items-center gap-y-6 gap-x-12 py-8 mb-4 border-y border-slate-100">
+                    <div class="flex flex-wrap items-center gap-y-6 gap-x-12 py-8 mb-4 border-y border-gray-100">
                         {{-- Revenue (SENSITIVE - PROTECTED) --}}
                         @can('update', $business)
                         <div class="flex items-start gap-4 group">
@@ -511,14 +511,14 @@
                                 <i class="bi bi-cash-stack text-lg"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
                                     <i class="bi bi-lock-fill text-[9px]"></i> Private Revenue
                                 </p>
-                                <h5 class="text-base font-extrabold text-slate-800">{{ $business->revenue_range ?? 'Not Disclosed' }}</h5>
-                                <p class="text-[9px] text-slate-400 font-medium mt-0.5 italic">Visible only to you</p>
+                                <h5 class="text-base font-extrabold text-gray-800">{{ $business->revenue_range ?? 'Not Disclosed' }}</h5>
+                                <p class="text-[9px] text-gray-400 font-medium mt-0.5 italic">Visible only to you</p>
                             </div>
                         </div>
-                        <div class="hidden lg:block w-px h-10 bg-slate-100"></div>
+                        <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
                         @endcan
 
                         {{-- Employee Count --}}
@@ -527,13 +527,13 @@
                                 <i class="bi bi-people-fill text-lg"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Team Size</p>
-                                <h5 class="text-base font-extrabold text-slate-800">{{ $business->employee_count ?? '0' }} Professionals</h5>
-                                <p class="text-[9px] text-slate-400 font-medium mt-0.5">Permanent & active staff</p>
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Team Size</p>
+                                <h5 class="text-base font-extrabold text-gray-800">{{ $business->employee_count ?? '0' }} Professionals</h5>
+                                <p class="text-[9px] text-gray-400 font-medium mt-0.5">Permanent & active staff</p>
                             </div>
                         </div>
 
-                        <div class="hidden lg:block w-px h-10 bg-slate-100"></div>
+                        <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
 
                         {{-- Established --}}
                         <div class="flex items-start gap-4 group">
@@ -541,8 +541,8 @@
                                 <i class="bi bi-rocket-takeoff-fill text-lg"></i>
                             </div>
                             <div>
-                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1.5">Academic Heritage</p>
-                                <h5 class="text-base font-extrabold text-slate-800">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Academic Heritage</p>
+                                <h5 class="text-base font-extrabold text-gray-800">
                                     @if($business->established_date)
                                         Est. {{ \Carbon\Carbon::parse($business->established_date)->format('M Y') }}
                                         <span class="inline-block ml-1 text-[11px] font-bold text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100/50">
@@ -552,7 +552,7 @@
                                         Timeline Undisclosed
                                     @endif
                                 </h5>
-                                <p class="text-[9px] text-slate-400 font-medium mt-0.5 italic">Total duration of excellence</p>
+                                <p class="text-[9px] text-gray-400 font-medium mt-0.5 italic">Total duration of excellence</p>
                             </div>
                         </div>
                     </div>
@@ -582,21 +582,21 @@
                         {{-- Strategic Challenges --}}
                         <div class="space-y-4">
                             <div class="flex items-center gap-2">
-                                <div class="w-1.5 h-4 bg-slate-900 rounded-full"></div>
-                                <h4 class="text-[11px] font-black text-slate-900 uppercase tracking-[0.2em]">Strategic Challenges</h4>
+                                <div class="w-1.5 h-4 bg-gray-900 rounded-full"></div>
+                                <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em]">Strategic Challenges</h4>
                             </div>
                             <div class="flex flex-wrap gap-2.5">
                                 @if($business->business_challenges && count($business->business_challenges) > 0)
                                     @foreach($business->business_challenges as $challenge)
-                                        <div class="px-3.5 py-2 bg-white text-slate-600 text-[11px] font-bold rounded-xl border border-slate-200 shadow-sm flex items-center gap-2 hover:border-slate-800 hover:text-slate-900 transition-all cursor-default">
+                                        <div class="px-3.5 py-2 bg-white text-gray-600 text-[11px] font-bold rounded-xl border border-gray-200 shadow-sm flex items-center gap-2 hover:border-gray-800 hover:text-gray-900 transition-all cursor-default">
                                             <i class="bi bi-chevron-right text-[8px] text-uco-orange-500"></i>
                                             {{ $challenge }}
                                         </div>
                                     @endforeach
                                 @else
-                                    <div class="flex items-center gap-3 p-4 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200 w-full max-w-md">
-                                        <i class="bi bi-shield-check text-slate-400 text-xl"></i>
-                                        <p class="text-xs text-slate-500 font-medium leading-relaxed italic">The business is currently operating with stable strategic planning. No major challenges reported.</p>
+                                    <div class="flex items-center gap-3 p-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 w-full max-w-md">
+                                        <i class="bi bi-shield-check text-gray-400 text-xl"></i>
+                                        <p class="text-xs text-gray-500 font-medium leading-relaxed italic">The business is currently operating with stable strategic planning. No major challenges reported.</p>
                                     </div>
                                 @endif
                             </div>

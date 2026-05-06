@@ -1,8 +1,8 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
-    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false }">
+    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false, isLoading: false }">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
+        <section class="relative overflow-hidden rounded-3xl border border-gray-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
                     <span class="inline-flex items-center rounded-full border border-gray-100 bg-gray-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-600">
@@ -13,8 +13,8 @@
                 </div>
 
                 @auth
-                    @if (auth()->user()->isAdmin())
-                        <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3">
+                        @if (auth()->user()->isAdmin())
                             <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-black rounded-xl">
                                 <i class="bi bi-star-fill text-yellow-500"></i>
                                 {{ $featuredBusinessCount }}/8 Featured
@@ -23,52 +23,66 @@
                                 <i class="bi bi-cloud-upload mr-2"></i>
                                 Import CSV
                             </button>
+                        @endif
 
-                            <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-5 py-3 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-sm">
-                                <i class="bi bi-plus-lg mr-2"></i>
-                                Create Business
-                            </a>
-                        </div>
-                    @endif
+                        <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-5 py-3 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-sm">
+                            <i class="bi bi-plus-lg mr-2"></i>
+                            Create Business
+                        </a>
+                    </div>
                 @endauth
             </div>
         </section>
 
         {{-- Entrepreneur / Intrapreneur Tabs --}}
-        <div class="flex gap-2 mb-8">
+        <div class="flex gap-2 mb-8 flex-wrap" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
-               class="px-6 py-3 rounded-xl font-bold text-sm transition {{ $viewType === 'entrepreneur' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50' }}">
+               class="px-6 py-3 rounded-xl font-bold text-sm transition {{ $viewType === 'entrepreneur' && !request('status') ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50' }}">
                 <i class="bi bi-briefcase mr-1"></i> Entrepreneurs
             </a>
             <a href="{{ route('businesses.index', ['view' => 'intrapreneur']) }}" 
                class="px-6 py-3 rounded-xl font-bold text-sm transition {{ $viewType === 'intrapreneur' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50' }}">
                 <i class="bi bi-building mr-1"></i> Intrapreneurs
             </a>
+
+            @if(auth()->user()?->isAdmin() && ($pendingCount > 0 || request('status') === 'pending'))
+            <a href="{{ route('businesses.index', ['status' => 'pending']) }}" 
+               class="px-6 py-3 rounded-xl font-bold text-sm transition {{ request('status') === 'pending' ? 'bg-red-600 text-white shadow-lg' : 'bg-white text-red-500 border border-red-100 hover:bg-red-50' }}">
+                <i class="bi bi-clock-history mr-1"></i> Pending Approval
+                <span class="ml-1 px-1.5 py-0.5 {{ request('status') === 'pending' ? 'bg-white text-red-600' : 'bg-red-100 text-red-600' }} rounded-md text-[10px]">{{ $pendingCount }}</span>
+            </a>
+            @endif
         </div>
 
         {{-- Filters --}}
         <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm">
-            <form action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
+            <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
                 <input type="hidden" name="view" value="{{ $viewType }}">
                 <div class="relative w-full">
-                    <i class="bi bi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Search name, category, or highlight..." 
-                           class="w-full pl-11 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 focus:border-gray-900 transition-all text-sm">
+                    <input type="text" 
+                           name="search" 
+                           id="search"
+                           value="{{ request('search') }}"
+                           class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all duration-200 placeholder:text-gray-400 text-sm" 
+                           placeholder="Search business name..."
+                           @input="isLoading = true"
+                           @input.debounce.500ms="$refs.filterForm.submit()"
+                           autocomplete="off">
                 </div>
                 <div class="grid grid-cols-3 gap-2 w-full">
-                    <select name="category" id="category_select" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+                    <select name="category" id="category_select" @change="isLoading = true; $refs.filterForm.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Categories</option>
                         @foreach($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
-                    <select name="province" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+                    <select name="province" @change="isLoading = true; $refs.filterForm.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Provinces</option>
                         @foreach($availableProvinces as $p)
                             <option value="{{ $p }}" {{ request('province') == $p ? 'selected' : '' }}>{{ $p }}</option>
                         @endforeach
                     </select>
-                    <select name="city" onchange="this.form.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+                    <select name="city" @change="isLoading = true; $refs.filterForm.submit()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
                         <option value="">All Cities</option>
                         @foreach($availableCities as $c)
                             <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
@@ -86,12 +100,13 @@
                 {{ $errors->first('featured') }}
             </div>
         @endif
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             @forelse ($businesses as $business)
                 <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full">
                     @auth
                         @if(auth()->user()->isAdmin())
-                            <div class="absolute top-3 right-3 z-10">
+                            <div class="absolute top-3 right-3 z-10 flex flex-col gap-2">
+                                {{-- Featured Toggle --}}
                                 <form action="{{ route('businesses.toggle-featured', $business) }}" method="POST">
                                     @csrf
                                     <button type="submit"
@@ -103,6 +118,18 @@
                                         <i class="bi bi-star-fill text-xs"></i>
                                     </button>
                                 </form>
+
+                                {{-- Approval Button --}}
+                                @if(!$business->is_visible)
+                                <form action="{{ route('businesses.approve', $business) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        title="Approve Business"
+                                        class="w-8 h-8 rounded-full flex items-center justify-center transition-all shadow-sm border bg-emerald-500 border-emerald-600 text-white hover:bg-emerald-600">
+                                        <i class="bi bi-check-lg text-xs"></i>
+                                    </button>
+                                </form>
+                                @endif
                             </div>
                         @endif
                     @endauth
@@ -119,9 +146,14 @@
                             </div>
                             <div class="flex-1 min-w-0">
                                 <div class="flex flex-col gap-1 mb-2">
-                                    <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">
-                                        {{ $viewType === 'entrepreneur' ? 'Entrepreneur' : 'Intrapreneur' }}
-                                    </span>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">
+                                            {{ $viewType === 'entrepreneur' ? 'Entrepreneur' : 'Intrapreneur' }}
+                                        </span>
+                                        @if(!$business->is_visible)
+                                            <span class="text-[8px] font-black bg-red-50 text-red-600 px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Pending Approval</span>
+                                        @endif
+                                    </div>
                                     <h3 class="font-extrabold text-gray-900 text-xl md:text-2xl leading-tight group-hover:text-gray-700 transition-colors line-clamp-2">
                                         {{ $business->name }}
                                     </h3>
@@ -283,6 +315,7 @@
                     try {
                         const res = await fetch('/import-progress/check', {
                             headers: {
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             }
                         });
@@ -306,7 +339,11 @@
                 async poll() {
                     if (!this.importId) return;
                     try {
-                        const res = await fetch(`/import-progress/${this.importId}`);
+                        const res = await fetch(`/import-progress/${this.importId}`, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
                         const data = await res.json();
 
                         this.status = data.status || 'processing';
@@ -321,6 +358,7 @@
                             fetch('/clear-active-import', {
                                 method: 'POST',
                                 headers: {
+                                    'Accept': 'application/json',
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                     'Content-Type': 'application/json',
                                 },
@@ -341,6 +379,7 @@
                     fetch('/clear-active-import', {
                         method: 'POST',
                         headers: {
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Content-Type': 'application/json',
                         },

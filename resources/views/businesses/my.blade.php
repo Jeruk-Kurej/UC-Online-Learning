@@ -6,7 +6,7 @@
             <p class="text-lg text-gray-500 max-w-2xl leading-relaxed mb-8">Manage and grow your entrepreneurial ventures within the UCO community.</p>
             
             @if($myBusinesses->count() > 0)
-                <a href="{{ route('businesses.create') }}" class="inline-flex items-center justify-center px-6 py-3.5 bg-uco-orange-500 text-white font-bold rounded-2xl hover:bg-uco-orange-600 hover:-translate-y-1 shadow-lg shadow-uco-orange-200 transition-all duration-300 group">
+                <a href="{{ route('businesses.create') }}" class="inline-flex items-center justify-center px-6 py-3.5 bg-uco-orange-500 text-white font-bold rounded-xl hover:bg-uco-orange-600 hover:-translate-y-1 shadow-lg shadow-uco-orange-200 transition-all duration-300 group">
                     <i class="bi bi-plus-circle-fill mr-2.5 text-lg group-hover:rotate-90 transition-transform duration-300"></i>
                     Register New Business
                 </a>
@@ -98,7 +98,7 @@
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">No Businesses Found</h2>
                 <p class="text-gray-500 max-w-md mx-auto mb-10 leading-relaxed italic">You haven't registered any businesses yet. Start showcasing your ventures to the UCO community today!</p>
-                <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-8 py-4 bg-uco-orange-500 text-white font-bold rounded-2xl hover:bg-uco-orange-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-uco-orange-100">
+                <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-8 py-4 bg-uco-orange-500 text-white font-bold rounded-xl hover:bg-uco-orange-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-uco-orange-100">
                     <i class="bi bi-plus-lg mr-2"></i>
                     Register Your First Business
                 </a>

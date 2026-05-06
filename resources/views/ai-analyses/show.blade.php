@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto space-y-6">
+    <div class="w-full max-w-[1600px] mx-auto space-y-6">
         {{-- Back Button --}}
         <div class="flex items-center gap-4">
             <a href="{{ route('ai-analyses.index') }}" 

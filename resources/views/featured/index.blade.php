@@ -15,7 +15,7 @@
                 <div class="space-y-10">
 
                     <div class="space-y-8">
-                        <h1 class="text-4xl font-[900] text-slate-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.05] max-w-4xl flex flex-wrap items-baseline gap-4"
+                        <h1 class="text-4xl font-[900] text-gray-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.05] max-w-4xl flex flex-wrap items-baseline gap-4"
                             x-data="{ 
                                 words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
                                 currentWord: 0,
@@ -33,10 +33,10 @@
                                   :class="isAnimating ? 'word-rotate-exit' : 'word-rotate-enter'"
                                   x-text="words[currentWord]"></span>
                             <span>Businesses</span>
-                            <span class="text-slate-950/80">from</span>
+                            <span class="text-gray-950/80">from</span>
                             <span class="whitespace-nowrap italic">UCO Community</span>
                         </h1>
-                        <p class="max-w-lg text-lg font-medium leading-relaxed text-slate-600/80 tracking-tight">
+                        <p class="max-w-lg text-lg font-medium leading-relaxed text-gray-600/80 tracking-tight">
                             Explore a vibrant ecosystem of student-led ventures. We bridge the gap between academic theory and market-ready impact.
                         </p>
                     </div>
@@ -60,7 +60,7 @@
                                     
                                     <div class="space-y-3">
                                         {{-- Compact Showcase Image --}}
-                                        <div class="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-slate-100">
+                                        <div class="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-gray-100">
                                             @php
                                                 $coverImage = $business->products->first()?->photo_url ?? null;
                                             @endphp
@@ -90,14 +90,14 @@
 
                                         {{-- Content --}}
                                         <div class="px-3 pb-2">
-                                            <h4 class="text-[15px] font-[900] text-slate-900 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
+                                            <h4 class="text-[15px] font-[900] text-gray-900 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
                                                 {{ $business->name }}
                                             </h4>
                                             <div class="flex items-center gap-2 mt-1">
                                                 <div class="h-4 w-4 overflow-hidden rounded-full border border-uco-orange-100">
                                                     <img src="{{ $business->user->profile_photo_url }}" class="h-full w-full object-cover">
                                                 </div>
-                                                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest truncate max-w-[80px]">
+                                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[80px]">
                                                     {{ $business->user->name ?? 'Founder' }}
                                                 </span>
                                             </div>
@@ -112,16 +112,16 @@
         </section>
 
         {{-- Featured Students & Testimonies --}}
-        <section class="max-w-[95rem] mx-auto px-8 md:px-12 py-24 space-y-16">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-24 space-y-16">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-slate-950 tracking-tighter">Featured Students</h2>
-                    <p class="text-xl font-medium text-slate-500 max-w-2xl leading-relaxed">
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Students</h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
                         Students and alumni whose profiles and testimonies stand out across the UCO community.
                     </p>
                 </div>
-                <div class="flex items-center gap-4 text-xs font-black text-slate-300 uppercase tracking-[0.25em]">
-                    <span class="w-12 h-[2px] bg-slate-100"></span>
+                <div class="flex items-center gap-4 text-xs font-black text-gray-300 uppercase tracking-[0.25em]">
+                    <span class="w-12 h-[2px] bg-gray-100"></span>
                     Community spotlight
                 </div>
             </div>
@@ -131,9 +131,9 @@
                     @php
                         $featuredBusiness = $student->businesses->first();
                     @endphp
-                    <article class="reveal-on-scroll group rounded-[2.5rem] border border-slate-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <article class="reveal-on-scroll group rounded-[2.5rem] border border-gray-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div class="flex items-start gap-4">
-                            <div class="h-16 w-16 overflow-hidden rounded-2xl border border-uco-orange-100 bg-slate-50 shadow-sm flex-shrink-0">
+                            <div class="h-16 w-16 overflow-hidden rounded-2xl border border-uco-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
                                 @if($student->profile_photo_url)
                                     <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
                                 @else
@@ -145,34 +145,34 @@
 
                             <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Student</p>
-                                <h3 class="mt-1 truncate text-xl font-[900] text-slate-950">{{ $student->name }}</h3>
-                                <p class="mt-1 text-sm font-medium text-slate-500">{{ $student->display_status }}</p>
+                                <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $student->name }}</h3>
+                                <p class="mt-1 text-sm font-medium text-gray-500">{{ $student->display_status }}</p>
                             </div>
                         </div>
 
                         <div class="mt-5 space-y-4">
-                            <p class="text-sm leading-relaxed text-slate-600 line-clamp-4">
+                            <p class="text-sm leading-relaxed text-gray-600 line-clamp-4">
                                 “{{ $student->testimony }}”
                             </p>
 
                             @if($featuredBusiness)
-                                <div class="rounded-2xl bg-slate-50 p-4 border border-slate-100">
-                                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Business Highlight</p>
-                                    <p class="mt-1 text-sm font-bold text-slate-900">{{ $featuredBusiness->name }}</p>
-                                    <p class="mt-1 text-xs text-slate-500 line-clamp-2">{{ $featuredBusiness->description }}</p>
+                                <div class="rounded-2xl bg-gray-50 p-4 border border-gray-100">
+                                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400">Business Highlight</p>
+                                    <p class="mt-1 text-sm font-bold text-gray-900">{{ $featuredBusiness->name }}</p>
+                                    <p class="mt-1 text-xs text-gray-500 line-clamp-2">{{ $featuredBusiness->description }}</p>
                                 </div>
                             @endif
                         </div>
                     </article>
                 @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-20 text-center">
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center">
                         <div class="relative z-10 space-y-4">
                             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
                                 <i class="bi bi-people text-2xl text-uco-orange-400"></i>
                             </div>
                             <div class="space-y-1">
-                                <p class="text-lg font-black text-slate-900">No Featured Students</p>
-                                <p class="text-sm font-medium text-slate-500">We're currently curating our top student entrepreneurs.</p>
+                                <p class="text-lg font-black text-gray-900">No Featured Students</p>
+                                <p class="text-sm font-medium text-gray-500">We're currently curating our top student entrepreneurs.</p>
                             </div>
                         </div>
                     </div>
@@ -182,16 +182,16 @@
             {{-- Community Testimonies Header --}}
             <div class="reveal-on-scroll pt-8 pb-4">
                 <div class="flex items-center gap-4">
-                    <h3 class="text-2xl font-[900] text-slate-950 tracking-tight">Community Voices</h3>
-                    <div class="h-[1px] flex-1 bg-slate-100"></div>
+                    <h3 class="text-2xl font-[900] text-gray-950 tracking-tight">Community Voices</h3>
+                    <div class="h-[1px] flex-1 bg-gray-100"></div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @forelse($testimonies as $testimony)
-                    <article class="reveal-on-scroll rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="transition-delay: {{ $loop->index * 60 }}ms">
+                    <article class="reveal-on-scroll rounded-[2rem] border border-gray-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl" style="transition-delay: {{ $loop->index * 60 }}ms">
                         <div class="flex items-center gap-3">
-                            <div class="h-12 w-12 overflow-hidden rounded-full border border-uco-orange-100 bg-slate-50 flex-shrink-0">
+                            <div class="h-12 w-12 overflow-hidden rounded-full border border-uco-orange-100 bg-gray-50 flex-shrink-0">
                                 @if($testimony->profile_photo_url)
                                     <img src="{{ $testimony->profile_photo_url }}" alt="{{ $testimony->name }}" class="h-full w-full object-cover">
                                 @else
@@ -201,22 +201,22 @@
                                 @endif
                             </div>
                             <div class="min-w-0 flex-1">
-                                <h4 class="truncate text-sm font-black text-slate-900">{{ $testimony->name }}</h4>
-                                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">Community Testimony</p>
+                                <h4 class="truncate text-sm font-black text-gray-900">{{ $testimony->name }}</h4>
+                                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400">Community Testimony</p>
                             </div>
                         </div>
 
-                        <p class="mt-4 text-sm leading-relaxed text-slate-600 line-clamp-5">“{{ $testimony->testimony }}”</p>
+                        <p class="mt-4 text-sm leading-relaxed text-gray-600 line-clamp-5">“{{ $testimony->testimony }}”</p>
                     </article>
                 @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-20 text-center">
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center">
                         <div class="relative z-10 space-y-4">
                             <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-sm">
                                 <i class="bi bi-chat-quote text-xl text-uco-orange-400"></i>
                             </div>
                             <div class="space-y-1">
-                                <p class="text-base font-black text-slate-900">No Testimonies Yet</p>
-                                <p class="text-xs font-medium text-slate-500">Testimonies from our community will appear here soon.</p>
+                                <p class="text-base font-black text-gray-900">No Testimonies Yet</p>
+                                <p class="text-xs font-medium text-gray-500">Testimonies from our community will appear here soon.</p>
                             </div>
                         </div>
                     </div>
@@ -225,16 +225,16 @@
         </section>
 
         {{-- Better Featured Grid Section --}}
-        <section class="max-w-[95rem] mx-auto px-8 md:px-12 space-y-20">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 space-y-20">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-slate-950 tracking-tighter">Featured Ventures</h2>
-                    <p class="text-xl font-medium text-slate-500 max-w-2xl leading-relaxed">
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Ventures</h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
                         Hand-picked businesses that represent the highest standards of innovation and execution within our network.
                     </p>
                 </div>
-                <div class="flex items-center gap-4 text-xs font-black text-slate-300 uppercase tracking-[0.25em]">
-                    <span class="w-12 h-[2px] bg-slate-100"></span>
+                <div class="flex items-center gap-4 text-xs font-black text-gray-300 uppercase tracking-[0.25em]">
+                    <span class="w-12 h-[2px] bg-gray-100"></span>
                     Scroll for more
                 </div>
             </div>
@@ -246,7 +246,7 @@
                         class="uco-glass-light block overflow-hidden rounded-[3rem] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.04)] transition-all duration-700 hover:-translate-y-4 hover:shadow-3xl hover:border-uco-orange-200/50">
                         
                         {{-- Immersive Showcase Image --}}
-                        <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[2.5rem] bg-slate-100">
+                        <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[2.5rem] bg-gray-100">
                             @php
                                 $coverImage = $business->products->first()?->photo_url ?? null;
                             @endphp
@@ -279,16 +279,16 @@
                         <div class="p-6 space-y-6">
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <h4 class="text-xl font-[900] text-slate-900 tracking-tight group-hover:text-uco-orange-600 transition-colors">
+                                    <h4 class="text-xl font-[900] text-gray-900 tracking-tight group-hover:text-uco-orange-600 transition-colors">
                                         {{ $business->name }}
                                     </h4>
                                 </div>
-                                <p class="text-sm text-slate-500 leading-relaxed line-clamp-3 font-medium opacity-80">
+                                <p class="text-sm text-gray-500 leading-relaxed line-clamp-3 font-medium opacity-80">
                                     {{ $business->description }}
                                 </p>
                             </div>
 
-                            <div class="flex items-center justify-between border-t border-slate-100 pt-6">
+                            <div class="flex items-center justify-between border-t border-gray-100 pt-6">
                                 {{-- Founder Profile --}}
                                 <div class="flex items-center gap-3">
                                     <div class="h-10 w-10 overflow-hidden rounded-full border-2 border-uco-orange-100 shadow-sm">
@@ -301,12 +301,12 @@
                                         @endif
                                     </div>
                                     <div class="flex flex-col">
-                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-widest">Founder</span>
-                                        <span class="text-[13px] font-bold text-slate-900">{{ $business->user->name ?? 'Founder' }}</span>
+                                        <span class="text-[8px] font-black text-gray-400 uppercase tracking-widest">Founder</span>
+                                        <span class="text-[13px] font-bold text-gray-900">{{ $business->user->name ?? 'Founder' }}</span>
                                     </div>
                                 </div>
 
-                                <div class="flex items-center gap-1.5 text-slate-400">
+                                <div class="flex items-center gap-1.5 text-gray-400">
                                     
                                 </div>
                             </div>
@@ -314,14 +314,14 @@
                     </a>
                 </div>
                 @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-slate-200 px-6 py-24 text-center">
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-24 text-center">
                         <div class="relative z-10 space-y-6">
                             <div class="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-sm">
                                 <i class="bi bi-rocket-takeoff text-3xl text-uco-orange-400 animate-pulse"></i>
                             </div>
                             <div class="space-y-2">
-                                <p class="text-2xl font-[900] text-slate-950 tracking-tight">Venture Pipeline Empty</p>
-                                <p class="text-base font-medium text-slate-500 max-w-md mx-auto">Our next generation of featured ventures is currently under review. Check back soon for new arrivals.</p>
+                                <p class="text-2xl font-[900] text-gray-950 tracking-tight">Venture Pipeline Empty</p>
+                                <p class="text-base font-medium text-gray-500 max-w-md mx-auto">Our next generation of featured ventures is currently under review. Check back soon for new arrivals.</p>
                             </div>
                         </div>
                     </div>

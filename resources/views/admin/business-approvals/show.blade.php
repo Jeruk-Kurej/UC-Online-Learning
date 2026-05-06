@@ -68,7 +68,7 @@
                         </h3>
                         <dl class="space-y-4">
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Business Mode</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Business Mode</p>
                                 <dd class="text-sm font-semibold text-gray-700 capitalize">{{ $business->offering_type }}</dd>
                             </div>
                             <div>
@@ -80,7 +80,7 @@
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->employee_count ?: 'N/A' }} employees</dd>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Revenue Range</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Revenue Range</p>
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->revenue_range ?: 'N/A' }}</dd>
                             </div>
                         </dl>
@@ -98,7 +98,7 @@
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->address ?: 'N/A' }}</dd>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Location</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Location</p>
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->city ?: 'N/A' }}, {{ $business->province ?: 'N/A' }}</dd>
                             </div>
                             @if($business->phone_number)
@@ -130,7 +130,7 @@
 
                 {{-- Action Card --}}
                 <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl">
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">Moderation Action</h2>
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Moderation Action</h2>
                     
                     <div class="space-y-4">
                         <form action="{{ route('admin.business-approvals.approve', $business) }}" method="POST">
@@ -163,8 +163,8 @@
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest font-semibold text-uco-orange-600">Moderation System</p>
-                                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">Request Revision</h1>
-                                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Explain what needs to be changed before approval.</p>
+                                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1">Request Revision</h1>
+                                    <p class="text-gray-600 mt-2 text-sm sm:text-base">Explain what needs to be changed before approval.</p>
                                 </div>
                                 <button @click="showRevisionModal = false" class="text-gray-400 hover:text-gray-600">
                                     <i class="bi bi-x-lg"></i>
@@ -174,9 +174,9 @@
                             <form action="{{ route('admin.business-approvals.need-revision', $business) }}" method="POST">
                                 @csrf
                                 <div class="mb-8">
-                                    <label for="rejection_reason_revision" class="block text-sm font-semibold text-slate-700 mb-2">Revision Notes</label>
+                                    <label for="rejection_reason_revision" class="block text-sm font-semibold text-gray-700 mb-2">Revision Notes</label>
                                     <textarea name="rejection_reason" id="rejection_reason_revision" rows="4" required
-                                              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
+                                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
                                               placeholder="E.g., Please upload a clearer logo, or fix the address..."></textarea>
                                 </div>
                                 
@@ -198,8 +198,8 @@
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest font-semibold text-uco-orange-600">Moderation System</p>
-                                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">Reject Business</h1>
-                                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Provide a reason for rejecting this registration.</p>
+                                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1">Reject Business</h1>
+                                    <p class="text-gray-600 mt-2 text-sm sm:text-base">Provide a reason for rejecting this registration.</p>
                                 </div>
                                 <button @click="showRejectModal = false" class="text-gray-400 hover:text-gray-600">
                                     <i class="bi bi-x-lg"></i>
@@ -209,9 +209,9 @@
                             <form action="{{ route('admin.business-approvals.reject', $business) }}" method="POST">
                                 @csrf
                                 <div class="mb-8">
-                                    <label for="rejection_reason_reject" class="block text-sm font-semibold text-slate-700 mb-2">Rejection Reason</label>
+                                    <label for="rejection_reason_reject" class="block text-sm font-semibold text-gray-700 mb-2">Rejection Reason</label>
                                     <textarea name="rejection_reason" id="rejection_reason_reject" rows="4" required
-                                              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-red-500 focus:border-red-500 transition-all duration-200 text-sm"
+                                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-red-500 focus:border-red-500 transition-all duration-200 text-sm"
                                               placeholder="Provide a reason for rejecting..."></textarea>
                                 </div>
                                 

@@ -141,7 +141,7 @@ class UserController extends Controller
         }
 
         // Get available businesses for ownership transfer
-        $availableBusinesses = Business::with('user', 'businessType')->get();
+        $availableBusinesses = Business::with('user', 'category')->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
         return view('users.create', compact('availableBusinesses', 'provinces'));
@@ -297,7 +297,7 @@ class UserController extends Controller
         }
 
         // Get available businesses for ownership transfer (excluding businesses owned by this user)
-        $availableBusinesses = Business::with('user', 'businessType')
+        $availableBusinesses = Business::with('user', 'category')
             ->where('user_id', '!=', $user->id)
             ->get();
 

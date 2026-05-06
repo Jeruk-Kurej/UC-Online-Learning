@@ -366,6 +366,7 @@
                     try {
                         const res = await fetch('/import-progress/check', {
                             headers: {
+                                'Accept': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             }
                         });
@@ -391,7 +392,11 @@
                     if (!this.importId) return;
                     
                     try {
-                        const res = await fetch(`/import-progress/${this.importId}`);
+                        const res = await fetch(`/import-progress/${this.importId}`, {
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
                         const data = await res.json();
 
                         this.status = data.status || 'processing';
@@ -406,6 +411,7 @@
                             fetch('/clear-active-import', {
                                 method: 'POST',
                                 headers: {
+                                    'Accept': 'application/json',
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                                     'Content-Type': 'application/json',
                                 },
@@ -427,6 +433,7 @@
                     fetch('/clear-active-import', {
                         method: 'POST',
                         headers: {
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Content-Type': 'application/json',
                         },

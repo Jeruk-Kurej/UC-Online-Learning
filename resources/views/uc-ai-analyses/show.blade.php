@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="w-full max-w-[1200px] mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-[1600px] mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
         {{-- Back Button & Header Section --}}
         <div class="mb-6">
             <a href="{{ route('ai-analyses.index') }}"

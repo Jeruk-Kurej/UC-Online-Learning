@@ -16,10 +16,7 @@
 
 
                 @auth
-                    @if(auth()->user()->isAdmin())
-                        <a href="{{ route('users.index') }}" class="text-sm font-bold {{ request()->routeIs('users.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Users</a>
-                    @endif
-<a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
+                <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                     {{-- Profile Dropdown --}}
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-soft-gray-50">
@@ -35,6 +32,15 @@
                                 <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ auth()->user()->role }}</p>
                                 <p class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->email }}</p>
                             </div>
+                            
+                            @if(auth()->user()->isAdmin())
+                            <div class="px-4 py-2 border-b border-gray-50 bg-gray-50">
+                                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
+                                <a href="{{ route('dashboard') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Command Center</a>
+                                <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
+                            </div>
+                            @endif
+
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             @if(!auth()->user()->isAdmin())
                                 <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</a>
@@ -69,12 +75,21 @@
             <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Directory</a>
             <a href="{{ route('uc-testimonies.index') }}" class="block py-3 text-base font-bold text-gray-900">Testimonies</a>
             @auth
-                @if(auth()->user()->isAdmin())
-                    <a href="{{ route('users.index') }}" class="block py-3 text-base font-bold text-gray-900">Users</a>
-                @endif
                 <div class="pt-4 border-t mt-4">
                     <p class="text-xs font-bold text-gray-400 uppercase mb-2">{{ auth()->user()->name }}</p>
-                    <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">Profile</a>
+                    
+                    @if(auth()->user()->isAdmin())
+                        <div class="mb-3 bg-gray-50 rounded-lg p-3">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Tools</p>
+                            <a href="{{ route('dashboard') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('dashboard') ? 'text-uco-orange-500' : 'text-gray-700' }}">Command Center</a>
+                            <a href="{{ route('users.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
+                        </div>
+                    @endif
+
+                    <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
+                    @if(!auth()->user()->isAdmin())
+                        <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>
+                    @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="block py-2 text-sm text-red-600">Log Out</button>

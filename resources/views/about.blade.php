@@ -3,7 +3,7 @@
         {{-- Hero Section --}}
         <section class="relative pt-24 pb-32 px-6 overflow-hidden">
             <div class="uco-hero-mesh"></div>
-            <div class="max-w-[1400px] mx-auto text-center relative z-10">
+            <div class="max-w-[1600px] mx-auto text-center relative z-10">
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-uco-orange-600 mb-8 animate-fade-in">
                     Our Vision
                 </span>
@@ -19,7 +19,7 @@
 
         {{-- Core Values --}}
         <section class="py-24 bg-white px-6">
-            <div class="max-w-[1400px] mx-auto">
+            <div class="max-w-[1600px] mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div class="space-y-6">
                         <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
@@ -51,7 +51,7 @@
             <div class="absolute inset-0 opacity-10 pointer-events-none">
                 <div class="w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px]"></div>
             </div>
-            <div class="max-w-[1400px] mx-auto relative z-10 text-center">
+            <div class="max-w-[1600px] mx-auto relative z-10 text-center">
                 <h2 class="text-4xl font-black text-white mb-20 tracking-tight">Driving Community Impact</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
                     <div class="space-y-2">

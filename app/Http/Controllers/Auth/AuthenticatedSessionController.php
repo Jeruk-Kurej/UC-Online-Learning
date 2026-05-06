@@ -33,6 +33,13 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // Prevent redirecting to AJAX/progress endpoints which might have been 
+        // stored as 'intended' by background polling during session expiration.
+        $intended = session()->get('url.intended');
+        if ($intended && str_contains($intended, 'import-progress')) {
+            session()->forget('url.intended');
+        }
+
         return redirect()->intended(route('dashboard', [], false));
     }
 

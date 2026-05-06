@@ -8,7 +8,7 @@
             if (str_contains($name, 'twitter') || str_contains($name, ' x ')) return ['bg' => 'bg-sky-50', 'text' => 'text-sky-500'];
             if (str_contains($name, 'email') || str_contains($name, 'gmail') || str_contains($name, 'surat')) return ['bg' => 'bg-red-50', 'text' => 'text-red-500'];
             if (str_contains($name, 'phone') || str_contains($name, 'telepon') || str_contains($name, 'mobile') || str_contains($name, 'hp')) return ['bg' => 'bg-blue-50', 'text' => 'text-blue-600'];
-            if (str_contains($name, 'website') || str_contains($name, 'url') || str_contains($name, 'link')) return ['bg' => 'bg-slate-50', 'text' => 'text-slate-600'];
+            if (str_contains($name, 'website') || str_contains($name, 'url') || str_contains($name, 'link')) return ['bg' => 'bg-gray-50', 'text' => 'text-gray-600'];
             if (str_contains($name, 'telegram')) return ['bg' => 'bg-sky-50', 'text' => 'text-sky-400'];
             if (str_contains($name, 'tiktok')) return ['bg' => 'bg-gray-100', 'text' => 'text-gray-900'];
             if (str_contains($name, 'linkedin')) return ['bg' => 'bg-blue-50', 'text' => 'text-blue-800'];
