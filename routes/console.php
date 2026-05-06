@@ -14,7 +14,7 @@ Artisan::command('test:business-enhancement', function () {
     $this->newLine();
     
     // Get businesses with user
-    $businesses = Business::with('user', 'businessType')->get();
+    $businesses = Business::with('user', 'category')->get();
     
     if ($businesses->isEmpty()) {
         $this->error('❌ No businesses found! Please run seeder first:');
@@ -34,7 +34,7 @@ Artisan::command('test:business-enhancement', function () {
         // Basic Info
         $this->line('<fg=cyan>📌 Basic Information:</>');
         $this->line('   Owner: ' . $business->user->name);
-        $this->line('   Type: ' . ($business->businessType->name ?? 'N/A'));
+        $this->line('   Type: ' . ($business->category->name ?? 'N/A'));
         $this->line('   Mode: ' . ucfirst($business->business_mode));
         $this->line('   Description: ' . substr($business->description, 0, 80) . '...');
         $this->newLine();
@@ -42,38 +42,29 @@ Artisan::command('test:business-enhancement', function () {
         // Enhanced Fields
         $this->line('<fg=green>✨ Enhanced Data (from 42-column Excel):</>');
         $this->line('   Logo: ' . ($business->logo_url ?? '<fg=yellow>Not set</>'));
-        $this->line('   Established: ' . ($business->established_date ? $business->established_date->format('d M Y') . ' (' . $business->getAgeInYears() . ' years old)' : '<fg=yellow>Not set</>'));
+        $this->line('   Established: ' . ($business->established_date ? $business->established_date->format('d M Y') : '<fg=yellow>Not set</>'));
         $this->line('   Address: ' . ($business->address ?? '<fg=yellow>Not set</>'));
         $this->line('   Employees: ' . ($business->employee_count ?? '<fg=yellow>Not set</>'));
-        $this->line('   Revenue: ' . $business->getRevenueLabel());
-        $this->line('   From College Project: ' . ($business->isCollegeProject() ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
+        $this->line('   Revenue: ' . ($business->revenue_range ?? 'Not set'));
+        $this->line('   From College Project: ' . ($business->is_from_college_project ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
         $this->line('   Continued After Grad: ' . ($business->is_continued_after_graduation ? '<fg=green>Yes ✓</> (Active)' : '<fg=red>No</> (Inactive)'));
-        $this->line('   Status: ' . ($business->isActive() ? '<fg=green>🟢 Active</>'  : '<fg=red>🔴 Inactive</>'));
+        $this->line('   Status: ' . ($business->is_visible ? '<fg=green>🟢 Visible</>'  : '<fg=red>🔴 Hidden</>'));
         $this->newLine();
         
         // Legal Documents
-        if ($business->hasLegalDocuments()) {
+        if ($business->legalDocuments()->count() > 0) {
             $this->line('<fg=blue>📄 Legal Documents:</>');
-            foreach ($business->legal_documents as $type => $number) {
-                $this->line('   - ' . $type . ': ' . $number);
+            foreach ($business->legalDocuments as $doc) {
+                $this->line('   - ' . $doc->name);
             }
             $this->newLine();
         }
         
         // Certifications
-        if ($business->hasCertifications()) {
+        if ($business->certifications()->count() > 0) {
             $this->line('<fg=magenta>🏆 Product Certifications:</>');
-            foreach ($business->product_certifications as $type => $number) {
-                $this->line('   - ' . $type . ': ' . $number);
-            }
-            $this->newLine();
-        }
-        
-        // Challenges
-        if (!empty($business->business_challenges)) {
-            $this->line('<fg=yellow>⚠️  Business Challenges (' . $business->getChallengesCount() . '):</>');
-            foreach ($business->business_challenges as $idx => $challenge) {
-                $this->line('   ' . ($idx + 1) . '. ' . $challenge);
+            foreach ($business->certifications as $cert) {
+                $this->line('   - ' . $cert->name);
             }
             $this->newLine();
         }
@@ -87,10 +78,8 @@ Artisan::command('test:business-enhancement', function () {
     $this->newLine();
     $this->line('<fg=cyan>Owner Information:</>');
     $this->line('   Name: ' . $user->name);
-    $this->line('   Employment Status: ' . $user->getEmploymentStatusLabel());
-    $this->line('   Has Side Business: ' . ($user->has_side_business ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
-    $this->line('   Total Businesses: ' . $user->totalBusinesses());
-    $this->line('   Multiple Businesses: ' . ($user->hasMultipleBusinesses() ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
+    $this->line('   Employment Status: ' . $user->current_status);
+    $this->line('   Total Businesses: ' . $user->businesses()->count());
     $this->line('   Is Entrepreneur: ' . ($user->isEntrepreneur() ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
     $this->line('   Is Intrapreneur: ' . ($user->isIntrapreneur() ? '<fg=green>Yes ✓</>' : '<fg=red>No</>'));
     $this->newLine();

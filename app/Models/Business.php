@@ -36,7 +36,6 @@ class Business extends Model
         'academic_heritage',
         'company_profile_url',
         'logo_url',
-        'business_challenge',
         'business_scale',
         'business_legality',
         'product_legality',

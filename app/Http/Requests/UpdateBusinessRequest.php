@@ -62,7 +62,6 @@ class UpdateBusinessRequest extends FormRequest
             'certification_path' => 'nullable|file|mimes:pdf|max:5120',
             'legal_documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'product_certifications.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'business_challenges' => 'nullable|array',
             'remove_legal_docs' => 'nullable|array',
             'remove_certifications' => 'nullable|array',
             'remove_legal_document' => 'nullable|boolean',

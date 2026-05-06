@@ -61,7 +61,6 @@ class StoreBusinessRequest extends FormRequest
             'certification_path' => 'nullable|file|mimes:pdf|max:5120',
             'legal_documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'product_certifications.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'business_challenges' => 'nullable|array',
 
             // Additional data fields
             'phone' => 'nullable|string|max:50',
