@@ -166,7 +166,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'academic_heritage'       => $this->col($row, 'academic_heritage'),
                     'company_profile_url'     => $this->col($row, 'company_profile'),
                     'logo_url'                => $this->col($row, 'businesscompany_logo', 'business_company_logo'),
-                    'business_challenge'      => $this->col($row, 'business_challenge'),
                     'business_scale'          => $this->col($row, 'business_scale'),
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
