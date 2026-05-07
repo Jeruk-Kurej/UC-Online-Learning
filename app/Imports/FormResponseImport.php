@@ -20,10 +20,11 @@ use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\BeforeImport;
 use Maatwebsite\Excel\Events\AfterImport;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
-class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents
+class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents, ShouldQueue
 {
     public $importId;
     protected $errors = [];
@@ -95,7 +96,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
                 'cv_url'            => $this->col($row, 'curriculum_vitae'),
-                'profile_photo_url' => $this->col($row, 'professional_profile_photo'),
+                'profile_photo_url' => $this->uploadToCloudinary($this->col($row, 'professional_profile_photo'), 'users', $fullName),
                 'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
                 'student_status'    => $studentStatus,
                 'email_verified_at' => now(),
@@ -165,7 +166,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'revenue_range'           => $this->col($row, 'revenue_range_per_year'),
                     'academic_heritage'       => $this->col($row, 'academic_heritage'),
                     'company_profile_url'     => $this->col($row, 'company_profile'),
-                    'logo_url'                => $this->col($row, 'businesscompany_logo', 'business_company_logo'),
+                    'logo_url'                => $this->uploadToCloudinary($this->col($row, 'businesscompany_logo', 'business_company_logo'), 'businesses', $businessName),
                     'business_scale'          => $this->col($row, 'business_scale'),
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
@@ -304,7 +305,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'name'        => $slot['name'],
                 'description' => $slot['desc'],
                 'price'       => $slot['price'],
-                'photo_url'   => $slot['photo'],
+                'photo_url'   => $this->uploadToCloudinary($slot['photo'], 'products', $slot['name']),
                 'sort_order'  => $order,
             ]);
         }
@@ -320,6 +321,12 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     private function parseDate(?string $val): ?string
     {
         if (!$val) return null;
+        
+        // If it's just a year (4 digits), convert to YYYY-01-01 to avoid Carbon guessing current day/month
+        if (preg_match('/^\d{4}$/', trim($val))) {
+            return trim($val) . '-01-01';
+        }
+
         try {
             return Carbon::parse($val)->format('Y-m-d');
         } catch (\Exception $e) {
@@ -357,6 +364,98 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         } else {
             Cache::increment("{$prefix}_skipped");
         }
+    }
+
+    /**
+     * Download image from URL (with cookie auth for employee.uc.ac.id) and upload to Cloudinary.
+     */
+    private function uploadToCloudinary(?string $url, string $folder, ?string $identifier): ?string
+    {
+        $url = $this->cleanUrl($url);
+        if (!$url) return null;
+
+        if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
+            return $url;
+        }
+
+        $tmpFile = null;
+        try {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, (string)$url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+            
+            $curlHeaders = [
+                'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                'Referer: https://employee.uc.ac.id/index.php/login',
+            ];
+            
+            $isUniversityPortal = str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
+            if ($isUniversityPortal) {
+                $cookie = env('UC_COOKIE_RAW', '');
+                if ($cookie) $curlHeaders[] = "Cookie: " . trim($cookie);
+            }
+            
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
+            $contents = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+            curl_close($ch);
+
+            if ($contents === false || $httpCode !== 200 || !str_contains(strtolower($contentType ?? ''), 'image')) {
+                return $url;
+            }
+
+            $tmpFile = tempnam(sys_get_temp_dir(), 'uco_img_');
+            file_put_contents($tmpFile, $contents);
+            
+            $sanitizedId = Str::slug($identifier ?? 'unknown');
+            $publicId = "uco/{$folder}/{$sanitizedId}/" . Str::random(10);
+
+            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->upload($tmpFile, [
+                'public_id' => $publicId,
+                'overwrite' => true,
+                'resource_type' => 'image'
+            ]);
+
+            if ($tmpFile && file_exists($tmpFile)) unlink($tmpFile);
+
+            return $uploadResult['secure_url'] ?? $url;
+
+        } catch (\Throwable $e) {
+            if ($tmpFile && file_exists($tmpFile)) unlink($tmpFile);
+            Log::error("[FormResponseImport] Image error for {$url}: " . $e->getMessage());
+            return $url;
+        }
+    }
+
+    /**
+     * Clean and convert URLs (including Google Drive).
+     */
+    private function cleanUrl(?string $url): ?string
+    {
+        if (!$url) return null;
+        $url = strip_tags($url);
+        $url = preg_replace('/[^\x20-\x7E]/', '', $url);
+        $url = trim($url);
+
+        if (preg_match('/(https?:\/\/.*)$/i', $url, $matches)) {
+            $url = $matches[1];
+        }
+
+        // Google Drive link conversion
+        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
+                // Use export=download&confirm=t to bypass virus scan warning HTML page so cURL downloads the actual image bytes
+                $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
+            }
+        }
+
+        return (filter_var($url, FILTER_VALIDATE_URL)) ? $url : null;
     }
 
     // ─── Events ───

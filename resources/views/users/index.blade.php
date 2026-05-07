@@ -1,5 +1,57 @@
 <x-app-layout>
-    <div class="users-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="{ showImportModal: false }">
+    <div class="users-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
+        x-data="{
+            isSubmitting: false,
+            debounceTimer: null,
+            showImportModal: false,
+            init() {
+                window.addEventListener('popstate', () => {
+                    this.updateList(window.location.href, false);
+                });
+            },
+            updateList(url = null, pushState = true) {
+                this.isSubmitting = true;
+                if (!url) {
+                    const form = this.$refs.filterForm;
+                    if (!form) { console.error('filterForm ref not found!'); this.isSubmitting = false; return; }
+                    const formData = new FormData(form);
+                    const params = new URLSearchParams(formData);
+                    url = `${form.action}?${params.toString()}`;
+                }
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(res => {
+                    if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
+                    return res.text();
+                })
+                .then(html => {
+                    const container = document.getElementById('users-list-container');
+                    if (container) {
+                        container.innerHTML = html;
+                        container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+                    }
+                    if (pushState) window.history.pushState({}, '', url);
+                    this.isSubmitting = false;
+                })
+                .catch(err => {
+                    console.error('Fetch failed:', err);
+                    this.isSubmitting = false;
+                });
+            },
+            resetFilters() {
+                this.$refs.filterForm.reset();
+                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+                this.updateList();
+            },
+            submitDebounced() {
+                if (this.debounceTimer) clearTimeout(this.debounceTimer);
+                this.debounceTimer = setTimeout(() => this.updateList(), 500);
+            }
+        }"
+        @ajax-pagination.window="updateList($event.detail.url)">
         
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
@@ -54,31 +106,9 @@
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;"
-            x-data="{
-                isSubmitting: false,
-                debounceTimer: null,
-                submitNow() {
-                    if (this.debounceTimer) {
-                        clearTimeout(this.debounceTimer);
-                    }
-                    if (this.isSubmitting) {
-                        return;
-                    }
-                    this.isSubmitting = true;
-                    this.$refs.filterForm.submit();
-                },
-                submitDebounced() {
-                    if (this.debounceTimer) {
-                        clearTimeout(this.debounceTimer);
-                    }
-                    this.debounceTimer = setTimeout(() => {
-                        this.submitNow();
-                    }, 500);
-                }
-            }">
+        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
             <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
-                @submit="isSubmitting = true">
+                @submit.prevent="updateList()">
                 <div class="flex flex-col gap-4 lg:flex-row">
                     <input
                         type="text"
@@ -86,13 +116,13 @@
                         value="{{ request('search') }}"
                         placeholder="Search name, email, username, or NIS..."
                         @input="submitDebounced()"
-                        @keydown.enter.prevent="submitNow()"
+                        @keydown.enter.prevent="updateList()"
                         class="flex-1 border-gray-200 bg-gray-50 rounded-2xl px-6 py-4 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all"
                     >
                     <div class="flex gap-3">
-                        <a href="{{ route('users.index') }}" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition whitespace-nowrap">
+                        <button type="button" @click="resetFilters()" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition whitespace-nowrap">
                             Reset
-                        </a>
+                        </button>
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-uco-orange-700 bg-uco-orange-50 border border-uco-orange-200 rounded-2xl">
                             <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
@@ -106,7 +136,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
                     <div>
                         <label for="sort_name" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Name</label>
-                        <select id="sort_name" name="sort_name" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="sort_name" name="sort_name" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Default</option>
                             <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
                             <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
@@ -115,7 +145,7 @@
 
                     <div>
                         <label for="sort_year" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Angkatan</label>
-                        <select id="sort_year" name="sort_year" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="sort_year" name="sort_year" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Default</option>
                             <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
                             <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
@@ -124,7 +154,7 @@
 
                     <div>
                         <label for="student_status" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</label>
-                        <select id="student_status" name="student_status" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="student_status" name="student_status" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Status</option>
                             <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
                             <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
@@ -135,7 +165,7 @@
 
                     <div>
                         <label for="major" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Jurusan</label>
-                        <select id="major" name="major" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="major" name="major" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Jurusan</option>
                             @foreach($availableMajors as $majorOption)
                                 <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
@@ -145,7 +175,7 @@
 
                     <div>
                         <label for="year_of_enrollment" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Tahun Angkatan</label>
-                        <select id="year_of_enrollment" name="year_of_enrollment" @change="submitNow()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Tahun</option>
                             @foreach($availableEnrollmentYears as $yearOption)
                                 <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
@@ -154,6 +184,18 @@
                     </div>
                 </div>
             </form>
+            <script>
+                // Intercept pagination clicks
+                document.addEventListener('click', function(e) {
+                    const link = e.target.closest('.pagination-ajax a');
+                    if (link) {
+                        e.preventDefault();
+                        window.dispatchEvent(new CustomEvent('ajax-pagination', {
+                            detail: { url: link.href }
+                        }));
+                    }
+                });
+            </script>
         </div>
 
         {{-- Flash messages --}}
@@ -168,97 +210,9 @@
             </div>
         @endif
 
-        {{-- Users Table --}}
-        <div class="bg-white border rounded-[2.5rem] overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50 border-b">
-                    <tr>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Name</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Email</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Peminatan</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Visible</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Featured</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Businesses</th>
-                        <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y">
-                    @forelse($users as $user)
-                        <tr class="hover:bg-gray-50/50 transition">
-                            <td class="px-6 py-4 font-bold text-gray-900">{{ $user->name }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
-                                    {{ $user->student_status }}
-                                </span>
-                            </td>
-                            <td class="px-6 py-4 text-sm text-gray-500">{{ $user->major }}</td>
-                            <td class="px-6 py-4 text-center">
-                                <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
-                                    @csrf
-                                    <button type="submit"
-                                        title="{{ $user->is_featured ? 'Remove from featured' : 'Add to featured' }}"
-                                        class="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
-                                            {{ $user->is_featured
-                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' }}">
-                                        <i class="bi bi-star-fill text-[10px]"></i>
-                                    </button>
-                                </form>
-                            </td>
-                            <td class="px-6 py-4 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex justify-end gap-2">
-                                    <a href="{{ route('users.show', $user) }}" class="p-2 text-gray-400 hover:text-uco-orange-500 transition">
-                                        <i class="bi bi-eye-fill"></i>
-                                    </a>
-                                    @if(auth()->id() !== $user->id)
-                                        <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition">
-                                                <i class="bi bi-trash-fill"></i>
-                                            </button>
-                                        </form>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="8" class="px-6 py-16 text-center">
-                                <div class="space-y-3">
-                                    @php
-                                        $hasActiveFilters = request()->filled('search')
-                                            || request()->filled('sort_name')
-                                            || request()->filled('sort_year')
-                                            || request()->filled('student_status')
-                                            || request()->filled('major')
-                                            || request()->filled('year_of_enrollment');
-                                    @endphp
-
-                                    <p class="text-gray-400 italic">
-                                        {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
-                                    </p>
-
-                                    @if($hasActiveFilters)
-                                        <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
-                                            Clear all filters
-                                        </a>
-                                    @endif
-                                </div>
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mt-8">
-            {{ $users->appends(request()->query())->links() }}
+        {{-- Users List Container --}}
+        <div id="users-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
+            @include('users.partials.list')
         </div>
 
         {{-- Import Modal --}}

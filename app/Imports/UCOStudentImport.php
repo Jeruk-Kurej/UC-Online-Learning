@@ -284,6 +284,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             'revenue_range'     => $cell(32),
             'business_legality' => $cell(35),
             'product_legality'  => $cell(36),
+            'academic_heritage' => $cell(10) ? 'Batch ' . $cell(10) : null,
             'logo_url'          => $logoUrl,
             'type'              => 'entrepreneur',
         ], fn($v) => $v !== null);
@@ -500,7 +501,15 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             $url = $matches[1];
         }
 
-        // 5. Final check
+        // 5. Google Drive link conversion
+        // Convert "open?id=..." or "/file/d/.../view" into direct stream link "/uc?export=download&confirm=t&id=..."
+        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
+                $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
+            }
+        }
+
+        // 6. Final check
         if (!$url || !filter_var($url, FILTER_VALIDATE_URL)) {
             return null;
         }
@@ -511,6 +520,12 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
     private function parseDate(?string $val): ?string
     {
         if (!$val) return null;
+        
+        // If it's just a year (4 digits), convert to YYYY-01-01 to avoid Carbon guessing current day/month
+        if (preg_match('/^\d{4}$/', trim($val))) {
+            return trim($val) . '-01-01';
+        }
+
         try {
             return Carbon::parse($val)->format('Y-m-d');
         } catch (\Exception $e) {

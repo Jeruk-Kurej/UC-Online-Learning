@@ -95,6 +95,10 @@ class BusinessController extends Controller
             $pendingCount = Business::where('is_visible', false)->count();
         }
 
+        if ($request->ajax()) {
+            return view('businesses.partials.list', compact('businesses', 'viewType'))->render();
+        }
+
         return view('businesses.index', compact('businesses', 'categories', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount', 'pendingCount'));
     }
 

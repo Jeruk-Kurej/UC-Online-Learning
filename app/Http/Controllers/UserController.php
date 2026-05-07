@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Models\Business;
 use App\Models\Province;
 
-use App\Imports\UsersImport;
+use App\Imports\UCOStudentImport;
+use App\Imports\FormResponseImport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Excel as ExcelFormat;
 
@@ -118,6 +120,10 @@ class UserController extends Controller
         $totalIntrapreneurs = User::whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
         $totalAlumni = User::where('role', 'alumni')->count();
         $featuredUserCount = User::where('is_featured', true)->count();
+
+        if ($request->ajax()) {
+            return view('users.partials.list', compact('users'))->render();
+        }
 
         return view('users.index', compact(
             'users',
@@ -453,7 +459,7 @@ class UserController extends Controller
         }
 
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls|max:10240', // Max 10MB
+            'file' => 'required|mimes:xlsx,xls,csv,txt|max:10240', // Max 10MB
         ]);
 
         // Increase execution time and memory limit for large imports
@@ -461,33 +467,58 @@ class UserController extends Controller
         ini_set('memory_limit', '512M');
 
         try {
-            $importId = 'user_import_' . time() . '_' . uniqid();
+            $importId = (string) Str::uuid();
+            $file = $request->file('file');
+
+            // Store file so queue worker can access it
+            $path = $file->store('imports', 'local');
+
+            // Peek at the file to auto-detect format
+            $importer = $this->detectImporter($file->getRealPath(), $importId, $file->getClientOriginalName());
+
+            // Queue it — runs in background via artisan queue:work
+            Excel::queueImport($importer, $path, 'local');
+
+            $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
+            
             session(['active_user_import_id' => $importId]);
-            $import = new UsersImport($importId);
-            Excel::import($import, $request->file('file'));
 
             return back()
-                ->with('import_success', 'Import started in the background! Please wait.');
-        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
-            $failures = $e->failures();
-            $errorMessages = [];
-            
-            foreach ($failures as $failure) {
-                $errorMsg = "Row {$failure->row()}: " . implode(', ', $failure->errors());
-                $errorMessages[] = $errorMsg;
-                Log::error("User import validation error: " . $errorMsg);
-            }
-            
-            return redirect()
-                ->route('users.index')
-                ->with('error', 'Import validation failed')
-                ->with('import_errors', array_slice($errorMessages, 0, 5));
+                ->with('import_success', "Import started ({$format})! Format auto-detected. Please wait.");
         } catch (\Exception $e) {
             Log::error('User import exception: ' . $e->getMessage());
             return redirect()
                 ->route('users.index')
                 ->with('error', 'Import failed: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Peek at the raw file to determine which importer to use.
+     * Replicated from BusinessController for consistency.
+     */
+    private function detectImporter(string $path, string $importId, string $originalName = '')
+    {
+        $ext = strtolower(pathinfo($originalName ?: $path, PATHINFO_EXTENSION));
+        if (in_array($ext, ['xlsx', 'xls'])) {
+            if (stripos($originalName, 'UCO') !== false || stripos($originalName, 'Student') !== false) {
+                return new UCOStudentImport($importId);
+            }
+            return new FormResponseImport($importId);
+        }
+
+        // For CSV/Raw: read first 2KB and search for markers
+        $handle = fopen($path, 'r');
+        if (!$handle) return new FormResponseImport($importId);
+        $peek = fread($handle, 2048);
+        fclose($handle);
+
+        // UCO Student format markers: "NIS" AND "Sub Prodi"
+        if (stripos($peek, 'NIS') !== false && stripos($peek, 'Sub Prodi') !== false) {
+            return new UCOStudentImport($importId);
+        }
+        
+        return new FormResponseImport($importId);
     }
 
     /**

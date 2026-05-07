@@ -242,7 +242,7 @@
                         @endif
                         <div class="flex-1">
                             <div class="flex items-center gap-2 mb-1">
-                                <p class="text-xs font-semibold text-soft-gray-500 uppercase tracking-wider">Listed by
+                                <p class="text-xs font-semibold text-soft-gray-500 uppercase tracking-wider"> UCO student
                                 </p>
                                 <button @click="showUserModal = true" title="View Profile"
                                     class="text-soft-gray-400 hover:text-soft-gray-900 transition-colors p-1 rounded-full hover:bg-soft-gray-100 flex items-center justify-center">

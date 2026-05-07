@@ -52,15 +52,18 @@ trait HasImage
      */
     private function convertGoogleDriveLink(string $url): string
     {
+        // Extract ID from various Google Drive URL formats:
+        // - drive.google.com/open?id=ID
+        // - drive.google.com/file/d/ID/view
+        // - docs.google.com/file/d/ID/edit
         $id = '';
-        if (preg_match('/\/d\/([a-zA-Z0-9_-]+)/', $url, $matches)) {
-            $id = $matches[1];
-        } elseif (preg_match('/id=([a-zA-Z0-9_-]+)/', $url, $matches)) {
+        if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
             $id = $matches[1];
         }
 
         if ($id) {
-            return "https://docs.google.com/uc?export=view&id={$id}";
+            // Use the undocumented thumbnail API which bypasses virus scan warnings and allows <img> embedding
+            return "https://drive.google.com/thumbnail?id={$id}&sz=w1000";
         }
 
         return $url;
