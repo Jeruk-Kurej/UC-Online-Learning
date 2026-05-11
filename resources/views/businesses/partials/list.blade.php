@@ -5,7 +5,28 @@
                 @if(auth()->user()->isAdmin())
                     <div class="absolute top-3 right-3 z-10 flex flex-col gap-2">
                         {{-- Featured Toggle --}}
-                        <form action="{{ route('businesses.toggle-featured', $business) }}" method="POST">
+                        <form action="{{ route('businesses.toggle-featured', $business) }}" method="POST"
+                              @submit.prevent="
+                                  const btn = $event.target.querySelector('button');
+                                  const isFeatured = btn.classList.contains('bg-yellow-400');
+                                  
+                                  if (isFeatured) {
+                                      btn.classList.remove('bg-yellow-400', 'border-yellow-500', 'text-white', 'hover:bg-yellow-500');
+                                      btn.classList.add('bg-white', 'border-gray-200', 'text-gray-300', 'hover:text-yellow-400', 'hover:border-yellow-300');
+                                      btn.title = 'Add to featured';
+                                  } else {
+                                      btn.classList.remove('bg-white', 'border-gray-200', 'text-gray-300', 'hover:text-yellow-400', 'hover:border-yellow-300');
+                                      btn.classList.add('bg-yellow-400', 'border-yellow-500', 'text-white', 'hover:bg-yellow-500');
+                                      btn.title = 'Remove from featured';
+                                  }
+
+                                  fetch($el.action, { method: 'POST', body: new FormData($el), headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                                  .then(res => {
+                                      if(res.ok && typeof window.showToast === 'function') {
+                                          window.showToast(isFeatured ? '&quot;{{ addslashes($business->name) }}&quot; removed from featured.' : '&quot;{{ addslashes($business->name) }}&quot; is now featured.', 'success');
+                                      }
+                                  });
+                              ">
                             @csrf
                             <button type="submit"
                                 title="{{ $business->is_featured ? 'Remove from featured' : 'Add to featured' }}"
@@ -19,7 +40,18 @@
 
                         {{-- Approval Button --}}
                         @if(!$business->is_visible)
-                        <form action="{{ route('businesses.approve', $business) }}" method="POST">
+                        <form action="{{ route('businesses.approve', $business) }}" method="POST"
+                              @submit.prevent="
+                                  fetch($el.action, { method: 'POST', body: new FormData($el), headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+                                  .then(res => {
+                                      if(res.ok) {
+                                          if(typeof window.showToast === 'function') window.showToast('Business &quot;{{ addslashes($business->name) }}&quot; has been approved and is now visible.', 'success');
+                                          $el.remove();
+                                          const badge = $el.closest('.group').querySelector('span.bg-red-50');
+                                          if(badge) badge.remove();
+                                      }
+                                  });
+                              ">
                             @csrf
                             <button type="submit"
                                 title="Approve Business"
