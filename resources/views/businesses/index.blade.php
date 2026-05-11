@@ -52,6 +52,11 @@
             submitDebounced() {
                 if (this.debounceTimer) clearTimeout(this.debounceTimer);
                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
+            },
+            resetFilters() {
+                const form = this.$refs.filterForm;
+                form.querySelectorAll('input[type=text], select').forEach(el => el.value = '');
+                this.updateList();
             }
          }"
          @ajax-pagination.window="updateList($event.detail.url)">
@@ -116,33 +121,58 @@
         </div>
 
         {{-- Filters --}}
-        <div class="bg-white border border-gray-100 rounded-lg p-4 mb-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
-            <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
+        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
+            <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="space-y-4" @submit.prevent="updateList()">
                 <input type="hidden" name="view" value="{{ $viewType }}">
-                <div class="relative w-full">
-                    <input type="text" 
-                           name="search" 
-                           id="search"
-                           value="{{ request('search') }}"
-                           class="w-full px-4 py-3 bg-gray-50 border-gray-200 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-gray-900 transition-all duration-200 placeholder:text-gray-400 text-sm" 
-                           placeholder="Search business name..."
-                           @input="submitDebounced()"
-                           autocomplete="off">
+                
+                {{-- Search & Reset Row --}}
+                <div class="flex items-center gap-3">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-search text-gray-400"></i>
+                        </div>
+                        <input type="text" 
+                               name="search" 
+                               id="search"
+                               value="{{ request('search') }}"
+                               placeholder="Search business name..."
+                               @input="submitDebounced()"
+                               @keydown.enter.prevent="updateList()"
+                               class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
+                               autocomplete="off">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                            <i class="bi bi-arrow-clockwise text-lg"></i>
+                        </button>
+                        <div x-show="isLoading" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
+                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
+                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            </svg>
+                            <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-3 gap-2 w-full">
-                    <select name="category" id="category_select" @change="submitDebounced()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+
+                {{-- Filters Row --}}
+                <div class="flex flex-wrap items-center gap-3">
+                    <select name="category" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Categories</option>
                         @foreach($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
                     </select>
-                    <select name="province" @change="submitDebounced()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+                    
+                    <select name="province" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Provinces</option>
                         @foreach($availableProvinces as $p)
                             <option value="{{ $p }}" {{ request('province') == $p ? 'selected' : '' }}>{{ $p }}</option>
                         @endforeach
                     </select>
-                    <select name="city" @change="submitDebounced()" class="bg-gray-50 border-transparent rounded-xl focus:bg-white focus:ring-2 focus:ring-gray-900/10 transition-all text-xs md:text-sm py-3 px-3 w-full">
+                    
+                    <select name="city" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Cities</option>
                         @foreach($availableCities as $c)
                             <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
