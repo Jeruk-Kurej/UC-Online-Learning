@@ -5,7 +5,7 @@
         $canManageBusiness = auth()->check() && $business->canBeManagedBy(auth()->user());
     @endphp
     @php
-        $businessTypeName = $business->businessType?->name ?? ucfirst(str_replace('_', ' ', $business->offering_type ?? 'business'));
+        $businessTypeName = $business->category?->name ?? ucfirst(str_replace('_', ' ', $business->offering_type ?? 'business'));
         $businessMode = $business->offering_type ?? 'product';
         $isProductMode = $businessMode === 'product';
         $isServiceMode = $businessMode === 'service';
@@ -588,31 +588,6 @@
                     </div>
                     @endif
 
-                    {{-- Business Challenges & Spacing --}}
-                    <div class="grid grid-cols-1 gap-12 mb-20">
-                        {{-- Strategic Challenges --}}
-                        <div class="space-y-4">
-                            <div class="flex items-center gap-2">
-                                <div class="w-1.5 h-4 bg-gray-900 rounded-full"></div>
-                                <h4 class="text-[11px] font-black text-gray-900 uppercase tracking-[0.2em]">Strategic Challenges</h4>
-                            </div>
-                            <div class="flex flex-wrap gap-2.5">
-                                @if($business->business_challenges && count($business->business_challenges) > 0)
-                                    @foreach($business->business_challenges as $challenge)
-                                        <div class="px-3.5 py-2 bg-white text-gray-600 text-[11px] font-bold rounded-xl border border-gray-200 shadow-sm flex items-center gap-2 hover:border-gray-800 hover:text-gray-900 transition-all cursor-default">
-                                            <i class="bi bi-chevron-right text-[8px] text-uco-orange-500"></i>
-                                            {{ $challenge }}
-                                        </div>
-                                    @endforeach
-                                @else
-                                    <div class="flex items-center gap-3 p-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 w-full max-w-md">
-                                        <i class="bi bi-shield-check text-gray-400 text-xl"></i>
-                                        <p class="text-xs text-gray-500 font-medium leading-relaxed italic">The business is currently operating with stable strategic planning. No major challenges reported.</p>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
 
                     {{-- Original Documents Links (Hidden if empty or moved to Insights) --}}
                     @if ($business->legal_document_path || $business->certification_path)
