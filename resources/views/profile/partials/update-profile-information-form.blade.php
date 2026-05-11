@@ -35,7 +35,7 @@
             </label>
             <div class="flex flex-col sm:flex-row sm:items-center gap-6">
                 <!-- Photo Previews Area -->
-                <div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-2xl">
+                <div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-lg">
                     <!-- Current Photo -->
                     <div class="flex flex-col items-center gap-2">
                         <span class="text-[10px] font-bold tracking-wider text-gray-400 uppercase">Current Photo</span>

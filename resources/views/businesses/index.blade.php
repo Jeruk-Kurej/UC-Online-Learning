@@ -56,7 +56,7 @@
          }"
          @ajax-pagination.window="updateList($event.detail.url)">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
@@ -116,7 +116,7 @@
         </div>
 
         {{-- Filters --}}
-        <div class="bg-white border border-gray-100 rounded-2xl p-4 mb-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
+        <div class="bg-white border border-gray-100 rounded-lg p-4 mb-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-2 gap-3 items-center w-full">
                 <input type="hidden" name="view" value="{{ $viewType }}">
                 <div class="relative w-full">
@@ -179,7 +179,7 @@
         {{-- Import Modal --}}
         @if (auth()->user()?->isAdmin())
             <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-                <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
+                <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
                      x-data="{
                         isDragging: false,
                         handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
@@ -222,7 +222,7 @@
 
         {{-- Import Progress Tracker --}}
         <div x-data="importProgress()" x-init="checkActiveImport().then(() => startPolling())" class="fixed bottom-6 right-6 z-50 w-96">
-            <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
+            <div class="bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
                 <div class="px-5 py-4 flex items-center justify-between" :class="status === 'completed' ? 'bg-emerald-50' : 'bg-gray-50'">
                     <div class="flex items-center gap-3">
                         <template x-if="status !== 'completed'">

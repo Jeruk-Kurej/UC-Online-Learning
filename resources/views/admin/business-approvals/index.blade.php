@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-12 reveal-on-scroll">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-12 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
@@ -12,7 +12,7 @@
                     <p class="text-sm text-gray-500 mt-1">Review and moderate business registrations before they go public.</p>
                 </div>
                 
-                <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-2xl">
+                <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-lg">
                     <a href="{{ route('admin.business-approvals.index', ['status' => 'pending']) }}" 
                        class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all {{ $status === 'pending' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
                         Pending
@@ -37,7 +37,7 @@
             {{-- Businesses Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
                 @foreach($businesses as $b)
-                    <div class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
+                    <div class="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
                         {{-- Cover Image / Logo --}}
                         <div class="h-48 bg-gray-50 relative overflow-hidden">
                             @php 
@@ -109,7 +109,7 @@
                 {{ $businesses->links() }}
             </div>
         @else
-            <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-20 text-center">
+            <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-20 text-center">
                 <div class="w-24 h-24 bg-soft-gray-50 text-soft-gray-300 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
                     <i class="bi bi-journal-check text-5xl"></i>
                 </div>

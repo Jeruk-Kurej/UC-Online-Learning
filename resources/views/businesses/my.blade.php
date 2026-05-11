@@ -19,7 +19,7 @@
                 @foreach($myBusinesses as $b)
                     @php $delay = ($loop->index % 12) * 50; @endphp
                     <a href="{{ route('businesses.show', $b) }}" 
-                       class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
+                       class="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
                        style="transition-delay: {{ $delay }}ms;">
                         {{-- Cover Image / Logo --}}
                         <div class="h-48 bg-gray-50 relative overflow-hidden">
@@ -92,7 +92,7 @@
                     </a>
                 @endforeach
         @else
-            <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-20 text-center reveal-on-scroll">
+            <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-20 text-center reveal-on-scroll">
                 <div class="w-24 h-24 bg-soft-gray-50 text-soft-gray-300 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
                     <i class="bi bi-shop-window text-5xl"></i>
                 </div>

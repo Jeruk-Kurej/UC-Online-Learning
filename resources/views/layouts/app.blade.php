@@ -10,7 +10,7 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700,800,900&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 
         <!-- Bootstrap Icons -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -47,7 +47,7 @@
         @stack('styles')
     </head>
     {{-- Layout body: keep background subtle and readable --}}
-    <body class="font-sans antialiased bg-soft-white">
+    <body class="font-sans antialiased bg-gray-50">
         <div class="min-h-screen flex flex-col">
             {{-- Navigation --}}
             @include('layouts.navigation')

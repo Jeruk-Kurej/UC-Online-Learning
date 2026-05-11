@@ -24,9 +24,9 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {{-- Left Section: Complete User Card & Professional details --}}
             <div class="space-y-8">
-                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm text-center relative overflow-hidden transition hover:shadow-md duration-300">
+                <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm text-center relative overflow-hidden transition hover:shadow-md duration-300">
                     <div class="relative z-10">
-                        <div class="w-28 h-28 md:w-36 md:h-36 rounded-2xl border border-gray-100 shadow-sm mx-auto overflow-hidden bg-gray-50 flex items-center justify-center mb-6 hover:scale-105 transition duration-500">
+                        <div class="w-28 h-28 md:w-36 md:h-36 rounded-lg border border-gray-100 shadow-sm mx-auto overflow-hidden bg-gray-50 flex items-center justify-center mb-6 hover:scale-105 transition duration-500">
                             @if($user->profile_photo_url)
                                 <img src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover">
                             @else
@@ -67,7 +67,7 @@
                 </div>
 
                 {{-- Contact Info Card --}}
-                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm space-y-5 transition hover:shadow-md duration-300">
+                <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm space-y-5 transition hover:shadow-md duration-300">
                     <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact Information</h3>
                     <div class="space-y-3">
                         <div class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100">
@@ -91,7 +91,7 @@
 
                 {{-- Core Skills Card --}}
                 @if($user->skills->count() > 0)
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-sm transition hover:shadow-md duration-300">
+                    <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm transition hover:shadow-md duration-300">
                         <p class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Core Competencies</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach($user->skills as $skill)
@@ -116,7 +116,7 @@
                         @if($user->businesses->count() === 1)
                             {{-- Premium Full-Width Horizontal Card for visual balance --}}
                             @php $biz = $user->businesses->first(); @endphp
-                            <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group">
+                            <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group">
                                 <a href="{{ route('businesses.show', $biz) }}" class="grid grid-cols-1 md:grid-cols-12 h-full">
                                     <div class="md:col-span-4 lg:col-span-3 bg-gray-50 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 overflow-hidden min-h-[160px] md:min-h-0">
                                         @if($biz->logo_url)
@@ -163,7 +163,7 @@
                             {{-- Default Grid for 2+ businesses --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 @foreach($user->businesses as $biz)
-                                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                                    <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                                         <a href="{{ route('businesses.show', $biz) }}" class="block flex-1 flex flex-col">
                                             {{-- Catalog Aspect Ratio Box --}}
                                             <div class="aspect-video bg-gray-50 flex items-center justify-center relative border-b border-gray-100 overflow-hidden">
@@ -223,7 +223,7 @@
                         @if($user->memberOfBusinesses->count() === 1)
                             {{-- Premium Full-Width Horizontal Card for visual balance --}}
                             @php $biz = $user->memberOfBusinesses->first(); @endphp
-                            <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group">
+                            <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group">
                                 <a href="{{ route('businesses.show', $biz) }}" class="grid grid-cols-1 md:grid-cols-12 h-full">
                                     <div class="md:col-span-4 lg:col-span-3 bg-gray-50 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 overflow-hidden min-h-[160px] md:min-h-0">
                                         @if($biz->logo_url)
@@ -270,7 +270,7 @@
                             {{-- Default Grid for 2+ businesses --}}
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 @foreach($user->memberOfBusinesses as $biz)
-                                    <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
+                                    <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group flex flex-col h-full">
                                         <a href="{{ route('businesses.show', $biz) }}" class="block flex-1 flex flex-col">
                                             {{-- Catalog Style --}}
                                             <div class="aspect-video bg-gray-50 flex items-center justify-center relative border-b border-gray-100 overflow-hidden">

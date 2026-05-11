@@ -22,21 +22,21 @@
             <div class="max-w-[1600px] mx-auto">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div class="space-y-6 reveal-on-scroll" style="transition-delay: 100ms;">
-                        <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
+                        <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
                             <i class="bi bi-rocket-takeoff"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Rapid Launch</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.</p>
                     </div>
                     <div class="space-y-6 reveal-on-scroll" style="transition-delay: 200ms;">
-                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-blue-100">
+                        <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-blue-100">
                             <i class="bi bi-people"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Global Network</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.</p>
                     </div>
                     <div class="space-y-6 reveal-on-scroll" style="transition-delay: 300ms;">
-                        <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-purple-100">
+                        <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-purple-100">
                             <i class="bi bi-graph-up-arrow"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Scalable Growth</h3>
@@ -85,10 +85,10 @@
                     Join the UCO community today and gain access to a world of entrepreneurial opportunities.
                 </p>
                 <div class="flex flex-wrap justify-center gap-4 relative z-10">
-                    <a href="{{ route('login') }}" class="px-10 py-5 bg-white text-uco-orange-500 font-black rounded-2xl hover:bg-gray-50 transition shadow-xl hover:-translate-y-1">
+                    <a href="{{ route('login') }}" class="px-10 py-5 bg-white text-uco-orange-500 font-black rounded-lg hover:bg-gray-50 transition shadow-xl hover:-translate-y-1">
                         Get Started Now
                     </a>
-                    <a href="{{ route('businesses.index') }}" class="px-10 py-5 bg-uco-orange-600 text-white font-black rounded-2xl hover:bg-uco-orange-700 transition shadow-xl">
+                    <a href="{{ route('businesses.index') }}" class="px-10 py-5 bg-uco-orange-600 text-white font-black rounded-lg hover:bg-uco-orange-700 transition shadow-xl">
                         Explore Directory
                     </a>
                 </div>

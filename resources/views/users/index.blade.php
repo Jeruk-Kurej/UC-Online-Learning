@@ -54,11 +54,10 @@
         @ajax-pagination.window="updateList($event.detail.url)">
         
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
-            <div class="uco-hero-mesh"></div>
-            <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-                <div class="space-y-2">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
+        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
+            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div class="space-y-1">
+                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
                         Admin Portal
                     </span>
                     <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">User Management</h1>
@@ -66,17 +65,17 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-4 py-3 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-black rounded-2xl">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
                         {{ $featuredUserCount }}/4 Featured
                     </span>
-                    <button @click="showImportModal = true" class="inline-flex items-center px-6 py-4 bg-white border border-gray-300 text-gray-700 text-sm font-bold rounded-2xl hover:bg-gray-50 transition shadow-sm">
+                    <button @click="showImportModal = true" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition shadow-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
 
                     @if(auth()->user() && auth()->user()->isAdmin())
-                        <a href="{{ route('users.create') }}" class="inline-flex items-center px-6 py-4 bg-gray-900 text-white text-sm font-bold rounded-2xl hover:bg-black transition shadow-sm">
+                        <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">
                             <i class="bi bi-person-plus-fill mr-2"></i>
                             Create User
                         </a>
@@ -86,49 +85,54 @@
         </section>
 
         {{-- Statistics --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 100ms;">
-                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-1">Total Users</p>
-                <p class="text-4xl font-black text-gray-900">{{ $totalUsers }}</p>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
+                <p class="text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 150ms;">
-                <p class="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Entrepreneurs</p>
-                <p class="text-4xl font-black text-blue-600">{{ $totalEntrepreneurs }}</p>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
+                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">Entrepreneurs</p>
+                <p class="text-3xl font-bold text-blue-600">{{ $totalEntrepreneurs }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 200ms;">
-                <p class="text-[10px] font-black text-green-400 uppercase tracking-[0.2em] mb-1">Intrapreneurs</p>
-                <p class="text-4xl font-black text-green-600">{{ $totalIntrapreneurs }}</p>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
+                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Intrapreneurs</p>
+                <p class="text-3xl font-bold text-green-600">{{ $totalIntrapreneurs }}</p>
             </div>
-            <div class="bg-white border rounded-[2.5rem] p-8 shadow-sm hover:shadow-xl transition-all duration-500 reveal-on-scroll" style="transition-delay: 250ms;">
-                <p class="text-[10px] font-black text-purple-400 uppercase tracking-[0.2em] mb-1">Alumni</p>
-                <p class="text-4xl font-black text-purple-600">{{ $totalAlumni }}</p>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
+                <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">Alumni</p>
+                <p class="text-3xl font-bold text-purple-600">{{ $totalAlumni }}</p>
             </div>
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border rounded-[2.5rem] p-6 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
+        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
             <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
-                <div class="flex flex-col gap-4 lg:flex-row">
-                    <input
-                        type="text"
-                        name="search"
-                        value="{{ request('search') }}"
-                        placeholder="Search name, email, username, or NIS..."
-                        @input="submitDebounced()"
-                        @keydown.enter.prevent="updateList()"
-                        class="flex-1 border-gray-200 bg-gray-50 rounded-2xl px-6 py-4 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all"
-                    >
-                    <div class="flex gap-3">
-                        <button type="button" @click="resetFilters()" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-8 py-4 rounded-2xl font-bold hover:bg-gray-50 transition whitespace-nowrap">
+                <div class="flex flex-col gap-3 lg:flex-row">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-search text-gray-400"></i>
+                        </div>
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Search name, email, username, or NIS..."
+                            @input="submitDebounced()"
+                            @keydown.enter.prevent="updateList()"
+                            class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
+                        >
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="button" @click="resetFilters()" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-4 py-2 text-sm rounded-md font-medium hover:bg-gray-50 transition whitespace-nowrap shadow-sm">
                             Reset
                         </button>
-                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-uco-orange-700 bg-uco-orange-50 border border-uco-orange-200 rounded-2xl">
+                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-uco-orange-700 bg-uco-orange-50 border border-uco-orange-200 rounded-md">
                             <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
                                 <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
                             </svg>
-                            Updating results...
+                            Updating...
                         </div>
                     </div>
                 </div>
@@ -136,7 +140,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
                     <div>
                         <label for="sort_name" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Name</label>
-                        <select id="sort_name" name="sort_name" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="sort_name" name="sort_name" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Default</option>
                             <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
                             <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
@@ -145,7 +149,7 @@
 
                     <div>
                         <label for="sort_year" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Angkatan</label>
-                        <select id="sort_year" name="sort_year" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="sort_year" name="sort_year" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Default</option>
                             <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
                             <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
@@ -154,7 +158,7 @@
 
                     <div>
                         <label for="student_status" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</label>
-                        <select id="student_status" name="student_status" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="student_status" name="student_status" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Status</option>
                             <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
                             <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
@@ -165,7 +169,7 @@
 
                     <div>
                         <label for="major" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Jurusan</label>
-                        <select id="major" name="major" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="major" name="major" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Jurusan</option>
                             @foreach($availableMajors as $majorOption)
                                 <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
@@ -175,7 +179,7 @@
 
                     <div>
                         <label for="year_of_enrollment" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Tahun Angkatan</label>
-                        <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-2xl px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
+                        <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
                             <option value="">Semua Tahun</option>
                             @foreach($availableEnrollmentYears as $yearOption)
                                 <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
@@ -217,7 +221,7 @@
 
         {{-- Import Modal --}}
         <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
                  x-data="{
                     isDragging: false,
                     handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
@@ -237,7 +241,7 @@
                 
                 <form action="{{ route('users.import') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
-                    <div class="border-2 border-dashed rounded-2xl p-10 text-center transition group"
+                    <div class="border-2 border-dashed rounded-lg p-10 text-center transition group"
                          :class="isDragging ? 'border-uco-orange-500 bg-orange-50' : 'border-gray-200 hover:border-uco-orange-300'"
                          @dragover="handleDragOver"
                          @dragleave="handleDragLeave"
@@ -259,7 +263,7 @@
 
         {{-- Import Progress Tracker (Always rendered, fetches active import on load) --}}
         <div x-data="importProgress()" x-init="checkActiveImport().then(() => startPolling())" class="fixed bottom-6 right-6 z-50 w-96">
-            <div class="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
+            <div class="bg-white rounded-lg shadow-2xl border border-gray-200 overflow-hidden" x-show="visible" x-transition>
                 {{-- Header --}}
                 <div class="px-5 py-4 flex items-center justify-between" :class="status === 'completed' ? 'bg-emerald-50' : 'bg-gray-50'">
                     <div class="flex items-center gap-3">

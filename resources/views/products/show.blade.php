@@ -18,7 +18,7 @@
             <div class="flex items-center gap-2">
                 @can('update', $business)
                     <a href="{{ route('businesses.products.edit', [$business, $product]) }}" 
-                       class="inline-flex items-center gap-2 px-6 py-2.5 bg-white border-2 border-gray-100 text-gray-700 rounded-2xl font-black text-sm hover:border-gray-900 hover:text-gray-900 transition-all shadow-sm">
+                       class="inline-flex items-center gap-2 px-6 py-2.5 bg-white border-2 border-gray-100 text-gray-700 rounded-lg font-black text-sm hover:border-gray-900 hover:text-gray-900 transition-all shadow-sm">
                         <i class="bi bi-pencil-square"></i>
                         Edit Product
                     </a>
@@ -29,7 +29,7 @@
                         @csrf
                         @method('DELETE')
                         <button type="submit" 
-                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 rounded-2xl font-black text-sm hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100">
+                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-600 rounded-lg font-black text-sm hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100">
                             <i class="bi bi-trash3"></i>
                             Delete
                         </button>
@@ -42,7 +42,7 @@
             {{-- Left column: Product Gallery --}}
             <div class="lg:col-span-2">
                 {{-- Main Gallery Card --}}
-                <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                     @php
                         $galleryPhotos = $product->photos->map(function ($photo) {
                             $full = storage_image_url($photo->photo_url, 'gallery_full');
@@ -73,7 +73,7 @@
                             
                             {{-- Active Preview Container --}}
                             <div @click="fullscreenOpen = true" 
-                                 class="relative aspect-[16/10] sm:aspect-video md:aspect-[21/9] lg:aspect-video max-h-[500px] rounded-2xl overflow-hidden bg-gray-100 border border-gray-100 group shadow-inner cursor-zoom-in">
+                                 class="relative aspect-[16/10] sm:aspect-video md:aspect-[21/9] lg:aspect-video max-h-[500px] rounded-lg overflow-hidden bg-gray-100 border border-gray-100 group shadow-inner cursor-zoom-in">
                                 <img :src="photos[activePhotoIndex]" 
                                      class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                      alt="{{ $product->name }}">
@@ -132,7 +132,7 @@
                         </div>
                     @else
                         <div class="aspect-video flex flex-col items-center justify-center p-12 bg-gray-50 text-center">
-                            <div class="w-20 h-20 bg-gray-100 rounded-2xl flex items-center justify-center mb-4 text-gray-300">
+                            <div class="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center mb-4 text-gray-300">
                                 <i class="bi bi-image text-4xl"></i>
                             </div>
                             <h3 class="text-gray-900 font-bold mb-1">No Photos Available</h3>
@@ -145,7 +145,7 @@
             {{-- Right column: Sidebar Details --}}
             <div class="space-y-6">
                 {{-- Price & Specs Card --}}
-                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm overflow-hidden flex flex-col">
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm overflow-hidden flex flex-col">
                     <div class="mb-6">
                         <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Price</span>
                         <p class="text-3xl font-black text-gray-900">

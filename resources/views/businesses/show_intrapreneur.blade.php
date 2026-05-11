@@ -15,10 +15,10 @@
             {{-- Left Column: Company Info --}}
             <div class="lg:col-span-2 space-y-8">
                 {{-- Hero Section --}}
-                <div class="bg-white border rounded-3xl p-8 shadow-sm overflow-hidden relative">
+                <div class="bg-white border rounded-xl p-8 shadow-sm overflow-hidden relative">
                     <div class="uco-hero-mesh opacity-30"></div>
                     <div class="relative z-10 flex flex-col md:flex-row gap-8 items-start">
-                        <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-50 rounded-2xl flex items-center justify-center border shadow-sm flex-shrink-0">
+                        <div class="w-32 h-32 md:w-40 md:h-40 bg-gray-50 rounded-lg flex items-center justify-center border shadow-sm flex-shrink-0">
                             @if($company->logo_url)
                                 <img src="{{ $company->logo_url }}" class="w-full h-full object-contain">
                             @else
@@ -68,7 +68,7 @@
 
                 {{-- Achievements Section --}}
                 @if($company->achievement)
-                    <div class="bg-white border rounded-3xl p-8 shadow-sm">
+                    <div class="bg-white border rounded-xl p-8 shadow-sm">
                         <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <i class="bi bi-trophy text-uco-orange-500"></i> Achievements & Contributions
                         </h2>
@@ -83,7 +83,7 @@
             <div class="space-y-8">
                 {{-- UCO Student Card --}}
                 @if($company->user)
-                    <div class="bg-white border rounded-3xl p-6 shadow-sm">
+                    <div class="bg-white border rounded-xl p-6 shadow-sm">
                         <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">UCO Student</h3>
                         <div class="flex items-center gap-4 mb-6">
                             <div class="w-16 h-16 rounded-full overflow-hidden border-2 border-uco-orange-100 bg-gray-50 flex items-center justify-center">

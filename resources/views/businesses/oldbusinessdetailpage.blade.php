@@ -52,10 +52,10 @@
                     @if ($business->logo_url)
                         <img src="{{ storage_image_url($business->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                             alt="{{ $business->name }} Logo" loading="lazy"
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-2xl object-cover border border-soft-gray-100 shadow-sm bg-white p-0.5">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-cover border border-soft-gray-100 shadow-sm bg-white p-0.5">
                     @else
                         <div
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-2xl bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 border border-soft-gray-100 flex items-center justify-center shadow-sm">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 border border-soft-gray-100 flex items-center justify-center shadow-sm">
                             <i class="bi bi-briefcase text-2xl sm:text-3xl text-soft-gray-300"></i>
                         </div>
                     @endif
@@ -114,7 +114,7 @@
 
         <div class="space-y-6">
             {{-- Business Overview Card - Professional Design --}}
-            <div class="bg-white shadow-lg sm:rounded-2xl overflow-hidden border border-soft-gray-100">
+            <div class="bg-white shadow-lg sm:rounded-lg overflow-hidden border border-soft-gray-100">
                 {{-- Hero Photo Carousel (Dynamic & Premium) --}}
                 <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden group"
                     @php $heroPhotosCount = $business->photos->count(); @endphp x-data="{
@@ -233,10 +233,10 @@
                         {{-- Avatar --}}
                         @if ($ownerPhotoUrl)
                             <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" loading="lazy" decoding="async"
-                                class="flex-shrink-0 w-16 h-16 rounded-2xl object-cover shadow-lg">
+                                class="flex-shrink-0 w-16 h-16 rounded-lg object-cover shadow-lg">
                         @else
                             <div
-                                class="flex-shrink-0 w-16 h-16 rounded-2xl bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
+                                class="flex-shrink-0 w-16 h-16 rounded-lg bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
                                 {{ strtoupper(substr($owner->name, 0, 1)) }}
                             </div>
                         @endif
@@ -479,7 +479,7 @@
                         {{-- Revenue (SENSITIVE - PROTECTED) --}}
                         @can('update', $business)
                         <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                            <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                                 <i class="bi bi-cash-stack text-lg"></i>
                             </div>
                             <div>
@@ -495,7 +495,7 @@
 
                         {{-- Employee Count --}}
                         <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                            <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
                                 <i class="bi bi-people-fill text-lg"></i>
                             </div>
                             <div>
@@ -509,7 +509,7 @@
 
                         {{-- Established --}}
                         <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                            <div class="w-11 h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
                                 <i class="bi bi-rocket-takeoff-fill text-lg"></i>
                             </div>
                             <div>
@@ -531,7 +531,7 @@
 
                     {{-- Academic Origin / Success Badge --}}
                     @if($business->is_from_college_project)
-                    <div class="mb-12 p-1.5 inline-flex items-center gap-3 bg-gradient-to-r from-orange-50 to-white border border-orange-100 rounded-2xl shadow-sm">
+                    <div class="mb-12 p-1.5 inline-flex items-center gap-3 bg-gradient-to-r from-orange-50 to-white border border-orange-100 rounded-lg shadow-sm">
                         <div class="w-8 h-8 rounded-xl bg-uco-orange-500 text-white flex items-center justify-center shadow-md">
                             <i class="bi bi-mortarboard-fill"></i>
                         </div>
@@ -566,7 +566,7 @@
                                         </div>
                                     @endforeach
                                 @else
-                                    <div class="flex items-center gap-3 p-4 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200 w-full max-w-md">
+                                    <div class="flex items-center gap-3 p-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200 w-full max-w-md">
                                         <i class="bi bi-shield-check text-gray-400 text-xl"></i>
                                         <p class="text-xs text-gray-500 font-medium leading-relaxed italic">The business is currently operating with stable strategic planning. No major challenges reported.</p>
                                     </div>
@@ -612,7 +612,7 @@
             <div id="business-tabs" x-data="{
                 activeTab: '{{ session('activeTab', $business->isProductMode() ? 'products' : 'services') }}'
             }"
-                class="mt-10 bg-white shadow-lg sm:rounded-2xl border border-soft-gray-100">
+                class="mt-10 bg-white shadow-lg sm:rounded-lg border border-soft-gray-100">
                 <div class="border-b-2 border-soft-gray-100">
                     <nav class="flex -mb-px px-6 overflow-x-auto">
                         @if ($business->isProductMode())
@@ -803,8 +803,8 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="text-center py-16 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-                                <div class="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <div class="text-center py-16 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
+                                <div class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                                     <i class="bi bi-box-seam text-2xl text-gray-400"></i>
                                 </div>
                                 <h4 class="text-base font-bold text-gray-900 mb-1">No products yet</h4>
@@ -941,7 +941,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             @foreach ($business->photos as $photo)
                                 <div
-                                    class="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col">
+                                    class="bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col">
                                     {{-- Photo --}}
                                     <div class="relative aspect-video overflow-hidden bg-gray-100 flex-shrink-0">
                                         <img src="{{ storage_image_url($photo->photo_url, 'gallery') }}"
@@ -967,7 +967,7 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-20 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                        <div class="text-center py-20 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                             <div
                                 class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                                 <i class="bi bi-images text-3xl text-gray-300"></i>
@@ -1108,7 +1108,7 @@
                     x-transition:leave="ease-in duration-200 transform"
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 translate-y-8 sm:translate-y-0 sm:scale-95"
-                    class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-2xl shadow-2xl sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-gray-100">
+                    class="inline-block overflow-hidden text-left align-bottom transition-all transform bg-white rounded-lg shadow-2xl sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-gray-100">
 
                     {{-- Modal Header & Avatar --}}
                     <div
@@ -1125,10 +1125,10 @@
                             @if ($business->user->profile_photo_url)
                                 <img src="{{ storage_image_url($business->user->profile_photo_url, 'profile_thumb') }}"
                                     alt="{{ $business->user->name }}"
-                                    class="w-24 h-24 rounded-2xl object-cover shadow-lg mb-4 border-2 border-white">
+                                    class="w-24 h-24 rounded-lg object-cover shadow-lg mb-4 border-2 border-white">
                             @else
                                 <div
-                                    class="w-24 h-24 rounded-2xl bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg mb-4 border-2 border-white">
+                                    class="w-24 h-24 rounded-lg bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg mb-4 border-2 border-white">
                                     {{ strtoupper(substr($business->user->name, 0, 1)) }}
                                 </div>
                             @endif

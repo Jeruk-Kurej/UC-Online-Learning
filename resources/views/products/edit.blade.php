@@ -167,7 +167,7 @@
                                 @endforeach
                             </div>
                         @else
-                            <div class="p-8 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <div class="p-8 text-center bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
                                 <p class="text-sm text-gray-400">No photos uploaded for this product yet.</p>
                             </div>
                         @endif

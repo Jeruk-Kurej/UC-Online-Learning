@@ -19,8 +19,8 @@
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                     {{-- Profile Dropdown --}}
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
-                        <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-soft-gray-50">
-                            <div class="w-7 h-7 bg-uco-orange-500 rounded-lg flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
+                        <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
+                            <div class="w-7 h-7 bg-uco-orange-500 rounded-md flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
                             {{ auth()->user()->name }}
                             <svg class="w-4 h-4 transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-lg">Log in</a>
+                    <a href="{{ route('login') }}" class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">Log in</a>
                 @endif
             </div>
 

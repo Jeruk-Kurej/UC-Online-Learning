@@ -1,5 +1,5 @@
 {{-- Users Table --}}
-<div class="bg-white border rounded-[2.5rem] overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+<div class="bg-white border rounded-xl overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
     <table class="w-full text-left">
         <thead class="bg-gray-50 border-b">
             <tr>

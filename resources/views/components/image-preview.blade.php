@@ -88,7 +88,7 @@
 
         {{-- Drop Zone --}}
         <div id="{{ $previewId }}-dropzone"
-             class="relative border-2 border-dashed border-gray-300 rounded-2xl {{ $height }} overflow-hidden cursor-pointer group hover:border-uco-orange-400 hover:bg-uco-orange-50/30 transition-all duration-300 bg-gradient-to-br from-gray-50 to-gray-100/80"
+             class="relative border-2 border-dashed border-gray-300 rounded-lg {{ $height }} overflow-hidden cursor-pointer group hover:border-uco-orange-400 hover:bg-uco-orange-50/30 transition-all duration-300 bg-gradient-to-br from-gray-50 to-gray-100/80"
              onclick="document.getElementById('{{ $inputId }}').click()"
              ondragover="event.preventDefault(); this.classList.add('!border-uco-orange-400','!bg-uco-orange-50/50')"
              ondragleave="this.classList.remove('!border-uco-orange-400','!bg-uco-orange-50/50')"
@@ -97,7 +97,7 @@
             {{-- Placeholder --}}
             <div id="{{ $previewId }}-placeholder"
                  class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 transition-all duration-300">
-                <div class="w-16 h-16 rounded-2xl bg-white shadow-md border border-gray-100 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                <div class="w-16 h-16 rounded-lg bg-white shadow-md border border-gray-100 flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
                     <i class="bi bi-cloud-arrow-up text-3xl text-uco-orange-400 group-hover:text-uco-orange-500"></i>
                 </div>
                 <div class="text-center pointer-events-none">

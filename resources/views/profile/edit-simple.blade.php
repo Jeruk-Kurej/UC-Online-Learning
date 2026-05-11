@@ -25,7 +25,7 @@
 
             <div class="space-y-6">
                 {{-- Profile Information Card --}}
-                <div class="bg-white rounded-2xl shadow-lg border border-soft-gray-100 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-lg border border-soft-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-uco-orange-50 to-uco-yellow-50 px-6 py-4 border-b border-soft-gray-100">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-uco-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -41,7 +41,7 @@
                 </div>
 
                 {{-- Update Password Card --}}
-                <div class="bg-white rounded-2xl shadow-lg border border-soft-gray-100 overflow-hidden">
+                <div class="bg-white rounded-lg shadow-lg border border-soft-gray-100 overflow-hidden">
                     <div class="bg-gradient-to-r from-uco-orange-50 to-uco-yellow-50 px-6 py-4 border-b border-soft-gray-100">
                         <div class="flex items-center gap-3">
                             <svg class="w-5 h-5 text-uco-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

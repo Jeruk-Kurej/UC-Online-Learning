@@ -56,7 +56,7 @@
                         @foreach ($spotlightBusinesses->take(4) as $index => $business)
                             <div class="group/card relative {{ $index % 2 == 1 ? 'mt-8' : '' }}">
                                 <a href="{{ route('businesses.show', $business) }}"
-                                    class="uco-glass-light block overflow-hidden rounded-[2.5rem] p-2 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-700 hover:-translate-y-2 hover:shadow-2xl hover:border-uco-orange-200/50">
+                                    class="uco-glass-light block overflow-hidden rounded-xl p-2 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-700 hover:-translate-y-2 hover:shadow-2xl hover:border-uco-orange-200/50">
                                     
                                     <div class="space-y-3">
                                         {{-- Compact Showcase Image --}}
@@ -131,9 +131,9 @@
                     @php
                         $featuredBusiness = $student->businesses->first();
                     @endphp
-                    <article class="reveal-on-scroll group rounded-[2.5rem] border border-gray-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <article class="reveal-on-scroll group rounded-xl border border-gray-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div class="flex items-start gap-4">
-                            <div class="h-16 w-16 overflow-hidden rounded-2xl border border-uco-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
+                            <div class="h-16 w-16 overflow-hidden rounded-lg border border-uco-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
                                 @if($student->profile_photo_url)
                                     <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
                                 @else
@@ -156,7 +156,7 @@
                             </p>
 
                             @if($featuredBusiness)
-                                <div class="rounded-2xl bg-gray-50 p-4 border border-gray-100">
+                                <div class="rounded-lg bg-gray-50 p-4 border border-gray-100">
                                     <p class="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400">Business Highlight</p>
                                     <p class="mt-1 text-sm font-bold text-gray-900">{{ $featuredBusiness->name }}</p>
                                     <p class="mt-1 text-xs text-gray-500 line-clamp-2">{{ $featuredBusiness->description }}</p>
@@ -246,7 +246,7 @@
                         class="uco-glass-light block overflow-hidden rounded-[3rem] p-3 shadow-[0_40px_100px_rgba(0,0,0,0.04)] transition-all duration-700 hover:-translate-y-4 hover:shadow-3xl hover:border-uco-orange-200/50">
                         
                         {{-- Immersive Showcase Image --}}
-                        <div class="relative aspect-[16/10] w-full overflow-hidden rounded-[2.5rem] bg-gray-100">
+                        <div class="relative aspect-[16/10] w-full overflow-hidden rounded-xl bg-gray-100">
                             @php
                                 $coverImage = $business->products->first()?->photo_url ?? null;
                             @endphp
@@ -263,7 +263,7 @@
                             @endif
 
                             {{-- Business Logo Overlay --}}
-                            <div class="absolute bottom-4 left-6 h-16 w-16 overflow-hidden rounded-2xl bg-white p-2.5 shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-translate-y-2">
+                            <div class="absolute bottom-4 left-6 h-16 w-16 overflow-hidden rounded-lg bg-white p-2.5 shadow-2xl transition-transform duration-700 group-hover:scale-110 group-hover:-translate-y-2">
                                 <img src="{{ $business->logo_url }}" class="h-full w-full object-contain">
                             </div>
 

@@ -70,7 +70,7 @@
                     </div>
                     
                     {{-- Right: Login Form --}}
-                    <div class="bg-white border border-soft-gray-100 rounded-2xl p-8 shadow-xl relative overflow-hidden reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="bg-white border border-soft-gray-100 rounded-lg p-8 shadow-xl relative overflow-hidden reveal-on-scroll" style="transition-delay: 200ms;">
                         {{-- Decorative corner elements --}}
                         <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-uco-orange-100 to-uco-yellow-100 rounded-bl-full opacity-40"></div>
                         <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 rounded-tr-full opacity-30"></div>

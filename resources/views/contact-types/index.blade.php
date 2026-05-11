@@ -18,7 +18,7 @@
     @endphp
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">

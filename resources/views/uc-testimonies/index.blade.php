@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-8">
-        <section class="relative overflow-hidden rounded-[2.5rem] border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">
@@ -24,7 +24,7 @@
 
         @auth
             @if(!auth()->user()->isAdmin())
-            <section class="rounded-2xl border border-soft-gray-200 bg-white p-5 shadow-sm md:p-6 reveal-on-scroll">
+            <section class="rounded-lg border border-soft-gray-200 bg-white p-5 shadow-sm md:p-6 reveal-on-scroll">
                 <div class="mb-5 border-b border-soft-gray-200 pb-4">
                     <h2 class="text-xl font-bold text-soft-gray-900">Write a Testimony</h2>
                     <p class="mt-1 text-sm text-soft-gray-600">Tell us how UC Online Learning helped your journey.</p>
@@ -93,7 +93,7 @@
                 </form>
             </section>
             @else
-            <section class="rounded-2xl border border-uco-yellow-200 bg-uco-yellow-50 px-5 py-4 text-sm text-uco-yellow-900 shadow-sm reveal-on-scroll">
+            <section class="rounded-lg border border-uco-yellow-200 bg-uco-yellow-50 px-5 py-4 text-sm text-uco-yellow-900 shadow-sm reveal-on-scroll">
                 <div class="flex items-start gap-2">
                     <i class="bi bi-info-circle mt-0.5"></i>
                     <p><strong>Note:</strong> Administrators cannot submit testimonies. Please use a non-admin account to post.</p>
@@ -101,7 +101,7 @@
             </section>
             @endif
         @else
-            <section class="rounded-2xl border border-soft-gray-200 bg-white p-5 shadow-sm md:p-6 reveal-on-scroll">
+            <section class="rounded-lg border border-soft-gray-200 bg-white p-5 shadow-sm md:p-6 reveal-on-scroll">
                 <div class="mb-5 border-b border-soft-gray-200 pb-4">
                     <h2 class="text-xl font-bold text-soft-gray-900">Write a Testimony</h2>
                     <p class="mt-1 text-sm text-soft-gray-600">Sign in to share your learning experience.</p>
@@ -126,7 +126,7 @@
 
             <div class="grid grid-cols-1 gap-4">
                 @forelse ($testimonies as $testimony)
-                    <article class="rounded-2xl border border-soft-gray-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-uco-orange-200 hover:shadow-md reveal-on-scroll">
+                    <article class="rounded-lg border border-soft-gray-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-uco-orange-200 hover:shadow-md reveal-on-scroll">
                         <div class="flex flex-wrap items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
                                 <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-uco-orange-100 text-sm font-bold text-uco-orange-700">
@@ -151,7 +151,7 @@
                         <p class="mt-3 text-sm leading-relaxed text-soft-gray-700 md:text-base">“{{ $testimony->testimony }}”</p>
                     </article>
                 @empty
-                    <div class="rounded-2xl border border-dashed border-soft-gray-300 bg-soft-gray-50 p-8 text-center text-soft-gray-600 reveal-on-scroll">
+                    <div class="rounded-lg border border-dashed border-soft-gray-300 bg-soft-gray-50 p-8 text-center text-soft-gray-600 reveal-on-scroll">
                         <div class="mb-2 text-uco-orange-500"><i class="bi bi-chat-left-text text-2xl"></i></div>
                         <p class="font-semibold">No approved testimonies yet.</p>
                         <p class="mt-1 text-sm">Be the first to share your experience with UC Online Learning.</p>
@@ -159,7 +159,7 @@
                 @endforelse
             </div>
 
-            <div class="rounded-2xl border border-soft-gray-200 bg-white px-4 py-4 shadow-sm reveal-on-scroll">
+            <div class="rounded-lg border border-soft-gray-200 bg-white px-4 py-4 shadow-sm reveal-on-scroll">
                 {{ $testimonies->links() }}
             </div>
         </section>
