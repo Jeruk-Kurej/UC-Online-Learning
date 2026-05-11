@@ -108,7 +108,9 @@
         <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
             <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
-                <div class="flex flex-col gap-3 lg:flex-row">
+                
+                {{-- Search & Reset Row --}}
+                <div class="flex items-center gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <i class="bi bi-search text-gray-400"></i>
@@ -123,69 +125,56 @@
                             class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
                         >
                     </div>
-                    <div class="flex gap-2">
-                        <button type="button" @click="resetFilters()" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 px-4 py-2 text-sm rounded-md font-medium hover:bg-gray-50 transition whitespace-nowrap shadow-sm">
-                            Reset
+
+                    <div class="flex items-center gap-2">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                            <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
-                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center gap-2 px-3 py-2 text-xs font-medium text-uco-orange-700 bg-uco-orange-50 border border-uco-orange-200 rounded-md">
+                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
                             <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
                                 <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
                             </svg>
-                            Updating...
+                            <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
-                    <div>
-                        <label for="sort_name" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Name</label>
-                        <select id="sort_name" name="sort_name" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                            <option value="">Default</option>
-                            <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
-                            <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
-                        </select>
-                    </div>
+                {{-- Filters Row --}}
+                <div class="flex flex-wrap items-center gap-3">
+                    <select id="sort_name" name="sort_name" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Sort Name: Default</option>
+                        <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
+                        <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
+                    </select>
 
-                    <div>
-                        <label for="sort_year" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Sort Angkatan</label>
-                        <select id="sort_year" name="sort_year" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                            <option value="">Default</option>
-                            <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
-                            <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
-                        </select>
-                    </div>
+                    <select id="sort_year" name="sort_year" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Angkatan: Default</option>
+                        <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
+                        <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
+                    </select>
 
-                    <div>
-                        <label for="student_status" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</label>
-                        <select id="student_status" name="student_status" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                            <option value="">Semua Status</option>
-                            <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
-                            <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
-                            <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
-                            <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
-                        </select>
-                    </div>
+                    <select id="student_status" name="student_status" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Status: Semua</option>
+                        <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
+                        <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
+                        <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
+                        <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
+                    </select>
 
-                    <div>
-                        <label for="major" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Jurusan</label>
-                        <select id="major" name="major" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                            <option value="">Semua Jurusan</option>
-                            @foreach($availableMajors as $majorOption)
-                                <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <select id="major" name="major" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Jurusan: Semua</option>
+                        @foreach($availableMajors as $majorOption)
+                            <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
+                        @endforeach
+                    </select>
 
-                    <div>
-                        <label for="year_of_enrollment" class="block mb-2 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Tahun Angkatan</label>
-                        <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="w-full border-gray-200 bg-gray-50 rounded-lg px-4 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all">
-                            <option value="">Semua Tahun</option>
-                            @foreach($availableEnrollmentYears as $yearOption)
-                                <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Tahun: Semua</option>
+                        @foreach($availableEnrollmentYears as $yearOption)
+                            <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </form>
             <script>
