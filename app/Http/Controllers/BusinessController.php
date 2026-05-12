@@ -103,6 +103,56 @@ class BusinessController extends Controller
     }
 
     /**
+     * Admin view to manage businesses.
+     */
+    public function adminIndex(Request $request)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $status = $request->get('status');
+        $search = $request->get('search');
+
+        $query = Business::with(['user', 'category'])->entrepreneur();
+
+        if ($status) {
+            $query->where('approval_status', $status);
+        }
+
+        if ($search) {
+            $query->where('name', 'LIKE', "%{$search}%");
+        }
+
+        $businesses = $query->latest()->paginate(20)->withQueryString();
+
+        return view('businesses.admin.index', compact('businesses', 'status', 'search'));
+    }
+
+    /**
+     * Update business status (admin only).
+     */
+    public function updateStatus(Request $request, Business $business)
+    {
+        if (!auth()->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'status' => 'required|in:approved,rejected,need_revision,pending',
+            'rejection_reason' => 'required_if:status,rejected,need_revision'
+        ]);
+
+        $business->update([
+            'approval_status' => $request->status,
+            'rejection_reason' => in_array($request->status, ['rejected', 'need_revision']) ? $request->rejection_reason : null,
+            'is_visible' => $request->status === 'approved'
+        ]);
+
+        return back()->with('success', "Business status updated to " . ucfirst(str_replace('_', ' ', $request->status)));
+    }
+
+    /**
      * Show the form for creating a new business.
      */
     public function create()

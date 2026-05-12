@@ -42,6 +42,8 @@ class Business extends Model
 
         // Platform management
         'is_visible',
+        'approval_status',
+        'rejection_reason',
         'is_featured',
         'type',
     ];
@@ -76,12 +78,19 @@ class Business extends Model
 
     public function getStatusAttribute(): string
     {
-        return $this->is_visible ? 'approved' : 'pending';
+        return $this->approval_status ?? ($this->is_visible ? 'approved' : 'pending');
     }
 
     public function getStatusLabelAttribute(): string
     {
-        return $this->is_visible ? 'Approved' : 'Pending Approval';
+        $status = $this->status;
+        return match($status) {
+            'approved' => 'Approved',
+            'pending' => 'Pending Approval',
+            'rejected' => 'Rejected',
+            'need_revision' => 'Need Revision',
+            default => 'Pending Approval',
+        };
     }
 
     public function getProfileQualityScoreAttribute()

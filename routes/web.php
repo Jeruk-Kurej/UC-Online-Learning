@@ -63,6 +63,8 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/businesses/import', [BusinessController::class, 'import'])->name('businesses.import');
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
     Route::post('/businesses/{business}/toggle-featured', [BusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
+    Route::get('/admin/businesses', [BusinessController::class, 'adminIndex'])->name('businesses.admin');
+    Route::post('/businesses/{business}/status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
     Route::post('/businesses/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
 });
 
