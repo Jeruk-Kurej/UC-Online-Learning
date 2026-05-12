@@ -1,33 +1,33 @@
 {{-- Users Table --}}
-<div class="bg-white border rounded-xl overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
-    <table class="w-full text-left">
+<div class="bg-white border rounded-xl overflow-hidden overflow-x-auto shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+    <table class="w-full text-left min-w-[1000px]">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Name</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Email</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Peminatan</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Visible</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Featured</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Businesses</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Name</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Email</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Status</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Peminatan</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Visible</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Featured</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Businesses</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">
             @forelse($users as $user)
                 <tr class="hover:bg-gray-50/50 transition">
-                    <td class="px-6 py-4 font-bold text-gray-900">{{ $user->name }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-2 font-bold text-gray-900">{{ $user->name }}</td>
+                    <td class="px-6 py-2 text-sm text-gray-500">{{ $user->email }}</td>
+                    <td class="px-6 py-2">
                         <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
                             {{ $user->student_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->major }}</td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-2 text-sm text-gray-500">{{ $user->major ?: '-' }}</td>
+                    <td class="px-6 py-2 text-center">
                         <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-2 text-center">
                         <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
                             @csrf
                             <button type="submit"
@@ -40,8 +40,8 @@
                             </button>
                         </form>
                     </td>
-                    <td class="px-6 py-4 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-2 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
+                    <td class="px-6 py-2 text-right">
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('users.show', $user) }}" class="p-2 text-gray-400 hover:text-uco-orange-500 transition">
                                 <i class="bi bi-eye-fill"></i>

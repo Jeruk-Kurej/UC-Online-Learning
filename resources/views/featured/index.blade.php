@@ -115,7 +115,7 @@
         <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-24 space-y-16">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Students</h2>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Intrapreneur</h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
                         Students and alumni whose profiles and testimonies stand out across the UCO community.
                     </p>
@@ -144,7 +144,7 @@
                             </div>
 
                             <div class="min-w-0 flex-1">
-                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Student</p>
+                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Intrapreneur</p>
                                 <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $student->name }}</h3>
                                 <p class="mt-1 text-sm font-medium text-gray-500">{{ $student->display_status }}</p>
                             </div>
@@ -171,7 +171,7 @@
                                 <i class="bi bi-people text-2xl text-uco-orange-400"></i>
                             </div>
                             <div class="space-y-1">
-                                <p class="text-lg font-black text-gray-900">No Featured Students</p>
+                                <p class="text-lg font-black text-gray-900">No Featured Intrapreneur</p>
                                 <p class="text-sm font-medium text-gray-500">We're currently curating our top student entrepreneurs.</p>
                             </div>
                         </div>
@@ -182,7 +182,7 @@
             {{-- Community Testimonies Header --}}
             <div class="reveal-on-scroll pt-8 pb-4">
                 <div class="flex items-center gap-4">
-                    <h3 class="text-2xl font-[900] text-gray-950 tracking-tight">Community Voices</h3>
+                    <h3 class="text-2xl font-[900] text-gray-950 tracking-tight">UC People Voices</h3>
                     <div class="h-[1px] flex-1 bg-gray-100"></div>
                 </div>
             </div>
@@ -228,7 +228,7 @@
         <section class="max-w-[1600px] mx-auto px-8 md:px-12 space-y-20">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Ventures</h2>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Entrepreneur</h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
                         Hand-picked businesses that represent the highest standards of innovation and execution within our network.
                     </p>
@@ -321,7 +321,7 @@
                             </div>
                             <div class="space-y-2">
                                 <p class="text-2xl font-[900] text-gray-950 tracking-tight">Venture Pipeline Empty</p>
-                                <p class="text-base font-medium text-gray-500 max-w-md mx-auto">Our next generation of featured ventures is currently under review. Check back soon for new arrivals.</p>
+                                <p class="text-base font-medium text-gray-500 max-w-md mx-auto">Our next generation of featured preneurs is currently under review. Check back soon for new arrivals.</p>
                             </div>
                         </div>
                     </div>

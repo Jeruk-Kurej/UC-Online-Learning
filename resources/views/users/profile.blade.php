@@ -117,13 +117,13 @@
                             @endif
                             @if($owner->year_of_enrollment)
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-500 font-medium">Batch</span>
+                                    <span class="text-gray-500 font-medium">Student Year</span>
                                     <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
                                 </div>
                             @endif
                             @if($owner->current_status)
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-500 font-medium">Focus</span>
+                                    <span class="text-gray-500 font-medium">Current Condition</span>
                                     <span class="text-gray-900 font-bold capitalize">{{ $owner->current_status }}</span>
                                 </div>
                             @endif
