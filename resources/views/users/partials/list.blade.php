@@ -66,21 +66,21 @@
                     </td>
                     <td class="px-6 py-3 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
                     <td class="px-6 py-3 text-right">
-                        <div class="flex justify-end gap-1">
+                        <div class="flex justify-end gap-2">
                             <a href="{{ route('users.show', $user) }}" title="View Profile"
-                               class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-uco-orange-500 hover:bg-orange-50 transition">
+                               class="w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
                                 <i class="bi bi-eye-fill text-sm"></i>
                             </a>
                             @if(auth()->user()?->isAdmin())
                                 <a href="{{ route('users.edit', $user) }}" title="Edit User"
-                                   class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition">
+                                   class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-200 shadow-sm">
                                     <i class="bi bi-pencil-fill text-sm"></i>
                                 </a>
                                 @if(auth()->id() !== $user->id)
                                     <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
                                         @csrf @method('DELETE')
                                         <button type="submit" title="Delete"
-                                                class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-red-100 text-red-600 hover:bg-red-500 hover:text-white transition-all duration-200 shadow-sm">
                                             <i class="bi bi-trash-fill text-sm"></i>
                                         </button>
                                     </form>

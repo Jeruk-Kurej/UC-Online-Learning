@@ -168,7 +168,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin,student,alumni',
+            'role' => 'required|in:user,admin',
             'student_status' => 'required|string',
             
             // Identity & Contact
@@ -319,7 +319,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin,student,alumni',
+            'role' => 'required|in:user,admin',
             'student_status' => 'required|string',
             
             // Identity & Contact
