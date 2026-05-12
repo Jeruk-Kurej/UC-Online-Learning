@@ -64,7 +64,7 @@
                                 required
                             ></textarea>
                             <div style="margin-top: 8px; display: flex; justify-content: flex-end;">
-                                <span style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;" x-text="testimony.length + ' / 1000'"></span>
+                                <span style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;" x-text="testimony.length + ' / 255'"></span>
                             </div>
                         </div>
 

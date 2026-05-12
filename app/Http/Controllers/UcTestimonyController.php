@@ -49,7 +49,7 @@ class UcTestimonyController extends Controller
         $user = Auth::user();
 
         $validated = $request->validate([
-            'content' => ['required', 'string', 'min:5', 'max:1000'],
+            'content' => ['required', 'string', 'min:5', 'max:255'],
         ]);
 
         $user->forceFill([

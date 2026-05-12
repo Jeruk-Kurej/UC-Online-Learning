@@ -15,55 +15,64 @@
             @endif
         </div>
 
-        <div style="display: flex; gap: 35px; align-items: flex-start;">
-            
-            {{-- Left Sidebar --}}
-            <div style="width: 260px; flex-shrink: 0;">
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <div style="width: 140px; height: 180px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; margin-bottom: 20px; cursor: pointer; transition: 0.3s;" 
-                         onmouseover="this.querySelector('.photo-overlay').style.opacity='1'" 
-                         onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
-                        @if($user->profile_photo_url)
-                            <img id="preview-image" src="{{ $user->profile_photo_url }}" style="width: 100%; height: 100%; object-fit: cover;">
-                        @else
-                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff8a00, #ff4d00); display: flex; align-items: center; justify-content: center; color: white;">
-                                <span style="font-size: 48px; font-weight: 800; letter-spacing: -2px;">{{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $user->name)[1] ?? '', 0, 1)) }}</span>
-                            </div>
-                        @endif
-                        <label for="profile_photo" style="position: absolute; inset: 0; cursor: pointer; z-index: 20;">
-                            <input type="file" name="profile_photo" id="profile_photo" style="display: none;" onchange="const [file] = this.files; if (file) document.getElementById('preview-image').src = URL.createObjectURL(file)">
-                        </label>
-                        <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                            <span style="color: white; font-size: 9px; font-weight: 800; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px;">Update</span>
-                        </div>
-                    </div>
-                    <h3 style="font-size: 17px; font-weight: 800; text-align: center; margin: 0 0 4px 0; color: #0f172a; letter-spacing: -0.5px; line-height: 1.3;">{{ $user->prefix_title ? $user->prefix_title . ' ' : '' }}{{ $user->name }}{{ $user->suffix_title ? ', ' . $user->suffix_title : '' }}</h3>
-                    <p style="font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 12px; text-align: center; word-break: break-all;">{{ $user->email }}</p>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
-                        <span style="padding: 3px 8px; background: #f1f5f9; border-radius: 5px; font-size: 9px; font-weight: 800; color: #475569; text-transform: uppercase;">{{ $user->student_status ?? 'Active' }}</span>
-                    </div>
-                    <div style="width: 100%; height: 1px; background: #f1f5f9; margin: 12px 0;"></div>
-                    <p style="font-size: 11px; color: #94a3b8; text-align: center; line-height: 1.6; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Joined {{ $user->created_at->format('M Y') }}</p>
-                </div>
-            </div>
+        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+            @csrf
+            @method('PATCH')
 
-            {{-- Right Side: Form Card --}}
-            <div style="flex: 1;">
+            <div style="display: flex; gap: 35px; align-items: flex-start;">
                 
-                {{-- Navigation Tabs --}}
-                <div style="display: flex; gap: 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 10px 10px 0 0;">
-                    <button @click="activeTab = 'identity'" :style="activeTab === 'identity' ? 'background: white; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-right: 1px solid #e2e8f0; border-radius: 10px 0 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Identity</button>
-                    <button @click="activeTab = 'contact'" :style="activeTab === 'contact' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Contact</button>
-                    <button @click="activeTab = 'academic'" :style="activeTab === 'academic' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Academic</button>
-                    <button @click="activeTab = 'extras'" :style="activeTab === 'extras' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Extras</button>
+                {{-- Left Sidebar --}}
+                <div style="width: 260px; flex-shrink: 0;">
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                        <div id="photo-container" style="width: 140px; height: 180px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; margin-bottom: 20px; cursor: pointer; transition: 0.3s;" 
+                             onmouseover="this.querySelector('.photo-overlay').style.opacity='1'" 
+                             onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
+                            
+                            <img id="preview-image" src="{{ $user->profile_photo_url }}" style="width: 100%; height: 100%; object-fit: cover; {{ !$user->profile_photo_url ? 'display: none;' : '' }}">
+                            
+                            @if(!$user->profile_photo_url)
+                                <div id="initials-placeholder" style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff8a00, #ff4d00); display: flex; align-items: center; justify-content: center; color: white;">
+                                    <span style="font-size: 48px; font-weight: 800; letter-spacing: -2px;">{{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $user->name)[1] ?? '', 0, 1)) }}</span>
+                                </div>
+                            @endif
+
+                            <label for="profile_photo" style="position: absolute; inset: 0; cursor: pointer; z-index: 20;">
+                                <input type="file" name="profile_photo" id="profile_photo" style="display: none;" 
+                                       onchange="const [file] = this.files; if (file) { 
+                                           const preview = document.getElementById('preview-image');
+                                           const placeholder = document.getElementById('initials-placeholder');
+                                           preview.src = URL.createObjectURL(file);
+                                           preview.style.display = 'block';
+                                           if(placeholder) placeholder.style.display = 'none';
+                                       }">
+                            </label>
+                            <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                <span style="color: white; font-size: 9px; font-weight: 800; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px;">Update</span>
+                            </div>
+                        </div>
+                        <h3 style="font-size: 17px; font-weight: 800; text-align: center; margin: 0 0 4px 0; color: #0f172a; letter-spacing: -0.5px; line-height: 1.3;">{{ $user->prefix_title ? $user->prefix_title . ' ' : '' }}{{ $user->name }}{{ $user->suffix_title ? ', ' . $user->suffix_title : '' }}</h3>
+                        <p style="font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 12px; text-align: center; word-break: break-all;">{{ $user->email }}</p>
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                            <span style="padding: 3px 8px; background: #f1f5f9; border-radius: 5px; font-size: 9px; font-weight: 800; color: #475569; text-transform: uppercase;">{{ $user->student_status ?? 'Active' }}</span>
+                        </div>
+                        <div style="width: 100%; height: 1px; background: #f1f5f9; margin: 12px 0;"></div>
+                        <p style="font-size: 11px; color: #94a3b8; text-align: center; line-height: 1.6; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Joined {{ $user->created_at->format('M Y') }}</p>
+                    </div>
                 </div>
 
-                <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
-                        @csrf
-                        @method('PATCH')
+                {{-- Right Side: Form Card --}}
+                <div style="flex: 1;">
+                    
+                    {{-- Navigation Tabs --}}
+                    <div style="display: flex; gap: 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 10px 10px 0 0;">
+                        <button type="button" @click="activeTab = 'identity'" :style="activeTab === 'identity' ? 'background: white; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-right: 1px solid #e2e8f0; border-radius: 10px 0 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Identity</button>
+                        <button type="button" @click="activeTab = 'contact'" :style="activeTab === 'contact' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Contact</button>
+                        <button type="button" @click="activeTab = 'academic'" :style="activeTab === 'academic' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Academic</button>
+                        <button type="button" @click="activeTab = 'extras'" :style="activeTab === 'extras' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Extras</button>
+                    </div>
 
+                    <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         {{-- Identity --}}
                         <div x-show="activeTab === 'identity'">
                             <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
@@ -139,10 +148,10 @@
                                 Save Changes
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 
     <script>
