@@ -4,17 +4,7 @@
     {{-- Back Button Wrapper --}}
     <div class="mb-8 px-4 sm:px-0">
         <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-            @php
-                $backUrl = url()->previous();
-                if ($backUrl === url()->current() || str_contains($backUrl, '/login') || str_contains($backUrl, '/register')) {
-                    $backUrl = route('businesses.index');
-                }
-            @endphp
-            <a href="{{ $backUrl }}"
-                class="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
-                <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                <span>Back</span>
-            </a>
+
             <div class="flex-1 flex flex-row items-center sm:items-start gap-4 sm:gap-5">
                 <div class="flex-1 min-w-0">
                     <h1 class="text-2xl sm:text-3xl font-bold text-soft-gray-900 tracking-tight leading-tight">
