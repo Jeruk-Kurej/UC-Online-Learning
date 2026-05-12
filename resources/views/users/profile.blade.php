@@ -30,7 +30,6 @@
         <div class="md:sticky md:top-6 space-y-4">
             @php
                 $owner      = $user;
-                $ownerPhoto = $owner->profile_photo_url;
                 $ownerAcad  = $owner->academic_data ?? [];
                 $ownerGrad  = $owner->graduation_data ?? [];
                 $ownerPerso = $owner->personal_data ?? [];
@@ -40,52 +39,25 @@
                     'student' => 'UCO Student',
                     default   => ucfirst($owner->role ?? 'Member'),
                 };
-                $ownerPhotoUrl = $ownerPhoto
-                    ? storage_image_url($ownerPhoto, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'])
-                    : null;
+                // The model accessor now correctly resolves the path via HasImage::resolveImage
+                // It returns either the real photo URL, a Google Drive URL, or ui-avatars fallback
+                $resolvedPhotoUrl = $owner->profile_photo_url;
+                $isRealPhoto = $resolvedPhotoUrl && !str_contains($resolvedPhotoUrl, 'ui-avatars.com');
             @endphp
 
             {{-- ✨ Premium Owner Card --}}
-            <div class="relative overflow-hidden rounded-3xl shadow-xl" style="background: #fff;">
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
 
-                {{-- Vibrant gradient banner --}}
-                <div class="relative h-28 overflow-hidden"
-                    style="background: linear-gradient(135deg, #f7931e 0%, #fdb913 45%, #ff6b35 100%);">
-                    {{-- Blurred orbs --}}
-                    <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-30"
-                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
-                    <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full opacity-20"
-                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
-                    {{-- Mesh lines --}}
-                    <svg class="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <pattern id="owner-mesh" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="0.5"/>
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#owner-mesh)"/>
-                    </svg>
-                    {{-- UCO badge top-right --}}
-                    <div class="absolute top-3 right-4">
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
-                            style="background: rgba(255,255,255,0.25); backdrop-filter: blur(8px); color: #fff; border: 1px solid rgba(255,255,255,0.4);">
-                            <i class="bi bi-mortarboard-fill"></i>
-                            {{ $ownerRoleLabel }}
-                        </span>
-                    </div>
-                </div>
-
-                {{-- Avatar + body --}}
-                <div class="px-5 pb-5">
-                    {{-- Avatar overlapping banner --}}
-                    <div class="-mt-10 mb-3">
-                        @if ($ownerPhotoUrl)
-                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}"
-                                class="w-20 h-20 rounded-2xl object-cover shadow-xl"
-                                style="border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                {{-- Top section: Photo + Name/Info side by side --}}
+                <div class="p-5 flex items-start gap-4">
+                    {{-- Left: Avatar --}}
+                    <div class="flex-shrink-0">
+                        @if ($isRealPhoto)
+                            <img src="{{ $resolvedPhotoUrl }}" alt="{{ $owner->name }}"
+                                class="w-20 h-20 rounded-2xl object-cover shadow-md border-2 border-gray-100">
                         @else
-                            <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
-                                style="background: linear-gradient(135deg, #f7931e, #fdb913); border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                            <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border-2 border-orange-100"
+                                style="background: linear-gradient(135deg, #f7931e, #fdb913);">
                                 <span class="text-white text-3xl font-black select-none" style="text-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                                     {{ strtoupper(substr($owner->name, 0, 1)) }}
                                 </span>
@@ -93,95 +65,107 @@
                         @endif
                     </div>
 
-                    {{-- Name --}}
-                    <h3 class="text-lg font-extrabold text-gray-900 leading-tight">
-                        {{ $owner->name }}
-                    </h3>
+                    {{-- Right: Name, role, major --}}
+                    <div class="flex-1 min-w-0 pt-1">
+                        {{-- Name --}}
+                        <h3 class="text-lg font-extrabold text-gray-900 leading-tight truncate">
+                            {{ $owner->name }}
+                        </h3>
 
-                    @if ($owner->major)
-                        <p class="mt-1 text-xs font-medium flex items-center gap-1.5" style="color: #f7931e;">
-                            <i class="bi bi-book-fill text-[10px]"></i>
-                            {{ $owner->major }}
-                        </p>
-                    @endif
+                        @if ($owner->major)
+                            <p class="mt-1 text-xs font-semibold flex items-center gap-1.5 text-orange-500">
+                                <i class="bi bi-book-fill text-[10px]"></i>
+                                {{ $owner->major }}
+                            </p>
+                        @endif
 
-                    {{-- Details Section --}}
-                    <div class="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Academic Details</h4>
-                        <div class="space-y-2 text-xs">
-                            @if($owner->nis)
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-500 font-medium">NIS/NIM</span>
-                                    <span class="text-gray-900 font-bold">{{ $owner->nis }}</span>
-                                </div>
-                            @endif
-                            @if($owner->year_of_enrollment)
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-500 font-medium">Batch</span>
-                                    <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
-                                </div>
-                            @endif
-                            @if($owner->current_status)
-                                <div class="flex justify-between items-center">
-                                    <span class="text-gray-500 font-medium">Focus</span>
-                                    <span class="text-gray-900 font-bold capitalize">{{ $owner->current_status }}</span>
-                                </div>
-                            @endif
-                        </div>
+                        @if ($owner->student_status)
+                            <p class="mt-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                                {{ $owner->student_status }}
+                            </p>
+                        @endif
                     </div>
+                </div>
 
-                    {{-- Divider --}}
-                    <div class="my-4" style="height: 1px; background: linear-gradient(90deg, #f7931e22, #fdb91322, transparent);"></div>
+                {{-- Divider --}}
+                <div class="border-t border-gray-100 mx-5"></div>
 
-                    {{-- Contact items --}}
-                    <div class="space-y-1">
+                {{-- Academic Details --}}
+                <div class="px-5 py-4">
+                    <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Academic Details</h4>
+                    <div class="space-y-2 text-xs">
+                        @if($owner->nis)
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 font-medium">NIS/NIM</span>
+                                <span class="text-gray-900 font-bold">{{ $owner->nis }}</span>
+                            </div>
+                        @endif
+                        @if($owner->year_of_enrollment)
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 font-medium">Batch</span>
+                                <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
+                            </div>
+                        @endif
+                        @if($owner->graduate_year)
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 font-medium">Graduation</span>
+                                <span class="text-gray-900 font-bold">{{ $owner->graduate_year }}</span>
+                            </div>
+                        @endif
+                        @if($owner->current_status)
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 font-medium">Focus</span>
+                                <span class="text-gray-900 font-bold capitalize">{{ $owner->current_status }}</span>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Contact section --}}
+                @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                    <div class="border-t border-gray-100 mx-5"></div>
+                    <div class="px-5 py-4 space-y-1">
                         @if ($owner->whatsapp)
                             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}"
                                 target="_blank"
-                                class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-200"
-                                style="background: transparent;"
-                                onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='transparent'">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200"
-                                    style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a;"
-                                    onmouseover="this.style.background='linear-gradient(135deg,#16a34a,#22c55e)'; this.style.color='#fff';"
-                                    onmouseout="this.style.background='linear-gradient(135deg, #dcfce7, #bbf7d0)'; this.style.color='#16a34a';">
+                                class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-green-50">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200
+                                            bg-green-100 text-green-600 group-hover:bg-green-500 group-hover:text-white">
                                     <i class="bi bi-whatsapp"></i>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">WhatsApp</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $owner->whatsapp }}</p>
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">WhatsApp</p>
+                                    <p class="text-xs font-bold truncate text-gray-700 mt-0.5">{{ $owner->whatsapp }}</p>
                                 </div>
-                                <i class="bi bi-arrow-up-right text-[10px] transition-colors" style="color: #d1d5db;"></i>
+                                <i class="bi bi-arrow-up-right text-[10px] text-gray-300 group-hover:text-green-500"></i>
                             </a>
                         @endif
 
                         @if ($ownerPerso['instagram'] ?? false)
-                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                    style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); color: #db2777;">
+                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 bg-pink-100 text-pink-600">
                                     <i class="bi bi-instagram"></i>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Instagram</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">@{{ $ownerPerso['instagram'] }}</p>
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">Instagram</p>
+                                    <p class="text-xs font-bold truncate text-gray-700 mt-0.5">@{{ $ownerPerso['instagram'] }}</p>
                                 </div>
                             </div>
                         @endif
 
                         @if ($ownerGrad['official_email'] ?? false)
-                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                    style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb;">
+                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 bg-blue-100 text-blue-600">
                                     <i class="bi bi-envelope-fill"></i>
                                 </div>
                                 <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Email</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $ownerGrad['official_email'] }}</p>
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">Email</p>
+                                    <p class="text-xs font-bold truncate text-gray-700 mt-0.5">{{ $ownerGrad['official_email'] }}</p>
                                 </div>
                             </div>
                         @endif
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 

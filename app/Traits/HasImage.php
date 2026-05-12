@@ -39,8 +39,21 @@ trait HasImage
         }
 
         // 3. Handle Local Storage Paths
-        // If it exists in storage, return URL. Else fallback.
-        if (Storage::disk('public')->exists($path)) {
+        // Normalize: strip leading /storage/ prefix since disk('public') paths
+        // are relative to storage/app/public (e.g. 'profile-photos/file.jpg')
+        $normalizedPath = $path;
+        if (str_starts_with($normalizedPath, '/storage/')) {
+            $normalizedPath = substr($normalizedPath, strlen('/storage/'));
+        } elseif (str_starts_with($normalizedPath, 'storage/')) {
+            $normalizedPath = substr($normalizedPath, strlen('storage/'));
+        }
+
+        if (Storage::disk('public')->exists($normalizedPath)) {
+            return Storage::disk('public')->url($normalizedPath);
+        }
+
+        // Also check the original path as a last resort
+        if ($normalizedPath !== $path && Storage::disk('public')->exists($path)) {
             return Storage::disk('public')->url($path);
         }
 

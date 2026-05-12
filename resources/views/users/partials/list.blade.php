@@ -15,19 +15,43 @@
         </thead>
         <tbody class="divide-y">
             @forelse($users as $user)
+                @php
+                    $resolvedPhoto = $user->profile_photo_url;
+                    $hasRealPhoto  = $resolvedPhoto && !str_contains($resolvedPhoto, 'ui-avatars.com');
+                @endphp
                 <tr class="hover:bg-gray-50/50 transition">
-                    <td class="px-6 py-4 font-bold text-gray-900">{{ $user->name }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->email }}</td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-3">
+                        <div class="flex items-center gap-3">
+                            {{-- Avatar: real photo or gradient initials --}}
+                            <div class="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
+                                @if($hasRealPhoto)
+                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
+                                         style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="min-w-0">
+                                <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ $user->name }}</p>
+                                @if($user->nis)
+                                    <p class="text-[10px] text-gray-400 font-medium">NIS: {{ $user->nis }}</p>
+                                @endif
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->email }}</td>
+                    <td class="px-6 py-3">
                         <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
                             {{ $user->student_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-4 text-sm text-gray-500">{{ $user->major }}</td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->major }}</td>
+                    <td class="px-6 py-3 text-center">
                         <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
                     </td>
-                    <td class="px-6 py-4 text-center">
+                    <td class="px-6 py-3 text-center">
                         <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
                             @csrf
                             <button type="submit"
@@ -40,19 +64,27 @@
                             </button>
                         </form>
                     </td>
-                    <td class="px-6 py-4 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex justify-end gap-2">
-                            <a href="{{ route('users.show', $user) }}" class="p-2 text-gray-400 hover:text-uco-orange-500 transition">
-                                <i class="bi bi-eye-fill"></i>
+                    <td class="px-6 py-3 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
+                    <td class="px-6 py-3 text-right">
+                        <div class="flex justify-end gap-1">
+                            <a href="{{ route('users.show', $user) }}" title="View Profile"
+                               class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-uco-orange-500 hover:bg-orange-50 transition">
+                                <i class="bi bi-eye-fill text-sm"></i>
                             </a>
-                            @if(auth()->id() !== $user->id)
-                                <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="p-2 text-gray-400 hover:text-red-500 transition">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </form>
+                            @if(auth()->user()?->isAdmin())
+                                <a href="{{ route('users.edit', $user) }}" title="Edit User"
+                                   class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition">
+                                    <i class="bi bi-pencil-fill text-sm"></i>
+                                </a>
+                                @if(auth()->id() !== $user->id)
+                                    <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" title="Delete"
+                                                class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition">
+                                            <i class="bi bi-trash-fill text-sm"></i>
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
                         </div>
                     </td>
