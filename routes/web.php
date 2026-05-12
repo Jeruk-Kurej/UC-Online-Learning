@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
     Route::get('/api/regencies', [BusinessController::class, 'getRegencies'])->name('api.regencies');
 
+    Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
     Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 });
 

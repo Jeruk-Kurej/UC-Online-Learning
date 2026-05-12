@@ -10,6 +10,23 @@ use Illuminate\View\View;
 
 class UcTestimonyController extends Controller
 {
+    /**
+     * Display the authenticated user's testimony management page.
+     */
+    public function my(): View
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        
+        return view('uc-testimonies.my', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Display a public list of testimonies.
+     * Note: Removed from main navigation as per user request.
+     */
     public function index(): View
     {
         $testimonies = User::query()
@@ -23,34 +40,25 @@ class UcTestimonyController extends Controller
         return view('uc-testimonies.index', compact('testimonies'));
     }
 
+    /**
+     * Store or update the authenticated user's testimony.
+     */
     public function store(Request $request): RedirectResponse
     {
-        /** @var User|null $user */
+        /** @var User $user */
         $user = Auth::user();
 
-        if (! $user) {
-            return redirect()
-                ->route('login')
-                ->with('error', 'Please sign in before submitting a testimony.');
-        }
-
-        if ($user->isAdmin()) {
-            abort(403, 'Administrators cannot submit testimonies.');
-        }
-
         $validated = $request->validate([
-            'rating' => ['required', 'integer', 'between:1,5'],
-            'content' => ['required', 'string', 'min:20'],
+            'content' => ['required', 'string', 'min:5', 'max:1000'],
         ]);
 
         $user->forceFill([
             'testimony' => trim($validated['content']),
             'submitted_at' => now(),
-            'is_visible' => true,
         ])->save();
 
         return redirect()
-            ->route('uc-testimonies.index')
-            ->with('success', 'Thanks! Your testimony has been saved and will appear on the public page.');
+            ->route('uc-testimonies.my')
+            ->with('success', 'Your testimony has been saved successfully!');
     }
 }
