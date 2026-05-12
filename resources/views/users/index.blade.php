@@ -149,28 +149,34 @@
                     </select>
 
                     <select id="sort_year" name="sort_year" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                        <option value="">Angkatan: Default</option>
-                        <option value="desc" @selected(request('sort_year') === 'desc')>Terbaru → Terlama</option>
-                        <option value="asc" @selected(request('sort_year') === 'asc')>Terlama → Terbaru</option>
+                        <option value="">Student Year: Default</option>
+                        <option value="desc" @selected(request('sort_year') === 'desc')>Latest → Earliest</option>
+                        <option value="asc" @selected(request('sort_year') === 'asc')>Earliest → Latest</option>
                     </select>
 
                     <select id="student_status" name="student_status" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                        <option value="">Status: Semua</option>
+                        <option value="">Status: All</option>
                         <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
                         <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
                         <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
                         <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
                     </select>
 
+                    <select id="current_status" name="current_status" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                        <option value="">Category: All</option>
+                        <option value="Entrepreneur" @selected(request('current_status') === 'Entrepreneur')>Entrepreneur</option>
+                        <option value="Intrapreneur" @selected(request('current_status') === 'Intrapreneur')>Intrapreneur</option>
+                    </select>
+
                     <select id="major" name="major" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                        <option value="">Jurusan: Semua</option>
+                        <option value="">Major: All</option>
                         @foreach($availableMajors as $majorOption)
                             <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
                         @endforeach
                     </select>
 
                     <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                        <option value="">Tahun: Semua</option>
+                        <option value="">Year: All</option>
                         @foreach($availableEnrollmentYears as $yearOption)
                             <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
                         @endforeach

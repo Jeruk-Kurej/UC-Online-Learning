@@ -48,6 +48,7 @@ class UserController extends Controller
         $sortName = $request->get('sort_name');
         $sortYear = $request->get('sort_year');
         $studentStatus = $request->get('student_status');
+        $currentStatus = $request->get('current_status');
         $major = $request->get('major');
         $yearOfEnrollment = $request->get('year_of_enrollment');
 
@@ -74,6 +75,7 @@ class UserController extends Controller
                 });
             })
             ->when($studentStatus, fn ($q) => $q->where('student_status', $studentStatus))
+            ->when($currentStatus, fn ($q) => $q->whereRaw('LOWER(current_status) = ?', [strtolower($currentStatus)]))
             ->when($major, fn ($q) => $q->where('major', $major))
             ->when($yearOfEnrollment, fn ($q) => $q->where('year_of_enrollment', $yearOfEnrollment));
 
@@ -413,6 +415,21 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', "Success! The profile for '{$user->name}' has been updated.");
+    }
+
+    /**
+     * Toggle the featured status of a user.
+     */
+    public function toggleFeatured(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can toggle featured status.');
+        }
+
+        $user->update(['is_featured' => !$user->is_featured]);
+
+        $status = $user->is_featured ? 'added to' : 'removed from';
+        return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
     }
 
     /**
