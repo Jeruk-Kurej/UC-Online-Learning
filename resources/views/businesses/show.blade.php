@@ -1092,161 +1092,114 @@
                 $additionalOwners = $business->members()->where('users.id', '!=', $business->user_id)->get();
             @endphp
 
-            {{-- ✨ Premium Owner Card --}}
-            <div class="relative overflow-hidden rounded-3xl shadow-xl" style="background: #fff;">
-
-                {{-- Vibrant gradient banner --}}
-                <div class="relative h-28 overflow-hidden"
-                    style="background: linear-gradient(135deg, #f7931e 0%, #fdb913 45%, #ff6b35 100%);">
-                    {{-- Blurred orbs --}}
-                    <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-30"
-                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
-                    <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full opacity-20"
-                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
-                    {{-- Mesh lines --}}
-                    <svg class="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <pattern id="owner-mesh" width="20" height="20" patternUnits="userSpaceOnUse">
-                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="0.5"/>
-                            </pattern>
-                        </defs>
-                        <rect width="100%" height="100%" fill="url(#owner-mesh)"/>
-                    </svg>
-                    {{-- UCO badge top-right --}}
-                    <div class="absolute top-3 right-4">
-                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
-                            style="background: rgba(255,255,255,0.25); backdrop-filter: blur(8px); color: #fff; border: 1px solid rgba(255,255,255,0.4);">
-                            <i class="bi bi-mortarboard-fill"></i>
-                            {{ $ownerRoleLabel }}
-                        </span>
+            {{-- ✨ Elegant Owner Card (Clickable) --}}
+            <a href="{{ route('users.show', $owner) }}" class="block relative bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden group hover:border-orange-200 hover:shadow-[0_8px_30px_rgb(247,147,30,0.1)] transition-all">
+                
+                {{-- Decorative gradient blob --}}
+                <div class="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full blur-[40px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em]">
+                            {{ strtolower($owner->current_status ?? '') === 'entrepreneur' ? 'Owned By' : 'Main Contact' }}
+                        </p>
+                        <i class="bi bi-box-arrow-up-right text-gray-300 group-hover:text-orange-500 transition-colors text-xs"></i>
                     </div>
-                </div>
 
-                {{-- Avatar + body --}}
-                <div class="px-5 pb-5">
-                    {{-- Avatar overlapping banner --}}
-                    <div class="-mt-10 mb-3">
+                    <div class="flex items-center gap-4 mb-5">
+                        {{-- Avatar --}}
                         @if ($ownerPhotoUrl)
                             <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}"
-                                class="w-20 h-20 rounded-2xl object-cover shadow-xl"
-                                style="border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                                class="w-14 h-14 rounded-xl object-cover shadow-sm ring-1 ring-black/5 flex-shrink-0">
                         @else
-                            <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
-                                style="background: linear-gradient(135deg, #f7931e, #fdb913); border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
-                                <span class="text-white text-3xl font-black select-none" style="text-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                            <div class="w-14 h-14 rounded-xl flex items-center justify-center shadow-sm ring-1 ring-black/5 bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
+                                <span class="text-xl font-black text-gray-400 select-none">
                                     {{ strtoupper(substr($owner->name, 0, 1)) }}
                                 </span>
                             </div>
                         @endif
+
+                        {{-- Name & Role --}}
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-base font-extrabold text-gray-900 leading-tight truncate group-hover:text-orange-600 transition-colors">
+                                {{ $owner->name }}
+                            </h3>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
+                                    {{ $ownerRoleLabel }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
-                    {{-- Name --}}
-                    <h3 class="text-base font-extrabold text-gray-900 leading-tight">
-                        {{ $owner->name }}
-                    </h3>
-
-                    {{-- Position --}}
                     @if ($business->position)
-                        <p class="mt-1 text-xs font-medium flex items-center gap-1.5" style="color: #f7931e;">
-                            <i class="bi bi-briefcase-fill text-[10px]"></i>
-                            {{ $business->position }}
-                        </p>
+                        <div class="mb-4 flex items-center gap-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
+                            <i class="bi bi-briefcase text-gray-400"></i>
+                            <span class="truncate">{{ $business->position }}</span>
+                        </div>
                     @endif
 
-                    {{-- Divider --}}
-                    <div class="my-4" style="height: 1px; background: linear-gradient(90deg, #f7931e22, #fdb91322, transparent);"></div>
-
-                    {{-- Contact items --}}
-                    <div class="space-y-1">
+                    {{-- Contact Data Inside Card --}}
+                    <div class="space-y-2 mt-4 pt-4 border-t border-gray-50">
                         @if ($owner->whatsapp)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}"
-                                target="_blank"
-                                class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-200"
-                                style="background: transparent;"
-                                onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='transparent'">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200"
-                                    style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a;"
-                                    onmouseover="this.style.background='linear-gradient(135deg,#16a34a,#22c55e)'; this.style.color='#fff';"
-                                    onmouseout="this.style.background='linear-gradient(135deg, #dcfce7, #bbf7d0)'; this.style.color='#16a34a';">
+                            <div class="flex items-center gap-2.5 text-xs">
+                                <div class="w-6 h-6 rounded flex items-center justify-center bg-green-50 text-green-600 flex-shrink-0">
                                     <i class="bi bi-whatsapp"></i>
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">WhatsApp</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $owner->whatsapp }}</p>
-                                </div>
-                                <i class="bi bi-arrow-up-right text-[10px] transition-colors" style="color: #d1d5db;"></i>
-                            </a>
+                                <span class="text-gray-600 font-medium truncate">{{ $owner->whatsapp }}</span>
+                            </div>
                         @endif
-
                         @if ($ownerPerso['instagram'] ?? false)
-                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                    style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); color: #db2777;">
+                            <div class="flex items-center gap-2.5 text-xs">
+                                <div class="w-6 h-6 rounded flex items-center justify-center bg-pink-50 text-pink-600 flex-shrink-0">
                                     <i class="bi bi-instagram"></i>
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Instagram</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">@{{ $ownerPerso['instagram'] }}</p>
-                                </div>
+                                <span class="text-gray-600 font-medium truncate">{{ $ownerPerso['instagram'] }}</span>
                             </div>
                         @endif
-
                         @if ($ownerGrad['official_email'] ?? false)
-                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
-                                    style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb;">
+                            <div class="flex items-center gap-2.5 text-xs">
+                                <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-50 text-blue-600 flex-shrink-0">
                                     <i class="bi bi-envelope-fill"></i>
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Email</p>
-                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $ownerGrad['official_email'] }}</p>
-                                </div>
+                                <span class="text-gray-600 font-medium truncate">{{ $ownerGrad['official_email'] }}</span>
                             </div>
                         @endif
+                        @if(!($owner->whatsapp) && !($ownerPerso['instagram'] ?? false) && !($ownerGrad['official_email'] ?? false))
+                             <p class="text-[10px] text-gray-400 italic">Click to view full profile details</p>
+                        @endif
                     </div>
-
-                    {{-- View Full Profile CTA --}}
-                    <a href="{{ route('users.show', $owner) }}"
-                        class="group mt-4 w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 relative overflow-hidden"
-                        style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff; box-shadow: 0 4px 15px rgba(17,24,39,0.25);"
-                        onmouseover="this.style.background='linear-gradient(135deg, #f7931e, #fdb913)'; this.style.boxShadow='0 4px 20px rgba(247,147,30,0.4)';"
-                        onmouseout="this.style.background='linear-gradient(135deg, #111827, #1f2937)'; this.style.boxShadow='0 4px 15px rgba(17,24,39,0.25)';">
-                        <i class="bi bi-person-circle text-base"></i>
-                        View Full Profile
-                    </a>
                 </div>
-            </div>
+            </a>
 
             {{-- Additional Owners --}}
             @if ($additionalOwners->isNotEmpty())
-                <div class="rounded-3xl p-5 shadow-lg" style="background: linear-gradient(135deg, #fff 0%, #fff8f0 100%); border: 1px solid #ffeedd;">
-                    <p class="text-[10px] font-black uppercase tracking-[0.15em] mb-4 flex items-center gap-2" style="color: #f7931e;">
+                <div class="mt-8">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] mb-4 flex items-center gap-2 text-gray-500">
                         <i class="bi bi-people-fill"></i>
                         Also Managed By
                     </p>
-                    <div class="space-y-3">
+                    <div class="grid grid-cols-2 gap-4">
                         @foreach ($additionalOwners as $addOwner)
                             @php
                                 $addPhotoUrl = $addOwner->profile_photo_url
-                                    ? storage_image_url($addOwner->profile_photo_url, ['width' => 80, 'height' => 80, 'crop' => 'thumb'])
+                                    ? storage_image_url($addOwner->profile_photo_url, ['width' => 150, 'height' => 150, 'crop' => 'thumb'])
                                     : null;
                             @endphp
-                            <div class="flex items-center gap-3">
+                            <a href="{{ route('users.show', $addOwner) }}" class="flex flex-col items-center justify-center gap-2.5 p-4 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(247,147,30,0.08)] hover:border-orange-200 transition-all text-center group">
                                 @if ($addPhotoUrl)
                                     <img src="{{ $addPhotoUrl }}" alt="{{ $addOwner->name }}"
-                                        class="w-9 h-9 rounded-xl object-cover flex-shrink-0"
-                                        style="border: 2px solid #fff; box-shadow: 0 2px 8px rgba(247,147,30,0.2);">
+                                        class="w-12 h-12 rounded-full object-cover shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
                                 @else
-                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0"
-                                        style="background: linear-gradient(135deg, #fff3e8, #ffeedd); color: #f7931e; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(247,147,30,0.2);">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center text-base font-black bg-gradient-to-br from-gray-50 to-gray-100 text-gray-400 ring-1 ring-black/5 group-hover:scale-105 transition-transform shadow-sm group-hover:from-orange-50 group-hover:to-orange-100 group-hover:text-orange-600">
                                         {{ strtoupper(substr($addOwner->name, 0, 1)) }}
                                     </div>
                                 @endif
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-gray-900 leading-snug truncate">{{ $addOwner->name }}</p>
-                                    <p class="text-[11px] font-medium capitalize" style="color: #f7931e;">{{ $addOwner->role ?? 'Member' }}</p>
+                                <div class="min-w-0 w-full">
+                                    <p class="text-xs font-bold text-gray-900 leading-tight truncate group-hover:text-orange-600 transition-colors">{{ $addOwner->name }}</p>
+                                    <p class="text-[10px] font-medium text-gray-500 capitalize truncate mt-0.5">{{ $addOwner->pivot->position ?? ($addOwner->role ?? 'Member') }}</p>
                                 </div>
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                 </div>
