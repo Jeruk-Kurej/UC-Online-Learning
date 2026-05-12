@@ -1186,7 +1186,7 @@
                 <div class="relative z-10">
                     <div class="flex items-center justify-between mb-4">
                         <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em]">
-                            {{ strtolower($owner->current_status ?? '') === 'entrepreneur' ? 'Owned By' : 'Main Contact' }}
+                            Owned By
                         </p>
                         <i class="bi bi-box-arrow-up-right text-gray-300 group-hover:text-orange-500 transition-colors text-xs"></i>
                     </div>
@@ -1225,6 +1225,7 @@
                     @endif
 
                     {{-- Contact Data Inside Card --}}
+                    @if ($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
                     <div class="space-y-2 mt-4 pt-4 border-t border-gray-50">
                         @if ($owner->whatsapp)
                             <div class="flex items-center gap-2.5 text-xs">
@@ -1250,10 +1251,8 @@
                                 <span class="text-gray-600 font-medium truncate">{{ $ownerGrad['official_email'] }}</span>
                             </div>
                         @endif
-                        @if(!($owner->whatsapp) && !($ownerPerso['instagram'] ?? false) && !($ownerGrad['official_email'] ?? false))
-                             <p class="text-[10px] text-gray-400 italic">Click to view full profile details</p>
-                        @endif
                     </div>
+                    @endif
                 </div>
             </a>
 
