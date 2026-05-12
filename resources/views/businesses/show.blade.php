@@ -1233,14 +1233,14 @@
                     </div>
 
                     {{-- View Full Profile CTA --}}
-                    <button @click="showUserModal = true"
+                    <a href="{{ route('users.show', $owner) }}"
                         class="group mt-4 w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 relative overflow-hidden"
                         style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff; box-shadow: 0 4px 15px rgba(17,24,39,0.25);"
                         onmouseover="this.style.background='linear-gradient(135deg, #f7931e, #fdb913)'; this.style.boxShadow='0 4px 20px rgba(247,147,30,0.4)';"
                         onmouseout="this.style.background='linear-gradient(135deg, #111827, #1f2937)'; this.style.boxShadow='0 4px 15px rgba(17,24,39,0.25)';">
                         <i class="bi bi-person-circle text-base"></i>
                         View Full Profile
-                    </button>
+                    </a>
                 </div>
             </div>
 

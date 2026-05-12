@@ -264,19 +264,28 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified user.
+     * Display the specified user profile catalog.
      */
     public function show(User $user)
     {
-        // ✅ SIMPLIFIED: Admin can view any user
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403, 'Only administrators can view user details.');
-        }
+        // Publicly accessible catalog - removed admin guard
 
-        $user->load('businesses.products');
+        // Load owned businesses with relationships
+        $user->load(['businesses' => function ($query) {
+            $query->where('is_visible', true)->with('category');
+        }]);
 
-        // Pass both variable names to be safe for views that expect either
-        return view('users.show', ['userToShow' => $user, 'user' => $user]);
+        // Load businesses they are a member of
+        $user->load(['memberOfBusinesses' => function ($query) {
+            $query->where('is_visible', true)->with('category');
+        }]);
+
+        // We use view users.profile instead of users.show
+        return view('users.profile', [
+            'user' => $user,
+            'ownedBusinesses' => $user->businesses,
+            'memberBusinesses' => $user->memberOfBusinesses
+        ]);
     }
 
     /**
