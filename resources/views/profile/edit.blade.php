@@ -1,144 +1,160 @@
 <x-app-layout>
-    <div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ activeTab: 'basic' }">
+    {{-- UCO Profile Edit Page - V35: Tightened Spacing & Optimized Layout --}}
+    <div style="max-width: 1000px; margin: 40px auto; padding: 0 25px; font-family: 'Inter', -apple-system, sans-serif; color: #1e293b;" x-data="{ activeTab: 'identity' }">
         
-        <div class="mb-10">
-            <h1 class="text-3xl font-black text-gray-900">Edit Profile</h1>
-            <p class="text-gray-500 font-medium">Keep your professional information up to date.</p>
+        {{-- Header --}}
+        <div style="margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 style="font-size: 30px; font-weight: 800; letter-spacing: -1.2px; margin: 0; color: #0f172a;">Profile Settings</h1>
+                <p style="color: #64748b; font-size: 13px; margin-top: 4px; font-weight: 500;">Manage your personal information and academic records.</p>
+            </div>
+            @if($user->submitted_at)
+                <div style="font-size: 10px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px;">
+                    Last Submitted: {{ $user->submitted_at->format('d M Y') }}
+                </div>
+            @endif
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-8">
-            {{-- Navigation --}}
-            <div class="lg:w-64 flex flex-col gap-1">
-                <button @click="activeTab = 'basic'" :class="activeTab === 'basic' ? 'bg-white shadow-sm border border-gray-200 text-gray-900 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium'" class="px-4 py-3 rounded-md text-left text-sm transition-all duration-200">
-                    Basic Info
-                </button>
-                <button @click="activeTab = 'contact'" :class="activeTab === 'contact' ? 'bg-white shadow-sm border border-gray-200 text-gray-900 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium'" class="px-4 py-3 rounded-md text-left text-sm transition-all duration-200">
-                    Contact
-                </button>
-                <button @click="activeTab = 'academic'" :class="activeTab === 'academic' ? 'bg-white shadow-sm border border-gray-200 text-gray-900 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium'" class="px-4 py-3 rounded-md text-left text-sm transition-all duration-200">
-                    Academic
-                </button>
-                <button @click="activeTab = 'security'" :class="activeTab === 'security' ? 'bg-white shadow-sm border border-gray-200 text-gray-900 font-bold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 font-medium'" class="px-4 py-3 rounded-md text-left text-sm transition-all duration-200">
-                    Security
-                </button>
+        <div style="display: flex; gap: 35px; align-items: flex-start;">
+            
+            {{-- Left Sidebar --}}
+            <div style="width: 260px; flex-shrink: 0;">
+                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <div style="width: 140px; height: 180px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; margin-bottom: 20px; cursor: pointer; transition: 0.3s;" 
+                         onmouseover="this.querySelector('.photo-overlay').style.opacity='1'" 
+                         onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
+                        @if($user->profile_photo_url)
+                            <img id="preview-image" src="{{ $user->profile_photo_url }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #ff8a00, #ff4d00); display: flex; align-items: center; justify-content: center; color: white;">
+                                <span style="font-size: 48px; font-weight: 800; letter-spacing: -2px;">{{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', $user->name)[1] ?? '', 0, 1)) }}</span>
+                            </div>
+                        @endif
+                        <label for="profile_photo" style="position: absolute; inset: 0; cursor: pointer; z-index: 20;">
+                            <input type="file" name="profile_photo" id="profile_photo" style="display: none;" onchange="const [file] = this.files; if (file) document.getElementById('preview-image').src = URL.createObjectURL(file)">
+                        </label>
+                        <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            <span style="color: white; font-size: 9px; font-weight: 800; text-transform: uppercase; margin-top: 6px; letter-spacing: 0.5px;">Update</span>
+                        </div>
+                    </div>
+                    <h3 style="font-size: 17px; font-weight: 800; text-align: center; margin: 0 0 4px 0; color: #0f172a; letter-spacing: -0.5px; line-height: 1.3;">{{ $user->prefix_title ? $user->prefix_title . ' ' : '' }}{{ $user->name }}{{ $user->suffix_title ? ', ' . $user->suffix_title : '' }}</h3>
+                    <p style="font-size: 12px; font-weight: 500; color: #64748b; margin-bottom: 12px; text-align: center; word-break: break-all;">{{ $user->email }}</p>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                        <span style="padding: 3px 8px; background: #f1f5f9; border-radius: 5px; font-size: 9px; font-weight: 800; color: #475569; text-transform: uppercase;">{{ $user->student_status ?? 'Active' }}</span>
+                    </div>
+                    <div style="width: 100%; height: 1px; background: #f1f5f9; margin: 12px 0;"></div>
+                    <p style="font-size: 11px; color: #94a3b8; text-align: center; line-height: 1.6; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Joined {{ $user->created_at->format('M Y') }}</p>
+                </div>
             </div>
 
-            {{-- Form Content --}}
-            <div class="flex-1 bg-white border rounded-xl p-10 shadow-sm">
-                <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="space-y-10">
-                    @csrf
-                    @method('PATCH')
+            {{-- Right Side: Form Card --}}
+            <div style="flex: 1;">
+                
+                {{-- Navigation Tabs --}}
+                <div style="display: flex; gap: 20px; border-bottom: 1px solid #e2e8f0; background: #f8fafc; border: 1px solid #e2e8f0; border-bottom: none; border-radius: 10px 10px 0 0;">
+                    <button @click="activeTab = 'identity'" :style="activeTab === 'identity' ? 'background: white; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-right: 1px solid #e2e8f0; border-radius: 10px 0 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Identity</button>
+                    <button @click="activeTab = 'contact'" :style="activeTab === 'contact' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Contact</button>
+                    <button @click="activeTab = 'academic'" :style="activeTab === 'academic' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Academic</button>
+                    <button @click="activeTab = 'extras'" :style="activeTab === 'extras' ? 'background: white; border: 1px solid #e2e8f0; border-bottom: 2px solid white; color: #0f172a; font-weight: 800; border-radius: 10px 10px 0 0;' : 'background: transparent; border: none; color: #64748b; font-weight: 600;'" style="padding: 15px 40px; font-size: 13px; cursor: pointer; transition: 0.2s; margin-bottom: -1px; position: relative; z-index: 10; white-space: nowrap;">Extras</button>
+                </div>
 
-                    {{-- Basic Tab --}}
-                    <div x-show="activeTab === 'basic'" class="space-y-8">
-                        <div class="flex flex-col sm:flex-row gap-8 items-center border-b pb-10">
-                            <div class="relative group">
-                                <div class="w-32 h-32 rounded-full border-4 border-gray-50 shadow-sm overflow-hidden bg-gray-100 flex items-center justify-center">
-                                    @if($user->profile_photo_url)
-                                        <img id="preview-image" src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover">
-                                    @else
-                                        <i class="bi bi-person text-5xl text-gray-300"></i>
-                                    @endif
+                <div style="background: white; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                    <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+                        @csrf
+                        @method('PATCH')
+
+                        {{-- Identity --}}
+                        <div x-show="activeTab === 'identity'">
+                            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
+                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Full Name</label>
+                                <div style="flex: 1; display: flex; gap: 10px;">
+                                    <input type="text" name="prefix_title" value="{{ old('prefix_title', $user->prefix_title) }}" placeholder="Prefix" style="width: 80px; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
+                                    <input type="text" name="name" value="{{ old('name', $user->name) }}" placeholder="Full Name" style="flex: 1; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
+                                    <input type="text" name="suffix_title" value="{{ old('suffix_title', $user->suffix_title) }}" placeholder="Suffix" style="width: 90px; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
                                 </div>
-                                <label for="profile_photo" class="absolute bottom-0 right-0 w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center cursor-pointer hover:bg-black transition shadow-lg">
-                                    <i class="bi bi-camera"></i>
-                                    <input type="file" name="profile_photo" id="profile_photo" class="hidden" onchange="const [file] = this.files; if (file) document.getElementById('preview-image').src = URL.createObjectURL(file)">
-                                </label>
                             </div>
-                            <div class="flex-1 text-center sm:text-left">
-                                <h3 class="text-lg font-black text-gray-900">Profile Photo</h3>
-                                <p class="text-sm text-gray-500">JPG, PNG or GIF. Max size 2MB.</p>
+                            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
+                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Personal Email</label>
+                                <input type="email" name="personal_email" value="{{ old('personal_email', $user->personal_email) }}" style="flex: 1; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
                             </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Full Name</label>
-                                <input type="text" name="name" value="{{ old('name', $user->name) }}" class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Email Address</label>
-                                <input type="email" value="{{ $user->email }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
-                                <p class="text-[10px] text-gray-400">Email cannot be changed.</p>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Status</label>
-                                <input type="text" value="{{ $user->display_status }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Role</label>
-                                <input type="text" value="{{ ucfirst($user->role) }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
+                            <div style="margin-bottom: 25px; display: flex; align-items: flex-start; gap: 25px;">
+                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 12px;">Testimony</label>
+                                <textarea name="testimony" rows="3" style="flex: 1; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 500; font-family: inherit; resize: none; outline: none; box-sizing: border-box;">{{ old('testimony', $user->testimony) }}</textarea>
                             </div>
                         </div>
 
-                        <div class="space-y-2">
-                            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Testimony</label>
-                            <textarea name="testimony" rows="4" class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500" placeholder="Share how UCO impacted your entrepreneurial journey...">{{ old('testimony', $user->testimony) }}</textarea>
-                            <p class="text-[10px] text-gray-400">This may be displayed publicly on the homepage.</p>
+                        {{-- Contact --}}
+                        <div x-show="activeTab === 'contact'">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Phone Number</label><input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Mobile Number</label><input type="text" name="mobile_number" value="{{ old('mobile_number', $user->mobile_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">WhatsApp</label><input type="text" name="whatsapp" value="{{ old('whatsapp', $user->whatsapp) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">LinkedIn URL</label><input type="url" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- Contact Tab --}}
-                    <div x-show="activeTab === 'contact'" class="space-y-8">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">WhatsApp Number</label>
-                                <input type="text" name="whatsapp" value="{{ old('whatsapp', $user->whatsapp) }}" placeholder="0812..." class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500">
+                        {{-- Academic --}}
+                        <div x-show="activeTab === 'academic'">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Student ID (NIS)</label><div style="width: 100%; height: 44px; padding: 0 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 700; color: #64748b; display: flex; align-items: center; box-sizing: border-box;">{{ $user->nis }}</div></div>
+                                <div style="margin-bottom: 20px; position: relative;">
+                                    <label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Current Status</label>
+                                    <select name="current_status" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; color: #0f172a; outline: none; appearance: none; background: white; cursor: pointer; box-sizing: border-box;">
+                                        <option value="Entrepreneur" {{ old('current_status', $user->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
+                                        <option value="Intrapreneur" {{ old('current_status', $user->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
+                                    </select>
+                                    <div style="position: absolute; right: 15px; top: 35px; pointer-events: none;"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                </div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Enrollment Year</label><input type="text" name="year_of_enrollment" value="{{ old('year_of_enrollment', $user->year_of_enrollment) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                                <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Graduate Year</label><input type="text" name="graduate_year" value="{{ old('graduate_year', $user->graduate_year) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">LinkedIn Profile URL</label>
-                                <input type="url" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" placeholder="https://linkedin.com/in/..." class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500">
-                            </div>
+                            <div style="margin-bottom: 20px;"><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px;">Major</label><div style="width: 100%; height: 44px; padding: 0 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 700; color: #64748b; display: flex; align-items: center; box-sizing: border-box;">{{ $user->major }}</div></div>
                         </div>
-                    </div>
 
-                    {{-- Academic Tab --}}
-                    <div x-show="activeTab === 'academic'" class="space-y-8">
-                        <p class="text-sm text-gray-400 italic">Academic information is managed by admin from the import data.</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">NIS (Student ID)</label>
-                                <input type="text" value="{{ $user->nis }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
+                        {{-- Extras --}}
+                        <div x-show="activeTab === 'extras'">
+                            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
+                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Curriculum Vitae</label>
+                                <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                                    <div style="flex: 1; position: relative;">
+                                        <input type="file" name="cv_file" id="cv_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('cv-name').innerText = this.files[0].name">
+                                        <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="cv-name">PDF or Doc file...</span></div>
+                                    </div>
+                                    @if($user->cv_url) <a href="{{ $user->cv_url }}" target="_blank" style="padding: 10px 15px; background: #f1f5f9; border-radius: 7px; color: #0f172a; font-size: 11px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">View</a> @endif
+                                </div>
                             </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Major / Peminatan</label>
-                                <input type="text" value="{{ $user->major }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Year of Enrollment</label>
-                                <input type="text" value="{{ $user->year_of_enrollment }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Graduate Year</label>
-                                <input type="text" value="{{ $user->graduate_year ?? 'Active Student' }}" class="w-full border-gray-200 rounded-lg px-5 py-3 bg-gray-50 text-gray-500 cursor-not-allowed" disabled>
+                            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
+                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Activities Doc</label>
+                                <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
+                                    <div style="flex: 1; position: relative;">
+                                        <input type="file" name="activities_file" id="activities_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('act-name').innerText = this.files[0].name">
+                                        <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="act-name">Documentation file...</span></div>
+                                    </div>
+                                    @if($user->activities_doc_url) <a href="{{ $user->activities_doc_url }}" target="_blank" style="padding: 10px 15px; background: #f1f5f9; border-radius: 7px; color: #0f172a; font-size: 11px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">View</a> @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Security Tab --}}
-                    <div x-show="activeTab === 'security'" class="space-y-8">
-                        <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 text-sm text-blue-700">
-                            <i class="bi bi-info-circle mr-1"></i> This password is only used to log in to this website.
+                        {{-- Footer Action --}}
+                        <div style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 25px; display: flex; justify-content: flex-end; align-items: center;">
+                            <button type="submit" style="background: #198754; color: white; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 2px 8px rgba(25, 135, 84, 0.2);">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21V13H7V21" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 3V8H15" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                Save Changes
+                            </button>
                         </div>
-                        <div class="space-y-6">
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">New Password</label>
-                                <input type="password" name="password" class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500" placeholder="Minimum 8 characters">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Confirm Password</label>
-                                <input type="password" name="password_confirmation" class="w-full border-gray-200 rounded-lg px-5 py-3 focus:ring-uco-orange-500 focus:border-uco-orange-500">
-                            </div>
-                            <p class="text-xs text-gray-400 italic">Leave empty to keep current password.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-end gap-3 pt-8 border-t border-gray-100">
-                        <button type="button" onclick="history.back()" class="px-6 py-2.5 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition">Cancel</button>
-                        <button type="submit" class="px-6 py-2.5 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">Update Profile</button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+                event.preventDefault();
+                event.target.blur();
+            }
+        });
+    </script>
 </x-app-layout>

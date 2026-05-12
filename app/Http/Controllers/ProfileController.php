@@ -24,13 +24,25 @@ class ProfileController extends Controller
         $user = $request->user();
         $validated = $request->validated();
 
-        $user->fill(collect($validated)->except(['profile_photo', 'password'])->toArray());
+        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_file', 'password'])->toArray());
 
         if ($request->hasFile('profile_photo')) {
             $file = $request->file('profile_photo');
             $slug = Str::slug($user->name, '_');
-            $path = $file->storeAs('profile-photos', $slug . '_' . time() . '.' . $file->getClientOriginalExtension(), config('filesystems.default'));
-            $user->profile_photo_url = $path;
+            $path = $file->storeAs('profile-photos', $slug . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $user->profile_photo_url = Storage::url($path);
+        }
+
+        if ($request->hasFile('cv_file')) {
+            $file = $request->file('cv_file');
+            $path = $file->storeAs('student-cvs', 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $user->cv_url = Storage::url($path);
+        }
+
+        if ($request->hasFile('activities_file')) {
+            $file = $request->file('activities_file');
+            $path = $file->storeAs('student-activities', 'act_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $user->activities_doc_url = Storage::url($path);
         }
 
         if ($request->filled('password')) {
