@@ -65,6 +65,10 @@
 
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-wrap items-center gap-2 mb-2">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-xl {{ strtolower($business->type ?? '') === 'entrepreneur' ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' }}">
+                                <i class="bi bi-person-workspace text-[10px]"></i>
+                                {{ ucfirst($business->type ?? 'Entrepreneur') }}
+                            </span>
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 bg-soft-gray-100 text-soft-gray-700 text-xs font-semibold rounded-xl max-w-[220px]"
                                 title="{{ $businessTypeName }}">
@@ -265,6 +269,87 @@
                                 <h5 class="text-base font-extrabold text-gray-800">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
                                 <p class="text-[9px] text-gray-400 font-medium mt-0.5">Founding academic batch</p>
                             </div>
+                        </div>
+                    </div>
+
+                    {{-- Comprehensive Business Details --}}
+                    <div class="mb-12">
+                        <h4 class="text-sm font-bold text-soft-gray-900 uppercase tracking-wider mb-6">Business Operations & Details</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                            {{-- Target Market --}}
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Target Market</p>
+                                <p class="text-sm font-bold text-gray-800">{{ $business->target_market ?: 'Not specified' }}</p>
+                            </div>
+
+                            {{-- Customer Base --}}
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Customer Base Size</p>
+                                <p class="text-sm font-bold text-gray-800">{{ $business->customer_base_size ?: 'Not specified' }}</p>
+                            </div>
+
+                            {{-- Scale --}}
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Business Scale</p>
+                                <p class="text-sm font-bold text-gray-800">{{ $business->business_scale ?: 'Not specified' }}</p>
+                            </div>
+
+                            {{-- Location --}}
+                            <div class="space-y-1">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</p>
+                                <p class="text-sm font-bold text-gray-800">
+                                    {{ $business->city ? $business->city . ($business->province ? ', ' . $business->province : '') : ($business->province ?: 'Not specified') }}
+                                </p>
+                            </div>
+
+                            {{-- Legality --}}
+                            <div class="space-y-1 md:col-span-2 pt-3 border-t border-gray-100">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Legality</p>
+                                <div class="flex flex-wrap gap-4">
+                                    <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                                        <i class="bi bi-briefcase text-gray-400"></i>
+                                        <span class="text-xs font-bold text-gray-700">Business: <span class="font-medium">{{ $business->business_legality ?: 'None' }}</span></span>
+                                    </div>
+                                    <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border border-gray-100 shadow-sm">
+                                        <i class="bi bi-box-seam text-gray-400"></i>
+                                        <span class="text-xs font-bold text-gray-700">Product: <span class="font-medium">{{ $business->product_legality ?: 'None' }}</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- Connect & Contacts --}}
+                            @if($business->website || $business->email || $business->instagram || $business->whatsapp)
+                            <div class="space-y-2 md:col-span-2 pt-3 border-t border-gray-100">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Connect</p>
+                                <div class="flex flex-wrap gap-3">
+                                    @if($business->website)
+                                        <a href="{{ str_starts_with($business->website, 'http') ? $business->website : 'https://' . $business->website }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-700 transition-colors border border-gray-200">
+                                            <i class="bi bi-globe text-gray-500"></i>
+                                            <span class="text-xs font-bold">{{ preg_replace('#^https?://#', '', $business->website) }}</span>
+                                        </a>
+                                    @endif
+                                    @if($business->whatsapp)
+                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-50 hover:bg-green-100 text-green-700 transition-colors border border-green-200">
+                                            <i class="bi bi-whatsapp"></i>
+                                            <span class="text-xs font-bold">{{ $business->whatsapp }}</span>
+                                        </a>
+                                    @endif
+                                    @if($business->instagram)
+                                        <a href="https://instagram.com/{{ ltrim($business->instagram, '@') }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 transition-colors border border-pink-200">
+                                            <i class="bi bi-instagram"></i>
+                                            <span class="text-xs font-bold">{{ $business->instagram }}</span>
+                                        </a>
+                                    @endif
+                                    @if($business->email)
+                                        <a href="mailto:{{ $business->email }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors border border-blue-200">
+                                            <i class="bi bi-envelope-fill"></i>
+                                            <span class="text-xs font-bold">{{ $business->email }}</span>
+                                        </a>
+                                    @endif
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -1071,8 +1156,8 @@
         </div>
         {{-- END LEFT COLUMN --}}
 
-        {{-- ═══ RIGHT COLUMN: Owner Profile ═══ --}}
-        <div class="md:sticky md:top-6 space-y-4">
+        {{-- ═══ RIGHT COLUMN (35%) ═══ --}}
+        <div class="md:sticky md:top-6 min-w-0 flex flex-col gap-6">
 
             @php
                 $owner      = $business->user;
