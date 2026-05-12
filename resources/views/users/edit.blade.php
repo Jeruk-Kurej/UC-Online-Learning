@@ -2,61 +2,90 @@
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
         <style>
-            .ts-wrapper {
-                width: 100% !important;
-                display: block !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-sizing: border-box !important;
+            .form-label-custom {
+                display: block; 
+                font-size: 10px; 
+                font-weight: 800; 
+                color: #64748b; 
+                text-transform: uppercase; 
+                margin-bottom: 8px;
+                letter-spacing: 0.5px;
             }
 
+            .form-input-custom {
+                width: 100%; 
+                height: 44px; 
+                padding: 0 15px; 
+                border: 1.5px solid #e2e8f0; 
+                border-radius: 7px; 
+                font-size: 13px; 
+                font-weight: 600; 
+                outline: none; 
+                box-sizing: border-box;
+                transition: all 0.2s ease;
+                background: white;
+            }
+
+            .form-input-custom:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            }
+
+            .form-file-container-custom {
+                position: relative; 
+                display: flex; 
+                align-items: center; 
+                justify-content: space-between; 
+                padding: 0 15px; 
+                height: 44px;
+                border: 1.5px dashed #cbd5e1; 
+                border-radius: 7px; 
+                background: #f8fafc; 
+                transition: all 0.2s ease;
+                cursor: pointer;
+                overflow: hidden;
+            }
+
+            .form-file-container-custom:hover {
+                border-color: #3b82f6;
+                background: white;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.05);
+            }
+
+            .form-textarea-custom {
+                width: 100%; 
+                padding: 12px 15px; 
+                border: 1.5px solid #e2e8f0; 
+                border-radius: 7px; 
+                font-size: 13px; 
+                font-weight: 600; 
+                outline: none; 
+                box-sizing: border-box;
+                transition: all 0.2s ease;
+                min-height: 100px;
+            }
+
+            .form-textarea-custom:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+            }
+
+            /* TomSelect Overrides */
             .ts-wrapper .ts-control {
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 0.75rem !important;
-                padding: 10px 16px !important; 
-                min-height: 42px !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-                background: white !important;
+                border: 1.5px solid #e2e8f0 !important;
+                border-radius: 7px !important;
+                height: 44px !important;
+                padding: 0 15px !important;
                 display: flex !important;
                 align-items: center !important;
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                box-shadow: none !important;
             }
 
             .ts-wrapper.focus .ts-control {
-                border-color: #111827 !important;
-                box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
-                ring: none !important;
-            }
-
-            .ts-dropdown {
-                background-color: white !important;
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-                margin-top: 6px !important;
-                padding: 6px !important;
-                z-index: 1000 !important;
-            }
-
-            .ts-dropdown .option {
-                padding: 8px 12px !important;
-                font-size: 13px !important;
-                color: #475569 !important;
-                border-radius: 0.75rem !important;
-                margin-bottom: 2px !important;
-                transition: all 0.15s ease !important;
-            }
-
-            .ts-dropdown .option.active {
-                background-color: #fff7ed !important;
-                color: #f97316 !important;
-                font-weight: 600 !important;
-            }
-
-            .ts-wrapper .ts-control>input {
-                font-size: 14px !important;
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
             }
         </style>
     @endpush
@@ -84,21 +113,22 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Email --}}
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="email" class="form-label-custom">
                         Email Address <span class="text-red-500">*</span>
                     </label>
                     <input type="email" name="email" id="email" value="{{ old('email', $userToEdit->email) }}" required
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('email') border-red-500 @enderror">
+                           class="form-input-custom @error('email') border-red-500 @enderror">
                     @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Role --}}
                 <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="role" class="form-label-custom">
                         Role <span class="text-red-500">*</span>
                     </label>
                     <select name="role" id="role" required class="block w-full">
-                        <option value="user" {{ old('role', $userToEdit->role) === 'user' ? 'selected' : '' }}>User</option>
+                        <option value="student" {{ old('role', $userToEdit->role) === 'student' ? 'selected' : '' }}>Student</option>
+                        <option value="alumni" {{ old('role', $userToEdit->role) === 'alumni' ? 'selected' : '' }}>Alumni</option>
                         <option value="admin" {{ old('role', $userToEdit->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                     @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
@@ -106,26 +136,26 @@
 
                 {{-- Password --}}
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="password" class="form-label-custom">
                         Password (leave blank to keep existing)
                     </label>
                     <input type="password" name="password" id="password"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('password') border-red-500 @enderror">
+                           class="form-input-custom @error('password') border-red-500 @enderror">
                     @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Password Confirmation --}}
                 <div>
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="password_confirmation" class="form-label-custom">
                         Confirm Password
                     </label>
                     <input type="password" name="password_confirmation" id="password_confirmation"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Student Status --}}
                 <div>
-                    <label for="student_status" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="student_status" class="form-label-custom">
                         Student Status <span class="text-red-500">*</span>
                     </label>
                     <select name="student_status" id="student_status" required class="block w-full">
@@ -138,8 +168,6 @@
                     </select>
                     @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
-
-
             </div>
         </div>
 
@@ -150,62 +178,62 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Prefix Title --}}
                 <div>
-                    <label for="prefix_title" class="block text-sm font-medium text-gray-700 mb-2">Prefix Title</label>
+                    <label for="prefix_title" class="form-label-custom">Prefix Title</label>
                     <input type="text" name="prefix_title" id="prefix_title" value="{{ old('prefix_title', $userToEdit->prefix_title) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Full Name --}}
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="name" class="form-label-custom">
                         Full Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name', $userToEdit->name) }}" required
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('name') border-red-500 @enderror">
+                           class="form-input-custom @error('name') border-red-500 @enderror">
                     @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Suffix Title --}}
                 <div>
-                    <label for="suffix_title" class="block text-sm font-medium text-gray-700 mb-2">Suffix Title</label>
+                    <label for="suffix_title" class="form-label-custom">Suffix Title</label>
                     <input type="text" name="suffix_title" id="suffix_title" value="{{ old('suffix_title', $userToEdit->suffix_title) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Personal Email --}}
                 <div>
-                    <label for="personal_email" class="block text-sm font-medium text-gray-700 mb-2">Personal Email</label>
+                    <label for="personal_email" class="form-label-custom">Personal Email</label>
                     <input type="email" name="personal_email" id="personal_email" value="{{ old('personal_email', $userToEdit->personal_email) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('personal_email') border-red-500 @enderror">
+                           class="form-input-custom @error('personal_email') border-red-500 @enderror">
                     @error('personal_email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Phone Number --}}
                 <div>
-                    <label for="phone_number" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <label for="phone_number" class="form-label-custom">Phone Number</label>
                     <input type="tel" name="phone_number" id="phone_number" value="{{ old('phone_number', $userToEdit->phone_number) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Mobile Number --}}
                 <div>
-                    <label for="mobile_number" class="block text-sm font-medium text-gray-700 mb-2">Mobile Number</label>
+                    <label for="mobile_number" class="form-label-custom">Mobile Number</label>
                     <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number', $userToEdit->mobile_number) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- WhatsApp --}}
                 <div>
-                    <label for="whatsapp" class="block text-sm font-medium text-gray-700 mb-2">WhatsApp Number</label>
+                    <label for="whatsapp" class="form-label-custom">WhatsApp Number</label>
                     <input type="tel" name="whatsapp" id="whatsapp" value="{{ old('whatsapp', $userToEdit->whatsapp) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- LinkedIn --}}
                 <div>
-                    <label for="linkedin" class="block text-sm font-medium text-gray-700 mb-2">LinkedIn URL</label>
+                    <label for="linkedin" class="form-label-custom">LinkedIn URL</label>
                     <input type="url" name="linkedin" id="linkedin" value="{{ old('linkedin', $userToEdit->linkedin) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
             </div>
         </div>
@@ -217,50 +245,53 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- NIS --}}
                 <div>
-                    <label for="nis" class="block text-sm font-medium text-gray-700 mb-2">NIS (Student ID)</label>
+                    <label for="nis" class="form-label-custom">NIS (Student ID)</label>
                     <input type="text" name="nis" id="nis" value="{{ old('nis', $userToEdit->nis) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Year of Enrollment --}}
                 <div>
-                    <label for="year_of_enrollment" class="block text-sm font-medium text-gray-700 mb-2">Year of Enrollment</label>
+                    <label for="year_of_enrollment" class="form-label-custom">Year of Enrollment</label>
                     <input type="text" name="year_of_enrollment" id="year_of_enrollment" value="{{ old('year_of_enrollment', $userToEdit->year_of_enrollment) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="e.g. 2023">
+                           class="form-input-custom" placeholder="e.g. 2023">
                 </div>
 
                 {{-- Graduate Year --}}
                 <div>
-                    <label for="graduate_year" class="block text-sm font-medium text-gray-700 mb-2">Graduate Year</label>
+                    <label for="graduate_year" class="form-label-custom">Graduate Year</label>
                     <input type="text" name="graduate_year" id="graduate_year" value="{{ old('graduate_year', $userToEdit->graduate_year) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="e.g. 2027">
+                           class="form-input-custom" placeholder="e.g. 2027">
                 </div>
 
                 {{-- Major --}}
                 <div>
-                    <label for="major" class="block text-sm font-medium text-gray-700 mb-2">Peminatan</label>
+                    <label for="major" class="form-label-custom">Peminatan</label>
                     <input type="text" name="major" id="major" value="{{ old('major', $userToEdit->major) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Current Status --}}
                 <div>
-                    <label for="current_status" class="block text-sm font-medium text-gray-700 mb-2">Current Career Status</label>
-                    <input type="text" name="current_status" id="current_status" value="{{ old('current_status', $userToEdit->current_status) }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="e.g. Entrepreneur, Intrapreneur">
+                    <label for="current_status" class="form-label-custom">Current Career Status</label>
+                    <select name="current_status" id="current_status" class="block w-full">
+                        <option value="">Select Status</option>
+                        <option value="Entrepreneur" {{ old('current_status', $userToEdit->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
+                        <option value="Intrapreneur" {{ old('current_status', $userToEdit->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
+                    </select>
                 </div>
 
                 {{-- Profile Photo --}}
                 <div class="relative">
-                    <label for="profile_photo_url" class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
-                    <div class="relative flex items-center justify-between px-4 py-2.5 border border-gray-200 rounded-xl hover:border-gray-900 transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md">
+                    <label for="profile_photo_url" class="form-label-custom">Profile Photo</label>
+                    <div class="form-file-container-custom group">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-gray-900 group-hover:text-white transition-all">
-                                <i class="bi bi-cloud-upload text-lg"></i>
+                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+                                <i class="bi bi-cloud-upload text-base"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors block" id="profile_photo_label">Upload or drop a file</span>
-                                <span class="text-xs text-gray-400">Accepted formats: JPG, PNG, WEBP</span>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="profile_photo_label">Upload or drop a file</span>
+                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP</span>
                             </div>
                         </div>
                         <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*"
@@ -268,8 +299,8 @@
                                onchange="document.getElementById('profile_photo_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
                     </div>
                     @if($userToEdit->profile_photo_url)
-                        <p class="mt-2 text-xs text-indigo-600 font-medium">
-                            <i class="bi bi-file-earmark-check me-1"></i> Current file exists. Upload a new one to replace it.
+                        <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider">
+                            <i class="bi bi-check-circle-fill me-1"></i> Current file exists
                         </p>
                     @endif
                     @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
@@ -277,15 +308,15 @@
 
                 {{-- CV File --}}
                 <div class="relative">
-                    <label for="cv_url" class="block text-sm font-medium text-gray-700 mb-2">CV / Resume File</label>
-                    <div class="relative flex items-center justify-between px-4 py-2.5 border border-gray-200 rounded-xl hover:border-gray-900 transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md">
+                    <label for="cv_url" class="form-label-custom">CV / Resume File</label>
+                    <div class="form-file-container-custom group">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-gray-900 group-hover:text-white transition-all">
-                                <i class="bi bi-cloud-upload text-lg"></i>
+                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+                                <i class="bi bi-file-earmark-pdf text-base"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors block" id="cv_label">Upload or drop a file</span>
-                                <span class="text-xs text-gray-400">Accepted formats: PDF</span>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="cv_label">Upload or drop a file</span>
+                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">PDF ONLY</span>
                             </div>
                         </div>
                         <input type="file" name="cv_url" id="cv_url" accept=".pdf"
@@ -293,8 +324,8 @@
                                onchange="document.getElementById('cv_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
                     </div>
                     @if($userToEdit->cv_url)
-                        <p class="mt-2 text-xs text-indigo-600 font-medium">
-                            <i class="bi bi-file-earmark-check me-1"></i> Current file exists. Upload a new one to replace it.
+                        <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider">
+                            <i class="bi bi-check-circle-fill me-1"></i> Current file exists
                         </p>
                     @endif
                     @error('cv_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
@@ -302,15 +333,15 @@
 
                 {{-- Activities Documentation File --}}
                 <div class="relative">
-                    <label for="activities_doc_url" class="block text-sm font-medium text-gray-700 mb-2">Activities Documentation File</label>
-                    <div class="relative flex items-center justify-between px-4 py-2.5 border border-gray-200 rounded-xl hover:border-gray-900 transition-all cursor-pointer group bg-white shadow-sm hover:shadow-md">
+                    <label for="activities_doc_url" class="form-label-custom">Activities Documentation File</label>
+                    <div class="form-file-container-custom group">
                         <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 group-hover:bg-gray-900 group-hover:text-white transition-all">
-                                <i class="bi bi-cloud-upload text-lg"></i>
+                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+                                <i class="bi bi-folder2-open text-base"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-700 group-hover:text-gray-900 transition-colors block" id="activities_label">Upload or drop a file</span>
-                                <span class="text-xs text-gray-400">Accepted formats: PDF</span>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="activities_label">Upload or drop a file</span>
+                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">PDF ONLY</span>
                             </div>
                         </div>
                         <input type="file" name="activities_doc_url" id="activities_doc_url" accept=".pdf"
@@ -318,8 +349,8 @@
                                onchange="document.getElementById('activities_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
                     </div>
                     @if($userToEdit->activities_doc_url)
-                        <p class="mt-2 text-xs text-indigo-600 font-medium">
-                            <i class="bi bi-file-earmark-check me-1"></i> Current file exists. Upload a new one to replace it.
+                        <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider">
+                            <i class="bi bi-check-circle-fill me-1"></i> Current file exists
                         </p>
                     @endif
                     @error('activities_doc_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
@@ -327,9 +358,9 @@
 
                 {{-- Testimony --}}
                 <div class="md:col-span-2">
-                    <label for="testimony" class="block text-sm font-medium text-gray-700 mb-2">Student Testimony</label>
+                    <label for="testimony" class="form-label-custom">Student Testimony</label>
                     <textarea name="testimony" id="testimony" rows="3"
-                              class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">{{ old('testimony', $userToEdit->testimony) }}</textarea>
+                              class="form-textarea-custom">{{ old('testimony', $userToEdit->testimony) }}</textarea>
                 </div>
             </div>
         </div>
@@ -341,7 +372,7 @@
             <div class="grid grid-cols-1 gap-6">
                 {{-- Transfer Owned Businesses --}}
                 <div>
-                    <label for="owned_businesses" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="owned_businesses" class="form-label-custom">
                         Owned Businesses to assign directly:
                     </label>
                     <select name="owned_businesses[]" id="owned_businesses" multiple class="block w-full">
@@ -375,8 +406,17 @@
                 if (window.TomSelect) {
                     new TomSelect('#role', { create: false, placeholder: "Select Role", searchField: ["text"] });
                     new TomSelect('#student_status', { create: false, placeholder: "Select Status", searchField: ["text"] });
+                    new TomSelect('#current_status', { create: false, placeholder: "Select Career Status", searchField: ["text"] });
                     new TomSelect('#owned_businesses', { create: false, placeholder: "Select Businesses", searchField: ["text"] });
                 }
+
+                // Standardized behavior: Enter key blurs the field instead of submitting
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
+                        event.preventDefault();
+                        event.target.blur();
+                    }
+                });
             });
         </script>
     @endpush

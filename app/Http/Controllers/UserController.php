@@ -163,104 +163,93 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            // Basic Required
-            'username' => 'required|string|max:255|unique:users',
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:student,alumni,admin',
-            'is_active' => 'nullable|boolean',
+            'role' => 'required|in:user,admin,student,alumni',
+            'student_status' => 'required|string',
             
-            // Core Personal
-            'birth_date' => 'nullable|date',
-            'birth_city' => 'nullable|string|max:255',
-            'religion' => 'nullable|string|max:255',
+            // Identity & Contact
+            'prefix_title' => 'nullable|string|max:255',
+            'suffix_title' => 'nullable|string|max:255',
+            'personal_email' => 'nullable|email|max:255',
             'phone_number' => 'nullable|string|max:50',
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
+            'linkedin' => 'nullable|url|max:255',
             
-            // Core Student
-            'NIS' => 'nullable|string|max:255',
-            'Student_Year' => 'nullable|string|max:50',
-            'Major' => 'nullable|string|max:255',
-            'Is_Graduate' => 'nullable|boolean',
-            'CGPA' => 'nullable|numeric|min:0|max:4',
+            // Academic & Career
+            'nis' => 'nullable|string|max:255',
+            'year_of_enrollment' => 'nullable|string|max:50',
+            'graduate_year' => 'nullable|string|max:50',
+            'major' => 'nullable|string|max:255',
+            'current_status' => 'nullable|string|max:255',
+            'testimony' => 'nullable|string',
             
-            // Employment & Extra (Virtual fields packed into JSON)
-            'current_employment_status' => 'nullable|string|max:100',
-            'has_side_business' => 'nullable|boolean',
-            'profile_photo_url' => 'nullable|string|max:2048',
-
-            // JSON Fields
-            'personal_data' => 'nullable|array',
-            'academic_data' => 'nullable|array',
-            'father_data' => 'nullable|array',
-            'mother_data' => 'nullable|array',
-            'graduation_data' => 'nullable|array',
+            // Files
+            'profile_photo_url' => 'nullable|image|max:5120',
+            'cv_url' => 'nullable|mimes:pdf|max:10240',
+            'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
-            // Business Assignments
+            'is_visible' => 'nullable|boolean',
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
-            'team_member' => 'nullable|array',
         ]);
 
-        // Prepare user data
         $userData = [
-            'username' => $validated['username'],
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'is_active' => $request->has('is_active'),
+            'student_status' => $validated['student_status'],
+            'prefix_title' => $validated['prefix_title'],
+            'suffix_title' => $validated['suffix_title'],
+            'personal_email' => $validated['personal_email'],
+            'phone_number' => $validated['phone_number'],
+            'mobile_number' => $validated['mobile_number'],
+            'whatsapp' => $validated['whatsapp'],
+            'linkedin' => $validated['linkedin'],
+            'nis' => $validated['nis'],
+            'year_of_enrollment' => $validated['year_of_enrollment'],
+            'graduate_year' => $validated['graduate_year'],
+            'major' => $validated['major'],
+            'current_status' => $validated['current_status'],
+            'testimony' => $validated['testimony'],
+            'is_visible' => $request->has('is_visible'),
             'email_verified_at' => now(),
-            
-            // Core fields
-            'birth_date' => $validated['birth_date'] ?? null,
-            'birth_city' => $validated['birth_city'] ?? null,
-            'religion' => $validated['religion'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'mobile_number' => $validated['mobile_number'] ?? null,
-            'whatsapp' => $validated['whatsapp'] ?? null,
-            'NIS' => $validated['NIS'] ?? null,
-            'Student_Year' => $validated['Student_Year'] ?? null,
-            'Major' => $validated['Major'] ?? null,
-            'Is_Graduate' => $request->has('Is_Graduate'),
-            'CGPA' => $validated['CGPA'] ?? null,
-            
-            // JSON fields
-            'personal_data' => (function() use ($validated) {
-                $data = !empty($validated['personal_data']) ? array_filter($validated['personal_data']) : [];
-                if (isset($validated['profile_photo_url'])) $data['profile_photo_url'] = $validated['profile_photo_url'];
-                return !empty($data) ? $data : null;
-            })(),
-            'academic_data' => !empty($validated['academic_data']) ? array_filter($validated['academic_data']) : null,
-            'father_data' => !empty($validated['father_data']) ? array_filter($validated['father_data']) : null,
-            'mother_data' => !empty($validated['mother_data']) ? array_filter($validated['mother_data']) : null,
-            'graduation_data' => (function() use ($validated, $request) {
-                $data = !empty($validated['graduation_data']) ? array_filter($validated['graduation_data']) : [];
-                if (isset($validated['current_employment_status'])) $data['current_employment_status'] = $validated['current_employment_status'];
-                if ($request->has('has_side_business')) $data['has_side_business'] = (bool)$request->has_side_business;
-                return !empty($data) ? $data : null;
-            })(),
         ];
+
+        // Handle File Uploads
+        if ($request->hasFile('profile_photo_url')) {
+            $file = $request->file('profile_photo_url');
+            $path = $file->storeAs('profile-photos', Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['profile_photo_url'] = '/storage/' . $path;
+        }
+
+        if ($request->hasFile('cv_url')) {
+            $file = $request->file('cv_url');
+            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['cv_url'] = '/storage/' . $path;
+        }
+
+        if ($request->hasFile('activities_doc_url')) {
+            $file = $request->file('activities_doc_url');
+            $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['activities_doc_url'] = '/storage/' . $path;
+        }
 
         // Create the user
         $newUser = User::create($userData);
 
-        // Transfer business ownership if selected
-        if ($request->has('owned_businesses') && !empty($request->owned_businesses)) {
+        // Assign businesses if selected
+        if (!empty($request->owned_businesses)) {
             Business::whereIn('id', $request->owned_businesses)
                 ->update(['user_id' => $newUser->id]);
-            
-            $businessCount = count($request->owned_businesses);
-            session()->flash('success', "Success! The user '{$newUser->name}' has been created, and {$businessCount} business(es) have been transferred.");
         }
-
-
 
         return redirect()
             ->route('users.index')
-            ->with('success', session('success') ?? "Success! The user '{$newUser->name}' has been registered.");
+            ->with('success', "Success! The profile for '{$newUser->name}' has been created.");
     }
 
     /**
@@ -325,88 +314,81 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            // Basic Required
-            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:student,alumni,admin',
-            'is_active' => 'nullable|boolean',
+            'role' => 'required|in:user,admin,student,alumni',
+            'student_status' => 'required|string',
             
-            // Core Personal
-            'birth_date' => 'nullable|date',
-            'birth_city' => 'nullable|string|max:255',
-            'religion' => 'nullable|string|max:255',
+            // Identity & Contact
+            'prefix_title' => 'nullable|string|max:255',
+            'suffix_title' => 'nullable|string|max:255',
+            'personal_email' => 'nullable|email|max:255',
             'phone_number' => 'nullable|string|max:50',
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
+            'linkedin' => 'nullable|url|max:255',
             
-            // Core Student
-            'NIS' => 'nullable|string|max:255',
-            'Student_Year' => 'nullable|string|max:50',
-            'Major' => 'nullable|string|max:255',
-            'Is_Graduate' => 'nullable|boolean',
-            'CGPA' => 'nullable|numeric|min:0|max:4',
+            // Academic & Career
+            'nis' => 'nullable|string|max:255',
+            'year_of_enrollment' => 'nullable|string|max:50',
+            'graduate_year' => 'nullable|string|max:50',
+            'major' => 'nullable|string|max:255',
+            'current_status' => 'nullable|string|max:255',
+            'testimony' => 'nullable|string',
             
-            // Employment & Extra (Virtual fields packed into JSON)
-            'current_employment_status' => 'nullable|string|max:100',
-            'has_side_business' => 'nullable|boolean',
-            'profile_photo_url' => 'nullable|string|max:2048',
-
-            // JSON Fields
-            'personal_data' => 'nullable|array',
-            'academic_data' => 'nullable|array',
-            'father_data' => 'nullable|array',
-            'mother_data' => 'nullable|array',
-            'graduation_data' => 'nullable|array',
+            // Files
+            'profile_photo_url' => 'nullable|image|max:5120',
+            'cv_url' => 'nullable|mimes:pdf|max:10240',
+            'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
-            // Business Assignments
+            'is_visible' => 'nullable|boolean',
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
-            'team_member' => 'nullable|array',
         ]);
 
-        // Prepare user data
         $userData = [
-            'username' => $validated['username'],
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
-            'is_active' => $request->has('is_active'),
-            
-            // Core fields
-            'birth_date' => $validated['birth_date'] ?? null,
-            'birth_city' => $validated['birth_city'] ?? null,
-            'religion' => $validated['religion'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'mobile_number' => $validated['mobile_number'] ?? null,
-            'whatsapp' => $validated['whatsapp'] ?? null,
-            'NIS' => $validated['NIS'] ?? null,
-            'Student_Year' => $validated['Student_Year'] ?? null,
-            'Major' => $validated['Major'] ?? null,
-            'Is_Graduate' => $request->has('Is_Graduate'),
-            'CGPA' => $validated['CGPA'] ?? null,
-            
-            // JSON fields
-            'personal_data' => (function() use ($validated) {
-                $data = !empty($validated['personal_data']) ? array_filter($validated['personal_data']) : [];
-                if (isset($validated['profile_photo_url'])) $data['profile_photo_url'] = $validated['profile_photo_url'];
-                return !empty($data) ? $data : null;
-            })(),
-            'academic_data' => !empty($validated['academic_data']) ? array_filter($validated['academic_data']) : null,
-            'father_data' => !empty($validated['father_data']) ? array_filter($validated['father_data']) : null,
-            'mother_data' => !empty($validated['mother_data']) ? array_filter($validated['mother_data']) : null,
-            'graduation_data' => (function() use ($validated, $request) {
-                $data = !empty($validated['graduation_data']) ? array_filter($validated['graduation_data']) : [];
-                if (isset($validated['current_employment_status'])) $data['current_employment_status'] = $validated['current_employment_status'];
-                if ($request->has('has_side_business')) $data['has_side_business'] = (bool)$request->has_side_business;
-                return !empty($data) ? $data : null;
-            })(),
+            'student_status' => $validated['student_status'],
+            'prefix_title' => $validated['prefix_title'],
+            'suffix_title' => $validated['suffix_title'],
+            'personal_email' => $validated['personal_email'],
+            'phone_number' => $validated['phone_number'],
+            'mobile_number' => $validated['mobile_number'],
+            'whatsapp' => $validated['whatsapp'],
+            'linkedin' => $validated['linkedin'],
+            'nis' => $validated['nis'],
+            'year_of_enrollment' => $validated['year_of_enrollment'],
+            'graduate_year' => $validated['graduate_year'],
+            'major' => $validated['major'],
+            'current_status' => $validated['current_status'],
+            'testimony' => $validated['testimony'],
+            'is_visible' => $request->has('is_visible'),
         ];
 
-        // Only update password if provided
         if (!empty($validated['password'])) {
             $userData['password'] = Hash::make($validated['password']);
+        }
+
+        // Handle File Uploads
+        if ($request->hasFile('profile_photo_url')) {
+            $file = $request->file('profile_photo_url');
+            $path = $file->storeAs('profile-photos', Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['profile_photo_url'] = '/storage/' . $path;
+        }
+
+        if ($request->hasFile('cv_url')) {
+            $file = $request->file('cv_url');
+            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['cv_url'] = '/storage/' . $path;
+        }
+
+        if ($request->hasFile('activities_doc_url')) {
+            $file = $request->file('activities_doc_url');
+            $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
+            $userData['activities_doc_url'] = '/storage/' . $path;
         }
 
         // Update the user
