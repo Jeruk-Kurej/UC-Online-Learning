@@ -140,7 +140,10 @@
             </div>
         </div>
 
-        <div class="space-y-6">
+        {{-- ═══ 2-COLUMN LAYOUT ═══ --}}
+        <div class="grid grid-cols-1 gap-6 md:gap-8 items-start" id="biz-layout-grid">
+        {{-- LEFT COLUMN: Business Content --}}
+        <div class="space-y-6 min-w-0">
             {{-- Business Overview Card - Professional Design --}}
             <div class="bg-white shadow-lg sm:rounded-lg overflow-hidden border border-soft-gray-100">
                 {{-- Hero Photo Carousel (Dynamic & Premium) --}}
@@ -217,282 +220,6 @@
 
                 {{-- Business Info Section --}}
                 <div class="p-4 sm:p-6 lg:p-8">
-                    {{-- Owner Info - PROMINENT with Avatar --}}
-                    @php
-                        $owner = $business->user;
-                        $ownerPhoto = $owner->profile_photo_url;
-                        $ownerAcad = $owner->academic_data ?? [];
-                        $ownerGrad = $owner->graduation_data ?? [];
-                        $ownerPerso = $owner->personal_data ?? [];
-                        $ownerMajor = $owner->Major ?? null;
-                        $ownerNis = $owner->extended_data['nis'] ?? ($ownerAcad['nis'] ?? null);
-                        $ownerYear = $ownerAcad['Angkatan'] ?? ($ownerAcad['angkatan'] ?? null);
-                        $ownerCgpa = $owner->CGPA ?? null;
-                        $ownerRole = match ($owner->role ?? '') {
-                            'admin' => 'Admin',
-                            'alumni' => 'Alumni',
-                            'student' => 'Student',
-                            default => ucfirst($owner->role ?? 'User'),
-                        };
-                        $ownerBizCount = $owner->businesses()->count();
-                        $ownerPhotoUrl = $ownerPhoto
-                            ? storage_image_url($ownerPhoto, [
-                                'width' => 256,
-                                'height' => 256,
-                                'crop' => 'thumb',
-                                'quality' => 'auto',
-                                'fetch_format' => 'auto',
-                            ])
-                            : null;
-                        $ownerPhotoBig = $ownerPhoto
-                            ? storage_image_url($ownerPhoto, [
-                                'width' => 400,
-                                'height' => 400,
-                                'crop' => 'thumb',
-                                'quality' => 'auto',
-                                'fetch_format' => 'auto',
-                            ])
-                            : null;
-                    @endphp
-
-                    <div x-data="{ tab: 'basic' }" @keydown.escape.window="showUserModal = false"
-                        class="flex flex-col sm:flex-row items-start gap-4 mb-6 pb-6 border-b-2 border-soft-gray-100">
-
-                        {{-- Avatar --}}
-                        @if ($ownerPhotoUrl)
-                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" loading="lazy" decoding="async"
-                                class="flex-shrink-0 w-16 h-16 rounded-lg object-cover shadow-lg">
-                        @else
-                            <div
-                                class="flex-shrink-0 w-16 h-16 rounded-lg bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-2xl font-bold shadow-lg">
-                                {{ strtoupper(substr($owner->name, 0, 1)) }}
-                            </div>
-                        @endif
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-1">
-                                <p class="text-xs font-semibold text-soft-gray-500 uppercase tracking-wider">UCO Student
-                                </p>
-                                <button @click="showUserModal = true" title="View Profile"
-                                    class="text-soft-gray-400 hover:text-soft-gray-900 transition-colors p-1 rounded-full hover:bg-soft-gray-100 flex items-center justify-center">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <h3 class="text-xl font-bold text-soft-gray-900 mb-1">{{ $business->user->name }}</h3>
-                            @if ($business->position)
-                                <div class="flex items-center gap-2">
-                                    <div
-                                        class="flex items-center gap-1.5 px-3 py-1.5 bg-soft-gray-100 text-soft-gray-700 rounded-xl">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
-                                        <span class="text-sm font-semibold">{{ $business->position }}</span>
-                                    </div>
-                                </div>
-                            @endif
-                            @php
-                                $additionalOwners = $business
-                                    ->members()
-                                    ->where('users.id', '!=', $business->user_id)
-                                    ->get();
-                            @endphp
-                            @if ($additionalOwners->isNotEmpty())
-                                <div class="mt-3">
-                                    <p class="text-xs font-semibold text-soft-gray-500 uppercase tracking-wider mb-1">
-                                        Additional Owners</p>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach ($additionalOwners as $additionalOwner)
-                                            <span
-                                                class="inline-flex items-center rounded-lg bg-soft-gray-100 px-2.5 py-1 text-xs font-medium text-soft-gray-700">
-                                                {{ $additionalOwner->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-
-                        {{-- ============================================ --}}
-                        {{-- POPUP CARD                                   --}}
-                        {{-- ============================================ --}}
-                        <template x-if="showUserModal">
-                            <div>
-
-                                {{-- Backdrop --}}
-                                <div x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-                                    @click="showUserModal = false" class="fixed inset-0 z-40 bg-black/60"></div>
-
-                                {{-- Card --}}
-                                <div x-transition:enter="transition ease-out duration-200"
-                                    x-transition:enter-start="opacity-0 scale-95 translate-y-1"
-                                    x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                                    x-transition:leave="transition ease-in duration-150"
-                                    x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                                    x-transition:leave-end="opacity-0 scale-95 translate-y-1"
-                                    class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-lg p-4">
-                                    <div class="bg-white rounded-[2rem] shadow-[0_25px_80px_-10px_rgba(0,0,0,0.15)] border border-gray-100 overflow-hidden relative">
-                                        
-                                        <button @click="showUserModal = false"
-                                            class="absolute top-5 right-5 w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:text-gray-900 flex items-center justify-center transition-all duration-200 z-30">
-                                            <i class="bi bi-x text-xl"></i>
-                                        </button>
-
-                                        {{-- HIG Header --}}
-                                        <div class="px-8 pt-10 pb-6 text-center">
-                                            <div class="mb-4">
-                                                @if($ownerPhotoBig)
-                                                    <img src="{{ $ownerPhotoBig }}" 
-                                                         class="w-24 h-24 object-cover rounded-full border border-gray-100 shadow-sm mx-auto" alt="photo">
-                                                @else
-                                                    <div class="w-24 h-24 bg-gray-50 text-gray-400 rounded-full flex items-center justify-center text-3xl font-bold border border-gray-100 mx-auto">
-                                                        {{ strtoupper(substr($owner->name, 0, 1)) }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <h2 class="text-xl font-bold text-gray-900 tracking-tight leading-tight">{{ $owner->name }}</h2>
-                                            <p class="text-[11px] font-semibold text-gray-400 uppercase tracking-widest mt-1">Owner Account</p>
-                                        </div>
-
-                                        {{-- HIG Segmented Control --}}
-                                        <div class="px-8 mb-4">
-                                            <div class="flex p-1 bg-gray-100/60 rounded-xl">
-                                                <button @click="tab = 'basic'"
-                                                    class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200"
-                                                    :class="tab === 'basic' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
-                                                    Identity
-                                                </button>
-                                                <button @click="tab = 'academic'"
-                                                    class="flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200"
-                                                    :class="tab === 'academic' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'">
-                                                    Academic
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div class="px-8 pb-10 overflow-y-auto max-h-[400px] custom-scrollbar">
-                                            {{-- TAB: IDENTITY --}}
-                                            <div x-show="tab === 'basic'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="divide-y divide-gray-50">
-                                                
-                                                <div class="py-3 flex items-center justify-between group">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-person text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Username</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $owner->username }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-envelope text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Official Email</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $ownerGrad['official_email'] ?? '-' }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-whatsapp text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">WhatsApp</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $owner->whatsapp ?? '-' }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-instagram text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Instagram</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $ownerPerso['instagram'] ?? '-' }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-gender-ambiguous text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Gender</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $ownerPerso['gender'] ?? '-' }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-calendar3 text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Birth Info</span>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <p class="text-sm font-bold text-gray-900">{{ $owner->birth_date ? \Carbon\Carbon::parse($owner->birth_date)->format('d M Y') : '-' }}</p>
-                                                        <p class="text-[10px] text-gray-400 font-bold uppercase">{{ $owner->birth_city ?? 'No City' }}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {{-- TAB: ACADEMIC --}}
-                                            <div x-show="tab === 'academic'" style="display: none;" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="divide-y divide-gray-50">
-                                                
-                                                <div class="py-4">
-                                                    <div class="flex items-center gap-3 mb-1">
-                                                        <i class="bi bi-mortarboard text-gray-400"></i>
-                                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Major & Concentration</span>
-                                                    </div>
-                                                    <p class="text-sm font-bold text-gray-900 ml-7">{{ $ownerAcad['prodi'] ?? ($ownerMajor ?? 'Not Recorded') }}</p>
-                                                    <p class="text-xs text-soft-gray-500 ml-7 mt-0.5">{{ $ownerAcad['sub_prodi'] ?? 'General Concentration' }}</p>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-bar-chart-steps text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Education Level</span>
-                                                    </div>
-                                                    <span class="text-sm font-bold text-gray-900">{{ $ownerAcad['edu_level'] ?? 'N/A' }}</span>
-                                                </div>
-
-                                                <div class="py-3 flex items-center justify-between">
-                                                    <div class="flex items-center gap-3">
-                                                        <i class="bi bi-check-circle text-gray-400"></i>
-                                                        <span class="text-sm font-medium text-gray-500">Status</span>
-                                                    </div>
-                                                    <span class="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-900 rounded text-[10px] font-bold uppercase">{{ $owner->Is_Graduate ? 'Alumni' : 'Active' }}</span>
-                                                </div>
-
-                                                <div class="py-4">
-                                                    <div class="flex items-center gap-3 mb-2">
-                                                        <i class="bi bi-patch-check text-gray-400"></i>
-                                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Certifications</span>
-                                                    </div>
-                                                    <div class="ml-7 space-y-3">
-                                                        @if(!empty($ownerAcad['certificate_no_1']) || !empty($ownerAcad['certificate_no_2']))
-                                                            @if(!empty($ownerAcad['certificate_no_1']))
-                                                                <div>
-                                                                    <p class="text-sm font-bold text-gray-900">{{ $ownerAcad['certificate_no_1'] }}</p>
-                                                                    <p class="text-[10px] text-gray-400 font-semibold italic">{{ $ownerAcad['certificate_date_1'] ?? '' }}</p>
-                                                                </div>
-                                                            @endif
-                                                        @else
-                                                            <div class="py-10 text-center">
-                                                                <i class="bi bi-shield-slash text-2xl text-gray-200 mb-2 block"></i>
-                                                                <p class="text-xs text-gray-400 font-medium">No registered records</p>
-                                                            </div>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                {{-- end card --}}
-                            </div>
-                        </template>
-
-                    </div>
-
                     {{-- Description --}}
                     <div class="mb-8">
                         <h4 class="text-sm font-bold text-soft-gray-900 uppercase tracking-wider mb-3">About This
@@ -619,8 +346,7 @@
                     @endif
                 </div>
             </div>
-                </div>
-            </div>
+
 
             {{-- Tabs Navigation - Elegant Design --}}
             <div id="business-tabs" x-data="{
@@ -1368,11 +1094,210 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
+        </div>
+        {{-- END LEFT COLUMN --}}
+
+        {{-- ═══ RIGHT COLUMN: Owner Profile ═══ --}}
+        <div class="md:sticky md:top-6 space-y-4">
+
+            @php
+                $owner      = $business->user;
+                $ownerPhoto = $owner->profile_photo_url;
+                $ownerAcad  = $owner->academic_data ?? [];
+                $ownerGrad  = $owner->graduation_data ?? [];
+                $ownerPerso = $owner->personal_data ?? [];
+                $ownerRoleLabel = match ($owner->role ?? '') {
+                    'admin'   => 'Administrator',
+                    'alumni'  => 'UCO Alumni',
+                    'student' => 'UCO Student',
+                    default   => ucfirst($owner->role ?? 'Member'),
+                };
+                $ownerPhotoUrl = $ownerPhoto
+                    ? storage_image_url($ownerPhoto, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'])
+                    : null;
+                $additionalOwners = $business->members()->where('users.id', '!=', $business->user_id)->get();
+            @endphp
+
+            {{-- ✨ Premium Owner Card --}}
+            <div class="relative overflow-hidden rounded-3xl shadow-xl" style="background: #fff;">
+
+                {{-- Vibrant gradient banner --}}
+                <div class="relative h-28 overflow-hidden"
+                    style="background: linear-gradient(135deg, #f7931e 0%, #fdb913 45%, #ff6b35 100%);">
+                    {{-- Blurred orbs --}}
+                    <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-30"
+                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
+                    <div class="absolute -bottom-4 -left-4 w-20 h-20 rounded-full opacity-20"
+                        style="background: radial-gradient(circle, #fff 0%, transparent 70%);"></div>
+                    {{-- Mesh lines --}}
+                    <svg class="absolute inset-0 w-full h-full opacity-10" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <pattern id="owner-mesh" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="white" stroke-width="0.5"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#owner-mesh)"/>
+                    </svg>
+                    {{-- UCO badge top-right --}}
+                    <div class="absolute top-3 right-4">
+                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
+                            style="background: rgba(255,255,255,0.25); backdrop-filter: blur(8px); color: #fff; border: 1px solid rgba(255,255,255,0.4);">
+                            <i class="bi bi-mortarboard-fill"></i>
+                            {{ $ownerRoleLabel }}
+                        </span>
+                    </div>
+                </div>
+
+                {{-- Avatar + body --}}
+                <div class="px-5 pb-5">
+                    {{-- Avatar overlapping banner --}}
+                    <div class="-mt-10 mb-3">
+                        @if ($ownerPhotoUrl)
+                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}"
+                                class="w-20 h-20 rounded-2xl object-cover shadow-xl"
+                                style="border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                        @else
+                            <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
+                                style="background: linear-gradient(135deg, #f7931e, #fdb913); border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                                <span class="text-white text-3xl font-black select-none" style="text-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                                    {{ strtoupper(substr($owner->name, 0, 1)) }}
+                                </span>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- Name --}}
+                    <h3 class="text-base font-extrabold text-gray-900 leading-tight">
+                        {{ $owner->name }}
+                    </h3>
+
+                    {{-- Position --}}
+                    @if ($business->position)
+                        <p class="mt-1 text-xs font-medium flex items-center gap-1.5" style="color: #f7931e;">
+                            <i class="bi bi-briefcase-fill text-[10px]"></i>
+                            {{ $business->position }}
+                        </p>
+                    @endif
+
+                    {{-- Divider --}}
+                    <div class="my-4" style="height: 1px; background: linear-gradient(90deg, #f7931e22, #fdb91322, transparent);"></div>
+
+                    {{-- Contact items --}}
+                    <div class="space-y-1">
+                        @if ($owner->whatsapp)
+                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}"
+                                target="_blank"
+                                class="group flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-200"
+                                style="background: transparent;"
+                                onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='transparent'">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200"
+                                    style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a;"
+                                    onmouseover="this.style.background='linear-gradient(135deg,#16a34a,#22c55e)'; this.style.color='#fff';"
+                                    onmouseout="this.style.background='linear-gradient(135deg, #dcfce7, #bbf7d0)'; this.style.color='#16a34a';">
+                                    <i class="bi bi-whatsapp"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">WhatsApp</p>
+                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $owner->whatsapp }}</p>
+                                </div>
+                                <i class="bi bi-arrow-up-right text-[10px] transition-colors" style="color: #d1d5db;"></i>
+                            </a>
+                        @endif
+
+                        @if ($ownerPerso['instagram'] ?? false)
+                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
+                                    style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); color: #db2777;">
+                                    <i class="bi bi-instagram"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Instagram</p>
+                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">@{{ $ownerPerso['instagram'] }}</p>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($ownerGrad['official_email'] ?? false)
+                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0"
+                                    style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #2563eb;">
+                                    <i class="bi bi-envelope-fill"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none" style="color: #9ca3af;">Email</p>
+                                    <p class="text-xs font-bold truncate mt-0.5" style="color: #374151;">{{ $ownerGrad['official_email'] }}</p>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
+                    {{-- View Full Profile CTA --}}
+                    <button @click="showUserModal = true"
+                        class="group mt-4 w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 relative overflow-hidden"
+                        style="background: linear-gradient(135deg, #111827, #1f2937); color: #fff; box-shadow: 0 4px 15px rgba(17,24,39,0.25);"
+                        onmouseover="this.style.background='linear-gradient(135deg, #f7931e, #fdb913)'; this.style.boxShadow='0 4px 20px rgba(247,147,30,0.4)';"
+                        onmouseout="this.style.background='linear-gradient(135deg, #111827, #1f2937)'; this.style.boxShadow='0 4px 15px rgba(17,24,39,0.25)';">
+                        <i class="bi bi-person-circle text-base"></i>
+                        View Full Profile
+                    </button>
+                </div>
+            </div>
+
+            {{-- Additional Owners --}}
+            @if ($additionalOwners->isNotEmpty())
+                <div class="rounded-3xl p-5 shadow-lg" style="background: linear-gradient(135deg, #fff 0%, #fff8f0 100%); border: 1px solid #ffeedd;">
+                    <p class="text-[10px] font-black uppercase tracking-[0.15em] mb-4 flex items-center gap-2" style="color: #f7931e;">
+                        <i class="bi bi-people-fill"></i>
+                        Also Managed By
+                    </p>
+                    <div class="space-y-3">
+                        @foreach ($additionalOwners as $addOwner)
+                            @php
+                                $addPhotoUrl = $addOwner->profile_photo_url
+                                    ? storage_image_url($addOwner->profile_photo_url, ['width' => 80, 'height' => 80, 'crop' => 'thumb'])
+                                    : null;
+                            @endphp
+                            <div class="flex items-center gap-3">
+                                @if ($addPhotoUrl)
+                                    <img src="{{ $addPhotoUrl }}" alt="{{ $addOwner->name }}"
+                                        class="w-9 h-9 rounded-xl object-cover flex-shrink-0"
+                                        style="border: 2px solid #fff; box-shadow: 0 2px 8px rgba(247,147,30,0.2);">
+                                @else
+                                    <div class="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0"
+                                        style="background: linear-gradient(135deg, #fff3e8, #ffeedd); color: #f7931e; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(247,147,30,0.2);">
+                                        {{ strtoupper(substr($addOwner->name, 0, 1)) }}
+                                    </div>
+                                @endif
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-gray-900 leading-snug truncate">{{ $addOwner->name }}</p>
+                                    <p class="text-[11px] font-medium capitalize" style="color: #f7931e;">{{ $addOwner->role ?? 'Member' }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+        </div>
+        {{-- END RIGHT COLUMN --}}
+
+        </div>
+        {{-- END 2-COLUMN GRID --}}
+
     </div>
 
+    {{-- 65/35 Grid Layout Styles --}}
+    <style>
+        @media (min-width: 768px) {
+            #biz-layout-grid {
+                grid-template-columns: 65fr 35fr;
+            }
+        }
+    </style>
+
     {{-- Smart Scroll Restoration Script --}}
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             // Restore scroll position after a reload/redirect if stored
