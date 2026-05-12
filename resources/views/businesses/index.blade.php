@@ -100,15 +100,6 @@
                 <i class="bi bi-building mr-1"></i> Intrapreneurs
             </a>
 
-            @if(auth()->user()?->isAdmin() && ($pendingCount > 0 || request('status') === 'pending'))
-            <a href="{{ route('businesses.index', ['status' => 'pending']) }}" 
-               @click.prevent="updateType('entrepreneur', $el.href, true)"
-               class="px-6 py-3 rounded-xl font-bold text-sm transition"
-               :class="isPending ? 'bg-red-600 text-white shadow-lg' : 'bg-white text-red-500 border border-red-100 hover:bg-red-50'">
-                <i class="bi bi-clock-history mr-1"></i> Pending Approval
-                <span class="ml-1 px-1.5 py-0.5" :class="isPending ? 'bg-white text-red-600' : 'bg-red-100 text-red-600'" rounded-md text-[10px]>{{ $pendingCount }}</span>
-            </a>
-            @endif
         </div>
 
         {{-- Filters --}}
