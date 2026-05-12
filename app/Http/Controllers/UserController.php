@@ -445,7 +445,15 @@ class UserController extends Controller
             abort(403, 'Only administrators can toggle user status.');
         }
 
-        $user->update(['is_visible' => !$user->is_visible]);
+        $newVisibility = !$user->is_visible;
+        $updateData = ['is_visible' => $newVisibility];
+        
+        // If deactivating, also turn off featured status
+        if (!$newVisibility) {
+            $updateData['is_featured'] = false;
+        }
+
+        $user->update($updateData);
 
         $status = $user->is_visible ? 'activated' : 'deactivated';
         return back()->with('success', "User '{$user->name}' has been {$status} successfully.");

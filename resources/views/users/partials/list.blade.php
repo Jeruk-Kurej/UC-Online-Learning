@@ -86,8 +86,8 @@
                                                 title="{{ $user->is_visible ? 'Non-aktifkan User' : 'Aktifkan User' }}"
                                                 class="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm
                                                     {{ $user->is_visible 
-                                                        ? 'bg-red-100 text-red-600 hover:bg-red-500 hover:text-white' 
-                                                        : 'bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white' }}">
+                                                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white' 
+                                                        : 'bg-red-100 text-red-600 hover:bg-red-500 hover:text-white' }}">
                                             <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }} text-sm"></i>
                                         </button>
                                     </form>
