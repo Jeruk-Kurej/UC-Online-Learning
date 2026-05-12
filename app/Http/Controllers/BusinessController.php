@@ -112,8 +112,25 @@ class BusinessController extends Controller
         $categories = Category::all();
         $users = User::orderBy('name')->get();
         $availableCities = \App\Models\Regency::pluck('name')->sort();
-        $availableProvinces = \App\Models\Province::pluck('name')->sort();
-        return view('businesses.create', compact('categories', 'users', 'availableCities', 'availableProvinces'));
+        $provinces = \App\Models\Province::orderBy('name')->get();
+        return view('businesses.create', compact('categories', 'users', 'availableCities', 'provinces'));
+    }
+
+    /**
+     * Get regencies for a given province.
+     */
+    public function getRegencies(Request $request)
+    {
+        $provinceId = $request->get('province_id');
+        if (!$provinceId) {
+            return response()->json([]);
+        }
+
+        $regencies = \App\Models\Regency::where('province_id', $provinceId)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return response()->json($regencies);
     }
 
     /**
@@ -146,9 +163,13 @@ class BusinessController extends Controller
         
         $categories = Category::all();
         $users = User::orderBy('name')->get();
-        $availableCities = \App\Models\Regency::pluck('name')->sort();
-        $availableProvinces = \App\Models\Province::pluck('name')->sort();
+        $provinces = \App\Models\Province::orderBy('name')->get();
         
+        $selectedProvinceId = \App\Models\Province::where('name', $business->province)->first()?->id;
+        $availableCities = $selectedProvinceId 
+            ? \App\Models\Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
+            : collect();
+
         // Prepare variables for the view
         $existingServices = []; // Placeholder as services are not yet separated in DB
         $legalDocs = $business->legalDocuments; // Use the many-to-many relationship
@@ -160,7 +181,8 @@ class BusinessController extends Controller
             'existingServices', 
             'legalDocs',
             'availableCities',
-            'availableProvinces'
+            'provinces',
+            'selectedProvinceId'
         ));
     }
 
@@ -207,6 +229,14 @@ class BusinessController extends Controller
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('logos', 'public');
             $data['logo_url'] = $path; // Fixed: using logo_url as per model
+        }
+
+        // Resolve Province and City names if IDs are sent
+        if (isset($data['province']) && is_numeric($data['province'])) {
+            $data['province'] = \App\Models\Province::find($data['province'])?->name ?? $data['province'];
+        }
+        if (isset($data['city']) && is_numeric($data['city'])) {
+            $data['city'] = \App\Models\Regency::find($data['city'])?->name ?? $data['city'];
         }
 
         $business->update($data);
@@ -270,6 +300,14 @@ class BusinessController extends Controller
         if ($request->hasFile('logo')) {
             $path = $request->file('logo')->store('logos', 'public');
             $data['logo_url'] = $path;
+        }
+
+        // Resolve Province and City names if IDs are sent
+        if (isset($data['province']) && is_numeric($data['province'])) {
+            $data['province'] = \App\Models\Province::find($data['province'])?->name ?? $data['province'];
+        }
+        if (isset($data['city']) && is_numeric($data['city'])) {
+            $data['city'] = \App\Models\Regency::find($data['city'])?->name ?? $data['city'];
         }
 
         $business = Business::create($data);

@@ -58,6 +58,44 @@
             .ts-wrapper .ts-control>input {
                 font-size: 14px !important;
             }
+
+            /* Standardized Form Styles */
+            .form-input-custom {
+                width: 100% !important;
+                border: 1.5px solid #e2e8f0 !important;
+                border-radius: 7px !important;
+                font-size: 13px !important;
+                font-weight: 600 !important;
+                color: #0f172a !important;
+                transition: all 0.2s ease !important;
+                box-sizing: border-box !important;
+            }
+
+            input.form-input-custom, 
+            select.form-input-custom {
+                height: 44px !important;
+                padding: 0 15px !important;
+            }
+
+            textarea.form-input-custom {
+                padding: 12px 15px !important;
+            }
+
+            .form-input-custom:focus {
+                border-color: #3b82f6 !important;
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+                outline: none !important;
+            }
+
+            label.form-label-custom {
+                display: block;
+                font-size: 11px;
+                font-weight: 800;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 8px;
+            }
         </style>
     @endpush
 
@@ -83,17 +121,17 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Business Name --}}
                 <div>
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="name" class="form-label-custom">
                         Business Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('name') border-red-500 @enderror">
+                           class="form-input-custom @error('name') border-red-500 @enderror">
                     @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Business Category --}}
                 <div>
-                    <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="category_id" class="form-label-custom">
                         Business Category <span class="text-red-500">*</span>
                     </label>
                     <select name="category_id" id="category_id" required class="block w-full">
@@ -109,7 +147,7 @@
 
                 {{-- Offering Type / Mode --}}
                 <div>
-                    <label for="business_mode" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="business_mode" class="form-label-custom">
                         Offering Type <span class="text-red-500">*</span>
                     </label>
                     <select name="business_mode" id="business_mode" required class="block w-full">
@@ -122,21 +160,21 @@
 
                 {{-- Established Date --}}
                 <div>
-                    <label for="established_date" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="established_date" class="form-label-custom">
                         Established Date
                     </label>
                     <input type="date" name="established_date" id="established_date" value="{{ old('established_date') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900 @error('established_date') border-red-500 @enderror">
+                           class="form-input-custom @error('established_date') border-red-500 @enderror">
                     @error('established_date')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Description --}}
                 <div class="md:col-span-2">
-                    <label for="description" class="block text-sm font-medium text-gray-700 mb-2">
+                    <label for="description" class="form-label-custom">
                         Description <span class="text-red-500">*</span>
                     </label>
                     <textarea name="description" id="description" rows="3" required
-                              class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">{{ old('description') }}</textarea>
+                              class="form-input-custom">{{ old('description') }}</textarea>
                     @error('description')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -149,66 +187,63 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Province --}}
                 <div>
-                    <label for="province" class="block text-sm font-medium text-gray-700 mb-2">Province</label>
+                    <label for="province" class="form-label-custom">Province</label>
                     <select name="province" id="province" class="block w-full">
-                        <option value="">Select or type Province</option>
-                        @foreach($availableProvinces as $prov)
-                            <option value="{{ $prov }}" {{ old('province') === $prov ? 'selected' : '' }}>{{ $prov }}</option>
+                        <option value="">Select Province</option>
+                        @foreach($provinces as $prov)
+                            <option value="{{ $prov->id }}" {{ old('province') == $prov->id ? 'selected' : '' }}>{{ $prov->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
                 {{-- City --}}
                 <div>
-                    <label for="city" class="block text-sm font-medium text-gray-700 mb-2">City / Regency</label>
+                    <label for="city" class="form-label-custom">City / Regency</label>
                     <select name="city" id="city" class="block w-full">
-                        <option value="">Select or type City</option>
-                        @foreach($availableCities as $c)
-                            <option value="{{ $c }}" {{ old('city') === $c ? 'selected' : '' }}>{{ $c }}</option>
-                        @endforeach
+                        <option value="">Select Province First</option>
                     </select>
                 </div>
 
                 {{-- Full Address --}}
                 <div class="md:col-span-2">
-                    <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Full Address</label>
+                    <label for="address" class="form-label-custom">Full Address</label>
                     <textarea name="address" id="address" rows="2"
-                              class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">{{ old('address') }}</textarea>
+                              class="form-input-custom">{{ old('address') }}</textarea>
                 </div>
 
                 {{-- Phone Number --}}
                 <div>
-                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Business Phone Number</label>
+                    <label for="phone" class="form-label-custom">Business Phone Number</label>
                     <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- WhatsApp Number --}}
                 <div>
-                    <label for="whatsapp_number" class="block text-sm font-medium text-gray-700 mb-2">Business WhatsApp Number</label>
+                    <label for="whatsapp_number" class="form-label-custom">Business WhatsApp Number</label>
                     <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ old('whatsapp_number') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="e.g. 62812...">
+                           class="form-input-custom" placeholder="e.g. 62812...">
                 </div>
 
                 {{-- Email Address --}}
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Business Email</label>
+                    <label for="email" class="form-label-custom">Business Email</label>
                     <input type="email" name="email" id="email" value="{{ old('email') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900">
+                           class="form-input-custom">
                 </div>
 
                 {{-- Website --}}
                 <div>
-                    <label for="website" class="block text-sm font-medium text-gray-700 mb-2">Website URL</label>
+                    <label for="website" class="form-label-custom">Website URL</label>
                     <input type="url" name="website" id="website" value="{{ old('website') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="https://...">
+                           class="form-input-custom" placeholder="https://...">
                 </div>
 
                 {{-- Instagram Handle --}}
                 <div>
-                    <label for="instagram_handle" class="block text-sm font-medium text-gray-700 mb-2">Instagram Handle</label>
+                    <label for="instagram_handle" class="form-label-custom">Instagram Handle</label>
                     <input type="text" name="instagram_handle" id="instagram_handle" value="{{ old('instagram_handle') }}"
-                           class="block w-full px-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-soft-gray-900 focus:border-soft-gray-900" placeholder="username">
+                           class="form-input-custom" placeholder="username">
                 </div>
             </div>
         </div>
@@ -221,7 +256,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Primary Owner --}}
                     <div>
-                        <label for="user_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="user_id" class="form-label-custom">
                             Primary Owner (Admin Only)
                         </label>
                         <select name="user_id" id="user_id" class="block w-full">
@@ -236,7 +271,7 @@
 
                     {{-- Additional Owners --}}
                     <div>
-                        <label for="owner_ids" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="owner_ids" class="form-label-custom">
                             Additional Owners (Optional)
                         </label>
                         <select name="owner_ids[]" id="owner_ids" multiple class="block w-full">
@@ -258,8 +293,9 @@
                 Cancel
             </a>
             <button type="submit" 
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-soft-gray-900 hover:bg-soft-gray-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                <i class="bi bi-check-circle-fill me-2"></i>
+                    class="inline-flex items-center gap-2 bg-[#198754] hover:bg-[#157347] text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+                    style="padding: 10px 24px; font-size: 14px;">
+                <i class="bi bi-check-circle-fill"></i>
                 Register Business
             </button>
         </div>
@@ -272,8 +308,46 @@
                 if (window.TomSelect) {
                     new TomSelect('#category_id', { create: false, placeholder: "Select Category", searchField: ["text"] });
                     new TomSelect('#business_mode', { create: false, placeholder: "Select Mode", searchField: ["text"] });
-                    new TomSelect('#province', { create: false, placeholder: "Select or type Province", searchField: ["text"] });
-                    new TomSelect('#city', { create: false, placeholder: "Select or type City", searchField: ["text"] });
+                    
+                    const citySelect = new TomSelect('#city', { 
+                        create: false, 
+                        placeholder: "Select Province First", 
+                        searchField: ["text"],
+                        valueField: 'id',
+                        labelField: 'name'
+                    });
+                    citySelect.disable();
+
+                    const provinceSelect = new TomSelect('#province', { 
+                        create: false, 
+                        placeholder: "Select Province", 
+                        searchField: ["text"],
+                        onChange: function(value) {
+                            citySelect.clear();
+                            citySelect.clearOptions();
+
+                            if (!value) {
+                                citySelect.disable();
+                                citySelect.settings.placeholder = "Select Province First";
+                                citySelect.inputState();
+                                return;
+                            }
+
+                            citySelect.disable();
+                            citySelect.settings.placeholder = "Loading cities...";
+                            citySelect.inputState();
+
+                            fetch(`/api/regencies?province_id=${value}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    citySelect.addOptions(data);
+                                    citySelect.enable();
+                                    citySelect.settings.placeholder = "Select City";
+                                    citySelect.inputState();
+                                });
+                        }
+                    });
+
                     @if(auth()->user()->role === 'admin')
                         new TomSelect('#user_id', { create: false, placeholder: "Select Primary Owner", searchField: ["text"] });
                         new TomSelect('#owner_ids', { create: false, placeholder: "Select Additional Owners", searchField: ["text"] });
