@@ -1,5 +1,5 @@
 <x-app-layout>
-    {{-- UCO Profile Edit Page - V35: Tightened Spacing & Optimized Layout --}}
+    {{-- UCO Profile Edit Page - V36: Clean Identity & Optimized Sidebar --}}
     <div style="max-width: 1000px; margin: 40px auto; padding: 0 25px; font-family: 'Inter', -apple-system, sans-serif; color: #1e293b;" x-data="{ activeTab: 'identity' }">
         
         {{-- Header --}}
@@ -74,13 +74,9 @@
                                     <input type="text" name="suffix_title" value="{{ old('suffix_title', $user->suffix_title) }}" placeholder="Suffix" style="width: 90px; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
                                 </div>
                             </div>
-                            <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
+                            <div style="margin-bottom: 5px; display: flex; align-items: center; gap: 25px;">
                                 <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Personal Email</label>
                                 <input type="email" name="personal_email" value="{{ old('personal_email', $user->personal_email) }}" style="flex: 1; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;">
-                            </div>
-                            <div style="margin-bottom: 25px; display: flex; align-items: flex-start; gap: 25px;">
-                                <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 12px;">Testimony</label>
-                                <textarea name="testimony" rows="3" style="flex: 1; padding: 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 500; font-family: inherit; resize: none; outline: none; box-sizing: border-box;">{{ old('testimony', $user->testimony) }}</textarea>
                             </div>
                         </div>
 
