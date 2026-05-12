@@ -30,10 +30,7 @@
         </div>
 
         @if(session('success'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl flex items-center gap-3">
-                <i class="bi bi-check-circle-fill"></i>
-                {{ session('success') }}
-            </div>
+            {{-- Handled by global toast --}}
         @endif
 
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">

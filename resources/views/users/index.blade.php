@@ -191,12 +191,7 @@
             </script>
         </div>
 
-        {{-- Flash messages --}}
-        @if(session('success'))
-            <div class="mb-4 bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm font-bold px-4 py-3 rounded-xl">
-                {{ session('success') }}
-            </div>
-        @endif
+        {{-- Flash messages removed - handled by global toasts --}}
         @if($errors->has('featured'))
             <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl">
                 {{ $errors->first('featured') }}
