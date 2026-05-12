@@ -426,6 +426,10 @@ class UserController extends Controller
             abort(403, 'Only administrators can toggle featured status.');
         }
 
+        if (!$user->is_visible && !$user->is_featured) {
+            return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
+        }
+
         $user->update(['is_featured' => !$user->is_featured]);
 
         $status = $user->is_featured ? 'added to' : 'removed from';
@@ -433,28 +437,27 @@ class UserController extends Controller
     }
 
     /**
+     * Toggle the visibility status of a user.
+     */
+    public function toggleStatus(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can toggle user status.');
+        }
+
+        $user->update(['is_visible' => !$user->is_visible]);
+
+        $status = $user->is_visible ? 'activated' : 'deactivated';
+        return back()->with('success', "User '{$user->name}' has been {$status} successfully.");
+    }
+
+    /**
      * Remove the specified user from storage.
      */
     public function destroy(User $user)
     {
-        $currentUser = $this->getAuthUser();
-
-        if (!$currentUser->isAdmin()) {
-            abort(403, 'Only administrators can delete users.');
-        }
-
-        // Prevent deleting yourself
-        if ($user->id === $currentUser->id) {
-            return redirect()
-                ->route('users.index')
-                ->with('error', 'You cannot delete your own account.');
-        }
-
-        $user->delete();
-
-        return redirect()
-            ->route('users.index')
-            ->with('success', "The user '{$user->name}' has been deleted successfully.");
+        // Deactivated as per user request to use toggleStatus instead of delete
+        abort(405, 'Delete action is disabled. Use Toggle Status instead.');
     }
 
     /**

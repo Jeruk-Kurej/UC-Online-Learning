@@ -55,11 +55,14 @@
                         <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
                             @csrf
                             <button type="submit"
-                                title="{{ $user->is_featured ? 'Remove from featured' : 'Add to featured' }}"
+                                title="{{ !$user->is_visible ? 'User must be visible to be featured' : ($user->is_featured ? 'Remove from featured' : 'Add to featured') }}"
+                                {{ !$user->is_visible ? 'disabled' : '' }}
                                 class="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
-                                    {{ $user->is_featured
-                                        ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                        : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' }}">
+                                    {{ !$user->is_visible 
+                                        ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
+                                        : ($user->is_featured
+                                            ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                            : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
                                 <i class="bi bi-star-fill text-[10px]"></i>
                             </button>
                         </form>
@@ -69,19 +72,23 @@
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('users.show', $user) }}" title="View Profile"
                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
-                                <i class="bi bi-eye-fill text-sm"></i>
+                                <i class="bi bi-box-arrow-up-right text-sm"></i>
                             </a>
                             @if(auth()->user()?->isAdmin())
                                 <a href="{{ route('users.edit', $user) }}" title="Edit User"
-                                   class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white transition-all duration-200 shadow-sm">
+                                   class="w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-500 hover:bg-gray-800 hover:text-white transition-all duration-200 shadow-sm">
                                     <i class="bi bi-pencil-fill text-sm"></i>
                                 </a>
                                 @if(auth()->id() !== $user->id)
-                                    <form action="{{ route('users.destroy', $user) }}" method="POST" onsubmit="return confirm('Delete this user?')">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" title="Delete"
-                                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-red-100 text-red-600 hover:bg-red-500 hover:text-white transition-all duration-200 shadow-sm">
-                                            <i class="bi bi-trash-fill text-sm"></i>
+                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" 
+                                                title="{{ $user->is_visible ? 'Non-aktifkan User' : 'Aktifkan User' }}"
+                                                class="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm
+                                                    {{ $user->is_visible 
+                                                        ? 'bg-red-100 text-red-600 hover:bg-red-500 hover:text-white' 
+                                                        : 'bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white' }}">
+                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }} text-sm"></i>
                                         </button>
                                     </form>
                                 @endif
