@@ -77,9 +77,6 @@
                     <div class="flex-1 min-w-0">
                         <div class="flex flex-col gap-1 mb-2">
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black uppercase tracking-widest text-gray-400">
-                                    {{ $viewType === 'entrepreneur' ? 'Entrepreneur' : 'Intrapreneur' }}
-                                </span>
                                 @if(!$business->is_visible)
                                     <span class="text-[8px] font-black bg-red-50 text-red-600 px-1.5 py-0.5 rounded-md uppercase tracking-tighter">Pending Approval</span>
                                 @endif
@@ -93,22 +90,24 @@
                                 </span>
                             @endif
                         </div>
-                        @if($business->unique_value_proposition || $business->description)
-                            <p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed font-normal">
-                                {{ $business->unique_value_proposition ?? $business->description }}
-                            </p>
+                        @if($viewType === 'entrepreneur' && $business->city)
+                            <div class="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                                <i class="bi bi-geo-alt-fill text-orange-500"></i>
+                                {{ $business->city }}
+                            </div>
                         @endif
                     </div>
                 </div>
 
+                @if($business->unique_value_proposition || $business->description)
+                    <p class="text-xs text-gray-500 line-clamp-3 mb-4 leading-relaxed font-normal mt-4">
+                        {{ $business->unique_value_proposition ?? $business->description }}
+                    </p>
+                @endif
+
                 <div class="flex items-end justify-between gap-4 pt-4 border-t border-gray-100 mt-auto">
                     <div class="space-y-3 min-w-0 flex-1">
-                        @if($viewType === 'entrepreneur' && $business->city)
-                            <span class="flex items-center gap-1 text-[11px] font-semibold text-gray-500">
-                                <i class="bi bi-geo-alt text-gray-400"></i>
-                                {{ $business->city }}
-                            </span>
-                        @endif
+
 
                         @if($business->user)
                             <div class="flex items-center gap-3 min-w-0">
