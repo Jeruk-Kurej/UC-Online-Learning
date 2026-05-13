@@ -188,9 +188,7 @@ class UserController extends Controller
             'current_status' => 'nullable|string|max:255',
             'testimony' => 'nullable|string',
             
-            // Files
             'profile_photo_url' => 'nullable|image|max:5120',
-            'cv_url' => 'nullable|mimes:pdf|max:10240',
             'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
             'is_visible' => 'nullable|boolean',
@@ -228,11 +226,7 @@ class UserController extends Controller
             $userData['profile_photo_url'] = '/storage/' . $path;
         }
 
-        if ($request->hasFile('cv_url')) {
-            $file = $request->file('cv_url');
-            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['cv_url'] = '/storage/' . $path;
-        }
+
 
         if ($request->hasFile('activities_doc_url')) {
             $file = $request->file('activities_doc_url');
@@ -341,7 +335,6 @@ class UserController extends Controller
             
             // Files
             'profile_photo_url' => 'nullable|image|max:5120',
-            'cv_url' => 'nullable|mimes:pdf|max:10240',
             'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
             'is_visible' => 'nullable|boolean',
@@ -381,11 +374,7 @@ class UserController extends Controller
             $userData['profile_photo_url'] = '/storage/' . $path;
         }
 
-        if ($request->hasFile('cv_url')) {
-            $file = $request->file('cv_url');
-            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['cv_url'] = '/storage/' . $path;
-        }
+
 
         if ($request->hasFile('activities_doc_url')) {
             $file = $request->file('activities_doc_url');

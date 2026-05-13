@@ -112,16 +112,6 @@
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 25px 0; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; letter-spacing: -0.5px;">Additional Documents</h2>
                         
-                        <div style="margin-bottom: 25px; display: flex; align-items: center; gap: 25px;">
-                            <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Curriculum Vitae</label>
-                            <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                <div style="flex: 1; position: relative;">
-                                    <input type="file" name="cv_file" id="cv_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('cv-name').innerText = this.files[0].name">
-                                    <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="cv-name">PDF or Doc file...</span></div>
-                                </div>
-                                @if($user->cv_url) <a href="{{ $user->cv_url }}" target="_blank" style="padding: 10px 15px; background: #f1f5f9; border-radius: 7px; color: #0f172a; font-size: 11px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">View</a> @endif
-                            </div>
-                        </div>
                         <div style="display: flex; align-items: center; gap: 25px;">
                             <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Activities Doc</label>
                             <div style="flex: 1; display: flex; align-items: center; gap: 12px;">

@@ -33,11 +33,7 @@ class ProfileController extends Controller
             $user->profile_photo_url = Storage::disk('public')->url($path);
         }
 
-        if ($request->hasFile('cv_file')) {
-            $file = $request->file('cv_file');
-            $path = $file->storeAs('student-cvs', 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $user->cv_url = Storage::disk('public')->url($path);
-        }
+
 
         if ($request->hasFile('activities_file')) {
             $file = $request->file('activities_file');
