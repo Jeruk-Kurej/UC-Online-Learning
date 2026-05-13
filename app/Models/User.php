@@ -48,6 +48,11 @@ class User extends Authenticatable
         'is_visible',
         'is_featured',
         'student_status',
+
+        // AI Analysis
+        'ai_sentiment',
+        'ai_score',
+        'ai_rejection_reason',
     ];
 
     protected $hidden = [

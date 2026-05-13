@@ -13,6 +13,7 @@ use App\Models\Certification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use App\Services\AiModerationService;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -112,6 +113,20 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'email'    => $email,
                     'password' => Hash::make('password123'),
                 ]));
+            }
+
+            // Analyze testimony using AI
+            if (!empty($user->testimony)) {
+                $aiService = app(AiModerationService::class);
+                $rating = 5; // Default assumption for imported ones if no rating
+                $result = $aiService->analyze($user->testimony, $rating, $user->name);
+
+                $user->update([
+                    'ai_score' => $result['sentiment_score'],
+                    'ai_sentiment' => $result['sentiment'],
+                    'is_visible' => $result['is_approved'],
+                    'ai_rejection_reason' => $result['rejection_reason'],
+                ]);
             }
 
             // ── 3. Handle Skills (M:N) ──

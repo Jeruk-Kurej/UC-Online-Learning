@@ -37,7 +37,7 @@
                                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
                                 <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
                                 <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Businesses</a>
-                                <a href="{{ route('uc-testimonies.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
+                                <a href="{{ route('admin.testimonies.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
                             </div>
                             @endif
 
@@ -84,6 +84,7 @@
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Tools</p>
                             <a href="{{ route('users.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
                             <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
+                            <a href="{{ route('admin.testimonies.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('admin.testimonies.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
                         </div>
                     @endif
 

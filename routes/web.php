@@ -7,6 +7,7 @@ use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\AiAnalysisController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -68,6 +69,11 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/admin/businesses', [BusinessController::class, 'adminIndex'])->name('businesses.admin');
     Route::post('/businesses/{business}/status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
     Route::post('/businesses/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
+    
+    // AI Analysis Testimony Management
+    Route::get('/admin/testimonies', [AiAnalysisController::class, 'index'])->name('admin.testimonies.index');
+    Route::patch('/admin/testimonies/{user}/toggle', [AiAnalysisController::class, 'toggle'])->name('admin.testimonies.toggle');
+    Route::get('/admin/testimonies/{user}', [AiAnalysisController::class, 'show'])->name('admin.testimonies.show');
 });
 
 // This must be LAST to avoid matching static routes like 'create'

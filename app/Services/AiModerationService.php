@@ -66,6 +66,7 @@ Analyze this testimony and respond with ONLY a JSON object (no markdown, no expl
 
 {
   "sentiment_score": 0-100,
+  "sentiment": "Positive" | "Neutral" | "Negative",
   "is_approved": true/false,
   "rejection_reason": "string or null"
 }
@@ -111,6 +112,8 @@ PROMPT;
             ? (float) max(0, min(100, $json['sentiment_score'])) 
             : 0.0;
             
+        $sentimentLabel = $json['sentiment'] ?? ($sentimentScore >= 60 ? 'Positive' : 'Negative');
+            
         $isApproved = isset($json['is_approved']) 
             ? (bool) $json['is_approved'] 
             : false;
@@ -121,6 +124,7 @@ PROMPT;
         
         return [
             'sentiment_score' => $sentimentScore,
+            'sentiment' => $sentimentLabel,
             'is_approved' => $isApproved,
             'rejection_reason' => $rejectionReason,
         ];
@@ -154,9 +158,11 @@ PROMPT;
         $sentimentScore = max(0, min(100, $baseScore + $keywordAdjustment));
         
         $isApproved = $sentimentScore >= 60;
+        $sentimentLabel = $sentimentScore >= 60 ? 'Positive' : 'Negative';
         
         return [
             'sentiment_score' => round($sentimentScore, 2),
+            'sentiment' => $sentimentLabel,
             'is_approved' => $isApproved,
             'rejection_reason' => $isApproved ? null : 'AI service unavailable - requires manual review',
         ];
