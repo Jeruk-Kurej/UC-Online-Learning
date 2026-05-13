@@ -11,12 +11,11 @@
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ request()->routeIs('businesses.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
-                <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a>
-
-
-                @auth
+                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ request()->routeIs('businesses.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Businesses</a>
+                <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.index') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a>
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
+                
+                @auth
                     {{-- Profile Dropdown --}}
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
@@ -38,11 +37,13 @@
                                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
                                 <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
                                 <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Businesses</a>
+                                <a href="{{ route('uc-testimonies.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
                             </div>
                             @endif
 
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             @if(!auth()->user()->isAdmin())
+                                <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a>
                                 <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
@@ -89,6 +90,7 @@
                     <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
                     @if(!auth()->user()->isAdmin())
                         <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>
+                        <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

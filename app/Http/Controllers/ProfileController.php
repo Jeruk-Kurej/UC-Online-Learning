@@ -30,19 +30,19 @@ class ProfileController extends Controller
             $file = $request->file('profile_photo');
             $slug = Str::slug($user->name, '_');
             $path = $file->storeAs('profile-photos', $slug . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $user->profile_photo_url = Storage::url($path);
+            $user->profile_photo_url = Storage::disk('public')->url($path);
         }
 
         if ($request->hasFile('cv_file')) {
             $file = $request->file('cv_file');
             $path = $file->storeAs('student-cvs', 'cv_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $user->cv_url = Storage::url($path);
+            $user->cv_url = Storage::disk('public')->url($path);
         }
 
         if ($request->hasFile('activities_file')) {
             $file = $request->file('activities_file');
             $path = $file->storeAs('student-activities', 'act_' . $user->id . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $user->activities_doc_url = Storage::url($path);
+            $user->activities_doc_url = Storage::disk('public')->url($path);
         }
 
         if ($request->filled('password')) {

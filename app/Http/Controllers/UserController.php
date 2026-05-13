@@ -48,6 +48,7 @@ class UserController extends Controller
         $sortName = $request->get('sort_name');
         $sortYear = $request->get('sort_year');
         $studentStatus = $request->get('student_status');
+        $currentStatus = $request->get('current_status');
         $major = $request->get('major');
         $yearOfEnrollment = $request->get('year_of_enrollment');
 
@@ -74,6 +75,7 @@ class UserController extends Controller
                 });
             })
             ->when($studentStatus, fn ($q) => $q->where('student_status', $studentStatus))
+            ->when($currentStatus, fn ($q) => $q->whereRaw('LOWER(current_status) = ?', [strtolower($currentStatus)]))
             ->when($major, fn ($q) => $q->where('major', $major))
             ->when($yearOfEnrollment, fn ($q) => $q->where('year_of_enrollment', $yearOfEnrollment));
 
@@ -166,7 +168,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin,student,alumni',
+            'role' => 'required|in:user,admin',
             'student_status' => 'required|string',
             
             // Identity & Contact
@@ -317,7 +319,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin,student,alumni',
+            'role' => 'required|in:user,admin',
             'student_status' => 'required|string',
             
             // Identity & Contact
@@ -416,28 +418,54 @@ class UserController extends Controller
     }
 
     /**
+     * Toggle the featured status of a user.
+     */
+    public function toggleFeatured(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can toggle featured status.');
+        }
+
+        if (!$user->is_visible && !$user->is_featured) {
+            return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
+        }
+
+        $user->update(['is_featured' => !$user->is_featured]);
+
+        $status = $user->is_featured ? 'added to' : 'removed from';
+        return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
+    }
+
+    /**
+     * Toggle the visibility status of a user.
+     */
+    public function toggleStatus(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can toggle user status.');
+        }
+
+        $newVisibility = !$user->is_visible;
+        $updateData = ['is_visible' => $newVisibility];
+        
+        // If deactivating, also turn off featured status
+        if (!$newVisibility) {
+            $updateData['is_featured'] = false;
+        }
+
+        $user->update($updateData);
+
+        $status = $user->is_visible ? 'activated' : 'deactivated';
+        return back()->with('success', "User '{$user->name}' has been {$status} successfully.");
+    }
+
+    /**
      * Remove the specified user from storage.
      */
     public function destroy(User $user)
     {
-        $currentUser = $this->getAuthUser();
-
-        if (!$currentUser->isAdmin()) {
-            abort(403, 'Only administrators can delete users.');
-        }
-
-        // Prevent deleting yourself
-        if ($user->id === $currentUser->id) {
-            return redirect()
-                ->route('users.index')
-                ->with('error', 'You cannot delete your own account.');
-        }
-
-        $user->delete();
-
-        return redirect()
-            ->route('users.index')
-            ->with('success', "The user '{$user->name}' has been deleted successfully.");
+        // Deactivated as per user request to use toggleStatus instead of delete
+        abort(405, 'Delete action is disabled. Use Toggle Status instead.');
     }
 
     /**

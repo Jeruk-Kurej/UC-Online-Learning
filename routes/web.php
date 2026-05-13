@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
     Route::get('/api/regencies', [BusinessController::class, 'getRegencies'])->name('api.regencies');
 
+    Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
     Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 });
 
@@ -56,9 +57,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     
-    Route::resource('users', UserController::class)->except(['show']);
+    Route::resource('users', UserController::class)->except(['show', 'destroy']);
     Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
     Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
+    Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     
     Route::post('/businesses/import', [BusinessController::class, 'import'])->name('businesses.import');
     Route::delete('/businesses/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');

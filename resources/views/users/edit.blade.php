@@ -127,8 +127,7 @@
                         Role <span class="text-red-500">*</span>
                     </label>
                     <select name="role" id="role" required class="block w-full">
-                        <option value="student" {{ old('role', $userToEdit->role) === 'student' ? 'selected' : '' }}>Student</option>
-                        <option value="alumni" {{ old('role', $userToEdit->role) === 'alumni' ? 'selected' : '' }}>Alumni</option>
+                        <option value="user" {{ old('role', $userToEdit->role) === 'user' ? 'selected' : '' }}>User</option>
                         <option value="admin" {{ old('role', $userToEdit->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                     @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
@@ -387,14 +386,14 @@
         </div>
 
         {{-- Action Buttons --}}
-        <div class="flex items-center justify-between pb-6">
-            <a href="{{ route('users.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
+        <div class="flex items-center justify-between pb-10">
+            <a href="{{ route('users.index') }}" class="inline-flex items-center px-6 py-3 text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition-all duration-200">
                 Cancel
             </a>
             <button type="submit" 
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-soft-gray-900 hover:bg-soft-gray-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                <i class="bi bi-check-circle-fill me-2"></i>
-                Update User
+                    class="inline-flex items-center gap-2.5 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-lg shadow-emerald-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                <i class="bi bi-check-circle-fill text-lg"></i>
+                <span>Update User</span>
             </button>
         </div>
     </form>
