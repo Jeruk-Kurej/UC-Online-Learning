@@ -11,7 +11,7 @@
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ request()->routeIs('businesses.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Directories</a>
+                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ request()->routeIs('businesses.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
                 <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.*') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a>
 
 
@@ -72,7 +72,7 @@
     <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t bg-white">
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('featured') }}" class="block py-3 text-base font-bold text-gray-900">Home</a>
-            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Directories</a>
+            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Showcase</a>
             <a href="{{ route('uc-testimonies.index') }}" class="block py-3 text-base font-bold text-gray-900">Testimonies</a>
             @auth
                 <div class="pt-4 border-t mt-4">

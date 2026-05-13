@@ -115,9 +115,9 @@
         <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-24 space-y-16">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Intrapreneur</h2>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Profiles</h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
-                        Students and alumni whose profiles and testimonies stand out across the UCO community.
+                        The shining stars of the UCO community, hand-picked for their impact and vision.
                     </p>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-black text-gray-300 uppercase tracking-[0.25em]">
@@ -127,33 +127,35 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                @forelse($topEntrepreneurs as $student)
+                @forelse($topProfiles as $profile)
                     @php
-                        $featuredBusiness = $student->businesses->first();
+                        $featuredBusiness = $profile->businesses->first() ?? $profile->memberOfBusinesses->first();
                     @endphp
                     <article class="reveal-on-scroll group rounded-xl border border-gray-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div class="flex items-start gap-4">
                             <div class="h-16 w-16 overflow-hidden rounded-lg border border-uco-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
-                                @if($student->profile_photo_url)
-                                    <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
+                                @if($profile->profile_photo_url)
+                                    <img src="{{ $profile->profile_photo_url }}" alt="{{ $profile->name }}" class="h-full w-full object-cover">
                                 @else
                                     <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-uco-orange-50 to-uco-orange-100/40 text-uco-orange-500 font-black text-lg">
-                                        {{ strtoupper(substr($student->name, 0, 1)) }}
+                                        {{ strtoupper(substr($profile->name, 0, 1)) }}
                                     </div>
                                 @endif
                             </div>
 
                             <div class="min-w-0 flex-1">
-                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Intrapreneur</p>
-                                <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $student->name }}</h3>
-                                <p class="mt-1 text-sm font-medium text-gray-500">{{ $student->display_status }}</p>
+                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Profile</p>
+                                <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $profile->name }}</h3>
+                                <p class="mt-1 text-sm font-medium text-gray-500">{{ $profile->major ?? $profile->role }}</p>
                             </div>
                         </div>
 
                         <div class="mt-5 space-y-4">
-                            <p class="text-sm leading-relaxed text-gray-600 line-clamp-4">
-                                “{{ $student->testimony }}”
-                            </p>
+                            @if($profile->testimony)
+                                <p class="text-sm leading-relaxed text-gray-600 line-clamp-4">
+                                    “{{ $profile->testimony }}”
+                                </p>
+                            @endif
 
                             @if($featuredBusiness)
                                 <div class="rounded-lg bg-gray-50 p-4 border border-gray-100">
@@ -171,8 +173,8 @@
                                 <i class="bi bi-people text-2xl text-uco-orange-400"></i>
                             </div>
                             <div class="space-y-1">
-                                <p class="text-lg font-black text-gray-900">No Featured Intrapreneur</p>
-                                <p class="text-sm font-medium text-gray-500">We're currently curating our top student entrepreneurs.</p>
+                                <p class="text-lg font-black text-gray-900">No Featured Profiles</p>
+                                <p class="text-sm font-medium text-gray-500">We're currently curating our top community members.</p>
                             </div>
                         </div>
                     </div>

@@ -441,6 +441,26 @@ class UserController extends Controller
     }
 
     /**
+     * Toggle featured status for a user.
+     */
+    public function toggleFeatured(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            abort(403, 'Only administrators can toggle featured status.');
+        }
+
+        // Check if we're adding and already hit the limit
+        if (!$user->is_featured && User::where('is_featured', true)->count() >= 4) {
+            return back()->withErrors(['featured' => 'Maximum of 4 users can be featured.']);
+        }
+
+        $user->update(['is_featured' => !$user->is_featured]);
+
+        $status = $user->is_featured ? 'added to' : 'removed from';
+        return back()->with('success', "User '{$user->name}' has been {$status} featured users.");
+    }
+
+    /**
      * Import users from Excel file.
      */
     public function import(Request $request)

@@ -49,7 +49,7 @@
             <div class="relative overflow-hidden rounded-3xl shadow-xl" style="background: #fff;">
 
                 {{-- Vibrant gradient banner --}}
-                <div class="relative h-28 overflow-hidden"
+                <div class="relative h-20 overflow-hidden"
                     style="background: linear-gradient(135deg, #f7931e 0%, #fdb913 45%, #ff6b35 100%);">
                     {{-- Blurred orbs --}}
                     <div class="absolute -top-6 -right-6 w-28 h-28 rounded-full opacity-30"
@@ -77,15 +77,14 @@
 
                 {{-- Avatar + body --}}
                 <div class="px-5 pb-5">
-                    {{-- Avatar overlapping banner --}}
-                    <div class="-mt-10 mb-3">
+                    {{-- Avatar below banner (no overlap) --}}
+                    <div class="mt-4 mb-3">
                         @if ($ownerPhotoUrl)
                             <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}"
-                                class="w-20 h-20 rounded-2xl object-cover shadow-xl"
-                                style="border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                                class="w-20 h-20 rounded-2xl object-cover shadow-xl">
                         @else
                             <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-xl"
-                                style="background: linear-gradient(135deg, #f7931e, #fdb913); border: 3px solid #fff; outline: 3px solid rgba(247,147,30,0.25);">
+                                style="background: linear-gradient(135deg, #f7931e, #fdb913);">
                                 <span class="text-white text-3xl font-black select-none" style="text-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                                     {{ strtoupper(substr($owner->name, 0, 1)) }}
                                 </span>
@@ -107,22 +106,22 @@
 
                     {{-- Details Section --}}
                     <div class="mt-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
-                        <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Academic Details</h4>
-                        <div class="space-y-2 text-xs">
+                        <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-600 mb-3">Academic Details</h4>
+                        <div class="space-y-3 text-xs">
                             @if($owner->nis)
-                                <div class="flex justify-between items-center">
+                                <div class="grid grid-cols-2 gap-4 items-center">
                                     <span class="text-gray-500 font-medium">NIS/NIM</span>
                                     <span class="text-gray-900 font-bold">{{ $owner->nis }}</span>
                                 </div>
                             @endif
                             @if($owner->year_of_enrollment)
-                                <div class="flex justify-between items-center">
+                                <div class="grid grid-cols-2 gap-4 items-center">
                                     <span class="text-gray-500 font-medium">Student Year</span>
                                     <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
                                 </div>
                             @endif
                             @if($owner->current_status)
-                                <div class="flex justify-between items-center">
+                                <div class="grid grid-cols-2 gap-4 items-center">
                                     <span class="text-gray-500 font-medium">Current Condition</span>
                                     <span class="text-gray-900 font-bold capitalize">{{ $owner->current_status }}</span>
                                 </div>

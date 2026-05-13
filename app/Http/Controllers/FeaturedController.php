@@ -12,22 +12,13 @@ class FeaturedController extends Controller
 {
     public function index(Request $request)
     {
-        // Top 3 entrepreneur profiles (have business + photo + testimony)
-        $topEntrepreneurs = User::where('is_visible', true)
-            ->whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true))
-            ->whereNotNull('profile_photo_url')
-            ->whereNotNull('testimony')
-            ->with(['businesses' => fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true)->with('category')])
+        // Featured profiles (Must have is_featured = true)
+        $topProfiles = User::where('is_visible', true)
+            ->where('is_featured', true)
+            ->with(['businesses' => fn ($q) => $q->where('is_visible', true)->with('category')])
+            ->with(['memberOfBusinesses' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
-            ->take(3)
-            ->get();
-
-        // Top 5 intrapreneur profiles (have company)
-        $topIntrapreneurs = User::where('is_visible', true)
-            ->whereHas('companies', fn ($q) => $q->where('is_visible', true))
-            ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
-            ->latest()
-            ->take(5)
+            ->take(8)
             ->get();
 
         // Spotlight businesses
@@ -55,12 +46,11 @@ class FeaturedController extends Controller
             ->take(6)
             ->get();
 
-        return view('featured.index', compact(
-            'topEntrepreneurs',
-            'topIntrapreneurs',
-            'spotlightBusinesses',
-            'categories',
-            'testimonies',
-        ));
+        return view('featured.index', [
+            'topProfiles' => $topProfiles,
+            'spotlightBusinesses' => $spotlightBusinesses,
+            'categories' => $categories,
+            'testimonies' => $testimonies,
+        ]);
     }
 }
