@@ -156,12 +156,15 @@
                         <p class="font-semibold">No approved testimonies yet.</p>
                         <p class="mt-1 text-sm">Be the first to share your experience with UC Online Learning.</p>
                     </div>
+                    
                 @endforelse
             </div>
 
-            <div class="rounded-lg border border-soft-gray-200 bg-white px-4 py-4 shadow-sm reveal-on-scroll">
-                {{ $testimonies->links() }}
-            </div>
+            @if($testimonies->hasPages())
+                <div class="rounded-lg border border-soft-gray-200 bg-white px-4 py-4 shadow-sm reveal-on-scroll">
+                    {{ $testimonies->links() }}
+                </div>
+            @endif
         </section>
     </div>
 </x-app-layout>
