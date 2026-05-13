@@ -72,12 +72,7 @@
                             {{ $owner->name }}
                         </h3>
 
-                        @if ($owner->major)
-                            <p class="mt-1 text-xs font-semibold flex items-center gap-1.5 text-orange-500">
-                                <i class="bi bi-book-fill text-[10px]"></i>
-                                {{ $owner->major }}
-                            </p>
-                        @endif
+
 
                         @if ($owner->student_status)
                             <p class="mt-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
@@ -94,22 +89,16 @@
                 <div class="px-5 py-4">
                     <h4 class="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Academic Details</h4>
                     <div class="space-y-2 text-xs">
-                        @if($owner->nis)
+                        @if($owner->major)
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-500 font-medium">NIS/NIM</span>
-                                <span class="text-gray-900 font-bold">{{ $owner->nis }}</span>
+                                <span class="text-gray-500 font-medium">Major</span>
+                                <span class="text-gray-900 font-bold">{{ $owner->major }}</span>
                             </div>
                         @endif
                         @if($owner->year_of_enrollment)
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-500 font-medium">Batch</span>
                                 <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
-                            </div>
-                        @endif
-                        @if($owner->graduate_year)
-                            <div class="flex justify-between items-center">
-                                <span class="text-gray-500 font-medium">Graduation</span>
-                                <span class="text-gray-900 font-bold">{{ $owner->graduate_year }}</span>
                             </div>
                         @endif
                         @if($owner->current_status)
