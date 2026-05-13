@@ -1,65 +1,78 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
-         x-data="{ 
-            showImportModal: false, 
-            isLoading: false,
-            viewType: '{{ $viewType }}',
-            isPending: {{ request('status') === 'pending' ? 'true' : 'false' }},
-            debounceTimer: null,
-            init() {
-                window.addEventListener('popstate', () => {
-                    this.updateList(window.location.href, false);
-                });
-            },
-            updateList(url = null, pushState = true) {
-                this.isLoading = true;
-                if (!url) {
-                    const form = this.$refs.filterForm;
-                    if (!form) { console.error('filterForm ref not found!'); this.isLoading = false; return; }
-                    const formData = new FormData(form);
-                    const params = new URLSearchParams(formData);
-                    url = `${form.action}?${params.toString()}`;
-                }
+          x-data="{ 
+             showImportModal: false, 
+             isLoading: false,
+             viewType: '{{ $viewType }}',
+             isPending: {{ request('status') === 'pending' ? 'true' : 'false' }},
+             debounceTimer: null,
+             
+             // Dependent Dropdown Logic
+             provinceCityMap: {{ json_encode($provinceCityMap) }},
+             selectedProvince: '{{ request('province') }}',
+             selectedCity: '{{ request('city') }}',
+             
+             get filteredCities() {
+                 if (!this.selectedProvince) return [];
+                 return this.provinceCityMap[this.selectedProvince] || [];
+             },
 
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin'
-                })
-                .then(res => {
-                    if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                    return res.text();
-                })
-                .then(html => {
-                    const container = document.getElementById('businesses-list-container');
-                    if (container) {
-                        container.innerHTML = html;
-                        container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
-                    }
-                    if (pushState) window.history.pushState({}, '', url);
-                    this.isLoading = false;
-                })
-                .catch(err => {
-                    console.error('Fetch failed:', err);
-                    this.isLoading = false;
-                });
-            },
-            updateType(type, url, pending = false) {
-                this.viewType = type;
-                this.isPending = pending;
-                this.updateList(url);
-            },
-            submitDebounced() {
-                if (this.debounceTimer) clearTimeout(this.debounceTimer);
-                this.debounceTimer = setTimeout(() => this.updateList(), 500);
-            },
-            resetFilters() {
-                const form = this.$refs.filterForm;
-                form.querySelectorAll('input[type=text], select').forEach(el => el.value = '');
-                this.updateList();
-            }
-         }"
-         @ajax-pagination.window="updateList($event.detail.url)">
+             init() {
+                 window.addEventListener('popstate', () => {
+                     this.updateList(window.location.href, false);
+                 });
+             },
+             updateList(url = null, pushState = true) {
+                 this.isLoading = true;
+                 if (!url) {
+                     const form = this.$refs.filterForm;
+                     if (!form) { console.error('filterForm ref not found!'); this.isLoading = false; return; }
+                     const formData = new FormData(form);
+                     const params = new URLSearchParams(formData);
+                     url = `${form.action}?${params.toString()}`;
+                 }
+
+                 fetch(url, {
+                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                     credentials: 'same-origin'
+                 })
+                 .then(res => {
+                     if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
+                     return res.text();
+                 })
+                 .then(html => {
+                     const container = document.getElementById('businesses-list-container');
+                     if (container) {
+                         container.innerHTML = html;
+                         container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+                     }
+                     if (pushState) window.history.pushState({}, '', url);
+                     this.isLoading = false;
+                 })
+                 .catch(err => {
+                     console.error('Fetch failed:', err);
+                     this.isLoading = false;
+                 });
+             },
+             updateType(type, url, pending = false) {
+                 this.viewType = type;
+                 this.isPending = pending;
+                 this.updateList(url);
+             },
+             submitDebounced() {
+                 if (this.debounceTimer) clearTimeout(this.debounceTimer);
+                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
+             },
+             resetFilters() {
+                 this.selectedProvince = '';
+                 this.selectedCity = '';
+                 const form = this.$refs.filterForm;
+                 form.querySelectorAll('input[type=text], select').forEach(el => el.value = '');
+                 this.updateList();
+             }
+          }"
+          @ajax-pagination.window="updateList($event.detail.url)">
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
@@ -147,18 +160,24 @@
                         @endforeach
                     </select>
                     
-                    <select name="province" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                    <select name="province" 
+                            x-model="selectedProvince"
+                            @change="selectedCity = ''; submitDebounced()" 
+                            class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Provinces</option>
                         @foreach($availableProvinces as $p)
-                            <option value="{{ $p }}" {{ request('province') == $p ? 'selected' : '' }}>{{ $p }}</option>
+                            <option value="{{ $p }}">{{ $p }}</option>
                         @endforeach
                     </select>
                     
-                    <select name="city" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                    <select name="city" 
+                            x-model="selectedCity"
+                            @change="submitDebounced()" 
+                            class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Cities</option>
-                        @foreach($availableCities as $c)
-                            <option value="{{ $c }}" {{ request('city') == $c ? 'selected' : '' }}>{{ $c }}</option>
-                        @endforeach
+                        <template x-for="city in (selectedProvince ? filteredCities : {{ json_encode($availableCities->values()) }})" :key="city">
+                            <option :value="city" x-text="city"></option>
+                        </template>
                     </select>
                 </div>
             </form>
