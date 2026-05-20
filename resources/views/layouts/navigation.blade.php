@@ -19,13 +19,17 @@
                     {{-- Profile Dropdown --}}
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
-                            <div class="w-7 h-7 bg-uco-orange-500 rounded-md flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
+                            @if(auth()->user()->isAdmin())
+                                <img src="{{ asset('images/Logo UCO.png') }}" alt="UCO Logo" class="w-7 h-7 object-contain rounded-md">
+                            @else
+                                <div class="w-7 h-7 bg-uco-orange-500 rounded-md flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
+                            @endif
                             {{ auth()->user()->name }}
                             <svg class="w-4 h-4 transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
- 
+
                         <div x-show="open" class="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-soft-gray-100 z-50 py-2">
                             <div class="px-4 py-2 border-b border-gray-50">
                                 <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ auth()->user()->role }}</p>
@@ -33,16 +37,13 @@
                             </div>
                             
                             @if(auth()->user()->isAdmin())
-                            <div class="px-4 py-2 border-b border-gray-50 bg-gray-50">
-                                <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
-                                <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
-                                <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Businesses</a>
-                                <a href="{{ route('uc-testimonies.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
-                            </div>
+                                <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Users</a>
+                                <a href="{{ route('businesses.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Businesses</a>
+                                <a href="{{ route('uc-testimonies.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Testimonies</a>
                             @endif
 
-                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             @if(!auth()->user()->isAdmin())
+                                <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                                 <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a>
                                 <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</a>
                             @endif
@@ -79,16 +80,13 @@
                     <p class="text-xs font-bold text-gray-400 uppercase mb-2">{{ auth()->user()->name }}</p>
                     
                     @if(auth()->user()->isAdmin())
-                        <div class="mb-3 bg-gray-50 rounded-lg p-3">
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Tools</p>
-                            <a href="{{ route('users.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
-                            <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
-                            <a href="{{ route('uc-testimonies.admin') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
-                        </div>
+                        <a href="{{ route('users.index') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
+                        <a href="{{ route('businesses.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
+                        <a href="{{ route('uc-testimonies.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
                     @endif
 
-                    <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
                     @if(!auth()->user()->isAdmin())
+                        <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
                         <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>
                         <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a>
                     @endif

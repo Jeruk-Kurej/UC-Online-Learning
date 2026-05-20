@@ -14,8 +14,11 @@ use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request): View
+    public function edit(Request $request): RedirectResponse|View
     {
+        if ($request->user()->isAdmin()) {
+            return Redirect::route('users.index');
+        }
         return view('profile.edit', ['user' => $request->user()]);
     }
 
