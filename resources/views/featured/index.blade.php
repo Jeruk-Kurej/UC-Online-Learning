@@ -328,8 +328,8 @@
         </section>
 
         {{-- Section 3: Community Voices (Testimonies) --}}
+        {{-- 
         <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
-            {{-- Background decorative glows --}}
             <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow -top-20 -left-20"></div>
 
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
@@ -349,7 +349,6 @@
                 @forelse($testimonies as $student)
                     <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
-                        {{-- Top Section: Image & Info --}}
                         <div class="relative h-[420px] w-full flex-shrink-0">
                             @if($student->profile_photo_url)
                                 <img src="{{ $student->profile_photo_url }}" 
@@ -362,10 +361,8 @@
                                 </div>
                             @endif
                             
-                            {{-- Overlay Gradient --}}
                             <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
                             
-                            {{-- Text Content on Image --}}
                             <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
                                 <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
                                 <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
@@ -374,9 +371,7 @@
                             </div>
                         </div>
 
-                        {{-- Bottom Section: Testimony content --}}
                         <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
-                            {{-- Quote Icon --}}
                             <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
                                 <i class="fa-solid fa-quote-left text-lg"></i>
                             </div>
@@ -400,7 +395,8 @@
                     </div>
                 @endforelse
             </div>
-        </section>  
+        </section>
+        --}}  
     </div>
 
     @push('scripts')
