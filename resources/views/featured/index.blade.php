@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="space-y-24 pb-32">
+    <div class="space-y-24 pb-6">
         {{-- High-Fidelity "Better" Hero Section --}}
         <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-10 py-24 md:px-24 md:py-32 lg:px-32 mx-4 mt-4 reveal-on-scroll">
             {{-- Background Effects --}}
@@ -126,7 +126,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            <div class="flex flex-wrap gap-6 justify-center">
                 @forelse($topIntrapreneurs as $student)
                     <article class="reveal-on-scroll group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-blue-100/70 w-full max-w-[380px] flex flex-col justify-between" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div>
@@ -219,7 +219,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            <div class="flex flex-wrap gap-6 justify-center">
                 @forelse($topEntrepreneurs as $student)
                     <article class="reveal-on-scroll group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[380px] flex flex-col justify-between" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div>
@@ -314,7 +314,7 @@
         </section>
 
         {{-- Section 3: Community Voices (Testimonies) --}}
-        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 pb-24 space-y-16">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16">
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
                 <div class="space-y-4">
                     <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Community Voices</h2>
@@ -328,7 +328,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            <div class="flex flex-wrap gap-6 justify-center">
                 @forelse($testimonies as $student)
                     <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
