@@ -7,9 +7,8 @@
             
             @if($myBusinesses->count() > 0)
                 <a href="{{ route('businesses.create') }}" 
-                   class="inline-flex items-center justify-center bg-[#198754] hover:bg-[#157347] text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                   style="padding: 10px 24px; font-size: 14px;">
-                    <i class="bi bi-plus-circle-fill mr-2"></i>
+                   class="btn-uco btn-uco-primary">
+                    <i class="bi bi-plus-circle-fill"></i>
                     Register New Business
                 </a>
             @endif
@@ -101,9 +100,8 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">No Businesses Found</h2>
                 <p class="text-gray-500 max-w-md mx-auto mb-10 leading-relaxed italic">You haven't registered any businesses yet. Start showcasing your ventures to the UCO community today!</p>
                 <a href="{{ route('businesses.create') }}" 
-                   class="inline-flex items-center justify-center bg-[#198754] hover:bg-[#157347] text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                   style="padding: 12px 28px; font-size: 15px;">
-                    <i class="bi bi-plus-lg mr-2"></i>
+                   class="btn-uco btn-uco-primary" style="padding: 10px 20px !important; font-size: 14px !important;">
+                    <i class="bi bi-plus-lg"></i>
                     Register Your First Business
                 </a>
             </div>

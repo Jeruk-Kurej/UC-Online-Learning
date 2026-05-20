@@ -1,5 +1,9 @@
 <x-app-layout>
     @section('title', 'Register New Business')
+
+    @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
+    @endpush
     <div class="mb-6 flex items-center gap-4">
         <a href="{{ (auth()->check() && auth()->user()->isAdmin()) ? route('businesses.index') : route('businesses.my') }}" 
            class="group inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
@@ -190,12 +194,10 @@
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between pb-6">
             <a href="{{ (auth()->check() && auth()->user()->isAdmin()) ? route('businesses.index') : route('businesses.my') }}" 
-               class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
+               class="btn-uco btn-uco-neutral">
                 Cancel
             </a>
-            <button type="submit" 
-                    class="inline-flex items-center gap-2 bg-[#198754] hover:bg-[#157347] text-white font-bold rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
-                    style="padding: 10px 24px; font-size: 14px;">
+            <button type="submit" class="btn-uco btn-uco-primary">
                 <i class="bi bi-check-circle-fill"></i>
                 Register Business
             </button>
