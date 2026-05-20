@@ -76,41 +76,23 @@
                     <td class="px-6 py-3 text-right">
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('users.show', $user) }}"
-                               class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
-                                <i class="bi bi-eye-fill text-sm"></i>
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                        View Profile
-                                    </div>
-                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                </div>
+                               class="btn-uco btn-uco-sm btn-uco-primary">
+                                <i class="bi bi-eye-fill"></i>
+                                <span>View</span>
                             </a>
                             @if(auth()->user()?->isAdmin())
                                 <a href="{{ route('users.edit', $user) }}"
-                                   class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-500 hover:bg-gray-800 hover:text-white transition-all duration-200 shadow-sm">
-                                    <i class="bi bi-pencil-fill text-sm"></i>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                            Edit User
-                                        </div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                    </div>
+                                   class="btn-uco btn-uco-sm btn-uco-secondary">
+                                    <i class="bi bi-pencil-fill"></i>
+                                    <span>Edit</span>
                                 </a>
                                 @if(auth()->id() !== $user->id)
-                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST">
+                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
                                         <button type="submit" 
-                                                class="relative group w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 shadow-sm
-                                                    {{ $user->is_visible 
-                                                        ? 'bg-blue-100 text-blue-600 hover:bg-blue-500 hover:text-white' 
-                                                        : 'bg-red-100 text-red-600 hover:bg-red-500 hover:text-white' }}">
-                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }} text-sm"></i>
-                                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                                <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                                    {{ $user->is_visible ? 'Deactivate' : 'Activate' }}
-                                                </div>
-                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                            </div>
+                                                class="btn-uco btn-uco-sm {{ $user->is_visible ? 'btn-uco-danger' : 'btn-uco-primary' }}">
+                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }}"></i>
+                                            <span>{{ $user->is_visible ? 'Disable' : 'Enable' }}</span>
                                         </button>
                                     </form>
                                 @endif

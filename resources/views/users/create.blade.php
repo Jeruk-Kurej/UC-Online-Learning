@@ -351,11 +351,11 @@
 
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between pb-10">
-            <a href="{{ route('users.index') }}" class="inline-flex items-center px-6 py-3 text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition-all duration-200">
+            <a href="{{ route('users.index') }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
                 Cancel
             </a>
             <button type="submit" 
-                    class="inline-flex items-center gap-2.5 px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-lg shadow-emerald-200 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+                    class="btn-uco btn-uco-primary px-8 py-3.5">
                 <i class="bi bi-person-plus-fill text-lg"></i>
                 <span>Create User</span>
             </button>

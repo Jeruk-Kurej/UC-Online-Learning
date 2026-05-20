@@ -128,7 +128,7 @@
                                     <input type="file" name="activities_file" id="activities_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('act-name').innerText = this.files[0].name">
                                     <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="act-name">Documentation file...</span></div>
                                 </div>
-                                @if($user->activities_doc_url) <a href="{{ $user->activities_doc_url }}" target="_blank" style="padding: 10px 15px; background: #f1f5f9; border-radius: 7px; color: #0f172a; font-size: 11px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 6px;">View</a> @endif
+                                @if($user->activities_doc_url) <a href="{{ $user->activities_doc_url }}" target="_blank" class="btn-uco btn-uco-sm btn-uco-neutral">View</a> @endif
                             </div>
                         </div>
                     </div>
@@ -138,8 +138,8 @@
             {{-- Footer Action - Outside Flex Container to limit Sidebar --}}
             <div style="margin-top: 30px; margin-bottom: 50px; display: flex; justify-content: flex-end; align-items: center; max-width: 1200px;">
                 <div style="width: 260px; margin-right: 35px; flex-shrink: 0;"></div> {{-- Spacer matching sidebar width --}}
-                <button type="submit" style="background: #15803d; color: white; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16L21 8V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 21V13H7V21" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 3V8H15" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <button type="submit" class="btn-uco btn-uco-primary">
+                    <i class="bi bi-file-earmark-check-fill text-base"></i>
                     Save Changes
                 </button>
             </div>

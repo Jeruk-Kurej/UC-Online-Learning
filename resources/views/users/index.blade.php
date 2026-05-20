@@ -70,13 +70,13 @@
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
                         {{ $featuredUserCount }}/4 Featured
                     </span>
-                    <button @click="showImportModal = true" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition shadow-sm">
+                    <button @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
 
                     @if(auth()->user() && auth()->user()->isAdmin())
-                        <a href="{{ route('users.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">
+                        <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm">
                             <i class="bi bi-person-plus-fill mr-2"></i>
                             Create User
                         </a>
@@ -278,8 +278,8 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="button" @click="showImportModal = false" class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit" class="flex-1 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition">Start Import</button>
+                        <button type="button" @click="showImportModal = false" class="btn-uco btn-uco-neutral flex-1 py-3">Cancel</button>
+                        <button type="submit" class="btn-uco btn-uco-primary flex-1 py-3">Start Import</button>
                     </div>
                 </form>
             </div>
