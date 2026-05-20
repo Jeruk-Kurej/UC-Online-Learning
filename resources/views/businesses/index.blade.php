@@ -1,5 +1,6 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
+    @section('title', 'Business Directory')
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
           x-data="{ 
              showImportModal: false, 
@@ -203,8 +204,26 @@
                 {{ $errors->first('featured') }}
             </div>
         @endif
-        <div id="businesses-list-container" :class="isLoading ? 'opacity-50 pointer-events-none transition-opacity duration-300' : 'transition-opacity duration-300'">
-            @include('businesses.partials.list')
+        <div id="businesses-list-container-wrapper" class="relative min-h-[400px]">
+            {{-- Loading Overlay --}}
+            <div x-show="isLoading" 
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[2px] rounded-xl"
+                 x-cloak>
+                <div class="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
+                    <div class="w-10 h-10 border-4 border-uco-orange-100 border-t-uco-orange-500 rounded-full animate-spin"></div>
+                    <span class="text-xs font-black uppercase tracking-widest text-gray-400">Updating Directory</span>
+                </div>
+            </div>
+
+            <div id="businesses-list-container" :class="isLoading ? 'filter blur-[1px] transition-all duration-300' : 'transition-all duration-300'">
+                @include('businesses.partials.list')
+            </div>
         </div>
 
     </div>

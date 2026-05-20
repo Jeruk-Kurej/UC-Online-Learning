@@ -1,6 +1,7 @@
 @use('Illuminate\Support\Facades\Storage')
 
 <x-app-layout>
+    @section('title', $business->name . ' - ' . ($business->category->name ?? 'Venture'))
     @php
         $canManageBusiness = auth()->check() && $business->canBeManagedBy(auth()->user());
     @endphp

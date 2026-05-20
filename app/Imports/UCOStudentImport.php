@@ -236,8 +236,11 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         $categoryId = null;
         $catName = $cell(26) ?? $cell(27); // kategori or jenis usaha
         if ($catName) {
-            $cat = Category::firstOrCreate(['name' => $catName], ['slug' => Str::slug($catName)]);
-            $categoryId = $cat->id;
+            $slug = Str::slug($catName);
+            if ($slug) {
+                $cat = Category::firstOrCreate(['slug' => $slug], ['name' => trim($catName)]);
+                $categoryId = $cat->id;
+            }
         }
 
         $logoUrl = $this->uploadToCloudinary($cell(43), 'companies', $companyName);
@@ -267,8 +270,11 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         $categoryId = null;
         $catName = $cell(30) ?? $cell(31); // Kategori perusahaan or Jenis bisnis/ventura
         if ($catName) {
-            $cat = Category::firstOrCreate(['name' => $catName], ['slug' => Str::slug($catName)]);
-            $categoryId = $cat->id;
+            $slug = Str::slug($catName);
+            if ($slug) {
+                $cat = Category::firstOrCreate(['slug' => $slug], ['name' => trim($catName)]);
+                $categoryId = $cat->id;
+            }
         }
 
         $logoUrl = $this->uploadToCloudinary($cell(43), 'businesses', $bizName);
@@ -344,6 +350,15 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         // Already a Cloudinary URL — pass through
         if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
             return $url;
+        }
+
+        // Cache lookup to prevent duplicate downloads/uploads
+        $cacheKey = 'cloudinary_upload_' . md5($url);
+        if (\Illuminate\Support\Facades\Cache::has($cacheKey)) {
+            $cachedUrl = \Illuminate\Support\Facades\Cache::get($cacheKey);
+            if ($cachedUrl) {
+                return $cachedUrl;
+            }
         }
 
         $tmpFile = null;
@@ -431,18 +446,13 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             unset($contents); // Free memory immediately
             gc_collect_cycles();
 
+            // Compress to WebP & Resize to max 1200px before uploading
+            $tmpFile = $this->compressToWebp($tmpFile);
+
             // Prepare Cloudinary public_id
             $sanitizedId = Str::slug($identifier ?? 'unknown');
-            $basename = basename(parse_url($url, PHP_URL_PATH) ?? 'image.jpg');
-            $sanitizedName = pathinfo($basename, PATHINFO_FILENAME);
-            $extension = strtolower(pathinfo($basename, PATHINFO_EXTENSION) ?: 'jpg');
-            if (!in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif'])) {
-                $extension = 'jpg';
-            }
-            $sanitizedFileName = preg_replace('/[^A-Za-z0-9_]/', '_', $sanitizedName);
-            
-            // Cloudinary public_id doesn't need extension
-            $publicId = "uco/{$folder}/{$sanitizedId}/{$sanitizedFileName}";
+            $urlHash = substr(md5($url), 0, 8);
+            $publicId = "uco/{$folder}/{$sanitizedId}_{$urlHash}";
 
             Log::debug("[UCOStudentImport] Uploading to Cloudinary: " . $publicId);
 
@@ -451,7 +461,6 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             // which provides the \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary facade.
             $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->upload($tmpFile, [
                 'public_id' => $publicId,
-                'folder'    => "uco/{$folder}/{$sanitizedId}", // The folder will be part of the public_id anyway if we include it
                 'overwrite' => true,
                 'resource_type' => 'image'
             ]);
@@ -462,6 +471,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
 
             if (isset($uploadResult['secure_url'])) {
                 Log::info("[UCOStudentImport] Uploaded to Cloudinary: " . $uploadResult['secure_url']);
+                \Illuminate\Support\Facades\Cache::put($cacheKey, $uploadResult['secure_url'], now()->addDays(30));
                 return $uploadResult['secure_url'];
             }
 
@@ -477,6 +487,81 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             ]);
             return $url;
         }
+    }
+
+    /**
+     * Compress image to WebP and resize to a maximum of 1200px.
+     */
+    private function compressToWebp(string $filePath, int $quality = 80): string
+    {
+        if (!extension_loaded('gd')) {
+            return $filePath;
+        }
+
+        try {
+            $imageInfo = @getimagesize($filePath);
+            if (!$imageInfo) {
+                return $filePath;
+            }
+
+            $mime = $imageInfo['mime'];
+            
+            switch ($mime) {
+                case 'image/jpeg':
+                case 'image/jpg':
+                    $image = @imagecreatefromjpeg($filePath);
+                    break;
+                case 'image/png':
+                    $image = @imagecreatefrompng($filePath);
+                    break;
+                case 'image/gif':
+                    $image = @imagecreatefromgif($filePath);
+                    break;
+                case 'image/webp':
+                    $image = @imagecreatefromwebp($filePath);
+                    break;
+                default:
+                    $data = file_get_contents($filePath);
+                    $image = @imagecreatefromstring($data);
+                    break;
+            }
+
+            if (!$image) {
+                return $filePath;
+            }
+
+            $width = imagesx($image);
+            $height = imagesy($image);
+            $maxDim = 1200;
+            if ($width > $maxDim || $height > $maxDim) {
+                if ($width > $height) {
+                    $newWidth = $maxDim;
+                    $newHeight = (int)($height * ($maxDim / $width));
+                } else {
+                    $newHeight = $maxDim;
+                    $newWidth = (int)($width * ($maxDim / $height));
+                }
+                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+                imagealphablending($resizedImage, false);
+                imagesavealpha($resizedImage, true);
+                imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagedestroy($image);
+                $image = $resizedImage;
+            }
+
+            $outputPath = $filePath . '.webp';
+            if (imagewebp($image, $outputPath, $quality)) {
+                imagedestroy($image);
+                unlink($filePath);
+                return $outputPath;
+            }
+            
+            imagedestroy($image);
+        } catch (\Throwable $e) {
+            Log::warning("[UCOStudentImport] Image compression to webp failed: " . $e->getMessage());
+        }
+
+        return $filePath;
     }
 
     /**

@@ -16,6 +16,7 @@ class Company extends Model
         'name',
         'slug',
         'position',
+        'level_position',
         'job_description',
         'year_started_working',
         'achievement',

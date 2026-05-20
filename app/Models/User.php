@@ -43,11 +43,18 @@ class User extends Authenticatable
 
         'profile_photo_url',
         'activities_doc_url',
+        'cv_url',
+        'expertise_certification_url',
 
         // Platform management
         'is_visible',
         'is_featured',
         'student_status',
+
+        // AI Analysis
+        'ai_sentiment',
+        'ai_score',
+        'ai_rejection_reason',
     ];
 
     protected $hidden = [

@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'About Us')
     <div class="relative overflow-hidden">
         {{-- Hero Section --}}
         <section class="relative pt-24 pb-32 px-6 overflow-hidden">

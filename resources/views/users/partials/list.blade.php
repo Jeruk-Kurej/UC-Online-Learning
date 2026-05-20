@@ -1,16 +1,16 @@
 {{-- Users Table --}}
-<div class="bg-white border rounded-xl overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
-    <table class="w-full text-left">
+<div class="bg-white border rounded-xl overflow-hidden overflow-x-auto shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+    <table class="w-full text-left min-w-[1000px]">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Name</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Email</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Status</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Peminatan</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Visible</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Featured</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Businesses</th>
-                <th class="px-6 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Name</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Email</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Status</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Peminatan</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Visible</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Featured</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Businesses</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">

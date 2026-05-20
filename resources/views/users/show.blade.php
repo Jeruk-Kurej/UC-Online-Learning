@@ -89,6 +89,43 @@
                     </div>
                 </div>
 
+                {{-- Documents Card --}}
+                @if($user->cv_url || $user->activities_doc_url || $user->expertise_certification_url)
+                    <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm space-y-5 transition hover:shadow-md duration-300">
+                        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Documents</h3>
+                        <div class="space-y-3">
+                            @if($user->cv_url)
+                                <a href="{{ $user->cv_url }}" target="_blank" class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-orange-50/30 transition duration-300 group">
+                                    <i class="bi bi-file-earmark-person text-lg text-orange-500 flex-shrink-0"></i>
+                                    <span class="text-gray-700 font-bold group-hover:text-orange-600 transition-colors">Curriculum Vitae (CV)</span>
+                                </a>
+                            @endif
+                            @if($user->activities_doc_url)
+                                @php
+                                    $activitiesUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
+                                @endphp
+                                @foreach($activitiesUrls as $index => $actUrl)
+                                    <a href="{{ $actUrl }}" target="_blank" class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-orange-50/30 transition duration-300 group">
+                                        <i class="bi bi-file-earmark-image text-lg text-orange-500 flex-shrink-0"></i>
+                                        <span class="text-gray-700 font-bold group-hover:text-orange-600 transition-colors">Professional Activities {{ count($activitiesUrls) > 1 ? '#' . ($index + 1) : '' }}</span>
+                                    </a>
+                                @endforeach
+                            @endif
+                            @if($user->expertise_certification_url)
+                                @php
+                                    $certUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->expertise_certification_url)));
+                                @endphp
+                                @foreach($certUrls as $index => $certUrl)
+                                    <a href="{{ $certUrl }}" target="_blank" class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-orange-50/30 transition duration-300 group">
+                                        <i class="bi bi-patch-check text-lg text-orange-500 flex-shrink-0"></i>
+                                        <span class="text-gray-700 font-bold group-hover:text-orange-600 transition-colors">Expertise Certification {{ count($certUrls) > 1 ? '#' . ($index + 1) : '' }}</span>
+                                    </a>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Core Skills Card --}}
                 @if($user->skills->count() > 0)
                     <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm transition hover:shadow-md duration-300">
@@ -106,6 +143,74 @@
 
             {{-- Right Section: Businesses Founded / Catalog Cards --}}
             <div class="lg:col-span-2 space-y-10">
+                {{-- Employment History (As Intrapreneur) --}}
+                @if($user->companies->count() > 0)
+                    <div class="space-y-6">
+                        <h2 class="text-xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                            <span class="w-1.5 h-6 bg-gray-800 rounded-full"></span>
+                            Employment History
+                        </h2>
+                        <div class="grid grid-cols-1 gap-6">
+                            @foreach($user->companies as $company)
+                                <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group p-6 md:p-8">
+                                    <div class="flex flex-col md:flex-row gap-6 items-start">
+                                        @if($company->logo_url)
+                                            <div class="w-20 h-20 bg-gray-50 flex items-center justify-center border border-gray-100 rounded-xl overflow-hidden flex-shrink-0">
+                                                <img src="{{ $company->logo_url }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition duration-500">
+                                            </div>
+                                        @endif
+                                        <div class="flex-1 space-y-3">
+                                            <div>
+                                                <h3 class="font-black text-gray-900 text-xl leading-snug group-hover:text-gray-700 transition">{{ $company->name }}</h3>
+                                                <div class="flex flex-wrap items-center gap-2 mt-1">
+                                                    @if($company->position)
+                                                        <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full">
+                                                            {{ $company->position }}
+                                                        </span>
+                                                    @endif
+                                                    @if($company->level_position)
+                                                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
+                                                            {{ $company->level_position }}
+                                                        </span>
+                                                    @endif
+                                                    @if($company->category)
+                                                        <span class="text-xs font-bold text-gray-500 bg-gray-50 px-2.5 py-0.5 rounded-full border border-gray-100">
+                                                            {{ $company->category->name }}
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+
+                                            @if($company->job_description)
+                                                <div class="text-sm text-gray-600 font-normal leading-relaxed">
+                                                    <strong>Job Description:</strong>
+                                                    <p class="mt-1 text-gray-500">{{ $company->job_description }}</p>
+                                                </div>
+                                            @endif
+
+                                            @if($company->achievement)
+                                                <div class="text-sm text-gray-600 font-normal leading-relaxed">
+                                                    <strong>Achievements:</strong>
+                                                    <p class="mt-1 text-gray-500">{{ $company->achievement }}</p>
+                                                </div>
+                                            @endif
+
+                                            <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-gray-400 pt-3 border-t border-gray-50">
+                                                @if($company->year_started_working)
+                                                    <span>Started Working: {{ $company->year_started_working }}</span>
+                                                @endif
+                                                @if($company->company_scale)
+                                                    <span>Company Scale: {{ $company->company_scale }}</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 {{-- Owned Businesses (As Entrepreneur) --}}
                 @if($user->businesses->count() > 0)
                     <div class="space-y-6">

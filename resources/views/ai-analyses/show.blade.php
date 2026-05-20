@@ -2,7 +2,7 @@
     <div class="w-full max-w-[1600px] mx-auto space-y-6">
         {{-- Back Button --}}
         <div class="flex items-center gap-4">
-            <a href="{{ route('ai-analyses.index') }}" 
+            <a href="{{ route('admin.testimonies.index') }}" 
                class="group inline-flex items-center gap-2.5 px-5 py-3 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-semibold text-base shadow-sm hover:shadow-md transition-all duration-200">
                 <i class="bi bi-arrow-left text-lg group-hover:-translate-x-0.5 transition-transform duration-200"></i>
                 <span>Back</span>
@@ -25,12 +25,12 @@
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-semibold text-gray-900">{{ $testimony->customer_name }}</p>
-                        <p class="text-xs text-gray-500">{{ $testimony->date->format('d F Y') }}</p>
+                        <p class="text-sm font-semibold text-gray-900">{{ $user->name }}</p>
+                        <p class="text-xs text-gray-500">{{ $user->submitted_at ? $user->submitted_at->format('d F Y') : $user->created_at->format('d F Y') }}</p>
                     </div>
                     <div class="flex items-center gap-1">
                         @for($i = 1; $i <= 5; $i++)
-                            <svg class="w-5 h-5 {{ $i <= $testimony->rating ? 'text-yellow-400' : 'text-gray-300' }} fill-current" viewBox="0 0 20 20">
+                            <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
                                 <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
                             </svg>
                         @endfor
@@ -38,21 +38,23 @@
                 </div>
 
                 <div class="bg-gray-50 rounded-lg p-4">
-                    <p class="text-sm text-gray-700 leading-relaxed">{{ $testimony->content }}</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">{{ $user->testimony }}</p>
                 </div>
 
+                @if($user->businesses->count() > 0)
                 <div class="pt-3 border-t border-gray-200">
                     <p class="text-xs text-gray-500">
                         <svg class="inline w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                         </svg>
                         Business: 
-                        <a href="{{ route('businesses.show', $testimony->business) }}" 
+                        <a href="{{ route('businesses.show', $user->businesses->first()) }}" 
                            class="text-blue-600 hover:underline">
-                            {{ $testimony->business->name }}
+                            {{ $user->businesses->first()->name }}
                         </a>
                     </p>
                 </div>
+                @endif
             </div>
         </div>
 
@@ -69,34 +71,42 @@
                 {{-- Sentiment Score --}}
                 <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
                     <p class="text-xs font-medium text-blue-800 uppercase mb-1">Sentiment Score</p>
-                    <p class="text-3xl font-bold text-blue-600">{{ round($analysis->sentiment_score) }}%</p>
+                    <p class="text-3xl font-bold text-blue-600">{{ round($user->ai_score ?? 0) }}%</p>
                     <div class="mt-2 bg-white rounded-full h-2 overflow-hidden">
                         <div class="bg-blue-600 h-full transition-all duration-500" 
-                             style="width: {{ $analysis->sentiment_score }}%"></div>
+                             style="width: {{ $user->ai_score ?? 0 }}%"></div>
                     </div>
                 </div>
 
                 {{-- Status --}}
-                <div class="bg-gradient-to-br from-{{ $analysis->is_approved ? 'green' : 'red' }}-50 to-{{ $analysis->is_approved ? 'green' : 'red' }}-100 rounded-lg p-4">
-                    <p class="text-xs font-medium text-{{ $analysis->is_approved ? 'green' : 'red' }}-800 uppercase mb-1">Status</p>
-                    <p class="text-2xl font-bold text-{{ $analysis->is_approved ? 'green' : 'red' }}-600">
-                        {{ $analysis->is_approved ? 'Approved' : 'Needs Review' }}
+                <div class="bg-gradient-to-br {{ $user->is_visible ? 'from-green-50 to-green-100' : 'from-red-50 to-red-100' }} rounded-lg p-4">
+                    <p class="text-xs font-medium {{ $user->is_visible ? 'text-green-800' : 'text-red-800' }} uppercase mb-1">Status</p>
+                    <p class="text-2xl font-bold {{ $user->is_visible ? 'text-green-600' : 'text-red-600' }}">
+                        {{ $user->is_visible ? 'Approved' : 'Needs Review' }}
                     </p>
-                    <div class="text-4xl text-{{ $analysis->is_approved ? 'green' : 'red' }}-300 mt-2">
-                        {{ $analysis->is_approved ? '✅' : '⚠️' }}
+                    <div class="{{ $user->is_visible ? 'text-green-500' : 'text-red-500' }} mt-2">
+                        @if($user->is_visible)
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        @else
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        @endif
                     </div>
                 </div>
 
                 {{-- Analysis Date --}}
                 <div class="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4">
                     <p class="text-xs font-medium text-purple-800 uppercase mb-1">Analyzed</p>
-                    <p class="text-lg font-bold text-purple-600">{{ $analysis->created_at->format('d M Y') }}</p>
-                    <p class="text-xs text-purple-700 mt-1">{{ $analysis->created_at->format('H:i:s') }}</p>
+                    <p class="text-lg font-bold text-purple-600">{{ $user->updated_at->format('d M Y') }}</p>
+                    <p class="text-xs text-purple-700 mt-1">{{ $user->updated_at->format('H:i:s') }}</p>
                 </div>
             </div>
 
             {{-- Rejection Reason --}}
-            @if(!$analysis->is_approved && $analysis->rejection_reason)
+            @if(!$user->is_visible && $user->ai_rejection_reason)
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
                     <div class="flex items-start">
                         <svg class="w-5 h-5 text-yellow-600 mt-0.5 mr-3" fill="currentColor" viewBox="0 0 20 20">
@@ -104,14 +114,12 @@
                         </svg>
                         <div>
                             <p class="text-sm font-semibold text-yellow-800 mb-1">Rejection Reason</p>
-                            <p class="text-sm text-yellow-700">{{ $analysis->rejection_reason }}</p>
+                            <p class="text-sm text-yellow-700">{{ $user->ai_rejection_reason }}</p>
                         </div>
                     </div>
                 </div>
             @endif
 
         </div>
-
-        {{-- Business-level testimonies have been removed --}}
     </div>
 </x-app-layout>

@@ -18,7 +18,7 @@ class AuthenticatedSessionController extends Controller
     {
         // If already authenticated, redirect to dashboard
         if (Auth::check()) {
-            return redirect()->intended(route('featured', [], false));
+            return redirect()->intended(route('dashboard', [], false));
         }
 
         return view('auth.login');
@@ -40,7 +40,7 @@ class AuthenticatedSessionController extends Controller
             session()->forget('url.intended');
         }
 
-        return redirect()->intended(route('featured', [], false));
+        return redirect()->intended(route('dashboard', [], false));
     }
 
     /**
