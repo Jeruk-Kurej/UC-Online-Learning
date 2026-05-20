@@ -163,14 +163,12 @@
             
             {{-- Owned Businesses Section --}}
             <div class="space-y-6">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shadow-inner">
-                        <i class="bi bi-briefcase-fill text-lg"></i>
+                <div class="relative mb-6">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-1 h-5 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                        <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Owned <span class="uco-text-gradient-orange">Businesses</span></h2>
                     </div>
-                    <div>
-                        <h2 class="text-xl font-black text-gray-900 leading-tight">Owned Businesses</h2>
-                        <p class="text-xs text-gray-500 font-medium">Businesses directly founded or owned by this profile.</p>
-                    </div>
+                    <p class="text-xs text-gray-500 font-medium mt-1.5 pl-3 border-l-2 border-gray-100">Businesses directly founded or owned by this profile.</p>
                 </div>
 
                 @if($ownedBusinesses->isEmpty())
@@ -227,14 +225,12 @@
             {{-- Member / Managed Businesses Section --}}
             @if($memberBusinesses->isNotEmpty())
             <div class="space-y-6">
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-inner">
-                        <i class="bi bi-people-fill text-lg"></i>
+                <div class="relative mb-6">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-1 h-5 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
+                        <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Also <span class="uco-text-gradient-blue">Manages</span></h2>
                     </div>
-                    <div>
-                        <h2 class="text-xl font-black text-gray-900 leading-tight">Also Manages</h2>
-                        <p class="text-xs text-gray-500 font-medium">Businesses where this profile is a team member.</p>
-                    </div>
+                    <p class="text-xs text-gray-500 font-medium mt-1.5 pl-3 border-l-2 border-gray-100">Businesses where this profile is a team member.</p>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
