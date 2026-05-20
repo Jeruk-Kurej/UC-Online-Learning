@@ -54,8 +54,7 @@
                                     @endif
                                 </div>
                                 <div class="min-w-0">
-                                    <p class="text-[9px] font-black uppercase tracking-widest text-gray-400">UCO Student</p>
-                                    <p class="truncate text-xs font-bold text-gray-800">
+                                    <p class="truncate text-sm font-bold text-gray-800">
                                         {{ $business->user->name }}
                                     </p>
                                 </div>
