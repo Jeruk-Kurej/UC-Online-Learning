@@ -104,7 +104,7 @@
                             <th scope="col" class="px-6 py-4">Status</th>
                             <th scope="col" class="px-6 py-4 text-center">Visible</th>
                             <th scope="col" class="px-6 py-4 text-center">Featured</th>
-                            <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                            <th scope="col" class="px-6 py-4 text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -180,8 +180,8 @@
                                          </button>
                                      </form>
                                 </td>
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-6 py-4 text-center">
+                                    <div class="flex items-center justify-center gap-2">
                                          <a href="{{ route('businesses.show', $b) }}" 
                                             class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
                                              <i class="bi bi-eye-fill text-sm"></i>

@@ -10,7 +10,7 @@
                 <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Visible</th>
                 <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Featured</th>
                 <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Businesses</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right">Actions</th>
+                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">
@@ -73,16 +73,16 @@
                         </form>
                     </td>
                     <td class="px-6 py-3 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
-                    <td class="px-6 py-3 text-right">
-                        <div class="flex justify-end gap-2">
+                    <td class="px-6 py-3 text-center">
+                        <div class="flex justify-center gap-2">
                             <a href="{{ route('users.show', $user) }}"
-                               class="btn-uco btn-uco-sm btn-uco-primary">
+                               class="btn-uco btn-uco-sm btn-uco-primary w-20 flex-shrink-0">
                                 <i class="bi bi-eye-fill"></i>
                                 <span>View</span>
                             </a>
                             @if(auth()->user()?->isAdmin())
                                 <a href="{{ route('users.edit', $user) }}"
-                                   class="btn-uco btn-uco-sm btn-uco-secondary">
+                                   class="btn-uco btn-uco-sm btn-uco-secondary w-20 flex-shrink-0">
                                     <i class="bi bi-pencil-fill"></i>
                                     <span>Edit</span>
                                 </a>
@@ -90,7 +90,7 @@
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
                                         <button type="submit" 
-                                                class="btn-uco btn-uco-sm {{ $user->is_visible ? 'btn-uco-danger' : 'btn-uco-primary' }}">
+                                                class="btn-uco btn-uco-sm {{ $user->is_visible ? 'btn-uco-danger' : 'btn-uco-primary' }} w-20 flex-shrink-0">
                                             <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }}"></i>
                                             <span>{{ $user->is_visible ? 'Disable' : 'Enable' }}</span>
                                         </button>

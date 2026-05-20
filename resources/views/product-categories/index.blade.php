@@ -37,7 +37,7 @@
                                 <th class="w-[15%] px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
                                 {{-- ✅ FIXED: All authenticated users can manage --}}
                                 @auth
-                                    <th class="w-[15%] px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    <th class="w-[15%] px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 @endauth
                             </tr>
                         </thead>
@@ -66,8 +66,8 @@
                                     </td>
                                     {{-- ✅ FIXED: All authenticated users can edit/delete --}}
                                     @auth
-                                        <td class="px-6 py-4 whitespace-nowrap text-right">
-                                            <div class="flex items-center justify-end gap-2">
+                                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                                            <div class="flex items-center justify-center gap-2">
                                                 <a href="{{ route('businesses.product-categories.edit', [$business, $category]) }}" 
                                                    class="inline-flex items-center justify-center w-9 h-9 bg-orange-50 text-orange-600 rounded hover:bg-orange-100 transition duration-150"
                                                    title="Edit Category">
