@@ -12,22 +12,24 @@ class FeaturedController extends Controller
 {
     public function index(Request $request)
     {
-        // Top 3 featured student profiles (have photo + testimony)
+        // Top 3 featured entrepreneur student profiles (have photo)
         $topEntrepreneurs = User::where('is_visible', true)
             ->where('is_featured', true)
+            ->where('current_status', 'Entrepreneur')
             ->whereNotNull('profile_photo_url')
-            ->whereNotNull('testimony')
             ->with(['businesses' => fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true)->with('category')])
             ->latest()
             ->take(3)
             ->get();
 
-        // Top 5 intrapreneur profiles (have company)
+        // Top 3 featured intrapreneur student profiles (have photo)
         $topIntrapreneurs = User::where('is_visible', true)
-            ->whereHas('companies', fn ($q) => $q->where('is_visible', true))
+            ->where('is_featured', true)
+            ->where('current_status', 'Intrapreneur')
+            ->whereNotNull('profile_photo_url')
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
-            ->take(5)
+            ->take(3)
             ->get();
 
         // Spotlight businesses
@@ -45,13 +47,12 @@ class FeaturedController extends Controller
             ->take(8)
             ->get();
 
-        // Testimonies (students only, with photo)
+        // Testimonies (curated testimonies, with photo and testimony)
         $testimonies = User::where('is_visible', true)
             ->where('is_featured', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->whereNotNull('profile_photo_url')
-            ->with(['businesses' => fn ($q) => $q->where('is_visible', true)->take(1)])
             ->latest()
             ->take(6)
             ->get();

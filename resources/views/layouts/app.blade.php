@@ -21,7 +21,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
-        {{-- Fallback for built assets (used when Vite manifest exists) --}}
+        <!-- {{-- Fallback for built assets (used when Vite manifest exists) --}}
         @php
             $manifestPath = public_path('build/manifest.json');
             if (file_exists($manifestPath)) {
@@ -29,15 +29,15 @@
                 $cssFile = $manifest['resources/css/app.css']['file'] ?? null;
                 $jsFile = $manifest['resources/js/app.js']['file'] ?? null;
             }
-        @endphp
+        @endphp -->
 
-        @if(!empty($cssFile))
+        <!-- @if(!empty($cssFile))
             <link rel="stylesheet" href="/build/{{ $cssFile }}">
         @endif
 
         @if(!empty($jsFile))
             <script type="module" src="/build/{{ $jsFile }}"></script>
-        @endif
+        @endif -->
 
         <style>
             [x-cloak] { display: none !important; }
