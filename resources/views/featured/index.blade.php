@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="space-y-24 pb-6">
         {{-- High-Fidelity "Better" Hero Section --}}
-        <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-10 py-24 md:px-24 md:py-32 lg:px-32 mx-4 mt-4 reveal-on-scroll">
+        <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-8 py-20 md:px-16 md:py-24 lg:px-16 mx-4 mt-4 reveal-on-scroll">
             {{-- Background Effects --}}
             <div class="uco-hero-mesh opacity-90"></div>
             <div class="uco-noise-overlay"></div>
@@ -10,12 +10,12 @@
             <div class="uco-float-orb uco-float-orb--one opacity-40 mix-blend-multiply transition-transform duration-[10s] group-hover:translate-x-12 group-hover:-translate-y-8"></div>
             <div class="uco-float-orb uco-float-orb--two opacity-30 mix-blend-multiply transition-transform duration-[12s] group-hover:-translate-x-16 group-hover:translate-y-12"></div>
             
-            <div class="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-start">
+            <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
                 {{-- Left Content --}}
-                <div class="space-y-10">
+                <div class="space-y-10 md:col-span-7 lg:col-span-7">
 
                     <div class="space-y-8">
-                        <h1 class="text-4xl font-[900] text-gray-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.05] max-w-4xl flex flex-wrap items-baseline gap-4"
+                        <h1 class="text-4xl font-[900] text-gray-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.1] max-w-4xl"
                             x-data="{ 
                                 words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
                                 currentWord: 0,
@@ -28,13 +28,11 @@
                                     isAnimating = false;
                                 }, 300);
                             }, 2300)">
-                            <span>Discover</span>
-                            <span class="uco-text-gradient-orange inline-block min-w-[180px]" 
+                            Discover <span class="uco-text-gradient-orange inline-block min-w-[180px] md:min-w-[280px]" 
                                   :class="isAnimating ? 'word-rotate-exit' : 'word-rotate-enter'"
                                   x-text="words[currentWord]"></span>
-                            <span>Businesses</span>
-                            <span class="text-gray-950/80">from</span>
-                            <span class="whitespace-nowrap italic">UCO Community</span>
+                            <br class="hidden md:inline">
+                            Businesses from <span class="whitespace-nowrap italic">UCO Community</span>
                         </h1>
                         <p class="max-w-lg text-lg font-medium leading-relaxed text-gray-600/80 tracking-tight">
                             Explore a vibrant ecosystem of student-led ventures. We bridge the gap between academic theory and market-ready impact.
@@ -51,7 +49,7 @@
                 </div>
 
                 {{-- Right Content: Immersive Spotlight Grid (2x2) --}}
-                <div class="lg:pl-8">
+                <div class="md:col-span-5 lg:col-span-5">
                     <div class="grid grid-cols-2 gap-6">
                         @foreach ($spotlightBusinesses->take(4) as $index => $business)
                             <div class="group/card relative {{ $index % 2 == 1 ? 'mt-8' : '' }}">
