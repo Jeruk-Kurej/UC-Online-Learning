@@ -51,7 +51,8 @@
                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
             }
         }"
-        @ajax-pagination.window="updateList($event.detail.url)">
+        @ajax-pagination.window="updateList($event.detail.url)"
+        @ajax-update-list.window="updateList()">
         
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
@@ -192,6 +193,39 @@
                         window.dispatchEvent(new CustomEvent('ajax-pagination', {
                             detail: { url: link.href }
                         }));
+                    }
+                });
+
+                // Intercept toggle actions to make them seamless
+                document.addEventListener('submit', function(e) {
+                    const form = e.target;
+                    const action = form.action;
+                    if (action && (action.includes('/toggle-featured') || action.includes('/toggle-status'))) {
+                        e.preventDefault();
+                        
+                        fetch(action, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': form.querySelector('input[name="_token"]').value
+                            }
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.dispatchEvent(new CustomEvent('ajax-update-list'));
+                                window.dispatchEvent(new CustomEvent('notify', {
+                                    detail: { message: data.message, type: 'success' }
+                                }));
+                            } else {
+                                window.dispatchEvent(new CustomEvent('notify', {
+                                    detail: { message: data.message || 'Error occurred', type: 'error' }
+                                }));
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Toggle action failed:', err);
+                        });
                     }
                 });
             </script>

@@ -446,6 +446,9 @@ class UserController extends Controller
     public function toggleStatus(User $user)
     {
         if (!$this->getAuthUser()->isAdmin()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Only administrators can toggle user status.'], 403);
+            }
             abort(403, 'Only administrators can toggle user status.');
         }
 
@@ -460,8 +463,19 @@ class UserController extends Controller
         $user->update($updateData);
 
         $status = $user->is_visible ? 'activated' : 'deactivated';
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_visible' => $user->is_visible,
+                'is_featured' => $user->is_featured,
+                'message' => "User '{$user->name}' has been {$status} successfully."
+            ]);
+        }
+
         return back()->with('success', "User '{$user->name}' has been {$status} successfully.");
     }
+
 
     /**
      * Remove the specified user from storage.

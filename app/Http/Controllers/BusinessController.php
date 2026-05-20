@@ -129,9 +129,6 @@ class BusinessController extends Controller
         ));
     }
 
-    /**
-     * Admin view to manage businesses.
-     */
     public function adminIndex(Request $request)
     {
         if (!auth()->user()->isAdmin()) {
@@ -140,11 +137,25 @@ class BusinessController extends Controller
 
         $status = $request->get('status');
         $search = $request->get('search');
+        $featured = $request->get('featured');
 
         $query = Business::with(['user', 'category'])->entrepreneur();
 
+        // Calculate statistics
+        $totalBusinesses = Business::entrepreneur()->count();
+        $pendingBusinesses = Business::entrepreneur()->where('approval_status', 'pending')->count();
+        $approvedBusinesses = Business::entrepreneur()->where('approval_status', 'approved')->count();
+        $rejectedBusinesses = Business::entrepreneur()->whereIn('approval_status', ['rejected', 'need_revision'])->count();
+        $featuredBusinessesCount = Business::entrepreneur()->where('is_featured', true)->count();
+
         if ($status) {
             $query->where('approval_status', $status);
+        }
+
+        if ($featured === 'yes') {
+            $query->where('is_featured', true);
+        } elseif ($featured === 'no') {
+            $query->where('is_featured', false);
         }
 
         if ($search) {
@@ -153,8 +164,19 @@ class BusinessController extends Controller
 
         $businesses = $query->latest()->paginate(20)->withQueryString();
 
-        return view('businesses.admin.index', compact('businesses', 'status', 'search'));
+        return view('businesses.admin.index', compact(
+            'businesses', 
+            'status', 
+            'search', 
+            'featured',
+            'totalBusinesses',
+            'pendingBusinesses',
+            'approvedBusinesses',
+            'rejectedBusinesses',
+            'featuredBusinessesCount'
+        ));
     }
+
 
     /**
      * Update business status (admin only).

@@ -72,7 +72,7 @@
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('users.show', $user) }}" title="View Profile"
                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
-                                <i class="bi bi-box-arrow-up-right text-sm"></i>
+                                <i class="bi bi-eye-fill text-sm"></i>
                             </a>
                             @if(auth()->user()?->isAdmin())
                                 <a href="{{ route('users.edit', $user) }}" title="Edit User"

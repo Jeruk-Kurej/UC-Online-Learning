@@ -1,49 +1,96 @@
 <x-app-layout>
     <div class="w-full max-w-[1600px] mx-auto py-8 px-4" x-data="{ showImportModal: false }">
-        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Business Management</h1>
-                <p class="text-gray-500 mt-1">Review and manage business submissions from students.</p>
+        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
+            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                <div class="space-y-1">
+                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
+                        Admin Portal
+                    </span>
+                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Business Management</h1>
+                    <p class="text-sm text-soft-gray-600 mt-1">Review and manage business submissions from students.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
+                        <i class="bi bi-star-fill text-uco-yellow-500"></i>
+                        {{ $featuredBusinessesCount }}/8 Featured
+                    </span>
+                    <button @click="showImportModal = true" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition shadow-sm">
+                        <i class="bi bi-cloud-upload mr-2"></i>
+                        Import CSV
+                    </button>
+
+                    <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">
+                        <i class="bi bi-plus-lg mr-2"></i>
+                        Create Business
+                    </a>
+                </div>
             </div>
-            
-            <div class="flex flex-wrap items-center gap-3">
-                <button @click="showImportModal = true" class="inline-flex items-center px-5 py-2.5 bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl hover:bg-gray-50 transition shadow-sm">
-                    <i class="bi bi-cloud-upload mr-2"></i>
-                    Import CSV
-                </button>
+        </section>
 
-                <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-5 py-2.5 bg-gray-900 text-white text-sm font-bold rounded-xl hover:bg-black transition shadow-sm">
-                    <i class="bi bi-plus-lg mr-2"></i>
-                    Create Business
-                </a>
-
-                <div class="h-10 w-px bg-gray-200 mx-2"></div>
-
-                <form action="{{ route('businesses.admin') }}" method="GET" class="flex items-center gap-3">
-                    <select name="status" onchange="this.form.submit()" 
-                            class="bg-white border border-gray-200 text-gray-700 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5">
-                        <option value="">All Statuses</option>
-                        <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
-                        <option value="approved" {{ $status === 'approved' ? 'selected' : '' }}>Approved</option>
-                        <option value="rejected" {{ $status === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                        <option value="need_revision" {{ $status === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
-                    </select>
-                    
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <i class="bi bi-search text-gray-400"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ $search }}"
-                               class="bg-white border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" 
-                               placeholder="Search business name...">
-                    </div>
-                </form>
+        {{-- Statistics --}}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Businesses</p>
+                <p class="text-3xl font-bold text-gray-900">{{ $totalBusinesses }}</p>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
+                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Approved</p>
+                <p class="text-3xl font-bold text-green-600">{{ $approvedBusinesses }}</p>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
+                <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">Pending Approval</p>
+                <p class="text-3xl font-bold text-amber-600">{{ $pendingBusinesses }}</p>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
+                <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">Rejected / Revision</p>
+                <p class="text-3xl font-bold text-red-600">{{ $rejectedBusinesses }}</p>
             </div>
         </div>
 
-        @if(session('success'))
-            {{-- Handled by global toast --}}
-        @endif
+        {{-- Filters & Search --}}
+        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
+            <form action="{{ route('businesses.admin') }}" method="GET">
+                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                    {{-- Search Input --}}
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="bi bi-search text-gray-400"></i>
+                        </div>
+                        <input
+                            type="text"
+                            name="search"
+                            value="{{ $search }}"
+                            placeholder="Search business name..."
+                            class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
+                        >
+                    </div>
+
+                    {{-- Filters & Reset Button --}}
+                    <div class="flex items-center gap-3">
+                        <select name="status" onchange="this.form.submit()" 
+                                class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                            <option value="">Status: All</option>
+                            <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
+                            <option value="approved" {{ $status === 'approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="rejected" {{ $status === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            <option value="need_revision" {{ $status === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
+                        </select>
+
+                        <select name="featured" onchange="this.form.submit()" 
+                                class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                            <option value="">Featured: All</option>
+                            <option value="yes" {{ $featured === 'yes' ? 'selected' : '' }}>Featured</option>
+                            <option value="no" {{ $featured === 'no' ? 'selected' : '' }}>Not Featured</option>
+                        </select>
+                        
+                        <a href="{{ route('businesses.admin') }}" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                            <i class="bi bi-arrow-clockwise text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
             <div class="overflow-x-auto">
@@ -54,6 +101,8 @@
                             <th scope="col" class="px-6 py-4">Category</th>
                             <th scope="col" class="px-6 py-4">Location</th>
                             <th scope="col" class="px-6 py-4">Status</th>
+                            <th scope="col" class="px-6 py-4 text-center">Visible</th>
+                            <th scope="col" class="px-6 py-4 text-center">Featured</th>
                             <th scope="col" class="px-6 py-4">Created At</th>
                             <th scope="col" class="px-6 py-4 text-right">Actions</th>
                         </tr>
@@ -96,27 +145,46 @@
                                         {{ $b->status_label }}
                                     </span>
                                 </td>
+                                <td class="px-6 py-4 text-center">
+                                    <span class="w-3 h-3 rounded-full inline-block {{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                title="{{ !$b->is_visible ? 'Business must be visible (approved) to be featured' : ($b->is_featured ? 'Remove from featured' : 'Add to featured') }}"
+                                                {{ !$b->is_visible ? 'disabled' : '' }}
+                                                class="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
+                                                    {{ !$b->is_visible 
+                                                        ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
+                                                        : ($b->is_featured
+                                                            ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                                            : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
+                                            <i class="bi bi-star-fill text-[10px]"></i>
+                                        </button>
+                                    </form>
+                                </td>
                                 <td class="px-6 py-4 text-xs">
                                     {{ $b->created_at->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('businesses.show', $b) }}" target="_blank" 
-                                           class="p-2 text-gray-400 hover:text-blue-600 transition-colors" title="View Details">
-                                            <i class="bi bi-eye-fill text-lg"></i>
+                                        <a href="{{ route('businesses.show', $b) }}" 
+                                           class="w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm" title="View Details">
+                                            <i class="bi bi-eye-fill text-sm"></i>
                                         </a>
                                         
                                         <button type="button" 
                                                 onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason]) }})"
-                                                class="p-2 text-gray-400 hover:text-green-600 transition-colors" title="Change Status">
-                                            <i class="bi bi-pencil-square text-lg"></i>
+                                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-900 hover:text-white transition-all duration-200 shadow-sm" title="Change Status">
+                                            <i class="bi bi-pencil-square text-sm"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-20 text-center text-gray-400 italic">
+                                <td colspan="8" class="px-6 py-20 text-center text-gray-400 italic">
                                     No businesses found matching the criteria.
                                 </td>
                             </tr>
