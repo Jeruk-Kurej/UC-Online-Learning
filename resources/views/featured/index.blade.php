@@ -1,7 +1,7 @@
 <x-app-layout>
-    <div class="space-y-24 pb-6">
+    <div class="space-y-16 pb-6">
         {{-- High-Fidelity "Better" Hero Section --}}
-        <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-8 py-20 md:px-16 md:py-24 lg:px-16 mx-4 mt-4 reveal-on-scroll">
+        <section class="group relative overflow-hidden rounded-[3.5rem] bg-[#FFF9F2] px-8 py-12 md:px-16 md:py-16 lg:px-16 mx-4 mt-0 reveal-on-scroll">
             {{-- Background Effects --}}
             <div class="uco-hero-mesh opacity-90"></div>
             <div class="uco-noise-overlay"></div>
