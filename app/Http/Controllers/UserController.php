@@ -67,6 +67,7 @@ class UserController extends Controller
 
         // Build query with search, filter, and sort options
         $query = User::withCount('businesses')
+            ->where('role', '!=', 'admin')
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($innerQuery) use ($search) {
                     $innerQuery->where('name', 'LIKE', "%{$search}%")
