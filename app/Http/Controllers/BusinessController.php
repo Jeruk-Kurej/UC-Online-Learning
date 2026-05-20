@@ -437,30 +437,43 @@ class BusinessController extends Controller
         return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
     }
 
-    /**
-     * Toggle the featured status of a business (admin only, max 8 featured at once).
-     */
     public function toggleFeatured(Business $business)
     {
         /** @var \App\Models\User|null $user */
         $user = Auth::user();
         if (!$user || !$user->isAdmin()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+            }
             abort(403);
         }
 
         if ($business->is_featured) {
             $business->update(['is_featured' => false]);
-            return back()->with('success', "\"{$business->name}\" removed from featured.");
+            $msg = "\"{$business->name}\" removed from featured.";
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => true, 'message' => $msg]);
+            }
+            return back()->with('success', $msg);
         }
 
         $featuredCount = Business::where('is_featured', true)->count();
         if ($featuredCount >= 8) {
-            return back()->withErrors(['featured' => 'Maximum of 8 featured businesses reached. Un-feature one first.']);
+            $msg = 'Maximum of 8 featured businesses reached. Un-feature one first.';
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $msg], 422);
+            }
+            return back()->withErrors(['featured' => $msg]);
         }
 
         $business->update(['is_featured' => true]);
-        return back()->with('success', "\"{$business->name}\" is now featured.");
+        $msg = "\"{$business->name}\" is now featured.";
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $msg]);
+        }
+        return back()->with('success', $msg);
     }
+
 
     /**
      * Import businesses from CSV/Excel using auto-detected importer.

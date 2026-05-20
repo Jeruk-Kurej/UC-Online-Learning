@@ -13,7 +13,7 @@
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        {{ $featuredBusinessesCount }}/8 Featured
+                        <span class="featured-count">{{ $featuredBusinessesCount }}</span>/8 Featured
                     </span>
                     <button @click="showImportModal = true" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition shadow-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
@@ -97,13 +97,13 @@
                 <table class="w-full text-sm text-left text-gray-500">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
                         <tr>
-                            <th scope="col" class="px-6 py-4">Business & Owner</th>
+                            <th scope="col" class="px-6 py-4">Business</th>
+                            <th scope="col" class="px-6 py-4">Owner</th>
                             <th scope="col" class="px-6 py-4">Category</th>
                             <th scope="col" class="px-6 py-4">Location</th>
                             <th scope="col" class="px-6 py-4">Status</th>
                             <th scope="col" class="px-6 py-4 text-center">Visible</th>
                             <th scope="col" class="px-6 py-4 text-center">Featured</th>
-                            <th scope="col" class="px-6 py-4">Created At</th>
                             <th scope="col" class="px-6 py-4 text-right">Actions</th>
                         </tr>
                     </thead>
@@ -121,8 +121,19 @@
                                         </div>
                                         <div>
                                             <div class="font-bold text-gray-900">{{ $b->name }}</div>
-                                            <div class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Owner: {{ optional($b->user)->name ?? 'Unknown' }}</div>
                                         </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        @php
+                                            $ownerName = optional($b->user)->name ?? 'Unknown';
+                                            $ownerPhoto = optional($b->user)->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($ownerName) . '&color=4B5563&background=F3F4F6';
+                                        @endphp
+                                        <div class="w-7 h-7 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
+                                            <img src="{{ $ownerPhoto }}" class="w-full h-full object-cover">
+                                        </div>
+                                        <span class="font-bold text-gray-700 text-xs">{{ $ownerName }}</span>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4 italic">
@@ -149,7 +160,7 @@
                                     <span class="w-3 h-3 rounded-full inline-block {{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block toggle-featured-form">
                                         @csrf
                                         <button type="submit"
                                                 title="{{ !$b->is_visible ? 'Business must be visible (approved) to be featured' : ($b->is_featured ? 'Remove from featured' : 'Add to featured') }}"
@@ -163,9 +174,6 @@
                                             <i class="bi bi-star-fill text-[10px]"></i>
                                         </button>
                                     </form>
-                                </td>
-                                <td class="px-6 py-4 text-xs">
-                                    {{ $b->created_at->format('d M Y') }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
@@ -287,6 +295,58 @@
                 reasonField.classList.add('hidden');
             }
         }
+
+        // Intercept featured toggle form submissions to handle them via AJAX
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            if (form && form.classList.contains('toggle-featured-form')) {
+                e.preventDefault();
+                const button = form.querySelector('button');
+                const tokenInput = form.querySelector('input[name="_token"]');
+                if (!button || !tokenInput) return;
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRF-TOKEN': tokenInput.value
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const isFeaturedNow = data.message.includes('now featured');
+                        if (isFeaturedNow) {
+                            button.className = "w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500";
+                            button.title = "Remove from featured";
+                        } else {
+                            button.className = "w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300";
+                            button.title = "Add to featured";
+                        }
+                        
+                        // Update featured badge count in header
+                        const countEl = document.querySelector('.featured-count');
+                        if (countEl) {
+                            let currentCount = parseInt(countEl.textContent, 10) || 0;
+                            countEl.textContent = isFeaturedNow ? currentCount + 1 : Math.max(0, currentCount - 1);
+                        }
+                        
+                        // Dispatch global toast message
+                        window.dispatchEvent(new CustomEvent('notify', {
+                            detail: { message: data.message, type: 'success' }
+                        }));
+                    } else {
+                        window.dispatchEvent(new CustomEvent('notify', {
+                            detail: { message: data.message || 'Error occurred', type: 'error' }
+                        }));
+                    }
+                })
+                .catch(err => {
+                    console.error('Featured toggle failed:', err);
+                });
+            }
+        });
+    </script>
     </div>
 
     {{-- Import Modal --}}
