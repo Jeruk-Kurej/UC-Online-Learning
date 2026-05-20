@@ -12,10 +12,9 @@ class FeaturedController extends Controller
 {
     public function index(Request $request)
     {
-        // Top 3 entrepreneur profiles (have business + photo + testimony)
+        // Top 3 featured student profiles (have photo + testimony)
         $topEntrepreneurs = User::where('is_visible', true)
             ->where('is_featured', true)
-            ->whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true))
             ->whereNotNull('profile_photo_url')
             ->whereNotNull('testimony')
             ->with(['businesses' => fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true)->with('category')])

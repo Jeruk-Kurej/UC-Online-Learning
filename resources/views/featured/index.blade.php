@@ -126,46 +126,52 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
                 @forelse($topEntrepreneurs as $student)
-                    @php
-                        $featuredBusiness = $student->businesses->first();
-                    @endphp
-                    <article class="reveal-on-scroll group rounded-xl border border-gray-100 bg-white p-6 shadow-[0_20px_60px_rgba(0,0,0,0.04)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl" style="transition-delay: {{ $loop->index * 80 }}ms">
-                        <div class="flex items-start gap-4">
-                            <div class="h-16 w-16 overflow-hidden rounded-lg border border-uco-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
-                                @if($student->profile_photo_url)
-                                    <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
-                                @else
-                                    <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-uco-orange-50 to-uco-orange-100/40 text-uco-orange-500 font-black text-lg">
-                                        {{ strtoupper(substr($student->name, 0, 1)) }}
-                                    </div>
-                                @endif
-                            </div>
-
-                            <div class="min-w-0 flex-1">
-                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Student</p>
-                                <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $student->name }}</h3>
-                                <p class="mt-1 text-sm font-medium text-gray-500">{{ $student->display_status }}</p>
-                            </div>
-                        </div>
-
-                        <div class="mt-5 space-y-4">
-                            <p class="text-sm leading-relaxed text-gray-600 line-clamp-4">
-                                “{{ $student->testimony }}”
-                            </p>
-
-                            @if($featuredBusiness)
-                                <div class="rounded-lg bg-gray-50 p-4 border border-gray-100">
-                                    <p class="text-[10px] font-black uppercase tracking-[0.25em] text-gray-400">Business Highlight</p>
-                                    <p class="mt-1 text-sm font-bold text-gray-900">{{ $featuredBusiness->name }}</p>
-                                    <p class="mt-1 text-xs text-gray-500 line-clamp-2">{{ $featuredBusiness->description }}</p>
+                    <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll" style="transition-delay: {{ $loop->index * 80 }}ms">
+                        
+                        {{-- Top Section: Image & Info --}}
+                        <div class="relative h-[420px] w-full flex-shrink-0">
+                            @if($student->profile_photo_url)
+                                <img src="{{ $student->profile_photo_url }}" 
+                                     alt="{{ $student->name }}"
+                                     style="width: 100%; height: 100%; object-fit: cover;">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
+                                     style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                    {{ strtoupper(substr($student->name, 0, 1)) }}
                                 </div>
                             @endif
+                            
+                            {{-- Overlay Gradient --}}
+                            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
+                            
+                            {{-- Text Content on Image --}}
+                            <div style="position: absolute; bottom: 38px; left: 25px; right: 25px; color: white;">
+                                <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
+                                <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
+                                    {{ $student->current_status ?? 'Member' }} at UCO Community
+                                </p>
+                                <p style="color: #ff8a00; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+                                    {{ $student->major ?? 'Student' }}
+                                </p>
+                            </div>
                         </div>
-                    </article>
+
+                        {{-- Bottom Section: Testimony content --}}
+                        <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
+                            {{-- Quote Icon --}}
+                            <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; background: #ff8a00; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(255, 138, 0, 0.3); display: flex; align-items: center; justify-content: center; color: white; font-size: 24px; z-index: 10;">
+                                <i class="bi bi-quote"></i>
+                            </div>
+
+                            <p style="color: #334155; font-weight: 600; line-height: 1.7; font-size: 14px; font-style: italic; margin: 0;">
+                                “{{ $student->testimony }}”
+                            </p>
+                        </div>
+                    </div>
                 @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center">
+                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
                         <div class="relative z-10 space-y-4">
                             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
                                 <i class="bi bi-people text-2xl text-uco-orange-400"></i>
