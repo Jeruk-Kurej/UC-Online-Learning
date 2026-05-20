@@ -47,7 +47,7 @@
                 <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
                 
                 {{-- Text Content on Image --}}
-                <div style="position: absolute; bottom: 38px; left: 25px; right: 25px; color: white;">
+                <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
                     <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $user->name }}</h3>
                     <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
                         {{ $user->current_status ?? 'Member' }} at UCO Community

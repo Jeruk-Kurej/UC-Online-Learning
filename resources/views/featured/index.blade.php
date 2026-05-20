@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="space-y-24 pb-32 bg-white">
+    <div class="space-y-24 pb-32">
         {{-- High-Fidelity "Better" Hero Section --}}
         <section class="group relative overflow-hidden rounded-[4.5rem] bg-[#FFF9F2] px-10 py-24 md:px-24 md:py-32 lg:px-32 mx-4 mt-4 reveal-on-scroll">
             {{-- Background Effects --}}
@@ -56,11 +56,11 @@
                         @foreach ($spotlightBusinesses->take(4) as $index => $business)
                             <div class="group/card relative {{ $index % 2 == 1 ? 'mt-8' : '' }}">
                                 <a href="{{ route('businesses.show', $business) }}"
-                                    class="uco-glass-light block overflow-hidden rounded-xl p-2 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-700 hover:-translate-y-2 hover:shadow-2xl hover:border-uco-orange-200/50">
+                                    class="block overflow-hidden transition-all duration-700 hover:-translate-y-2">
                                     
                                     <div class="space-y-3">
                                         {{-- Compact Showcase Image --}}
-                                        <div class="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-gray-100">
+                                        <div class="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-gray-100 shadow-[0_15px_30px_rgba(0,0,0,0.06)]">
                                             @php
                                                 $coverImage = $business->products->first()?->photo_url ?? null;
                                             @endphp
@@ -349,7 +349,7 @@
                             <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
                             
                             {{-- Text Content on Image --}}
-                            <div style="position: absolute; bottom: 38px; left: 25px; right: 25px; color: white;">
+                            <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
                                 <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
                                 <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
                                     {{ $student->current_status ?? 'Member' }} at UCO Community
