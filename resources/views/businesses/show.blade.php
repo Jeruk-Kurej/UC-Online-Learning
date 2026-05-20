@@ -1178,20 +1178,24 @@
                 $additionalOwners = $business->members()->where('users.id', '!=', $business->user_id)->get();
             @endphp
 
+            {{-- Section Title: Owned By --}}
+            <div class="relative mb-3.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-1 h-4 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                    <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-gray-700">Owned <span class="uco-text-gradient-orange">By</span></h4>
+                </div>
+            </div>
+
             {{-- ✨ Elegant Owner Card (Clickable) --}}
             <a href="{{ route('users.show', $owner) }}" class="block relative bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden group hover:border-orange-200 hover:shadow-[0_8px_30px_rgb(247,147,30,0.1)] transition-all">
                 
                 {{-- Decorative gradient blob --}}
                 <div class="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full blur-[40px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
                 
+                {{-- Link Icon --}}
+                <i class="absolute top-5 right-5 bi bi-box-arrow-up-right text-gray-300 group-hover:text-orange-500 transition-colors text-xs z-20"></i>
+                
                 <div class="relative z-10">
-                    <div class="flex items-center justify-between mb-4">
-                        <p class="text-[9px] font-black text-gray-400 uppercase tracking-[0.15em]">
-                            Owned By
-                        </p>
-                        <i class="bi bi-box-arrow-up-right text-gray-300 group-hover:text-orange-500 transition-colors text-xs"></i>
-                    </div>
-
                     <div class="flex items-center gap-4 mb-5">
                         {{-- Avatar --}}
                         @if ($ownerPhotoUrl)
@@ -1259,11 +1263,13 @@
 
             {{-- Additional Owners --}}
             @if ($additionalOwners->isNotEmpty())
-                <div class="mt-8">
-                    <p class="text-[10px] font-black uppercase tracking-[0.15em] mb-4 flex items-center gap-2 text-gray-500">
-                        <i class="bi bi-people-fill"></i>
-                        Also Managed By
-                    </p>
+                <div class="mt-6 space-y-3.5">
+                    <div class="relative">
+                        <div class="flex items-center gap-2">
+                            <span class="w-1 h-4 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
+                            <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-gray-700">Also Managed <span class="uco-text-gradient-blue">By</span></h4>
+                        </div>
+                    </div>
                     <div class="grid grid-cols-2 gap-4">
                         @foreach ($additionalOwners as $addOwner)
                             @php
