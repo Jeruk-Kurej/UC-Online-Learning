@@ -37,7 +37,7 @@
                                 <p class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Admin Tools</p>
                                 <a href="{{ route('users.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Users</a>
                                 <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Businesses</a>
-                                <a href="{{ route('admin.testimonies.index') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
+                                <a href="{{ route('uc-testimonies.admin') }}" class="block py-1 text-sm text-gray-700 hover:text-uco-orange-500 font-medium">Manage Testimonies</a>
                             </div>
                             @endif
 
@@ -70,18 +70,11 @@
     </div>
 
     {{-- Mobile Menu --}}
-    <div x-show="open" 
-         x-transition:enter="transition ease-out duration-200"
-         x-transition:enter-start="opacity-0 -translate-y-2"
-         x-transition:enter-end="opacity-100 translate-y-0"
-         x-transition:leave="transition ease-in duration-150"
-         x-transition:leave-start="opacity-100 translate-y-0"
-         x-transition:leave-end="opacity-0 -translate-y-2"
-         class="md:hidden border-t bg-white" x-cloak>
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t bg-white">
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('featured') }}" class="block py-3 text-base font-bold text-gray-900">Home</a>
-            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Showcase</a>
-            <a href="{{ route('uc-testimonies.index') }}" class="block py-3 text-base font-bold text-gray-900">Testimonies</a>
+            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Directory</a>
+            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Directory</a>
             @auth
                 <div class="pt-4 border-t mt-4">
                     <p class="text-xs font-bold text-gray-400 uppercase mb-2">{{ auth()->user()->name }}</p>
@@ -91,7 +84,7 @@
                             <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Admin Tools</p>
                             <a href="{{ route('users.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
                             <a href="{{ route('businesses.admin') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
-                            <a href="{{ route('admin.testimonies.index') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('admin.testimonies.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
+                            <a href="{{ route('uc-testimonies.admin') }}" class="block py-1 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
                         </div>
                     @endif
 

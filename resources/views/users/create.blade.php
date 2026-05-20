@@ -301,25 +301,7 @@
                     @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- CV File --}}
-                <div class="relative">
-                    <label for="cv_url" class="form-label-custom">CV / Resume File</label>
-                    <div class="form-file-container-custom group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
-                                <i class="bi bi-file-earmark-pdf text-base"></i>
-                            </div>
-                            <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="cv_label">Upload or drop a file</span>
-                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">PDF ONLY</span>
-                            </div>
-                        </div>
-                        <input type="file" name="cv_url" id="cv_url" accept=".pdf"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('cv_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
-                    </div>
-                    @error('cv_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
+
 
                 {{-- Activities Documentation File --}}
                 <div class="relative">

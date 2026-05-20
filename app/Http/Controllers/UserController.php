@@ -188,9 +188,7 @@ class UserController extends Controller
             'current_status' => 'nullable|string|max:255',
             'testimony' => 'nullable|string',
             
-            // Files
             'profile_photo_url' => 'nullable|image|max:5120',
-            'cv_url' => 'nullable|mimes:pdf|max:10240',
             'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
             'is_visible' => 'nullable|boolean',
@@ -228,11 +226,7 @@ class UserController extends Controller
             $userData['profile_photo_url'] = '/storage/' . $path;
         }
 
-        if ($request->hasFile('cv_url')) {
-            $file = $request->file('cv_url');
-            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['cv_url'] = '/storage/' . $path;
-        }
+
 
         if ($request->hasFile('activities_doc_url')) {
             $file = $request->file('activities_doc_url');
@@ -341,7 +335,6 @@ class UserController extends Controller
             
             // Files
             'profile_photo_url' => 'nullable|image|max:5120',
-            'cv_url' => 'nullable|mimes:pdf|max:10240',
             'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
             
             'is_visible' => 'nullable|boolean',
@@ -381,11 +374,7 @@ class UserController extends Controller
             $userData['profile_photo_url'] = '/storage/' . $path;
         }
 
-        if ($request->hasFile('cv_url')) {
-            $file = $request->file('cv_url');
-            $path = $file->storeAs('student-cvs', 'cv_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['cv_url'] = '/storage/' . $path;
-        }
+
 
         if ($request->hasFile('activities_doc_url')) {
             $file = $request->file('activities_doc_url');
@@ -415,6 +404,40 @@ class UserController extends Controller
         return redirect()
             ->route('users.index')
             ->with('success', "Success! The profile for '{$user->name}' has been updated.");
+    }
+
+    /**
+     * Toggle the featured status of a user.
+     */
+    public function toggleFeatured(User $user)
+    {
+        if (!$this->getAuthUser()->isAdmin()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
+            }
+            abort(403, 'Only administrators can toggle featured status.');
+        }
+
+        if (!$user->is_visible && !$user->is_featured) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
+            }
+            return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
+        }
+
+        $user->update(['is_featured' => !$user->is_featured]);
+
+        $status = $user->is_featured ? 'added to' : 'removed from';
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_featured' => $user->is_featured,
+                'message' => "User '{$user->name}' has been {$status} featured list."
+            ]);
+        }
+
+        return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
     }
 
     /**

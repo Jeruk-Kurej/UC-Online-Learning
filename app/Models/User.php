@@ -40,7 +40,7 @@ class User extends Authenticatable
 
         // CSV: Profile extras
         'testimony',
-        'cv_url',
+
         'profile_photo_url',
         'activities_doc_url',
 

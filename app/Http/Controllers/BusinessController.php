@@ -85,8 +85,26 @@ class BusinessController extends Controller
         $businesses = $query->latest()->paginate(12)->withQueryString();
         $categories = Category::all();
         
-        $availableCities = Business::visible()->whereNotNull('city')->distinct()->pluck('city')->sort();
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
+        
+        // Dynamic city list based on selected province
+        $cityQuery = Business::visible()->whereNotNull('city');
+        if ($request->province) {
+            $cityQuery->where('province', $request->province);
+        }
+        $availableCities = $cityQuery->distinct()->pluck('city')->sort();
+
+        // Mapping for Alpine.js dependent dropdown
+        $provinceCityMap = Business::visible()
+            ->whereNotNull('province')
+            ->whereNotNull('city')
+            ->select('province', 'city')
+            ->distinct()
+            ->get()
+            ->groupBy('province')
+            ->map(fn($items) => $items->pluck('city')->sort()->values())
+            ->toArray();
+
         $featuredBusinessCount = Business::where('is_featured', true)->count();
 
         // If admin, also get count of businesses waiting for approval
@@ -99,7 +117,16 @@ class BusinessController extends Controller
             return view('businesses.partials.list', compact('businesses', 'viewType'))->render();
         }
 
-        return view('businesses.index', compact('businesses', 'categories', 'availableCities', 'availableProvinces', 'viewType', 'featuredBusinessCount', 'pendingCount'));
+        return view('businesses.index', compact(
+            'businesses', 
+            'categories', 
+            'viewType', 
+            'availableCities', 
+            'availableProvinces',
+            'provinceCityMap',
+            'featuredBusinessCount',
+            'pendingCount'
+        ));
     }
 
     /**

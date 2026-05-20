@@ -22,7 +22,7 @@ class ProfileUpdateRequest extends FormRequest
             'graduate_year'      => ['nullable', 'string', 'max:50'],
             'testimony'          => ['nullable', 'string'],
             'profile_photo'      => ['nullable', 'image', 'max:10240'],
-            'cv_file'            => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:20480'],
+
             'activities_file'    => ['nullable', 'file', 'max:50120'],
             'password'           => ['nullable', 'confirmed', 'min:8'],
         ];
