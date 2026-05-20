@@ -368,8 +368,8 @@
                         {{-- Bottom Section: Testimony content --}}
                         <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
                             {{-- Quote Icon --}}
-                            <div style="position: absolute; top: -25px; left: 50%; transform: translateX(-50%); width: 50px; height: 50px; background: #ff8a00; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(255, 138, 0, 0.3); display: flex; align-items: center; justify-center; color: white; font-size: 24px; z-index: 10;">
-                                <i class="bi bi-quote"></i>
+                            <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
+                                <i class="fa-solid fa-quote-left text-lg"></i>
                             </div>
 
                             <p style="color: #334155; font-weight: 600; line-height: 1.7; font-size: 14px; font-style: italic; margin: 0;">
