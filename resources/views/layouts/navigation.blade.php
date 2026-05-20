@@ -41,7 +41,6 @@
                             </div>
                             @endif
 
-                            <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Dashboard</a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                             @if(!auth()->user()->isAdmin())
                                 <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a>
@@ -88,7 +87,6 @@
                         </div>
                     @endif
 
-                    <a href="{{ route('dashboard') }}" class="block py-2 text-sm text-gray-600">Dashboard</a>
                     <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
                     @if(!auth()->user()->isAdmin())
                         <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>

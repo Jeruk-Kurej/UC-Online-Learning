@@ -25,7 +25,7 @@ class NavigationTest extends TestCase
         $response = $this->actingAs($user)->get(route('businesses.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Dashboard');
+        $response->assertSee('My Profile');
         $response->assertSee($user->name);
         $response->assertSee('My Businesses');
     }

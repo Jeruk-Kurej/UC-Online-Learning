@@ -18,9 +18,6 @@ Route::get('/', function () {
     return redirect('/featured');
 })->name('home');
 
-Route::get('/dashboard', function () {
-    return redirect()->route('featured');
-})->name('dashboard');
 
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
