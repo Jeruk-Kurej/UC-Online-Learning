@@ -1,4 +1,5 @@
 <x-app-layout>
+    @section('title', 'Community Testimonies')
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8 pb-8">
         <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>

@@ -418,25 +418,6 @@ class UserController extends Controller
     }
 
     /**
-     * Toggle the featured status of a user.
-     */
-    public function toggleFeatured(User $user)
-    {
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403, 'Only administrators can toggle featured status.');
-        }
-
-        if (!$user->is_visible && !$user->is_featured) {
-            return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
-        }
-
-        $user->update(['is_featured' => !$user->is_featured]);
-
-        $status = $user->is_featured ? 'added to' : 'removed from';
-        return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
-    }
-
-    /**
      * Toggle the visibility status of a user.
      */
     public function toggleStatus(User $user)

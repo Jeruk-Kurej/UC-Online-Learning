@@ -70,7 +70,14 @@
     </div>
 
     {{-- Mobile Menu --}}
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t bg-white">
+    <div x-show="open" 
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-2"
+         class="md:hidden border-t bg-white" x-cloak>
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('featured') }}" class="block py-3 text-base font-bold text-gray-900">Home</a>
             <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Showcase</a>

@@ -107,7 +107,7 @@ class BusinessController extends Controller
      */
     public function adminIndex(Request $request)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (!auth()->check() || !auth()->user()->isAdmin()) {
             abort(403);
         }
 
@@ -134,7 +134,7 @@ class BusinessController extends Controller
      */
     public function updateStatus(Request $request, Business $business)
     {
-        if (!auth()->user()->isAdmin()) {
+        if (!auth()->check() || !auth()->user()->isAdmin()) {
             abort(403);
         }
 

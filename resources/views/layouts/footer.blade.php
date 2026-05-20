@@ -21,34 +21,28 @@
                 <h4 class="font-medium text-sm text-gray-900 mb-4">Quick Links</h4>
                 <ul class="space-y-2">
                     <li>
-                        <a href="{{ route('about') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                            About Us
+                        <a href="{{ route('featured') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
+                            Home
                         </a>
                     </li>
                     <li>
-                        <a href="/dashboard" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                            Dashboard
+                        <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
+                            Business Directory
                         </a>
                     </li>
                     <li>
-                        @if(auth()->check())
-                            <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                                Businesses Directory
-                            </a>
-                        @else
-                            <a href="{{ route('featured') }}" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                                Businesses Directory
-                            </a>
-                        @endif
+                        <a href="{{ route('uc-testimonies.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
+                            Community Testimonies
+                        </a>
                     </li>
                     <li>
-                        <a href="/business-types" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-                            Business Categories
+                        <a href="{{ route('about') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
+                            About UCO
                         </a>
                     </li>
                     @auth
                         <li>
-                            <a href="/profile" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
+                            <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
                                 My Profile
                             </a>
                         </li>

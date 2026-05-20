@@ -90,7 +90,7 @@
 
                                         {{-- Content --}}
                                         <div class="px-3 pb-2">
-                                            <h4 class="text-[15px] font-[900] text-gray-900 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
+                                            <h4 class="text-[15px] font-[900] text-gray-900 truncate tracking-tight group-hover/card:text-uco-orange-700 transition-colors">
                                                 {{ $business->name }}
                                             </h4>
                                             <div class="flex items-center gap-2 mt-1">
@@ -144,7 +144,7 @@
                             </div>
 
                             <div class="min-w-0 flex-1">
-                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-600">Featured Profile</p>
+                                <p class="text-[10px] font-black uppercase tracking-[0.25em] text-uco-orange-700">Featured Profile</p>
                                 <h3 class="mt-1 truncate text-xl font-[900] text-gray-950">{{ $profile->name }}</h3>
                                 <p class="mt-1 text-sm font-medium text-gray-500">{{ $profile->major ?? $profile->role }}</p>
                             </div>
@@ -271,7 +271,7 @@
 
                             {{-- Category Tag --}}
                             <div class="absolute top-4 right-6 rounded-full bg-white/90 px-4 py-1 backdrop-blur-md shadow-sm border border-white/50">
-                                <span class="text-[9px] font-black uppercase tracking-widest text-uco-orange-600">
+                                <span class="text-[9px] font-black uppercase tracking-widest text-uco-orange-700">
                                     {{ $business->category->name ?? 'Venture' }}
                                 </span>
                             </div>
@@ -281,7 +281,7 @@
                         <div class="p-6 space-y-6">
                             <div class="space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <h4 class="text-xl font-[900] text-gray-900 tracking-tight group-hover:text-uco-orange-600 transition-colors">
+                                    <h4 class="text-xl font-[900] text-gray-900 tracking-tight group-hover:text-uco-orange-700 transition-colors">
                                         {{ $business->name }}
                                     </h4>
                                 </div>

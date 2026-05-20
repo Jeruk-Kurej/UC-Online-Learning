@@ -1,106 +1,7 @@
 <x-app-layout>
-    @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-        <style>
-            .ts-wrapper {
-                width: 100% !important;
-                display: block !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-sizing: border-box !important;
-            }
-
-            .ts-wrapper .ts-control {
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 0.75rem !important;
-                padding: 10px 16px !important; 
-                min-height: 42px !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-                background: white !important;
-                display: flex !important;
-                align-items: center !important;
-            }
-
-            .ts-wrapper.focus .ts-control {
-                border-color: #111827 !important;
-                box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
-                ring: none !important;
-            }
-
-            .ts-dropdown {
-                background-color: white !important;
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-                margin-top: 6px !important;
-                padding: 6px !important;
-                z-index: 1000 !important;
-            }
-
-            .ts-dropdown .option {
-                padding: 8px 12px !important;
-                font-size: 13px !important;
-                color: #475569 !important;
-                border-radius: 0.75rem !important;
-                margin-bottom: 2px !important;
-                transition: all 0.15s ease !important;
-            }
-
-            .ts-dropdown .option.active {
-                background-color: #fff7ed !important;
-                color: #f97316 !important;
-                font-weight: 600 !important;
-            }
-
-            .ts-wrapper .ts-control>input {
-                font-size: 14px !important;
-            }
-
-            /* Standardized Form Styles */
-            .form-input-custom {
-                width: 100% !important;
-                border: 1.5px solid #e2e8f0 !important;
-                border-radius: 7px !important;
-                font-size: 13px !important;
-                font-weight: 600 !important;
-                color: #0f172a !important;
-                transition: all 0.2s ease !important;
-                box-sizing: border-box !important;
-            }
-
-            input.form-input-custom, 
-            select.form-input-custom {
-                height: 44px !important;
-                padding: 0 15px !important;
-            }
-
-            textarea.form-input-custom {
-                padding: 12px 15px !important;
-            }
-
-            .form-input-custom:focus {
-                border-color: #3b82f6 !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-                outline: none !important;
-            }
-
-            label.form-label-custom {
-                display: block;
-                font-size: 11px;
-                font-weight: 800;
-                color: #64748b;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                margin-bottom: 8px;
-            }
-        </style>
-    @endpush
-
+    @section('title', 'Register New Business')
     <div class="mb-6 flex items-center gap-4">
-        <a href="{{ auth()->user()->role === 'admin' ? route('businesses.index') : route('businesses.my') }}" 
+        <a href="{{ (auth()->check() && auth()->user()->isAdmin()) ? route('businesses.index') : route('businesses.my') }}" 
            class="group inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
             <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
             <span>Back</span>
@@ -120,17 +21,17 @@
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {{-- Business Name --}}
-                <div>
+                <div class="relative pb-5">
                     <label for="name" class="form-label-custom">
                         Business Name <span class="text-red-500">*</span>
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}" required
                            class="form-input-custom @error('name') border-red-500 @enderror">
-                    @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('name')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Business Category --}}
-                <div>
+                <div class="relative pb-5">
                     <label for="category_id" class="form-label-custom">
                         Business Category <span class="text-red-500">*</span>
                     </label>
@@ -142,11 +43,11 @@
                             </option>
                         @endforeach
                     </select>
-                    @error('category_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('category_id')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Offering Type / Mode --}}
-                <div>
+                <div class="relative pb-5">
                     <label for="business_mode" class="form-label-custom">
                         Offering Type <span class="text-red-500">*</span>
                     </label>
@@ -155,27 +56,27 @@
                         <option value="service" {{ old('business_mode') === 'service' ? 'selected' : '' }}>Service Only</option>
                         <option value="both" {{ old('business_mode', 'both') === 'both' ? 'selected' : '' }}>Product & Service</option>
                     </select>
-                    @error('business_mode')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('business_mode')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Established Date --}}
-                <div>
+                <div class="relative pb-5">
                     <label for="established_date" class="form-label-custom">
                         Established Date
                     </label>
                     <input type="date" name="established_date" id="established_date" value="{{ old('established_date') }}"
                            class="form-input-custom @error('established_date') border-red-500 @enderror">
-                    @error('established_date')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('established_date')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Description --}}
-                <div class="md:col-span-2">
+                <div class="md:col-span-2 relative pb-5">
                     <label for="description" class="form-label-custom">
                         Description <span class="text-red-500">*</span>
                     </label>
                     <textarea name="description" id="description" rows="3" required
                               class="form-input-custom">{{ old('description') }}</textarea>
-                    @error('description')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('description')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>
@@ -248,7 +149,7 @@
             </div>
         </div>
 
-        @if(auth()->user()->role === 'admin')
+        @if(auth()->check() && auth()->user()->isAdmin())
             <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
                     Ownership Management
@@ -288,7 +189,7 @@
 
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between pb-6">
-            <a href="{{ auth()->user()->role === 'admin' ? route('businesses.index') : route('businesses.my') }}" 
+            <a href="{{ (auth()->check() && auth()->user()->isAdmin()) ? route('businesses.index') : route('businesses.my') }}" 
                class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
                 Cancel
             </a>
@@ -348,7 +249,7 @@
                         }
                     });
 
-                    @if(auth()->user()->role === 'admin')
+                    @if(auth()->check() && auth()->user()->isAdmin())
                         new TomSelect('#user_id', { create: false, placeholder: "Select Primary Owner", searchField: ["text"] });
                         new TomSelect('#owner_ids', { create: false, placeholder: "Select Additional Owners", searchField: ["text"] });
                     @endif
