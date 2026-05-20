@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\User;
 use App\Models\Business;
-use App\Models\BusinessType;
-use App\Models\ProductCategory;
-use App\Models\ContactType;
+use App\Models\Company;
+use App\Models\Category;
+use App\Models\Skill;
+use App\Models\LegalDocument;
+use App\Models\Certification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -39,45 +41,55 @@ class ResetDatabase extends Command
         $this->info('🔥 Starting database reset...');
         $this->newLine();
 
-        // Delete all businesses (will cascade to products, services, etc.)
+        // 1. Delete all businesses (will cascade to products, services, etc.)
         $this->info('Deleting all businesses...');
         $businessCount = Business::count();
         Business::query()->delete();
         $this->info("✅ Deleted {$businessCount} businesses");
 
-        // Delete business types
-        $this->info('Deleting all business types...');
-        $typeCount = BusinessType::count();
-        BusinessType::query()->delete();
-        $this->info("✅ Deleted {$typeCount} business types");
+        // 2. Delete all companies
+        $this->info('Deleting all companies...');
+        $companyCount = Company::count();
+        Company::query()->delete();
+        $this->info("✅ Deleted {$companyCount} companies");
 
-        // Delete product categories
-        $this->info('Deleting all product categories...');
-        $catCount = ProductCategory::count();
-        ProductCategory::query()->delete();
-        $this->info("✅ Deleted {$catCount} product categories");
+        // 3. Delete categories
+        $this->info('Deleting all categories...');
+        $catCount = Category::count();
+        Category::query()->delete();
+        $this->info("✅ Deleted {$catCount} categories");
 
-        // Delete contact types
-        $this->info('Deleting all contact types...');
-        $contactCount = ContactType::count();
-        ContactType::query()->delete();
-        $this->info("✅ Deleted {$contactCount} contact types");
+        // 4. Delete skills
+        $this->info('Deleting all skills...');
+        $skillCount = Skill::count();
+        Skill::query()->delete();
+        $this->info("✅ Deleted {$skillCount} skills");
 
-        // Delete ALL users
+        // 5. Delete legal documents
+        $this->info('Deleting all legal documents...');
+        $legalCount = LegalDocument::count();
+        LegalDocument::query()->delete();
+        $this->info("✅ Deleted {$legalCount} legal documents");
+
+        // 6. Delete certifications
+        $this->info('Deleting all certifications...');
+        $certCount = Certification::count();
+        Certification::query()->delete();
+        $this->info("✅ Deleted {$certCount} certifications");
+
+        // 7. Delete ALL users
         $this->info('Deleting all users...');
         $userCount = User::count();
         User::query()->delete();
         $this->info("✅ Deleted {$userCount} users");
 
-        // Create ONE default admin
+        // 8. Create ONE default admin
         $this->info('Creating default admin...');
         $admin = User::create([
-            'username' => 'admin',
             'name' => 'Admin UCO',
             'email' => 'admin@uco.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'is_active' => true,
             'email_verified_at' => now(),
         ]);
         $this->info("✅ Created admin: {$admin->email}");

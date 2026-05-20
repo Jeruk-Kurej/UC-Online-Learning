@@ -15,6 +15,10 @@ class AiModerationService
 
     public function analyze(string $content, int $rating = 0, string $customerName = ''): array
     {
+        if (env('SKIP_AI_MODERATION', false)) {
+            return $this->fallbackAnalysis($content, $rating);
+        }
+
         try {
             $prompt = $this->buildPrompt($content, $rating, $customerName);
             $model = env('GEMINI_MODEL', 'gemini-2.5-flash');

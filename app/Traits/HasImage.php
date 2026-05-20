@@ -4,9 +4,77 @@ namespace App\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 trait HasImage
 {
+    /**
+     * Boot the trait to automatically delete Cloudinary images when models are deleted.
+     */
+    public static function bootHasImage()
+    {
+        static::deleting(function ($model) {
+            $fields = ['profile_photo_url', 'logo_url', 'photo_url'];
+            foreach ($fields as $field) {
+                try {
+                    $value = $model->getRawOriginal($field);
+                    if ($value) {
+                        self::deleteCloudinaryImage($value);
+                    }
+                } catch (\Throwable $e) {
+                    // Ignore if field doesn't exist on the model
+                }
+            }
+        });
+    }
+
+    /**
+     * Delete an image from Cloudinary if the URL points to Cloudinary.
+     */
+    public static function deleteCloudinaryImage(?string $url)
+    {
+        if (!$url || !str_contains($url, 'cloudinary.com')) {
+            return;
+        }
+
+        try {
+            $publicId = self::getCloudinaryPublicId($url);
+            if ($publicId) {
+                \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->destroy($publicId);
+                Log::info("[HasImage] Successfully deleted Cloudinary asset: {$publicId}");
+            }
+        } catch (\Throwable $e) {
+            Log::warning("[HasImage] Failed to delete Cloudinary asset: " . $e->getMessage());
+        }
+    }
+
+    /**
+     * Extract public ID from Cloudinary URL.
+     */
+    public static function getCloudinaryPublicId(?string $url): ?string
+    {
+        if (!$url || !str_contains($url, 'cloudinary.com')) {
+            return null;
+        }
+
+        $path = parse_url($url, PHP_URL_PATH);
+        if (!$path) return null;
+
+        $parts = explode('/', trim($path, '/'));
+        $uploadIndex = array_search('upload', $parts);
+        if ($uploadIndex === false) {
+            return null;
+        }
+
+        $startIndex = $uploadIndex + 1;
+        if (isset($parts[$startIndex]) && str_starts_with($parts[$startIndex], 'v') && is_numeric(substr($parts[$startIndex], 1))) {
+            $startIndex++;
+        }
+
+        $publicIdWithExt = implode('/', array_slice($parts, $startIndex));
+        return preg_replace('/\.[^.]+$/', '', $publicIdWithExt);
+    }
+
     /**
      * Resolve image URL handling Google Drive, Local Storage, and External URLs.
      * Fallback to UI-Avatars if no valid image found.

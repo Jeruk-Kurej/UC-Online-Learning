@@ -18,7 +18,9 @@ Route::get('/', function () {
     return redirect('/featured');
 })->name('home');
 
-// Home route - redirect to appropriate page based on auth status
+Route::get('/dashboard', function () {
+    return redirect()->route('featured');
+})->name('dashboard');
 
 Route::get('/about', AboutController::class)->name('about');
 Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');

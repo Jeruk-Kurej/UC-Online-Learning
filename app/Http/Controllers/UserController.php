@@ -418,11 +418,20 @@ class UserController extends Controller
             abort(403, 'Only administrators can toggle featured status.');
         }
 
+        // Cannot feature an inactive user
         if (!$user->is_visible && !$user->is_featured) {
             if (request()->ajax() || request()->wantsJson()) {
                 return response()->json(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
             }
             return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
+        }
+
+        // Check limit (max 4 featured users) when adding
+        if (!$user->is_featured && User::where('is_featured', true)->count() >= 4) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Maximum of 4 users can be featured.'], 422);
+            }
+            return back()->withErrors(['featured' => 'Maximum of 4 users can be featured.']);
         }
 
         $user->update(['is_featured' => !$user->is_featured]);
@@ -472,25 +481,6 @@ class UserController extends Controller
         abort(405, 'Delete action is disabled. Use Toggle Status instead.');
     }
 
-    /**
-     * Toggle featured status for a user.
-     */
-    public function toggleFeatured(User $user)
-    {
-        if (!$this->getAuthUser()->isAdmin()) {
-            abort(403, 'Only administrators can toggle featured status.');
-        }
-
-        // Check if we're adding and already hit the limit
-        if (!$user->is_featured && User::where('is_featured', true)->count() >= 4) {
-            return back()->withErrors(['featured' => 'Maximum of 4 users can be featured.']);
-        }
-
-        $user->update(['is_featured' => !$user->is_featured]);
-
-        $status = $user->is_featured ? 'added to' : 'removed from';
-        return back()->with('success', "User '{$user->name}' has been {$status} featured users.");
-    }
 
     /**
      * Import users from Excel file.

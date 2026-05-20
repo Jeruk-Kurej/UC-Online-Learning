@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Exception;
 
 class MigrateImagesToCloudinary extends Command
@@ -79,6 +80,13 @@ class MigrateImagesToCloudinary extends Command
                     $this->line("  ⏩ id={$id} already on Cloudinary");
                     $stats['skipped']++;
                     continue;
+                }
+
+                // Clean and convert Google Drive viewer links to direct download links
+                if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+                    if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
+                        $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
+                    }
                 }
 
                 try {
@@ -155,6 +163,14 @@ class MigrateImagesToCloudinary extends Command
                             $stats['failed']++;
                             continue;
                         }
+                        
+                        $contentType = $response->header('Content-Type');
+                        if (!str_contains(strtolower($contentType ?? ''), 'image')) {
+                            $this->error("  ❌ id={$id} Not an image (Type: {$contentType}). File is likely private / requires Google login.");
+                            $stats['failed']++;
+                            continue;
+                        }
+                        
                         $contents = $response->body();
                         $basename = basename(parse_url($url, PHP_URL_PATH) ?? 'image.jpg');
                     }
@@ -176,8 +192,11 @@ class MigrateImagesToCloudinary extends Command
 
                     // Upload to Cloudinary (or configured disk)
                     if ($disk === 'cloudinary') {
-                        $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig');
+                        $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
                         file_put_contents($tempFile, $contents);
+                        
+                        // Compress to WebP & Resize to max 1200px before uploading
+                        $tempFile = $this->compressToWebp($tempFile);
                         
                         try {
                             $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->upload($tempFile, [
@@ -192,7 +211,7 @@ class MigrateImagesToCloudinary extends Command
                             $this->error("  ❌ id={$id} Cloudinary Error: " . $e->getMessage());
                             $stored = false;
                         } finally {
-                            if (file_exists($tempFile)) unlink($tempFile);
+                            if ($tempFile && file_exists($tempFile)) unlink($tempFile);
                         }
                     } else {
                         $stored = Storage::disk($disk)->put($targetPath, $contents);
@@ -220,5 +239,91 @@ class MigrateImagesToCloudinary extends Command
         $this->newLine();
         $this->info("Done! Uploaded: {$stats['uploaded']} | Skipped: {$stats['skipped']} | Failed: {$stats['failed']}");
         return 0;
+    }
+
+    /**
+     * Compress image to WebP and resize to a maximum of 1200px.
+     */
+    private function compressToWebp(string $filePath, int $quality = 80): string
+    {
+        ini_set('memory_limit', '512M');
+        if (!extension_loaded('gd')) {
+            return $filePath;
+        }
+
+        try {
+            $imageInfo = @getimagesize($filePath);
+            if (!$imageInfo) {
+                return $filePath;
+            }
+
+            $mime = $imageInfo['mime'];
+            
+            switch ($mime) {
+                case 'image/jpeg':
+                case 'image/jpg':
+                    $image = @imagecreatefromjpeg($filePath);
+                    break;
+                case 'image/png':
+                    $image = @imagecreatefrompng($filePath);
+                    break;
+                case 'image/gif':
+                    $image = @imagecreatefromgif($filePath);
+                    break;
+                case 'image/webp':
+                    $image = @imagecreatefromwebp($filePath);
+                    break;
+                default:
+                    $data = file_get_contents($filePath);
+                    $image = @imagecreatefromstring($data);
+                    break;
+            }
+
+            if (!$image) {
+                return $filePath;
+            }
+
+            // Convert palette images to truecolor to prevent "Palette image not supported by webp" error
+            if (!imageistruecolor($image)) {
+                $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
+                imagealphablending($trueColorImage, false);
+                imagesavealpha($trueColorImage, true);
+                imagecopy($trueColorImage, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+                imagedestroy($image);
+                $image = $trueColorImage;
+            }
+
+            $width = imagesx($image);
+            $height = imagesy($image);
+            $maxDim = 1200;
+            if ($width > $maxDim || $height > $maxDim) {
+                if ($width > $height) {
+                    $newWidth = $maxDim;
+                    $newHeight = (int)($height * ($maxDim / $width));
+                } else {
+                    $newHeight = $maxDim;
+                    $newWidth = (int)($width * ($maxDim / $height));
+                }
+                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+                imagealphablending($resizedImage, false);
+                imagesavealpha($resizedImage, true);
+                imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagedestroy($image);
+                $image = $resizedImage;
+            }
+
+            $outputPath = $filePath . '.webp';
+            if (imagewebp($image, $outputPath, $quality)) {
+                imagedestroy($image);
+                unlink($filePath);
+                return $outputPath;
+            }
+            
+            imagedestroy($image);
+        } catch (\Throwable $e) {
+            $this->warn("Image compression to webp failed: " . $e->getMessage());
+        }
+
+        return $filePath;
     }
 }
