@@ -47,7 +47,7 @@
                             {{ $user->student_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->major }}</td>
+                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->major ?: '-' }}</td>
                     <td class="px-6 py-3 text-center">
                         <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
                     </td>
