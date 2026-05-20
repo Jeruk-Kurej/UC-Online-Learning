@@ -24,7 +24,7 @@ Route::get('/about', AboutController::class)->name('about');
 Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
 Route::get('/businesses', [BusinessController::class, 'index'])->name('businesses.index');
 Route::get('/intrapreneurs/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
-Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
+// Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
 
 // ============================================================
 // AUTHENTICATED ROUTES
@@ -47,8 +47,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/businesses/{business}', [BusinessController::class, 'update'])->name('businesses.update');
     Route::get('/api/regencies', [BusinessController::class, 'getRegencies'])->name('api.regencies');
 
-    Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
-    Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
+    // Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
+    // Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 });
 
 // ============================================================
@@ -69,7 +69,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/businesses/{business}/status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
     Route::post('/businesses/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
     
-    Route::get('/admin/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
+    // Route::get('/admin/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
 });
 
 // This must be LAST to avoid matching static routes like 'create'
