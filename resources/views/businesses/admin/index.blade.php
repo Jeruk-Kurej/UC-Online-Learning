@@ -161,32 +161,49 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block toggle-featured-form">
-                                        @csrf
-                                        <button type="submit"
-                                                title="{{ !$b->is_visible ? 'Business must be visible (approved) to be featured' : ($b->is_featured ? 'Remove from featured' : 'Add to featured') }}"
-                                                {{ !$b->is_visible ? 'disabled' : '' }}
-                                                class="w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
-                                                    {{ !$b->is_visible 
-                                                        ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
-                                                        : ($b->is_featured
-                                                            ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                            : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
-                                            <i class="bi bi-star-fill text-[10px]"></i>
-                                        </button>
-                                    </form>
+                                         @csrf
+                                         <button type="submit"
+                                                 {{ !$b->is_visible ? 'disabled' : '' }}
+                                                 class="relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
+                                                     {{ !$b->is_visible 
+                                                         ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
+                                                         : ($b->is_featured
+                                                             ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                                             : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
+                                             <i class="bi bi-star-fill text-[10px]"></i>
+                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
+                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider tooltip-text">
+                                                     {{ !$b->is_visible ? 'Requires approved business' : ($b->is_featured ? 'Remove featured' : 'Make featured') }}
+                                                 </div>
+                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                             </div>
+                                         </button>
+                                     </form>
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
-                                        <a href="{{ route('businesses.show', $b) }}" 
-                                           class="w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm" title="View Details">
-                                            <i class="bi bi-eye-fill text-sm"></i>
-                                        </a>
-                                        
-                                        <button type="button" 
-                                                onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason]) }})"
-                                                class="w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-900 hover:text-white transition-all duration-200 shadow-sm" title="Change Status">
-                                            <i class="bi bi-pencil-square text-sm"></i>
-                                        </button>
+                                         <a href="{{ route('businesses.show', $b) }}" 
+                                            class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
+                                             <i class="bi bi-eye-fill text-sm"></i>
+                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
+                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
+                                                     View Details
+                                                 </div>
+                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                             </div>
+                                         </a>
+                                         
+                                         <button type="button" 
+                                                 onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason]) }})"
+                                                 class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-900 hover:text-white transition-all duration-200 shadow-sm">
+                                             <i class="bi bi-pencil-square text-sm"></i>
+                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
+                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
+                                                     Change Status
+                                                 </div>
+                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                             </div>
+                                         </button>
                                     </div>
                                 </td>
                             </tr>
@@ -316,12 +333,13 @@
                 .then(data => {
                     if (data.success) {
                         const isFeaturedNow = data.message.includes('now featured');
+                        const tooltipEl = button.querySelector('.tooltip-text');
                         if (isFeaturedNow) {
-                            button.className = "w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500";
-                            button.title = "Remove from featured";
+                            button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500";
+                            if (tooltipEl) tooltipEl.textContent = 'Remove featured';
                         } else {
-                            button.className = "w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300";
-                            button.title = "Add to featured";
+                            button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300";
+                            if (tooltipEl) tooltipEl.textContent = 'Make featured';
                         }
                         
                         // Update featured badge count in header
