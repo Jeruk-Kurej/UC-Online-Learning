@@ -162,7 +162,7 @@
         <div class="space-y-8 min-w-0">
             
             {{-- Owned Businesses Section --}}
-            <div class="bg-white shadow-lg sm:rounded-3xl overflow-hidden border border-soft-gray-100 p-6 sm:p-8">
+            <div class="space-y-6">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shadow-inner">
                         <i class="bi bi-briefcase-fill text-lg"></i>
@@ -174,8 +174,8 @@
                 </div>
 
                 @if($ownedBusinesses->isEmpty())
-                    <div class="bg-gray-50 rounded-2xl p-8 text-center border border-gray-100 border-dashed">
-                        <div class="inline-flex w-16 h-16 rounded-full bg-white items-center justify-center shadow-sm border border-gray-100 text-gray-300 mb-3">
+                    <div class="bg-white rounded-2xl p-8 text-center border border-gray-100 border-dashed shadow-sm">
+                        <div class="inline-flex w-16 h-16 rounded-full bg-gray-50 items-center justify-center shadow-sm border border-gray-100 text-gray-300 mb-3">
                             <i class="bi bi-inbox text-2xl"></i>
                         </div>
                         <h3 class="text-sm font-bold text-gray-600">No businesses yet</h3>
@@ -184,7 +184,7 @@
                 @else
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         @foreach($ownedBusinesses as $biz)
-                            <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-orange-300 hover:shadow-xl transition-all duration-300 relative">
+                            <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-orange-300 hover:shadow-xl transition-all duration-300 relative shadow-sm">
                                 <div class="absolute inset-0 bg-gradient-to-br from-orange-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 
                                 <div class="p-5 relative">
@@ -226,7 +226,7 @@
 
             {{-- Member / Managed Businesses Section --}}
             @if($memberBusinesses->isNotEmpty())
-            <div class="bg-white shadow-lg sm:rounded-3xl overflow-hidden border border-soft-gray-100 p-6 sm:p-8">
+            <div class="space-y-6">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-inner">
                         <i class="bi bi-people-fill text-lg"></i>
@@ -239,7 +239,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     @foreach($memberBusinesses as $biz)
-                        <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative">
+                        <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative shadow-sm">
                             <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             
                             <div class="p-5 relative">
