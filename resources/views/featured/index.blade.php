@@ -41,7 +41,7 @@
 
                     <div class="pt-6">
                         <a href="{{ route('businesses.index') }}"
-                            class="group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
+                            class="uco-magnetic-btn group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
                             Explore Businesses
                             <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
                         </a>
@@ -114,10 +114,17 @@
             {{-- Background decorative glows --}}
             <div class="uco-ambient-glow uco-ambient-glow--blue uco-floating-blob-slow -top-20 -left-20"></div>
 
+            {{-- Floating micro-shapes (Ada Kehidupan) --}}
+            <div class="uco-floating-shape uco-floating-shape--plus-blue top-[15%] right-[10%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--ring-blue bottom-[25%] left-[5%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--dot top-[50%] right-[25%]"></div>
+
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
-                <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue">Featured <span class="uco-text-gradient-blue">Students</span></h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
+                <div class="space-y-4 relative">
+                    {{-- Outline background text --}}
+                    <div class="uco-outline-bg-text uco-outline-bg-text--blue uco-parallax-text">STUDENTS</div>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue relative z-10">Featured <span class="uco-text-gradient-blue">Students</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Meet our outstanding intrapreneurs and professionals driving innovation within corporate ecosystems.
                     </p>
                 </div>
@@ -207,10 +214,17 @@
             {{-- Background decorative glows --}}
             <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -bottom-20 -right-20"></div>
 
+            {{-- Floating micro-shapes (Ada Kehidupan) --}}
+            <div class="uco-floating-shape uco-floating-shape--plus top-[20%] left-[8%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--ring bottom-[20%] right-[10%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--dot top-[60%] left-[25%]"></div>
+
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
-                <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title">Featured <span class="uco-text-gradient-orange">Ventures</span></h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
+                <div class="space-y-4 relative">
+                    {{-- Outline background text --}}
+                    <div class="uco-outline-bg-text uco-outline-bg-text--orange uco-parallax-text">VENTURES</div>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">Featured <span class="uco-text-gradient-orange">Ventures</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Discover startup founders and student-led enterprises shaping the future of business.
                     </p>
                 </div>
@@ -328,14 +342,21 @@
         </section>
 
         {{-- Section 3: Community Voices (Testimonies) --}}
-        {{-- 
         <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
+            {{-- Background decorative glows --}}
             <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow -top-20 -left-20"></div>
 
+            {{-- Floating micro-shapes (Ada Kehidupan) --}}
+            <div class="uco-floating-shape uco-floating-shape--plus-blue top-[15%] right-[12%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--ring-blue bottom-[30%] left-[6%]"></div>
+            <div class="uco-floating-shape uco-floating-shape--dot top-[55%] right-[30%]"></div>
+
             <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
-                <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title">Community <span class="uco-text-gradient-orange">Voices</span></h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
+                <div class="space-y-4 relative">
+                    {{-- Outline background text --}}
+                    <div class="uco-outline-bg-text uco-outline-bg-text--purple uco-parallax-text">VOICES</div>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">Community <span class="uco-text-gradient-orange">Voices</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Real stories, journeys, and experiences shared by members of the UCO community.
                     </p>
                 </div>
@@ -349,6 +370,7 @@
                 @forelse($testimonies as $student)
                     <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
+                        {{-- Top Section: Image & Info --}}
                         <div class="relative h-[420px] w-full flex-shrink-0">
                             @if($student->profile_photo_url)
                                 <img src="{{ $student->profile_photo_url }}" 
@@ -361,8 +383,10 @@
                                 </div>
                             @endif
                             
+                            {{-- Overlay Gradient --}}
                             <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
                             
+                            {{-- Text Content on Image --}}
                             <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
                                 <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
                                 <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
@@ -371,13 +395,15 @@
                             </div>
                         </div>
 
+                        {{-- Bottom Section: Testimony content --}}
                         <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
+                            {{-- Quote Icon --}}
                             <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
                                 <i class="fa-solid fa-quote-left text-lg"></i>
                             </div>
 
                             <p style="color: #334155; font-weight: 600; line-height: 1.7; font-size: 14px; font-style: italic; margin: 0;">
-                                “{{ $student->testimony }}”
+                                "{{ $student->testimony }}"
                             </p>
                         </div>
                     </div>
@@ -396,27 +422,11 @@
                 @endforelse
             </div>
         </section>
-        --}}  
     </div>
 
     @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Subtle Mouse Tracking for Hero
-            const hero = document.querySelector('section');
-            if (hero) {
-                hero.addEventListener('mousemove', (e) => {
-                    const orbs = document.querySelectorAll('.uco-float-orb');
-                    if (orbs.length >= 2) {
-                        const x = (e.clientX / window.innerWidth - 0.5) * 40;
-                        const y = (e.clientY / window.innerHeight - 0.5) * 40;
-                        
-                        orbs[0].style.transform = `translate(${x}px, ${y}px)`;
-                        orbs[1].style.transform = `translate(${-x}px, ${-y}px)`;
-                    }
-                });
-            }
-
             // GSAP Animations
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
                 gsap.registerPlugin(ScrollTrigger);
@@ -470,6 +480,92 @@
                         toggleActions: "play none none none"
                     }
                 });
+
+                // Scroll-Driven Heading Parallax (Alternate horizontal movements)
+                gsap.utils.toArray('.uco-parallax-text').forEach((text, idx) => {
+                    const movementX = idx % 2 === 0 ? 100 : -100;
+                    gsap.to(text, {
+                        x: movementX,
+                        scrollTrigger: {
+                            trigger: text,
+                            start: "top bottom",
+                            end: "bottom top",
+                            scrub: 1.2
+                        }
+                    });
+                });
+            }
+
+            // Spotlight hover coordinates tracker
+            document.querySelectorAll('.uco-premium-card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    card.style.setProperty('--mouse-x', `${x}px`);
+                    card.style.setProperty('--mouse-y', `${y}px`);
+                });
+            });
+
+            // Magnetic buttons elastic tracking
+            if (typeof gsap !== 'undefined') {
+                document.querySelectorAll('.uco-magnetic-btn').forEach(btn => {
+                    btn.addEventListener('mousemove', e => {
+                        const rect = btn.getBoundingClientRect();
+                        const x = e.clientX - rect.left - (rect.width / 2);
+                        const y = e.clientY - rect.top - (rect.height / 2);
+                        
+                        gsap.to(btn, {
+                            x: x * 0.35,
+                            y: y * 0.35,
+                            duration: 0.3,
+                            ease: "power2.out"
+                        });
+                    });
+                    
+                    btn.addEventListener('mouseleave', () => {
+                        gsap.to(btn, {
+                            x: 0,
+                            y: 0,
+                            duration: 0.65,
+                            ease: "elastic.out(1.1, 0.4)"
+                        });
+                    });
+                });
+
+                // Mouse movements for background elements (parallax on mouse move)
+                window.addEventListener('mousemove', e => {
+                    const mouseX = (e.clientX / window.innerWidth - 0.5) * 25;
+                    const mouseY = (e.clientY / window.innerHeight - 0.5) * 25;
+
+                    gsap.to('.uco-floating-shape', {
+                        x: -mouseX,
+                        y: -mouseY,
+                        duration: 1.5,
+                        ease: "power1.out",
+                        overwrite: "auto"
+                    });
+
+                    const orbs = document.querySelectorAll('.uco-float-orb');
+                    if (orbs.length >= 2) {
+                        gsap.to(orbs[0], { x: mouseX, y: mouseY, duration: 1.5, ease: "power1.out", overwrite: "auto" });
+                        gsap.to(orbs[1], { x: -mouseX, y: -mouseY, duration: 1.5, ease: "power1.out", overwrite: "auto" });
+                    }
+                });
+            } else {
+                // Classic JS fallbacks for hover/mousemove orbs if GSAP is unavailable
+                const hero = document.querySelector('section');
+                if (hero) {
+                    hero.addEventListener('mousemove', (e) => {
+                        const orbs = document.querySelectorAll('.uco-float-orb');
+                        if (orbs.length >= 2) {
+                            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+                            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+                            orbs[0].style.transform = `translate(${x}px, ${y}px)`;
+                            orbs[1].style.transform = `translate(${-x}px, ${-y}px)`;
+                        }
+                    });
+                }
             }
         });
     </script>

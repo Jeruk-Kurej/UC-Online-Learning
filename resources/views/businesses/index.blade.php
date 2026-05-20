@@ -99,21 +99,83 @@
             </div>
         </section>
 
-        {{-- Entrepreneur / Intrapreneur Tabs --}}
-        <div class="flex gap-2 mb-8 flex-wrap reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
+        {{-- Entrepreneur / Intrapreneur Tabs (Tactile Glass Cards) --}}
+        <div class="flex justify-center gap-4 mb-8 flex-wrap reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
+            <!-- Entrepreneurs Card -->
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
                @click.prevent="updateType('entrepreneur', $el.href)"
-               class="px-6 py-3 rounded-xl font-bold text-sm transition"
-               :class="viewType === 'entrepreneur' && !isPending ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50'">
-                <i class="bi bi-briefcase mr-1"></i> Entrepreneurs
-            </a>
-            <a href="{{ route('businesses.index', ['view' => 'intrapreneur']) }}" 
-               @click.prevent="updateType('intrapreneur', $el.href)"
-               class="px-6 py-3 rounded-xl font-bold text-sm transition"
-               :class="viewType === 'intrapreneur' ? 'bg-gray-900 text-white shadow-lg' : 'bg-white text-gray-500 border hover:bg-gray-50'">
-                <i class="bi bi-building mr-1"></i> Intrapreneurs
+               class="relative overflow-hidden flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
+               :class="(viewType === 'entrepreneur' && !isPending) 
+                   ? 'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' 
+                   : 'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
+                
+                <!-- Shimmer Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-br from-uco-orange-500/5 to-yellow-500/5 opacity-0 transition-opacity duration-500"
+                     :class="(viewType === 'entrepreneur' && !isPending) && 'opacity-100'"></div>
+
+                <!-- Slow Repeating Shimmer Sweep / Hover Sweep -->
+                <div class="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-12 pointer-events-none transition-all"
+                     :class="(viewType === 'entrepreneur' && !isPending) ? 'animate-uco-shimmer' : 'group-hover:animate-uco-shimmer-once'"></div>
+
+                <!-- Floating Light Orb inside (Active) -->
+                <div class="absolute -right-6 -bottom-6 w-16 h-16 rounded-full bg-uco-orange-500/15 filter blur-md opacity-0 transition-all duration-500 scale-75"
+                     :class="(viewType === 'entrepreneur' && !isPending) && 'opacity-100 scale-125'"></div>
+
+                <!-- Icon Box with dynamic hover & active transitions -->
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300"
+                     :class="(viewType === 'entrepreneur' && !isPending) 
+                         ? 'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' 
+                         : 'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
+                    <i class="bi bi-briefcase text-lg"></i>
+                </div>
+
+                <!-- Typography Label details -->
+                <div class="flex flex-col text-left">
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
+                    <span class="text-sm font-bold transition-colors duration-300"
+                          :class="(viewType === 'entrepreneur' && !isPending) ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
+                        Entrepreneurs
+                    </span>
+                </div>
             </a>
 
+            <!-- Intrapreneurs Card -->
+            <a href="{{ route('businesses.index', ['view' => 'intrapreneur']) }}" 
+               @click.prevent="updateType('intrapreneur', $el.href)"
+               class="relative overflow-hidden flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
+               :class="viewType === 'intrapreneur' 
+                   ? 'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' 
+                   : 'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
+                
+                <!-- Shimmer Overlay -->
+                <div class="absolute inset-0 bg-gradient-to-br from-uco-orange-500/5 to-yellow-500/5 opacity-0 transition-opacity duration-500"
+                     :class="viewType === 'intrapreneur' && 'opacity-100'"></div>
+
+                <!-- Slow Repeating Shimmer Sweep / Hover Sweep -->
+                <div class="absolute inset-y-0 -left-1/3 w-1/3 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-12 pointer-events-none transition-all"
+                     :class="viewType === 'intrapreneur' ? 'animate-uco-shimmer' : 'group-hover:animate-uco-shimmer-once'"></div>
+
+                <!-- Floating Light Orb inside (Active) -->
+                <div class="absolute -right-6 -bottom-6 w-16 h-16 rounded-full bg-uco-orange-500/15 filter blur-md opacity-0 transition-all duration-500 scale-75"
+                     :class="viewType === 'intrapreneur' && 'opacity-100 scale-125'"></div>
+
+                <!-- Icon Box with dynamic hover & active transitions -->
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300"
+                     :class="viewType === 'intrapreneur' 
+                         ? 'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' 
+                         : 'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
+                    <i class="bi bi-building text-lg"></i>
+                </div>
+
+                <!-- Typography Label details -->
+                <div class="flex flex-col text-left">
+                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
+                    <span class="text-sm font-bold transition-colors duration-300"
+                          :class="viewType === 'intrapreneur' ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
+                        Intrapreneurs
+                    </span>
+                </div>
+            </a>
         </div>
 
         {{-- Filters --}}

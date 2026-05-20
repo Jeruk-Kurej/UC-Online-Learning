@@ -36,15 +36,15 @@
                                 <p class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->email }}</p>
                             </div>
                             
-                            @if(auth()->user()->isAdmin())
+                             @if(auth()->user()->isAdmin())
                                 <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Users</a>
                                 <a href="{{ route('businesses.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Businesses</a>
-                                {{-- <a href="{{ route('uc-testimonies.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Testimonies</a> --}}
+                                <a href="{{ route('uc-testimonies.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Testimonies</a>
                             @endif
 
                             @if(!auth()->user()->isAdmin())
                                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
-                                {{-- <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a> --}}
+                                <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a>
                                 <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
@@ -82,13 +82,13 @@
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('users.index') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
                         <a href="{{ route('businesses.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
-                        {{-- <a href="{{ route('uc-testimonies.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a> --}}
+                        <a href="{{ route('uc-testimonies.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
                     @endif
 
                     @if(!auth()->user()->isAdmin())
                         <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
                         <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>
-                        {{-- <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a> --}}
+                        <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
