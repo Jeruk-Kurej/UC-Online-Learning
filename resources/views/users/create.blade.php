@@ -110,6 +110,16 @@
                 Account & Auth Info
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {{-- Full Name --}}
+                <div>
+                    <label for="name" class="form-label-custom">
+                        Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
+                           class="form-input-custom @error('name') border-red-500 @enderror">
+                    @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
                 {{-- Email --}}
                 <div>
                     <label for="email" class="form-label-custom">
@@ -132,6 +142,22 @@
                     @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
+                {{-- Student Status --}}
+                <div id="student_status_container">
+                    <label for="student_status" class="form-label-custom">
+                        Student Status <span class="text-red-500">*</span>
+                    </label>
+                    <select name="student_status" id="student_status" required class="block w-full">
+                        <option value="student aktif" {{ old('student_status', 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
+                        <option value="student non aktif" {{ old('student_status') === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
+                        <option value="student cuti" {{ old('student_status') === 'student cuti' ? 'selected' : '' }}>Student Cuti</option>
+                        <option value="alumni aktif" {{ old('student_status') === 'alumni aktif' ? 'selected' : '' }}>Alumni Aktif</option>
+                        <option value="alumni non aktif" {{ old('student_status') === 'alumni non aktif' ? 'selected' : '' }}>Alumni Non Aktif</option>
+                        <option value="alumni cuti" {{ old('student_status') === 'alumni cuti' ? 'selected' : '' }}>Alumni Cuti</option>
+                    </select>
+                    @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
+
                 {{-- Password --}}
                 <div>
                     <label for="password" class="form-label-custom">
@@ -150,28 +176,10 @@
                     <input type="password" name="password_confirmation" id="password_confirmation" required
                            class="form-input-custom">
                 </div>
-
-                {{-- Student Status --}}
-                <div>
-                    <label for="student_status" class="form-label-custom">
-                        Student Status <span class="text-red-500">*</span>
-                    </label>
-                    <select name="student_status" id="student_status" required class="block w-full">
-                        <option value="student aktif" {{ old('student_status', 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
-                        <option value="student non aktif" {{ old('student_status') === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
-                        <option value="student cuti" {{ old('student_status') === 'student cuti' ? 'selected' : '' }}>Student Cuti</option>
-                        <option value="alumni aktif" {{ old('student_status') === 'alumni aktif' ? 'selected' : '' }}>Alumni Aktif</option>
-                        <option value="alumni non aktif" {{ old('student_status') === 'alumni non aktif' ? 'selected' : '' }}>Alumni Non Aktif</option>
-                        <option value="alumni cuti" {{ old('student_status') === 'alumni cuti' ? 'selected' : '' }}>Alumni Cuti</option>
-                    </select>
-                    @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-
-
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="identity_contact_section">
             <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
                 Identity & Contact
             </h2>
@@ -181,16 +189,6 @@
                     <label for="prefix_title" class="form-label-custom">Prefix Title</label>
                     <input type="text" name="prefix_title" id="prefix_title" value="{{ old('prefix_title') }}"
                            class="form-input-custom">
-                </div>
-
-                {{-- Full Name --}}
-                <div>
-                    <label for="name" class="form-label-custom">
-                        Full Name <span class="text-red-500">*</span>
-                    </label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                           class="form-input-custom @error('name') border-red-500 @enderror">
-                    @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Suffix Title --}}
@@ -235,10 +233,30 @@
                     <input type="url" name="linkedin" id="linkedin" value="{{ old('linkedin') }}"
                            class="form-input-custom">
                 </div>
+
+                {{-- Profile Photo --}}
+                <div class="relative">
+                    <label for="profile_photo_url" class="form-label-custom">Profile Photo</label>
+                    <div class="form-file-container-custom group">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+                                <i class="bi bi-cloud-upload text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="profile_photo_label">Upload or drop a file</span>
+                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP</span>
+                            </div>
+                        </div>
+                        <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               onchange="document.getElementById('profile_photo_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
+                    </div>
+                    @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                </div>
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="academic_extra_section">
             <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
                 Academic & Extra
             </h2>
@@ -281,28 +299,6 @@
                     </select>
                 </div>
 
-                {{-- Profile Photo --}}
-                <div class="relative">
-                    <label for="profile_photo_url" class="form-label-custom">Profile Photo</label>
-                    <div class="form-file-container-custom group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
-                                <i class="bi bi-cloud-upload text-base"></i>
-                            </div>
-                            <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="profile_photo_label">Upload or drop a file</span>
-                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP</span>
-                            </div>
-                        </div>
-                        <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('profile_photo_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
-                    </div>
-                    @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-
-
-
                 {{-- Activities Documentation File --}}
                 <div class="relative">
                     <label for="activities_doc_url" class="form-label-custom">Activities Documentation File</label>
@@ -327,12 +323,12 @@
                 <div class="md:col-span-2">
                     <label for="testimony" class="form-label-custom">Student Testimony</label>
                     <textarea name="testimony" id="testimony" rows="3"
-                              class="form-textarea-custom">{{ old('testimony') }}</textarea>
+                               class="form-textarea-custom">{{ old('testimony') }}</textarea>
                 </div>
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="business_assignment_section">
             <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
                 Business Transfers & Assignments
             </h2>
@@ -370,11 +366,46 @@
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
+                const roleSelect = document.getElementById('role');
+                const studentStatusSelect = document.getElementById('student_status');
+                const studentStatusContainer = document.getElementById('student_status_container');
+                const identityContactSection = document.getElementById('identity_contact_section');
+                const academicExtraSection = document.getElementById('academic_extra_section');
+                const businessAssignmentSection = document.getElementById('business_assignment_section');
+
+                function toggleStudentFields(role) {
+                    if (role === 'admin') {
+                        if (studentStatusContainer) studentStatusContainer.classList.add('hidden');
+                        if (identityContactSection) identityContactSection.classList.add('hidden');
+                        if (academicExtraSection) academicExtraSection.classList.add('hidden');
+                        if (businessAssignmentSection) businessAssignmentSection.classList.add('hidden');
+                        if (studentStatusSelect) studentStatusSelect.removeAttribute('required');
+                    } else {
+                        if (studentStatusContainer) studentStatusContainer.classList.remove('hidden');
+                        if (identityContactSection) identityContactSection.classList.remove('hidden');
+                        if (academicExtraSection) academicExtraSection.classList.remove('hidden');
+                        if (businessAssignmentSection) businessAssignmentSection.classList.remove('hidden');
+                        if (studentStatusSelect) studentStatusSelect.setAttribute('required', 'required');
+                    }
+                }
+
                 if (window.TomSelect) {
-                    new TomSelect('#role', { create: false, placeholder: "Select Role", searchField: ["text"] });
+                    new TomSelect('#role', { 
+                        create: false, 
+                        placeholder: "Select Role", 
+                        searchField: ["text"],
+                        onChange: function(value) {
+                            toggleStudentFields(value);
+                        }
+                    });
                     new TomSelect('#student_status', { create: false, placeholder: "Select Status", searchField: ["text"] });
                     new TomSelect('#current_status', { create: false, placeholder: "Select Career Status", searchField: ["text"] });
                     new TomSelect('#owned_businesses', { create: false, placeholder: "Select Businesses", searchField: ["text"] });
+                }
+
+                // Initial run based on current role select value
+                if (roleSelect) {
+                    toggleStudentFields(roleSelect.value);
                 }
 
                 // Standardized behavior: Enter key blurs the field instead of submitting

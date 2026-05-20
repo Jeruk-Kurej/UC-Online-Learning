@@ -170,7 +170,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
-            'student_status' => 'required|string',
+            'student_status' => 'required_if:role,user|nullable|string',
             
             // Identity & Contact
             'prefix_title' => 'nullable|string|max:255',
@@ -202,7 +202,7 @@ class UserController extends Controller
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
             'role' => $validated['role'],
-            'student_status' => $validated['student_status'],
+            'student_status' => $validated['role'] === 'admin' ? 'student aktif' : ($validated['student_status'] ?? 'student aktif'),
             'prefix_title' => $validated['prefix_title'],
             'suffix_title' => $validated['suffix_title'],
             'personal_email' => $validated['personal_email'],
@@ -315,7 +315,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
-            'student_status' => 'required|string',
+            'student_status' => 'required_if:role,user|nullable|string',
             
             // Identity & Contact
             'prefix_title' => 'nullable|string|max:255',
@@ -347,7 +347,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'email' => $validated['email'],
             'role' => $validated['role'],
-            'student_status' => $validated['student_status'],
+            'student_status' => $validated['role'] === 'admin' ? 'student aktif' : ($validated['student_status'] ?? 'student aktif'),
             'prefix_title' => $validated['prefix_title'],
             'suffix_title' => $validated['suffix_title'],
             'personal_email' => $validated['personal_email'],
