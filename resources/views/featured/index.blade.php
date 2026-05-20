@@ -140,10 +140,7 @@
                                 </div>
 
                                 <div class="min-w-0 flex-1">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-blue-50 text-blue-600">
-                                        Intrapreneur
-                                    </span>
-                                    <h3 class="mt-2 truncate text-lg font-[900] text-gray-950">{{ $student->name }}</h3>
+                                    <h3 class="truncate text-lg font-[900] text-gray-950">{{ $student->name }}</h3>
                                     <p class="text-xs font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
                                 </div>
                             </div>
@@ -217,82 +214,95 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-6 justify-center">
+            <div class="flex flex-wrap gap-8 justify-center w-full">
                 @forelse($topEntrepreneurs as $student)
-                    <article class="reveal-on-scroll group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[380px] flex flex-col justify-between" style="transition-delay: {{ $loop->index * 80 }}ms">
-                        <div>
-                            <div class="flex items-start gap-4">
-                                <div class="h-20 w-20 overflow-hidden rounded-[1.5rem] border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
-                                    @if($student->profile_photo_url)
-                                        <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
-                                    @else
-                                        <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-2xl">
-                                            {{ strtoupper(substr($student->name, 0, 1)) }}
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <div class="min-w-0 flex-1">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-50 text-uco-orange-600">
-                                        Entrepreneur
-                                    </span>
-                                    <h3 class="mt-2 truncate text-lg font-[900] text-gray-950">{{ $student->name }}</h3>
-                                    <p class="text-xs font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-
-                            <div class="mt-6 border-t border-gray-50 pt-5">
-                                <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-2.5">Academic Profile</p>
-                                <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <div>
-                                        <p class="text-gray-400 font-medium">Major</p>
-                                        <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-gray-400 font-medium">Graduate Year</p>
-                                        <p class="text-gray-700 font-bold">{{ $student->graduate_year ?? 'N/A' }}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6">
-                            @php
-                                $featuredBusiness = $student->businesses->first();
-                            @endphp
+                    @php
+                        $featuredBusiness = $student->businesses->first();
+                    @endphp
+                    <article class="reveal-on-scroll group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[620px] flex flex-col md:flex-row overflow-hidden" style="transition-delay: {{ $loop->index * 80 }}ms">
+                        
+                        {{-- Left Column: Business Details --}}
+                        <div class="flex-grow p-6 bg-gradient-to-br from-orange-50/10 to-white flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100/80">
                             @if($featuredBusiness)
-                                <div class="rounded-xl bg-orange-50/50 p-4 border border-orange-100/60">
-                                    <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 overflow-hidden rounded-lg bg-white p-1 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
+                                <div>
+                                    <div class="flex items-center gap-4">
+                                        <div class="h-16 w-16 overflow-hidden rounded-[1.2rem] bg-white p-2 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
                                             @if($featuredBusiness->logo_url)
                                                 <img src="{{ $featuredBusiness->logo_url }}" class="h-full w-full object-contain">
                                             @else
-                                                <div class="flex h-full w-full items-center justify-center text-[10px] font-black text-uco-orange-400 bg-uco-orange-50">
+                                                <div class="flex h-full w-full items-center justify-center text-2xl font-black text-uco-orange-500 bg-orange-50 rounded-[0.8rem]">
                                                     {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
                                                 </div>
                                             @endif
                                         </div>
-                                        <div class="min-w-0 flex-1">
+                                        <div>
                                             <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400">Venture Founded</p>
-                                            <p class="text-sm font-bold text-gray-900 truncate">{{ $featuredBusiness->name }}</p>
+                                            <h3 class="text-2xl font-[900] text-gray-950 mt-0.5 leading-tight">{{ $featuredBusiness->name }}</h3>
                                         </div>
                                     </div>
+                                    
                                     @if($featuredBusiness->category)
-                                        <span class="inline-block mt-2 text-[9px] font-bold text-white bg-uco-orange-600 px-2 py-0.5 rounded-md">
+                                        <span class="inline-flex mt-4 items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-50/80 text-uco-orange-600 border border-orange-100/50">
                                             {{ $featuredBusiness->category->name }}
                                         </span>
                                     @endif
-                                    <p class="mt-2 text-xs text-gray-600 line-clamp-2 leading-relaxed">{{ $featuredBusiness->description }}</p>
-                                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="inline-flex items-center gap-1 mt-3 text-xs font-bold text-uco-orange-600 hover:text-uco-orange-700 transition">
-                                        Visit Storefront <i class="bi bi-chevron-right text-[9px]"></i>
+                                    
+                                    <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
+                                        {{ $featuredBusiness->description }}
+                                    </p>
+                                </div>
+                                
+                                <div class="mt-6 pt-4 border-t border-gray-50">
+                                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 hover:text-uco-orange-700 transition">
+                                        Visit Storefront <i class="bi bi-arrow-right text-base"></i>
                                     </a>
                                 </div>
                             @else
-                                <div class="rounded-xl bg-orange-50/20 p-4 border border-dashed border-orange-200 text-center py-6">
-                                    <i class="bi bi-shop text-orange-300 text-xl block mb-1"></i>
-                                    <p class="text-[9px] text-orange-400 font-medium">No business registered yet</p>
+                                <div class="h-full flex flex-col items-center justify-center text-center py-12">
+                                    <div class="h-12 w-12 rounded-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center mb-3">
+                                        <i class="bi bi-shop text-gray-300 text-lg"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-400">No Venture Registered</p>
+                                    <p class="text-xs text-gray-400 max-w-[200px] mt-1">This founder is currently developing their venture.</p>
                                 </div>
                             @endif
+                        </div>
+                        
+                        {{-- Right Column: Founder Profile --}}
+                        <div class="w-full md:w-[210px] p-6 flex flex-col justify-between bg-white flex-shrink-0">
+                            <div>
+                                <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-4">Owned By</p>
+                                
+                                <div class="flex flex-col items-start">
+                                    <div class="h-14 w-14 overflow-hidden rounded-[1.2rem] border border-orange-100 bg-gray-50 shadow-sm mb-3">
+                                        @if($student->profile_photo_url)
+                                            <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
+                                        @else
+                                            <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-xl">
+                                                {{ strtoupper(substr($student->name, 0, 1)) }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-[900] text-gray-950 leading-tight">{{ $student->name }}</h4>
+                                        <p class="text-[10px] font-semibold text-gray-400 mt-1">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 pt-4 border-t border-gray-50">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">Academic Profile</p>
+                                    <div class="space-y-3 text-xs">
+                                        <div>
+                                            <p class="text-gray-400 font-medium">Major</p>
+                                            <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-gray-400 font-medium">Graduate Year</p>
+                                            <p class="text-gray-700 font-bold">{{ $student->graduate_year ?? 'N/A' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </article>
                 @empty
