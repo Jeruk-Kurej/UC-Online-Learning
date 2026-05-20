@@ -14,6 +14,7 @@ class FeaturedController extends Controller
     {
         // Top 3 entrepreneur profiles (have business + photo + testimony)
         $topEntrepreneurs = User::where('is_visible', true)
+            ->where('is_featured', true)
             ->whereHas('businesses', fn ($q) => $q->where('type', 'entrepreneur')->where('is_visible', true))
             ->whereNotNull('profile_photo_url')
             ->whereNotNull('testimony')
@@ -47,6 +48,7 @@ class FeaturedController extends Controller
 
         // Testimonies (students only, with photo)
         $testimonies = User::where('is_visible', true)
+            ->where('is_featured', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->whereNotNull('profile_photo_url')

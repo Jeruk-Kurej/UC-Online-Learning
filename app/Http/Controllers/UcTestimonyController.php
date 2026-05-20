@@ -11,6 +11,52 @@ use Illuminate\View\View;
 class UcTestimonyController extends Controller
 {
     /**
+     * Display a listing of testimonies for admin management.
+     */
+    public function adminIndex(Request $request)
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!$user || !$user->isAdmin()) {
+            abort(403, 'Only administrators can view testimonies management.');
+        }
+
+        $search = trim((string) $request->get('search', ''));
+        $featured = $request->get('featured');
+
+        $query = User::query()
+            ->whereNotNull('testimony')
+            ->where('testimony', '!=', '');
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('testimony', 'LIKE', "%{$search}%");
+            });
+        }
+
+        if ($featured === '1') {
+            $query->where('is_featured', true);
+        } elseif ($featured === '0') {
+            $query->where('is_featured', false);
+        }
+
+        $users = $query->orderByDesc('submitted_at')
+            ->orderByDesc('created_at')
+            ->paginate(12);
+
+        // Fetch stats
+        $totalTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->count();
+        $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured', true)->count();
+
+        if ($request->ajax()) {
+            return view('uc-testimonies.partials.list', compact('users'))->render();
+        }
+
+        return view('uc-testimonies.admin', compact('users', 'totalTestimonies', 'featuredTestimonies'));
+    }
+
+    /**
      * Display the authenticated user's testimony management page.
      */
     public function my(): View

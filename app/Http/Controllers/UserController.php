@@ -412,16 +412,31 @@ class UserController extends Controller
     public function toggleFeatured(User $user)
     {
         if (!$this->getAuthUser()->isAdmin()) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
+            }
             abort(403, 'Only administrators can toggle featured status.');
         }
 
         if (!$user->is_visible && !$user->is_featured) {
+            if (request()->ajax() || request()->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
+            }
             return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
         }
 
         $user->update(['is_featured' => !$user->is_featured]);
 
         $status = $user->is_featured ? 'added to' : 'removed from';
+
+        if (request()->ajax() || request()->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'is_featured' => $user->is_featured,
+                'message' => "User '{$user->name}' has been {$status} featured list."
+            ]);
+        }
+
         return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
     }
 
