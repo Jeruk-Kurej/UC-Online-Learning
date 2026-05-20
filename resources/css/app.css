@@ -393,3 +393,85 @@
 .word-rotate-exit {
 	animation: rotatingWordExit 0.3s ease-out;
 }
+
+/* Custom UI/UX Enhancements */
+.uco-ambient-glow {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 9999px;
+    filter: blur(130px);
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+}
+.uco-ambient-glow--orange {
+    background: radial-gradient(circle, #f7931e 0%, transparent 70%);
+}
+.uco-ambient-glow--blue {
+    background: radial-gradient(circle, #3b82f6 0%, transparent 70%);
+}
+.uco-ambient-glow--purple {
+    background: radial-gradient(circle, #8b5cf6 0%, transparent 70%);
+}
+
+.uco-floating-blob-slow {
+    animation: ucoFloatSlow 25s ease-in-out infinite;
+}
+
+@keyframes ucoFloatSlow {
+    0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
+    33% { transform: translate(50px, -30px) rotate(120deg) scale(1.08); }
+    66% { transform: translate(-30px, 50px) rotate(240deg) scale(0.95); }
+}
+
+.uco-section-title {
+    position: relative;
+    display: inline-block;
+}
+.uco-section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #f7931e 0%, #ffc088 100%);
+    border-radius: 9999px;
+}
+
+.uco-section-title--blue::after {
+    background: linear-gradient(90deg, #3b82f6 0%, #93c5fd 100%);
+}
+
+.uco-premium-card {
+    position: relative;
+    transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.uco-premium-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(135deg, transparent, transparent);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background 400ms ease;
+    z-index: 10;
+}
+.uco-premium-card--blue:hover::before {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), transparent, rgba(96, 165, 250, 0.4));
+}
+.uco-premium-card--orange:hover::before {
+    background: linear-gradient(135deg, rgba(247, 147, 30, 0.4), transparent, rgba(255, 176, 92, 0.4));
+}
+
+.uco-text-gradient-blue {
+    background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}

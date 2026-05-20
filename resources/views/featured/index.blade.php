@@ -110,11 +110,14 @@
         </section>
 
         {{-- Section 1: Featured Students (Intrapreneurs) --}}
-        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-24 space-y-16">
-            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-24 space-y-16 relative overflow-hidden">
+            {{-- Background decorative glows --}}
+            <div class="uco-ambient-glow uco-ambient-glow--blue uco-floating-blob-slow -top-20 -left-20"></div>
+
+            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Students</h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue">Featured <span class="uco-text-gradient-blue">Students</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
                         Meet our outstanding intrapreneurs and professionals driving innovation within corporate ecosystems.
                     </p>
                 </div>
@@ -124,9 +127,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-6 justify-center">
+            <div class="flex flex-wrap gap-6 justify-center relative z-10">
                 @forelse($topIntrapreneurs as $student)
-                    <article class="reveal-on-scroll group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-blue-100/70 w-full max-w-[380px] flex flex-col justify-between" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <article class="reveal-on-scroll uco-premium-card uco-premium-card--blue group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-blue-100/70 w-full max-w-[380px] flex flex-col justify-between" style="transition-delay: {{ $loop->index * 80 }}ms">
                         <div>
                             <div class="flex items-start gap-4">
                                 <div class="h-20 w-20 overflow-hidden rounded-[1.5rem] border border-blue-100 bg-gray-50 shadow-sm flex-shrink-0">
@@ -200,11 +203,14 @@
         </section>
 
         {{-- Section 2: Featured Ventures (Entrepreneurs) --}}
-        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16">
-            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
+            {{-- Background decorative glows --}}
+            <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -bottom-20 -right-20"></div>
+
+            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Featured Ventures</h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title">Featured <span class="uco-text-gradient-orange">Ventures</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
                         Discover startup founders and student-led enterprises shaping the future of business.
                     </p>
                 </div>
@@ -214,12 +220,12 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-8 justify-center w-full">
+            <div class="flex flex-wrap gap-8 justify-center w-full relative z-10">
                 @forelse($topEntrepreneurs as $student)
                     @php
                         $featuredBusiness = $student->businesses->first();
                     @endphp
-                    <article class="reveal-on-scroll group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[620px] flex flex-col md:flex-row overflow-hidden" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <article class="reveal-on-scroll uco-premium-card uco-premium-card--orange group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[620px] flex flex-col md:flex-row overflow-hidden" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
                         {{-- Left Column: Business Details --}}
                         <div class="flex-grow p-6 bg-gradient-to-br from-orange-50/10 to-white flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100/80">
@@ -322,11 +328,14 @@
         </section>
 
         {{-- Section 3: Community Voices (Testimonies) --}}
-        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16">
-            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10">
+        <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
+            {{-- Background decorative glows --}}
+            <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow -top-20 -left-20"></div>
+
+            <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
                 <div class="space-y-4">
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter">Community Voices</h2>
-                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed">
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title">Community <span class="uco-text-gradient-orange">Voices</span></h2>
+                    <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4">
                         Real stories, journeys, and experiences shared by members of the UCO community.
                     </p>
                 </div>
@@ -336,9 +345,9 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-6 justify-center">
+            <div class="flex flex-wrap gap-6 justify-center relative z-10">
                 @forelse($testimonies as $student)
-                    <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
                         {{-- Top Section: Image & Info --}}
                         <div class="relative h-[420px] w-full flex-shrink-0">
@@ -408,6 +417,61 @@
                         
                         orbs[0].style.transform = `translate(${x}px, ${y}px)`;
                         orbs[1].style.transform = `translate(${-x}px, ${-y}px)`;
+                    }
+                });
+            }
+
+            // GSAP Animations
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Disable default transitions only for items we are going to animate to avoid FOUC
+                const animatedElements = document.querySelectorAll('section:nth-of-type(2) article, section:nth-of-type(3) article, section:nth-of-type(4) .reveal-on-scroll');
+                animatedElements.forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(40px)';
+                    el.style.transition = 'none';
+                });
+
+                // Section 1 (Featured Students)
+                gsap.to("section:nth-of-type(2) article", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    stagger: 0.1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: "section:nth-of-type(2)",
+                        start: "top 80%",
+                        toggleActions: "play none none none"
+                    }
+                });
+
+                // Section 2 (Featured Ventures)
+                gsap.to("section:nth-of-type(3) article", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    stagger: 0.1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: "section:nth-of-type(3)",
+                        start: "top 80%",
+                        toggleActions: "play none none none"
+                    }
+                });
+
+                // Section 3 (Community Voices / Testimonies)
+                gsap.to("section:nth-of-type(4) .reveal-on-scroll", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    stagger: 0.1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: "section:nth-of-type(4)",
+                        start: "top 80%",
+                        toggleActions: "play none none none"
                     }
                 });
             }

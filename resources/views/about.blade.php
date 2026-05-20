@@ -4,6 +4,10 @@
         {{-- Hero Section --}}
         <section class="relative pt-24 pb-32 px-6 overflow-hidden">
             <div class="uco-hero-mesh"></div>
+            {{-- Floating Ambient Glow Blobs --}}
+            <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -top-20 -left-20"></div>
+            <div class="uco-ambient-glow uco-ambient-glow--blue uco-floating-blob-slow bottom-0 right-0"></div>
+
             <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-uco-orange-600 mb-8 animate-fade-in">
                     Our Vision
@@ -19,24 +23,26 @@
         </section>
 
         {{-- Core Values --}}
-        <section class="py-24 bg-white px-6">
-            <div class="max-w-[1600px] mx-auto">
+        <section class="py-24 bg-white px-6 relative overflow-hidden">
+            <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow top-1/2 left-1/2"></div>
+
+            <div class="max-w-[1600px] mx-auto relative z-10">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 100ms;">
+                    <div class="space-y-6 reveal-on-scroll uco-premium-card uco-premium-card--orange p-6 rounded-2xl border border-gray-100" style="transition-delay: 100ms;">
                         <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
                             <i class="bi bi-rocket-takeoff"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Rapid Launch</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.</p>
                     </div>
-                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="space-y-6 reveal-on-scroll uco-premium-card uco-premium-card--blue p-6 rounded-2xl border border-gray-100" style="transition-delay: 200ms;">
                         <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-blue-100">
                             <i class="bi bi-people"></i>
                         </div>
                         <h3 class="text-2xl font-black text-gray-900">Global Network</h3>
                         <p class="text-gray-500 leading-relaxed font-medium">Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.</p>
                     </div>
-                    <div class="space-y-6 reveal-on-scroll" style="transition-delay: 300ms;">
+                    <div class="space-y-6 reveal-on-scroll uco-premium-card uco-premium-card--orange p-6 rounded-2xl border border-gray-100" style="transition-delay: 300ms;">
                         <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-purple-100">
                             <i class="bi bi-graph-up-arrow"></i>
                         </div>
@@ -48,7 +54,7 @@
         </section>
 
         {{-- Statistics / Impact --}}
-        <section class="py-32 bg-gray-900 px-6 relative">
+        <section class="py-32 bg-gray-900 px-6 relative overflow-hidden">
             <div class="absolute inset-0 opacity-10 pointer-events-none">
                 <div class="w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px]"></div>
             </div>
@@ -56,19 +62,19 @@
                 <h2 class="text-4xl font-black text-white mb-20 tracking-tight">Driving Community Impact</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
                     <div class="space-y-2">
-                        <p class="text-5xl font-black text-uco-orange-500 tracking-tighter">500+</p>
+                        <p class="text-5xl font-black text-uco-orange-500 tracking-tighter"><span class="stat-number" data-target="500">500</span>+</p>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Active Ventures</p>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-5xl font-black text-white tracking-tighter">1.2k</p>
+                        <p class="text-5xl font-black text-white tracking-tighter"><span class="stat-number" data-target="1200">1200</span>+</p>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Graduated Founders</p>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-5xl font-black text-white tracking-tighter">24</p>
+                        <p class="text-5xl font-black text-white tracking-tighter"><span class="stat-number" data-target="24">24</span></p>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Industry Categories</p>
                     </div>
                     <div class="space-y-2">
-                        <p class="text-5xl font-black text-white tracking-tighter">15+</p>
+                        <p class="text-5xl font-black text-white tracking-tighter"><span class="stat-number" data-target="15">15</span>+</p>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-widest">Years of Heritage</p>
                     </div>
                 </div>
@@ -96,4 +102,51 @@
             </div>
         </section>
     </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Disable default transitions during entry scroll to avoid conflict with GSAP
+                document.querySelectorAll('.reveal-on-scroll').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(40px)';
+                    el.style.transition = 'none';
+                });
+
+                // Animate elements in the Hero & Core Values sections
+                gsap.to(".reveal-on-scroll", {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.9,
+                    ease: "power3.out",
+                    stagger: 0.15,
+                    scrollTrigger: {
+                        trigger: ".relative.pt-24",
+                        start: "top 80%"
+                    }
+                });
+
+                // Count up animation for stats
+                gsap.utils.toArray('.stat-number').forEach(stat => {
+                    const target = parseInt(stat.getAttribute('data-target'));
+                    stat.innerText = '0';
+                    gsap.to(stat, {
+                        innerText: target,
+                        duration: 1.8,
+                        snap: { innerText: 1 },
+                        ease: "power2.out",
+                        scrollTrigger: {
+                            trigger: stat,
+                            start: "top 90%",
+                            toggleActions: "play none none none"
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+    @endpush
 </x-app-layout>
