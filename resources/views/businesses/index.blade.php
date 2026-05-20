@@ -117,7 +117,7 @@
         </div>
 
         {{-- Filters --}}
-        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
+        <div class="mb-8 reveal-on-scroll" style="transition-delay: 150ms;">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="space-y-4" @submit.prevent="updateList()">
                 <input type="hidden" name="view" value="{{ $viewType }}">
                 

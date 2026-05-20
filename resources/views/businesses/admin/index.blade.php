@@ -49,7 +49,7 @@
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
+        <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
             <form action="{{ route('businesses.admin') }}" method="GET">
                 <div class="flex flex-col md:flex-row md:items-center gap-3">
                     {{-- Search Input --}}
