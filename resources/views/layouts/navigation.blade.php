@@ -11,7 +11,7 @@
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.*') && !request()->routeIs('businesses.admin')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Businesses</a>
+                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.*') && !request()->routeIs('businesses.admin')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
                 {{-- <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.index') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a> --}}
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                 

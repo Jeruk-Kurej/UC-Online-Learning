@@ -256,7 +256,6 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400">Venture Founded</p>
                                             <h3 class="text-2xl font-[900] text-gray-950 mt-0.5 leading-tight">{{ $featuredBusiness->name }}</h3>
                                         </div>
                                     </div>
@@ -270,7 +269,7 @@
                                 
                                 <div class="mt-6 pt-4 border-t border-gray-50">
                                     <a href="{{ route('businesses.show', $featuredBusiness) }}" class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 hover:text-uco-orange-700 transition">
-                                        Visit Storefront <i class="bi bi-arrow-right text-base"></i>
+                                        Visit Venture <i class="bi bi-arrow-right text-base"></i>
                                     </a>
                                 </div>
                             @else

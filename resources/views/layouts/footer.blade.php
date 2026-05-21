@@ -50,7 +50,7 @@
                 </ul>
             </div>
 
-            {{-- Column 3: Resources --}}
+            <!-- {{-- Column 3: Resources --}}
             <div>
                 <h4 class="font-medium text-sm text-gray-900 mb-4">Resources</h4>
                 <ul class="space-y-2">
@@ -75,7 +75,7 @@
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> -->
 
             {{-- Column 4: Contact --}}
             <div>
