@@ -54,7 +54,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">Log in</a>
+                    <a href="{{ route('login') }}" class="px-5 py-2.5 bg-uco-orange-500 text-white text-sm font-bold tracking-wide rounded-[1rem] shadow-[0_4px_10px_-2px_rgba(247,147,30,0.4)] hover:bg-uco-orange-600 hover:-translate-y-0.5 hover:shadow-[0_8px_15px_-3px_rgba(247,147,30,0.5)] transition-all duration-300">Log in</a>
                 @endif
             </div>
  
