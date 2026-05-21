@@ -235,9 +235,9 @@
             </div>
 
             <div class="flex flex-wrap gap-8 justify-center w-full relative z-10">
-                @forelse($topEntrepreneurs as $student)
+                @forelse($spotlightBusinesses as $featuredBusiness)
                     @php
-                        $featuredBusiness = $student->businesses->first();
+                        $student = $featuredBusiness->user;
                     @endphp
                     <article class="reveal-on-scroll uco-premium-card uco-premium-card--orange group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full max-w-[620px] flex flex-col md:flex-row overflow-hidden" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
@@ -366,49 +366,52 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap gap-6 justify-center relative z-10">
-                @forelse($testimonies as $student)
-                    <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
-                        
-                        {{-- Top Section: Image & Info --}}
-                        <div class="relative h-[420px] w-full flex-shrink-0">
-                            @if($student->profile_photo_url)
-                                <img src="{{ $student->profile_photo_url }}" 
-                                     alt="{{ $student->name }}"
-                                     style="width: 100%; height: 100%; object-fit: cover;">
-                            @else
-                                <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
-                                     style="background: linear-gradient(135deg, #f7931e, #fdb913);">
-                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+            <div class="relative z-10 w-full max-w-[1192px] mx-auto" x-data="testimonyCarousel()" x-init="init()" @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
+                <div x-ref="track" @scroll.passive="updateScroll" class="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    @forelse($testimonies as $student)
+                        <div class="snap-start shrink-0 w-[75vw] md:w-[280px] flex h-auto">
+                            <div class="w-full bg-white border border-gray-100 rounded-[20px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
+                                
+                                {{-- Top Section: Image & Info --}}
+                                <div class="relative h-[280px] w-full flex-shrink-0">
+                                    @if($student->profile_photo_url)
+                                        <img src="{{ $student->profile_photo_url }}" 
+                                             alt="{{ $student->name }}"
+                                             style="width: 100%; height: 100%; object-fit: cover;">
+                                    @else
+                                        <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
+                                             style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    
+                                    {{-- Overlay Gradient --}}
+                                    <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
+                                    
+                                    {{-- Text Content on Image --}}
+                                    <div style="position: absolute; bottom: 35px; left: 20px; right: 20px; color: white;">
+                                        <h3 style="font-size: 16px; font-weight: 900; margin-bottom: 2px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
+                                        <p style="color: #cbd5e1; font-size: 10px; font-weight: 600; margin-bottom: 0;">
+                                            {{ $student->current_status ?? 'Member' }} at UCO Community
+                                        </p>
+                                    </div>
                                 </div>
-                            @endif
-                            
-                            {{-- Overlay Gradient --}}
-                            <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
-                            
-                            {{-- Text Content on Image --}}
-                            <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
-                                <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $student->name }}</h3>
-                                <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
-                                    {{ $student->current_status ?? 'Member' }} at UCO Community
-                                </p>
+
+                                {{-- Bottom Section: Testimony content --}}
+                                <div style="position: relative; padding: 30px 20px 25px 20px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[20px]">
+                                    {{-- Quote Icon --}}
+                                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
+                                        <i class="fa-solid fa-quote-left text-base"></i>
+                                    </div>
+
+                                    <p style="color: #334155; font-weight: 500; line-height: 1.6; font-size: 12px; font-style: italic; margin: 0; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;">
+                                        "{{ $student->testimony }}"
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        {{-- Bottom Section: Testimony content --}}
-                        <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
-                            {{-- Quote Icon --}}
-                            <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
-                                <i class="fa-solid fa-quote-left text-lg"></i>
-                            </div>
-
-                            <p style="color: #334155; font-weight: 600; line-height: 1.7; font-size: 14px; font-style: italic; margin: 0;">
-                                "{{ $student->testimony }}"
-                            </p>
-                        </div>
-                    </div>
                 @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
+                    <div class="snap-start shrink-0 w-full col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center">
                         <div class="relative z-10 space-y-4">
                             <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
                                 <i class="bi bi-chat-quote text-2xl text-uco-orange-400"></i>
@@ -420,12 +423,94 @@
                         </div>
                     </div>
                 @endforelse
+                </div>
+                
+                {{-- Carousel Dots --}}
+                <div class="flex justify-center items-center gap-2 mt-4" x-show="totalSlides > 1" style="display: none;" x-transition>
+                    <template x-for="(_, index) in totalSlides" :key="index">
+                        <button @click="scrollTo(index)"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="activeSlide === index ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
+                        </button>
+                    </template>
+                </div>
             </div>
         </section>
     </div>
 
     @push('scripts')
     <script>
+        function testimonyCarousel() {
+            return {
+                activeSlide: 0,
+                totalSlides: 0,
+                slides: [],
+                autoScrollInterval: null,
+                init() {
+                    this.$nextTick(() => {
+                        this.slides = Array.from(this.$refs.track.children).filter(el => !el.classList.contains('hidden'));
+                        this.totalSlides = this.slides.length;
+                        this.updateScroll();
+                        this.startAutoScroll();
+                    });
+                    
+                    window.addEventListener('resize', () => {
+                        this.updateScroll();
+                    });
+                },
+                startAutoScroll() {
+                    this.stopAutoScroll();
+                    this.autoScrollInterval = setInterval(() => {
+                        let nextSlide = this.activeSlide + 1;
+                        if (nextSlide >= this.totalSlides) {
+                            nextSlide = 0;
+                        }
+                        this.scrollTo(nextSlide);
+                    }, 4000);
+                },
+                stopAutoScroll() {
+                    if (this.autoScrollInterval) {
+                        clearInterval(this.autoScrollInterval);
+                        this.autoScrollInterval = null;
+                    }
+                },
+                updateScroll() {
+                    if (!this.$refs.track || this.totalSlides === 0) return;
+                    
+                    const track = this.$refs.track;
+                    const trackCenter = track.scrollLeft + (track.offsetWidth / 2);
+                    
+                    let minDistance = Infinity;
+                    let closestIndex = 0;
+                    
+                    this.slides.forEach((slide, index) => {
+                        const slideCenter = slide.offsetLeft - track.offsetLeft + (slide.offsetWidth / 2);
+                        const distance = Math.abs(trackCenter - slideCenter);
+                        
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            closestIndex = index;
+                        }
+                    });
+                    
+                    this.activeSlide = closestIndex;
+                },
+                scrollTo(index) {
+                    if (this.slides[index] && this.$refs.track) {
+                        const track = this.$refs.track;
+                        const slide = this.slides[index];
+                        const scrollPos = slide.offsetLeft - track.offsetLeft - (track.offsetWidth / 2) + (slide.offsetWidth / 2);
+                        
+                        track.scrollTo({
+                            left: scrollPos,
+                            behavior: 'smooth'
+                        });
+                        this.activeSlide = index;
+                    }
+                }
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // GSAP Animations
             if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
