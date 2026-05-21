@@ -115,8 +115,10 @@
             {{-- Business Overview Card - Professional Design --}}
             <div class="bg-white shadow-lg sm:rounded-lg overflow-hidden border border-soft-gray-100">
                 {{-- Hero Photo Carousel (Dynamic & Premium) --}}
+                @php $heroPhotosCount = $businessPhotos->count(); @endphp
+                @if ($heroPhotosCount > 0)
                 <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden group"
-                    @php $heroPhotosCount = $businessPhotos->count(); @endphp x-data="{
+                    x-data="{
                         activeHeroSlide: 0,
                         heroSlidesCount: {{ $heroPhotosCount }},
                         heroTimer: null,
@@ -133,7 +135,7 @@
                     }"
                     x-init="startHeroTimer()" @mouseenter="stopHeroTimer()" @mouseleave="startHeroTimer()">
 
-                    @forelse($businessPhotos as $index => $photo)
+                    @foreach($businessPhotos as $index => $photo)
                         <div x-show="activeHeroSlide === {{ $index }}"
                             x-transition:enter="transition ease-out duration-1000"
                             x-transition:enter-start="opacity-0 scale-105"
@@ -146,19 +148,7 @@
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
                             </div>
                         </div>
-                    @empty
-                        <div
-                            class="w-full h-full bg-gradient-to-br from-soft-gray-100 via-soft-gray-50 to-soft-gray-100 flex items-center justify-center relative">
-                            <svg class="w-24 h-24 text-soft-gray-300" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
-                                </path>
-                            </svg>
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent">
-                            </div>
-                        </div>
-                    @endforelse
+                    @endforeach
 
                     {{-- Hero Controls (only if multiple) --}}
                     @if ($heroPhotosCount > 1)
@@ -184,6 +174,7 @@
                         </div>
                     @endif
                 </div>
+                @endif
 
 
                 {{-- Business Info Section --}}
@@ -201,8 +192,8 @@
                     <div class="flex flex-wrap items-center gap-y-6 gap-x-12 py-8 mb-4 border-y border-gray-100">
                         {{-- Revenue (SENSITIVE - PROTECTED) --}}
                         @can('update', $business)
-                        <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
+                        <div class="flex items-start gap-4">
+                            <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm">
                                 <i class="bi bi-cash-stack text-lg"></i>
                             </div>
                             <div>
@@ -217,8 +208,8 @@
                         @endcan
 
                         {{-- Employee Count --}}
-                        <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
+                        <div class="flex items-start gap-4">
+                            <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm">
                                 <i class="bi bi-people-fill text-lg"></i>
                             </div>
                             <div>
@@ -231,8 +222,8 @@
                         <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
 
                         {{-- Venture Inception --}}
-                        <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                        <div class="flex items-start gap-4">
+                            <div class="w-11 h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm">
                                 <i class="bi bi-rocket-takeoff-fill text-lg"></i>
                             </div>
                             <div>
@@ -251,8 +242,8 @@
                         <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
 
                         {{-- Academic Heritage --}}
-                        <div class="flex items-start gap-4 group">
-                            <div class="w-11 h-11 rounded-lg bg-orange-50 text-uco-orange-600 flex items-center justify-center border border-orange-100/50 shadow-sm group-hover:bg-uco-orange-600 group-hover:text-white transition-all duration-300">
+                        <div class="flex items-start gap-4">
+                            <div class="w-11 h-11 rounded-lg bg-orange-50 text-uco-orange-600 flex items-center justify-center border border-orange-100/50 shadow-sm">
                                 <i class="bi bi-mortarboard-fill text-lg"></i>
                             </div>
                             <div>
@@ -267,7 +258,7 @@
                     <div class="mb-12">
                         <h4 class="text-sm font-bold text-soft-gray-900 uppercase tracking-wider mb-6">Business Operations & Details</h4>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {{-- Target Market --}}
                             <div class="space-y-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Target Market</p>
@@ -987,87 +978,93 @@
             @endphp
 
             {{-- Section Title: Owned By --}}
-            <div class="relative mb-3.5">
+            <div class="relative mb-4">
                 <div class="flex items-center gap-2">
-                    <span class="w-1 h-4 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
-                    <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-gray-700">Owned <span class="uco-text-gradient-orange">By</span></h4>
+                    <span class="w-1 h-5 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                    <h4 class="text-sm font-black uppercase tracking-[0.15em] text-gray-700">Owned <span class="uco-text-gradient-orange">By</span></h4>
                 </div>
             </div>
 
-            {{-- ✨ Elegant Owner Card (Clickable) --}}
-            <a href="{{ route('users.show', $owner) }}" class="block relative bg-white rounded-2xl p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden group hover:border-orange-200 hover:shadow-[0_8px_30px_rgb(247,147,30,0.1)] transition-all">
-                
-                {{-- Decorative gradient blob --}}
-                <div class="absolute -top-12 -right-12 w-32 h-32 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full blur-[40px] opacity-10 group-hover:opacity-20 transition-opacity"></div>
-                
-                {{-- Link Icon --}}
-                <i class="absolute top-5 right-5 bi bi-box-arrow-up-right text-gray-300 group-hover:text-orange-500 transition-colors text-xs z-20"></i>
-                
-                <div class="relative z-10">
-                    <div class="flex items-center gap-4 mb-5">
-                        {{-- Avatar --}}
+            {{-- ✨ Elegant Owner Card --}}
+            <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group hover:border-orange-200 cursor-pointer">
+                {{-- Invisible link that stretches over the whole card --}}
+                <a href="{{ route('users.show', $owner) }}" class="absolute inset-0 z-0" aria-label="View {{ $owner->name }} Profile"></a>
+
+                {{-- Arrow Icon (visual only now) --}}
+                <div class="absolute top-4 right-4 text-gray-300 group-hover:text-orange-500 transition-colors z-10">
+                    <i class="bi bi-box-arrow-up-right text-xs"></i>
+                </div>
+
+                {{-- Header: Avatar & Name --}}
+                <div class="flex items-center gap-5 relative z-10 pointer-events-none">
+                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
                         @if ($ownerPhotoUrl)
-                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}"
-                                class="w-14 h-14 rounded-xl object-cover shadow-sm ring-1 ring-black/5 flex-shrink-0">
+                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" class="w-full h-full object-cover">
                         @else
-                            <div class="w-14 h-14 rounded-xl flex items-center justify-center shadow-sm ring-1 ring-black/5 bg-gradient-to-br from-gray-50 to-gray-100 flex-shrink-0">
-                                <span class="text-xl font-black text-gray-400 select-none">
-                                    {{ strtoupper(substr($owner->name, 0, 1)) }}
-                                </span>
-                            </div>
+                            <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($owner->name, 0, 1)) }}</span>
                         @endif
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $owner->name }}</h2>
+                        <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $owner->student_status ?: 'Active' }}</p>
+                    </div>
+                </div>
 
-                        {{-- Name & Role --}}
-                        <div class="flex-1 min-w-0">
-                            <h3 class="text-base font-extrabold text-gray-900 leading-tight truncate group-hover:text-orange-600 transition-colors">
-                                {{ $owner->name }}
-                            </h3>
-                            <div class="flex items-center gap-2 mt-1">
-                                <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-gray-100 text-gray-600">
-                                    {{ $ownerRoleLabel }}
-                                </span>
+                <div class="w-full h-px bg-gray-100 my-5"></div>
+
+                {{-- Academic Details --}}
+                <div class="space-y-3">
+                    <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Academic Details</h3>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] font-medium text-gray-500">Major</span>
+                        <span class="text-[13px] font-bold text-gray-900">{{ $owner->major ?: '-' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] font-medium text-gray-500">Batch</span>
+                        <span class="text-[13px] font-bold text-gray-900">{{ $owner->year_of_enrollment ?: '-' }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[13px] font-medium text-gray-500">Focus</span>
+                        <span class="text-[13px] font-bold text-gray-900">{{ $ownerRoleLabel ?: '-' }}</span>
+                    </div>
+                </div>
+
+                {{-- Contacts / WhatsApp --}}
+                @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
+                <div class="space-y-4 relative z-20">
+                    @if($owner->whatsapp)
+                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                                <i class="bi bi-whatsapp text-lg"></i>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">WhatsApp</p>
+                                <p class="text-sm font-bold text-gray-800 group-hover:text-green-600 transition-colors leading-tight mt-0.5">{{ $owner->whatsapp }}</p>
                             </div>
                         </div>
-                    </div>
-
-                    @if ($business->position)
-                        <div class="mb-4 flex items-center gap-2 text-xs font-medium text-gray-500 bg-gray-50 rounded-lg p-2.5 border border-gray-100">
-                            <i class="bi bi-briefcase text-gray-400"></i>
-                            <span class="truncate">{{ $business->position }}</span>
-                        </div>
+                        <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
+                    </a>
                     @endif
 
-                    {{-- Contact Data Inside Card --}}
-                    @if ($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
-                    <div class="space-y-2 mt-4 pt-4 border-t border-gray-50">
-                        @if ($owner->whatsapp)
-                            <div class="flex items-center gap-2.5 text-xs">
-                                <div class="w-6 h-6 rounded flex items-center justify-center bg-green-50 text-green-600 flex-shrink-0">
-                                    <i class="bi bi-whatsapp"></i>
-                                </div>
-                                <span class="text-gray-600 font-medium truncate">{{ $owner->whatsapp }}</span>
+                    @if($ownerPerso['instagram'] ?? false)
+                    <a href="https://instagram.com/{{ ltrim($ownerPerso['instagram'], '@') }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
+                                <i class="bi bi-instagram text-lg"></i>
                             </div>
-                        @endif
-                        @if ($ownerPerso['instagram'] ?? false)
-                            <div class="flex items-center gap-2.5 text-xs">
-                                <div class="w-6 h-6 rounded flex items-center justify-center bg-pink-50 text-pink-600 flex-shrink-0">
-                                    <i class="bi bi-instagram"></i>
-                                </div>
-                                <span class="text-gray-600 font-medium truncate">{{ $ownerPerso['instagram'] }}</span>
+                            <div>
+                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Instagram</p>
+                                <p class="text-sm font-bold text-gray-800 group-hover:text-pink-600 transition-colors leading-tight mt-0.5">{{ $ownerPerso['instagram'] }}</p>
                             </div>
-                        @endif
-                        @if ($ownerGrad['official_email'] ?? false)
-                            <div class="flex items-center gap-2.5 text-xs">
-                                <div class="w-6 h-6 rounded flex items-center justify-center bg-blue-50 text-blue-600 flex-shrink-0">
-                                    <i class="bi bi-envelope-fill"></i>
-                                </div>
-                                <span class="text-gray-600 font-medium truncate">{{ $ownerGrad['official_email'] }}</span>
-                            </div>
-                        @endif
-                    </div>
+                        </div>
+                        <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-pink-500 transition-colors text-sm"></i>
+                    </a>
                     @endif
                 </div>
-            </a>
+                @endif
+            </div>
 
             {{-- Additional Owners --}}
             @if ($additionalOwners->isNotEmpty())

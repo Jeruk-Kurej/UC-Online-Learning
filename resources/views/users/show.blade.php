@@ -24,69 +24,76 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
             {{-- Left Section: Complete User Card & Professional details --}}
             <div class="space-y-8">
-                <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm text-center relative overflow-hidden transition hover:shadow-md duration-300">
-                    <div class="relative z-10">
-                        <div class="w-28 h-28 md:w-36 md:h-36 rounded-lg border border-gray-100 shadow-sm mx-auto overflow-hidden bg-gray-50 flex items-center justify-center mb-6 hover:scale-105 transition duration-500">
+                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300">
+                    {{-- Header: Avatar & Name --}}
+                    <div class="flex items-center gap-5">
+                        <div class="w-20 h-20 md:w-24 md:h-24 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
                             @if($user->profile_photo_url)
                                 <img src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover">
                             @else
-                                <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 select-none">
-                                    <span class="text-5xl font-black opacity-20 select-none">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                                </div>
+                                <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                             @endif
                         </div>
-                        <h2 class="text-2xl font-extrabold text-gray-900 leading-tight tracking-tight">{{ $user->name }}</h2>
-                        <p class="text-gray-500 font-bold text-xs mt-1.5 tracking-wider uppercase opacity-80">{{ $user->major ?: 'UCO Student' }}</p>
-                        
-                        {{-- Data Info Cards --}}
-                        <div class="mt-8 grid grid-cols-1 gap-3 text-left border-t border-gray-100 pt-6">
-                            <div class="flex items-center justify-between bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
-                                <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Peminatan</span>
-                                <span class="text-xs font-bold text-gray-800">{{ $user->major ?: '-' }}</span>
-                            </div>
-                            @if($user->year_of_enrollment)
-                                <div class="flex items-center justify-between bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
-                                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Enrollment</span>
-                                    <span class="text-xs font-bold text-gray-800">{{ $user->year_of_enrollment }}</span>
-                                </div>
-                            @endif
-                            @if($user->graduate_year)
-                                <div class="flex items-center justify-between bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
-                                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Graduate</span>
-                                    <span class="text-xs font-bold text-gray-800">{{ $user->graduate_year }}</span>
-                                </div>
-                            @endif
-                            @if($user->student_status)
-                                <div class="flex items-center justify-between bg-gray-50/50 border border-gray-100 rounded-xl p-3.5">
-                                    <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</span>
-                                    <span class="text-xs font-bold text-gray-800">{{ $user->student_status }}</span>
-                                </div>
-                            @endif
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $user->name }}</h2>
+                            <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $user->student_status ?: 'Active' }}</p>
                         </div>
                     </div>
-                </div>
 
-                {{-- Contact Info Card --}}
-                <div class="bg-white border border-gray-100 rounded-lg p-6 md:p-8 shadow-sm space-y-5 transition hover:shadow-md duration-300">
-                    <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.2em]">Contact Information</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100">
-                            <i class="bi bi-envelope text-lg text-gray-400 flex-shrink-0"></i>
-                            <span class="text-gray-700 font-bold truncate">{{ $user->email }}</span>
+                    <div class="w-full h-px bg-gray-100 my-6"></div>
+
+                    {{-- Academic Details --}}
+                    <div class="space-y-4">
+                        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Academic Details</h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Major</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $user->major ?: '-' }}</span>
                         </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Batch</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $user->year_of_enrollment ?: '-' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Focus</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $user->role ?: '-' }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Contacts / WhatsApp --}}
+                    @if($user->whatsapp || $user->email)
+                    <div class="w-full h-px bg-gray-100 my-6"></div>
+                    <div class="space-y-4">
                         @if($user->whatsapp)
-                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->whatsapp) }}" target="_blank" class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-emerald-50/30 transition duration-300 group">
-                                <i class="bi bi-whatsapp text-lg text-emerald-500 flex-shrink-0"></i>
-                                <span class="text-gray-700 font-bold group-hover:text-emerald-600 transition-colors">{{ $user->whatsapp }}</span>
-                            </a>
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->whatsapp) }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                                    <i class="bi bi-whatsapp text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">WhatsApp</p>
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-green-600 transition-colors leading-tight mt-0.5">{{ $user->whatsapp }}</p>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
+                        </a>
                         @endif
-                        @if($user->linkedin)
-                            <a href="{{ $user->linkedin }}" target="_blank" class="flex items-center gap-3.5 text-xs bg-gray-50/50 p-4 rounded-xl border border-gray-100 hover:border-gray-200 hover:bg-blue-50/30 transition duration-300 group">
-                                <i class="bi bi-linkedin text-lg text-blue-600 flex-shrink-0"></i>
-                                <span class="text-gray-700 font-bold group-hover:text-blue-600 transition-colors">LinkedIn Profile</span>
-                            </a>
+
+                        @if($user->email && !$user->whatsapp)
+                        <a href="mailto:{{ $user->email }}" class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                                    <i class="bi bi-envelope-fill text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Email</p>
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors leading-tight mt-0.5 truncate max-w-[150px]">{{ $user->email }}</p>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-blue-500 transition-colors text-sm"></i>
+                        </a>
                         @endif
                     </div>
+                    @endif
                 </div>
 
                 {{-- Documents Card --}}
