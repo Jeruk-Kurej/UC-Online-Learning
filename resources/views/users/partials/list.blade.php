@@ -1,16 +1,15 @@
 {{-- Users Table --}}
-<div class="bg-white border rounded-xl overflow-hidden overflow-x-auto shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
-    <table class="w-full text-left min-w-[1000px]">
+<div class="bg-white border rounded-xl overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+    <table class="w-full text-left">
         <thead class="bg-gray-50 border-b">
             <tr>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Name</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Email</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Status</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Peminatan</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Visible</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Featured</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Businesses</th>
-                <th class="px-6 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center">Actions</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Name</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Email</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] whitespace-nowrap">Status</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Major</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Flags</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Biz</th>
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right whitespace-nowrap w-px">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">
@@ -19,11 +18,12 @@
                     $resolvedPhoto = $user->profile_photo_url;
                     $hasRealPhoto  = $resolvedPhoto && !str_contains($resolvedPhoto, 'ui-avatars.com');
                 @endphp
-                <tr class="hover:bg-gray-50/50 transition">
-                    <td class="px-6 py-3">
-                        <div class="flex items-center gap-3">
-                            {{-- Avatar: real photo or gradient initials --}}
-                            <div class="w-9 h-9 rounded-xl overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
+                <tr class="hover:bg-orange-50/30 transition">
+
+                    {{-- Name + Avatar --}}
+                    <td class="px-4 py-3 max-w-[180px]">
+                        <div class="flex items-center gap-2.5">
+                            <div class="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
                                 @if($hasRealPhoto)
                                     <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                                 @else
@@ -36,73 +36,122 @@
                             <div class="min-w-0">
                                 <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ $user->name }}</p>
                                 @if($user->nis)
-                                    <p class="text-[10px] text-gray-400 font-medium">NIS: {{ $user->nis }}</p>
+                                    <p class="text-[10px] text-gray-400 font-medium">{{ $user->nis }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->email }}</td>
-                    <td class="px-6 py-3">
+
+                    {{-- Email (truncated) --}}
+                    <td class="px-4 py-3 max-w-[180px]">
+                        <span class="block text-sm text-gray-500 truncate" title="{{ $user->email }}">{{ $user->email }}</span>
+                    </td>
+
+                    {{-- Student Status Badge --}}
+                    <td class="px-4 py-3">
                         <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
                             {{ $user->student_status }}
                         </span>
                     </td>
-                    <td class="px-6 py-3 text-sm text-gray-500">{{ $user->major ?: '-' }}</td>
-                    <td class="px-6 py-3 text-center">
-                        <span class="w-3 h-3 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
+
+                    {{-- Major (truncated) --}}
+                    <td class="px-4 py-3 max-w-[120px]">
+                        <span class="block text-sm text-gray-500 truncate" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
                     </td>
-                    <td class="px-6 py-3 text-center">
-                        <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
-                            @csrf
-                            <button type="submit"
-                                {{ !$user->is_visible ? 'disabled' : '' }}
-                                class="relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
-                                    {{ !$user->is_visible 
-                                        ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
-                                        : ($user->is_featured
-                                            ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                            : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
-                                <i class="bi bi-star-fill text-[10px]"></i>
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                        {{ !$user->is_visible ? 'Requires visible user' : ($user->is_featured ? 'Remove featured' : 'Make featured') }}
-                                    </div>
+
+                    {{-- Flags: Visible dot + Featured star (combined column) --}}
+                    <td class="px-4 py-3">
+                        <div class="flex items-center justify-center gap-2">
+                            {{-- Visible dot --}}
+                            <div class="relative group flex-shrink-0">
+                                <span class="w-2.5 h-2.5 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
+                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
+                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">{{ $user->is_visible ? 'Visible' : 'Hidden' }}</div>
                                     <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
                                 </div>
-                            </button>
-                        </form>
+                            </div>
+
+                            {{-- Featured star toggle --}}
+                            <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
+                                @csrf
+                                <button type="submit"
+                                    {{ !$user->is_visible ? 'disabled' : '' }}
+                                    class="relative group w-6 h-6 rounded-full inline-flex items-center justify-center transition-all border
+                                        {{ !$user->is_visible
+                                            ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
+                                            : ($user->is_featured
+                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
+                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
+                                    <i class="bi bi-star-fill text-[9px]"></i>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
+                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
+                                            {{ !$user->is_visible ? 'Need visible' : ($user->is_featured ? 'Unfeature' : 'Feature') }}
+                                        </div>
+                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                    </div>
+                                </button>
+                            </form>
+                        </div>
                     </td>
-                    <td class="px-6 py-3 text-center font-bold text-gray-900">{{ $user->businesses_count }}</td>
-                    <td class="px-6 py-3 text-center">
-                        <div class="flex justify-center gap-2">
+
+                    {{-- Businesses count --}}
+                    <td class="px-4 py-3 text-center">
+                        <span class="text-sm font-bold text-gray-700">{{ $user->businesses_count }}</span>
+                    </td>
+
+                    {{-- Actions: icon-only buttons with tooltips --}}
+                    <td class="px-4 py-3 whitespace-nowrap w-px">
+                        <div class="flex items-center justify-end gap-1.5">
+                            {{-- View --}}
                             <a href="{{ route('users.show', $user) }}"
-                               class="btn-uco btn-uco-sm btn-uco-primary w-20 flex-shrink-0">
-                                <i class="bi bi-eye-fill"></i>
-                                <span>View</span>
+                               class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
+                               style="background-color: #198754;"
+                               onmouseover="this.style.backgroundColor='#157347'" onmouseout="this.style.backgroundColor='#198754'">
+                                <i class="bi bi-eye-fill text-xs"></i>
+                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
+                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">View</div>
+                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                </div>
                             </a>
+
                             @if(auth()->user()?->isAdmin())
+                                {{-- Edit --}}
                                 <a href="{{ route('users.edit', $user) }}"
-                                   class="btn-uco btn-uco-sm btn-uco-secondary w-20 flex-shrink-0">
-                                    <i class="bi bi-pencil-fill"></i>
-                                    <span>Edit</span>
+                                   class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
+                                   style="background-color: #6c757d;"
+                                   onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
+                                    <i class="bi bi-pencil-fill text-xs"></i>
+                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
+                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Edit</div>
+                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                    </div>
                                 </a>
+
                                 @if(auth()->id() !== $user->id)
+                                    {{-- Disable / Enable --}}
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
-                                        <button type="submit" 
-                                                class="btn-uco btn-uco-sm {{ $user->is_visible ? 'btn-uco-danger' : 'btn-uco-primary' }} w-20 flex-shrink-0">
-                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }}"></i>
-                                            <span>{{ $user->is_visible ? 'Disable' : 'Enable' }}</span>
+                                        <button type="submit"
+                                                class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
+                                                style="background-color: {{ $user->is_visible ? '#dc3545' : '#198754' }};"
+                                                onmouseover="this.style.backgroundColor='{{ $user->is_visible ? '#bb2d3b' : '#157347' }}'"
+                                                onmouseout="this.style.backgroundColor='{{ $user->is_visible ? '#dc3545' : '#198754' }}'">
+                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }} text-xs"></i>
+                                            <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
+                                                <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">{{ $user->is_visible ? 'Disable' : 'Enable' }}</div>
+                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-2"></div>
+                                            </div>
                                         </button>
                                     </form>
                                 @endif
                             @endif
                         </div>
                     </td>
+
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-16 text-center">
+                    <td colspan="7" class="px-6 py-16 text-center">
                         <div class="space-y-3">
                             @php
                                 $hasActiveFilters = request()->filled('search')

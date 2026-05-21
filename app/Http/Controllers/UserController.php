@@ -118,11 +118,11 @@ class UserController extends Controller
             ->pluck('year_of_enrollment');
 
         // Get accurate counts from database (not from paginated collection)
-        $totalUsers = User::count();
-        $totalEntrepreneurs = User::whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count();
-        $totalIntrapreneurs = User::whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
-        $totalAlumni = User::where('role', 'alumni')->count();
-        $featuredUserCount = User::where('is_featured', true)->count();
+        $totalUsers = User::where('role', '!=', 'admin')->count();
+        $totalEntrepreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count();
+        $totalIntrapreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
+        $totalAlumni = User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count();
+        $featuredUserCount = User::where('role', '!=', 'admin')->where('is_featured', true)->count();
 
         if ($request->ajax()) {
             return view('users.partials.list', compact('users'))->render();
@@ -138,6 +138,20 @@ class UserController extends Controller
             'availableMajors',
             'availableEnrollmentYears'
         ));
+    }
+
+    /**
+     * Return live stats counts as JSON (used for live counter refresh during import).
+     */
+    public function stats()
+    {
+        return response()->json([
+            'total'          => User::where('role', '!=', 'admin')->count(),
+            'entrepreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
+            'intrapreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
+            'alumni'         => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
+            'featured'       => User::where('role', '!=', 'admin')->where('is_featured', true)->count(),
+        ]);
     }
 
     /**
@@ -531,10 +545,25 @@ class UserController extends Controller
             
             session(['active_user_import_id' => $importId]);
 
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'importId' => $importId,
+                    'format' => $format,
+                    'message' => "Import started ({$format})! Format auto-detected."
+                ]);
+            }
+
             return back()
                 ->with('import_success', "Import started ({$format})! Format auto-detected. Please wait.");
         } catch (\Exception $e) {
             Log::error('User import exception: ' . $e->getMessage());
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Import failed: ' . $e->getMessage()
+                ], 500);
+            }
             return redirect()
                 ->route('users.index')
                 ->with('error', 'Import failed: ' . $e->getMessage());

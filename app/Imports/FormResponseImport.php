@@ -31,6 +31,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     protected $errors = [];
     protected $successCount = 0;
     protected $skippedCount = 0;
+    private static bool $debugKeysDumped = false; // one-time column key debug
 
     public function __construct($importId = null)
     {
@@ -39,7 +40,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
     public function chunkSize(): int
     {
-        return 50;
+        return 1; // 1 row per job: each row can take 15-30s (Cloudinary + Gemini AI)
     }
 
     /**
@@ -63,6 +64,16 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     public function model(array $row)
     {
         try {
+            // ── DEBUG: Log raw column keys on first row only ──
+            if (!self::$debugKeysDumped) {
+                self::$debugKeysDumped = true;
+                $keysAndSamples = [];
+                foreach ($row as $k => $v) {
+                    $keysAndSamples[$k] = (string)($v ?? '');
+                }
+                Log::info('[FormResponseImport] DEBUG - Raw column keys from CSV (Maatwebsite snake_case):', $keysAndSamples);
+            }
+
             // ── 1. Resolve email (required) ──
             $email = $this->col($row, 'email_address');
             if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -77,10 +88,41 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
 
             // ── 2. Create or update User ──
-            $graduateYear = $this->col($row, 'graduate_year');
-            $studentStatus = $graduateYear ? 'alumni' : 'active';
+            $graduateYearRaw = $this->col($row, 'graduate_year');
+            // graduate_year column can be: a 4-digit year ("2025") OR text like "Active Student".
+            // Only treat a real 4-digit numeric year as graduation → alumni.
+            $graduateYear = (is_numeric($graduateYearRaw) && strlen(trim((string)$graduateYearRaw)) === 4)
+                            ? trim((string)$graduateYearRaw)
+                            : null;
+
+            // Determine student status: 'alumni' if graduate year is a 4-digit year or enrollment status contains 'alumni'
+            $enrollmentStatus = strtolower($this->col($row, 'current_status') ?? '');
+            $studentStatus = ($graduateYear || str_contains($enrollmentStatus, 'alumni')) ? 'alumni' : 'active';
+
+            // The "Category" column holds the career category: Entrepreneur / Intrapreneur.
+            $careerCategoryRaw = $this->col($row, 'category') ?? '';
+            $careerCategory = null;
+            if (str_contains(strtolower($careerCategoryRaw), 'intrapreneur')) {
+                $careerCategory = 'Intrapreneur';
+            } elseif (str_contains(strtolower($careerCategoryRaw), 'entrepreneur')) {
+                $careerCategory = 'Entrepreneur';
+            }
+
             $selectedRaw = $this->col($row, 'selected');
             $isFeatured = filter_var($selectedRaw, FILTER_VALIDATE_BOOLEAN);
+
+            // ── DEBUG: Log critical field values ──
+            Log::debug('[FormResponseImport] Row debug', [
+                'email'                  => $email,
+                'category_raw'           => $row['category']      ?? '<<KEY MISSING>>',
+                'current_status_raw'     => $row['current_status'] ?? '<<KEY MISSING>>',
+                'graduate_year_raw'      => $graduateYearRaw,
+                'graduate_year_resolved' => $graduateYear,
+                'student_status'         => $studentStatus,
+                'career_category'        => $careerCategory,
+                'business_name'          => $row['business_name']  ?? '<<KEY MISSING>>',
+                'company_name'           => $row['company_name_']  ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
+            ]);
 
             $userData = [
                 'submitted_at'      => $this->parseTimestamp($this->col($row, 'timestamp')),
@@ -92,9 +134,11 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'mobile_number'     => $this->col($row, 'personal_mobile_number'),
                 'whatsapp'          => $this->col($row, 'personal_whatsapp'),
                 'linkedin'          => $this->col($row, 'linkedin'),
-                'current_status'    => $this->col($row, 'current_status'),
+                // "Category" column → Entrepreneur | Intrapreneur (career type)
+                'current_status'    => $careerCategory,
                 'nis'               => $this->col($row, 'nis_student_id'),
                 'year_of_enrollment'=> $this->col($row, 'year_of_enrollment'),
+                // Only store graduate_year if it's a real 4-digit year, not "Active Student"
                 'graduate_year'     => $graduateYear,
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
@@ -182,7 +226,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'website'                 => $this->col($row, 'website'),
                     'instagram'               => $this->col($row, 'instagram'),
                     'operational_status'      => $this->col($row, 'operational_status'),
-                    'offering_type'           => $this->col($row, 'offering_type'),
+                    'offering_type'           => $this->normalizeOfferingType($this->col($row, 'offering_type')),
                     'unique_value_proposition'=> $this->col($row, 'unique_value_proposition'),
                     'target_market'           => $this->col($row, 'target_market'),
                     'customer_base_size'      => $this->col($row, 'customer_base_size'),
@@ -250,7 +294,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
 
             // ── 4b. Intrapreneur → Company ──
-            $companyName = $this->col($row, 'company_name');
+            // Note: CSV header "Company Name " (with trailing space) → Maatwebsite key = "company_name_"
+            $companyName = $this->col($row, 'company_name_', 'company_name');
             if ($companyName) {
                 // Company names always UPPERCASE
                 $companyName = strtoupper(trim($companyName));
@@ -331,11 +376,14 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             ],
         ];
 
+        $productType = ($business->offering_type === 'service') ? 'service' : 'product';
+
         foreach ($productSlots as $order => $slot) {
             if (empty($slot['name'])) continue;
 
             Product::create([
                 'business_id' => $business->id,
+                'type'        => $productType,
                 'name'        => $slot['name'],
                 'description' => $slot['desc'],
                 'price'       => $slot['price'],
@@ -346,6 +394,22 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     }
 
     // ─── Helpers ───
+
+    private function normalizeOfferingType(?string $val): string
+    {
+        if (!$val) return 'product';
+        $lower = strtolower(trim($val));
+        if (str_contains($lower, 'both') || str_contains($lower, '&') || str_contains($lower, 'and')) {
+            return 'both';
+        }
+        if (str_contains($lower, 'service')) {
+            return 'service';
+        }
+        if (str_contains($lower, 'product')) {
+            return 'product';
+        }
+        return 'product';
+    }
 
     private function splitComma(string $raw): array
     {
@@ -384,6 +448,19 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         $this->errors[] = $msg;
         \Illuminate\Support\Facades\Log::warning("Skipped row: " . $msg);
         $this->updateProgress('skipped');
+
+        if ($this->importId) {
+            $prefix = "import_{$this->importId}";
+            $progress = \Illuminate\Support\Facades\Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
+            if (!is_array($progress)) {
+                $progress = ['status' => 'processing', 'errors' => []];
+            }
+            if (!isset($progress['errors']) || !is_array($progress['errors'])) {
+                $progress['errors'] = [];
+            }
+            $progress['errors'][] = $msg;
+            \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
+        }
     }
 
     private function updateProgress(string $status): void

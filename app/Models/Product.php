@@ -11,9 +11,11 @@ class Product extends Model
 
     protected $fillable = [
         'business_id',
+        'type',
         'name',
         'description',
         'price',
+        'price_type',
         'photo_url',
         'sort_order',
     ];

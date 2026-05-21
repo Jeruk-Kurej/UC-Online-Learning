@@ -198,4 +198,14 @@ class Business extends Model
 
         return $this->members()->where('users.id', $user->id)->exists();
     }
+
+    public function isProductMode(): bool
+    {
+        return $this->offering_type === 'product' || $this->offering_type === 'both';
+    }
+
+    public function isServiceMode(): bool
+    {
+        return $this->offering_type === 'service' || $this->offering_type === 'both';
+    }
 }

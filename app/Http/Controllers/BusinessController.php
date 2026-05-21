@@ -514,10 +514,25 @@ class BusinessController extends Controller
             // Store importId in session so frontend can poll progress
             session(['active_import' => $importId]);
 
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'importId' => $importId,
+                    'format' => $format,
+                    'message' => "Import queued! Format: {$format}."
+                ]);
+            }
+
             return back()->with('success', "Import queued! Format: {$format}. Processing ~1500 rows in background...")
                          ->with('importId', $importId);
         } catch (\Exception $e) {
             Log::error('Import error: ' . $e->getMessage());
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Import failed: ' . $e->getMessage()
+                ], 500);
+            }
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }

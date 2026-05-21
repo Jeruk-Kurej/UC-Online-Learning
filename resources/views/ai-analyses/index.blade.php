@@ -42,9 +42,9 @@
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User & Testimony</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">AI Analysis</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Date</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
@@ -65,7 +65,7 @@
                                         @endif
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 text-center">
+                                <td class="px-6 py-4">
                                     @if($testimony->is_visible)
                                         <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                             Visible
@@ -76,11 +76,11 @@
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 text-center text-xs text-gray-500">
+                                <td class="px-6 py-4 text-xs text-gray-500">
                                     {{ $testimony->submitted_at ? $testimony->submitted_at->format('d M Y') : $testimony->created_at->format('d M Y') }}
                                 </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center justify-start gap-2">
                                         {{-- Toggle Visibility Action --}}
                                         <form action="{{ route('admin.testimonies.toggle', $testimony->id) }}" method="POST" class="inline-block">
                                             @csrf

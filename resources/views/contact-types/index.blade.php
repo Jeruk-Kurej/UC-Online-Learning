@@ -49,18 +49,18 @@
                 <table class="w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">
+                            <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">
                                 Icon Preview
                             </th>
                             <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[40%]">
                                 Platform Name
                             </th>
-                            <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[20%]">
+                            <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[20%]">
                                 Usage Count
                             </th>
                             @auth
                                 @if(auth()->user()->isAdmin())
-                                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[25%]">
+                                    <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[25%]">
                                         Actions
                                     </th>
                                 @endif
@@ -72,7 +72,7 @@
                             <tr class="hover:bg-gray-50 transition">
                                 {{-- Icon Preview --}}
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center">
+                                    <div class="flex items-center justify-start">
                                         @php $colors = $getPlatformColor($type->platform_name); @endphp
                                         <div class="w-12 h-12 rounded-lg {{ $colors['bg'] }} flex items-center justify-center {{ $colors['text'] }} text-xl shadow-sm border {{ str_replace('bg-', 'border-', $colors['bg']) }}">
                                             <i class="{{ $type->icon_class }}"></i>
@@ -86,7 +86,7 @@
                                 </td>
 
                                 {{-- Usage Count --}}
-                                <td class="px-4 py-4 text-center">
+                                <td class="px-4 py-4">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
                                         {{ $type->business_contacts_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600' }}">
                                         {{ $type->business_contacts_count ?? 0 }}
@@ -97,7 +97,7 @@
                                 @auth
                                     @if(auth()->user()->isAdmin())
                                         <td class="px-4 py-4">
-                                            <div class="flex items-center justify-center gap-2">
+                                            <div class="flex items-center justify-start gap-2">
                                                 <a href="{{ route('contact-types.show', $type) }}" 
                                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
                                                    title="View Details">

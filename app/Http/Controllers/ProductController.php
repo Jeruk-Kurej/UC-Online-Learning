@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
-use App\Models\ProductPhoto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,15 +38,6 @@ class ProductController extends Controller
     }
 
     /**
-     * Display a listing of products for a business.
-     * ✅ CHANGED: Redirect to business show page with products tab
-     */
-    public function index(Business $business)
-    {
-        return redirect()->route('businesses.show', $business)->with('activeTab', 'products');
-    }
-
-    /**
      * Show the form for creating a new product.
      */
     public function create(Business $business)
@@ -61,10 +51,7 @@ class ProductController extends Controller
                 ->withErrors(['business_mode' => 'This business is not in Product mode.']);
         }
 
-        // Fetch product categories for this BUSINESS
-        $categories = $business->productCategories;
-
-        return view('products.create', compact('business', 'categories'));
+        return view('products.create', compact('business'));
     }
 
     /**
@@ -74,46 +61,27 @@ class ProductController extends Controller
     {
         $this->authorizeBusinessAccess($business);
 
-        try {
-            $validated = $request->validate([
-                'product_category_id' => 'required|exists:product_categories,id',
-                'name' => 'required|string|max:255',
-                'description' => 'required|string',
-                'price' => 'required|numeric|min:0',
-            ]);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+        ]);
 
-            // Ensure the category belongs to this BUSINESS
-            $category = $business->productCategories()->find($validated['product_category_id']);
-            
-            if (!$category) {
-                return back()->withErrors(['product_category_id' => 'The selected category does not belong to this business.'])->withInput();
-            }
+        $validated['business_id'] = $business->id;
+        $validated['type'] = 'product';
 
-            $validated['business_id'] = $business->id;
-
-            $product = Product::create($validated);
-
-            // Handle Photo Uploads
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photoFile) {
-                    $path = $photoFile->store('products', config('filesystems.default'));
-                    ProductPhoto::create([
-                        'product_id' => $product->id,
-                        'photo_url' => $path,
-                    ]);
-                }
-            }
-
-            // ✅ FIXED: Redirect to business show page with products tab active
-            return redirect()
-                ->route('businesses.show', $business)
-                ->with('success', "Success! The product '{$product->name}' has been added with its photos.")
-                ->with('activeTab', 'products');
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return back()->withErrors($e->errors())->withInput();
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'An error occurred: ' . $e->getMessage()])->withInput();
+        // Handle Photo Upload
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('products', 'public');
+            $validated['photo_url'] = $path;
         }
+
+        $product = Product::create($validated);
+
+        return redirect()
+            ->route('businesses.show', $business)
+            ->with('success', "Success! The product '{$product->name}' has been added.");
     }
 
     /**
@@ -121,11 +89,9 @@ class ProductController extends Controller
      */
     public function show(Business $business, Product $product)
     {
-        if ($product->business_id !== $business->id) {
+        if ($product->business_id !== $business->id || $product->type !== 'product') {
             abort(404);
         }
-
-        $product->load(['productCategory', 'photos']);
 
         return view('products.show', compact('business', 'product'));
     }
@@ -137,15 +103,11 @@ class ProductController extends Controller
     {
         $this->authorizeBusinessAccess($business);
 
-        // Ensure product belongs to this business
-        if ($product->business_id !== $business->id) {
+        if ($product->business_id !== $business->id || $product->type !== 'product') {
             abort(404);
         }
 
-        // Fetch product categories for this BUSINESS
-        $categories = $business->productCategories;
-
-        return view('products.edit', compact('business', 'product', 'categories'));
+        return view('products.edit', compact('business', 'product'));
     }
 
     /**
@@ -155,43 +117,32 @@ class ProductController extends Controller
     {
         $this->authorizeBusinessAccess($business);
 
-        // Ensure product belongs to this business
-        if ($product->business_id !== $business->id) {
+        if ($product->business_id !== $business->id || $product->type !== 'product') {
             abort(404);
         }
 
         $validated = $request->validate([
-            'product_category_id' => 'required|exists:product_categories,id',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
-        // Ensure the category belongs to this BUSINESS
-        $category = $business->productCategories()->find($validated['product_category_id']);
-        
-        if (!$category) {
-            return back()->withErrors(['product_category_id' => 'The selected category does not belong to this business.']);
+        // Handle Photo Upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if it exists
+            if ($product->getRawOriginal('photo_url')) {
+                Product::deleteCloudinaryImage($product->getRawOriginal('photo_url'));
+            }
+            $path = $request->file('photo')->store('products', 'public');
+            $validated['photo_url'] = $path;
         }
 
         $product->update($validated);
 
-        // Handle Additional Photo Uploads
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photoFile) {
-                $path = $photoFile->store('products', config('filesystems.default'));
-                ProductPhoto::create([
-                    'product_id' => $product->id,
-                    'photo_url' => $path,
-                ]);
-            }
-        }
-
-        // ✅ FIXED: Redirect to product show page
         return redirect()
             ->route('businesses.products.show', [$business, $product])
-            ->with('success', "Success! The product '{$product->name}' has been updated.")
-            ->with('activeTab', 'products');
+            ->with('success', "Success! The product '{$product->name}' has been updated.");
     }
 
     /**
@@ -201,17 +152,19 @@ class ProductController extends Controller
     {
         $this->authorizeBusinessAccess($business);
 
-        // Ensure product belongs to this business
-        if ($product->business_id !== $business->id) {
+        if ($product->business_id !== $business->id || $product->type !== 'product') {
             abort(404);
+        }
+
+        // Delete photo if it exists
+        if ($product->getRawOriginal('photo_url')) {
+            Product::deleteCloudinaryImage($product->getRawOriginal('photo_url'));
         }
 
         $product->delete();
 
-        // ✅ FIXED: Redirect to business show page
         return redirect()
             ->route('businesses.show', $business)
-            ->with('success', "Success! The product '{$product->name}' has been removed.")
-            ->with('activeTab', 'products');
+            ->with('success', "Success! The product '{$product->name}' has been removed.");
     }
 }

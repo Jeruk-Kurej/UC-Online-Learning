@@ -47,12 +47,20 @@ class FeaturedController extends Controller
             ->take(8)
             ->get();
 
-        // Testimonies (curated testimonies, with photo and testimony)
+        // Community Voices: users with AI-approved testimonies (NOT tied to is_featured toggle)
+        // is_featured only controls Featured Students + Featured Ventures sections above.
         $testimonies = User::where('is_visible', true)
-            ->where('is_featured', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->whereNotNull('profile_photo_url')
+            ->where(function ($q) {
+                // Prefer AI-approved testimonies (score >= 80), but fallback to any visible testimony
+                $q->where('ai_score', '>=', 80)
+                  ->orWhere(function ($q2) {
+                      $q2->whereNull('ai_score')->where('is_visible', true);
+                  });
+            })
+            ->orderByDesc('ai_score')
             ->latest()
             ->take(6)
             ->get();

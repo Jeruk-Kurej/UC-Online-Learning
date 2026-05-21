@@ -106,7 +106,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
 
     public function chunkSize(): int
     {
-        return 10;
+        return 1; // 1 row per job to avoid queue timeout
     }
 
     // ─── Main processor ────────────────────────────────────────────────────────
@@ -624,6 +624,19 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         $this->errors[] = $msg;
         Log::warning("[UCOStudentImport] Skipped: {$msg}");
         $this->updateProgress('skipped');
+
+        if ($this->importId) {
+            $prefix = "import_{$this->importId}";
+            $progress = \Illuminate\Support\Facades\Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
+            if (!is_array($progress)) {
+                $progress = ['status' => 'processing', 'errors' => []];
+            }
+            if (!isset($progress['errors']) || !is_array($progress['errors'])) {
+                $progress['errors'] = [];
+            }
+            $progress['errors'][] = $msg;
+            \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
+        }
     }
 
     private function updateProgress(string $status): void

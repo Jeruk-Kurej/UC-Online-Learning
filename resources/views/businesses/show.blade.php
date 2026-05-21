@@ -13,9 +13,10 @@
         $isBothMode = $businessMode === 'both';
         $businessModeLabel = $isBothMode ? 'Products & Services' : ($isProductMode ? 'Product-Based' : 'Service-Based');
         $businessModeShortLabel = $isBothMode ? 'Both' : ($isProductMode ? 'Product' : 'Service');
-        $businessProducts = collect($business->products ?? []);
+        $allProductsAndServices = collect($business->products ?? []);
+        $businessProducts = $allProductsAndServices->where('type', 'product');
         $businessPhotos = collect($business->photos ?? []);
-        $businessServices = collect();
+        $businessServices = $allProductsAndServices->where('type', 'service');
         $businessContacts = collect();
         $hasProducts = $businessProducts->isNotEmpty();
         $hasGallery = $businessPhotos->isNotEmpty();
@@ -405,7 +406,7 @@
             <div class="mt-4 space-y-6">
 
                 {{-- ── PRODUCTS SECTION ── --}}
-                @if (($isProductMode || $isBothMode) && $hasProducts)
+                @if (($isProductMode || $isBothMode) && ($hasProducts || $canManageBusiness))
                     <div class="bg-white shadow-lg sm:rounded-lg border border-soft-gray-100 overflow-hidden">
                         {{-- Section Header --}}
                         <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
@@ -443,66 +444,15 @@
                             @if ($businessProducts->count() > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessProducts as $product)
-                                        @php
-                                            $productPhotos = collect($product->photos ?? []);
-                                        @endphp
                                         <div @if ($hasProductsShowRoute) @click="if(!event.target.closest('button') && !event.target.closest('a')) window.location='{{ route('businesses.products.show', [$business, $product]) }}'" @endif
                                             class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 {{ $hasProductsShowRoute ? 'cursor-pointer' : '' }} bg-white">
-                                            {{-- Product Image / Carousel --}}
-                                            <div class="relative overflow-hidden group" x-data="{
-                                                currentIndex: 0,
-                                                total: {{ $productPhotos->count() }},
-                                                timer: null,
-                                                startTimer() {
-                                                    if (this.total > 1) {
-                                                        this.timer = setInterval(() => {
-                                                            this.currentIndex = (this.currentIndex + 1) % this.total;
-                                                        }, 4000);
-                                                    }
-                                                },
-                                                stopTimer() {
-                                                    if (this.timer) clearInterval(this.timer);
-                                                }
-                                            }"
-                                                x-init="startTimer()" @mouseenter="stopTimer()"
-                                                @mouseleave="startTimer()">
-
-                                                @if ($productPhotos->count() > 0)
+                                            {{-- Product Image --}}
+                                            <div class="relative overflow-hidden">
+                                                @if ($product->getRawOriginal('photo_url'))
                                                     <div class="relative h-48 bg-gray-100">
-                                                        @foreach ($productPhotos as $index => $photo)
-                                                            <div x-show="currentIndex === {{ $index }}"
-                                                                x-transition:enter="transition ease-out duration-500"
-                                                                x-transition:enter-start="opacity-0 scale-105"
-                                                                x-transition:enter-end="opacity-100 scale-100"
-                                                                x-transition:leave="transition ease-in duration-300"
-                                                                x-transition:leave-start="opacity-100"
-                                                                x-transition:leave-end="opacity-0"
-                                                                class="absolute inset-0 cursor-pointer">
-                                                                <img src="{{ storage_image_url($photo->photo_url, 'gallery_thumb') }}"
-                                                                    alt="{{ $product->name }}"
-                                                                    class="w-full h-full object-cover">
-                                                            </div>
-                                                        @endforeach
-
-                                                        @if ($productPhotos->count() > 1)
-                                                            <button
-                                                                @click="currentIndex = (currentIndex - 1 + total) % total"
-                                                                class="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-black/60 backdrop-blur-sm hover:scale-110">
-                                                                <i class="bi bi-chevron-left"></i>
-                                                            </button>
-                                                            <button @click="currentIndex = (currentIndex + 1) % total"
-                                                                class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-all duration-200 hover:bg-black/60 backdrop-blur-sm hover:scale-110">
-                                                                <i class="bi bi-chevron-right"></i>
-                                                            </button>
-                                                            <div class="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
-                                                                @foreach ($productPhotos as $index => $photo)
-                                                                    <button @click="currentIndex = {{ $index }}"
-                                                                        :class="currentIndex === {{ $index }} ? 'bg-white w-4' : 'bg-white/50 w-1.5'"
-                                                                        class="h-1.5 rounded-full transition-all duration-300 shadow-sm">
-                                                                    </button>
-                                                                @endforeach
-                                                            </div>
-                                                        @endif
+                                                        <img src="{{ $product->photo_url }}"
+                                                            alt="{{ $product->name }}"
+                                                            class="w-full h-full object-cover">
                                                     </div>
                                                 @else
                                                     <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
@@ -516,10 +466,6 @@
                                                 <div class="flex items-start justify-between mb-2">
                                                     <div class="flex-1">
                                                         <h4 class="font-semibold text-gray-900 mb-1">{{ $product->name }}</h4>
-                                                        <p class="text-xs text-gray-500 mb-2">
-                                                            <i class="bi bi-tag me-1"></i>
-                                                            {{ $product->productCategory?->name ?? 'Uncategorized' }}
-                                                        </p>
                                                     </div>
                                                     <span class="text-orange-600 font-bold text-lg">
                                                         Rp {{ number_format($product->price, 0, ',', '.') }}
@@ -531,13 +477,29 @@
                                         </div>
                                     @endforeach
                                 </div>
+                            @else
+                                {{-- Compact empty prompt for owner only --}}
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                    <div class="flex items-center gap-3 text-gray-500">
+                                        <i class="bi bi-box-seam text-xl text-gray-400"></i>
+                                        <span class="text-sm">No products added yet. Start building your product catalog.</span>
+                                    </div>
+                                    <div class="flex items-center gap-2 flex-shrink-0">
+                                        @if ($hasProductsCreateRoute)
+                                            <a href="{{ route('businesses.products.create', $business) }}"
+                                                class="btn-uco btn-uco-primary">
+                                                <i class="bi bi-plus-lg"></i> Add Product
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
                 @endif
 
                 {{-- ── SERVICES SECTION ── --}}
-                @if (($isServiceMode || $isBothMode) && $businessServices->count() > 0)
+                @if (($isServiceMode || $isBothMode) && ($businessServices->count() > 0 || $canManageBusiness))
                     <div class="bg-white shadow-lg sm:rounded-lg border border-soft-gray-100 overflow-hidden">
                         {{-- Section Header --}}
                         <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
@@ -605,6 +567,20 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                </div>
+                            @else
+                                {{-- Compact empty prompt for owner only --}}
+                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+                                    <div class="flex items-center gap-3 text-gray-500">
+                                        <i class="bi bi-wrench text-xl text-gray-400"></i>
+                                        <span class="text-sm">No services added yet. Add your first service to showcase what you offer.</span>
+                                    </div>
+                                    @if ($hasServicesCreateRoute)
+                                        <a href="{{ route('businesses.services.create', $business) }}"
+                                            class="btn-uco btn-uco-primary flex-shrink-0">
+                                            <i class="bi bi-plus-lg"></i> Add Service
+                                        </a>
+                                    @endif
                                 </div>
                             @endif
                         </div>
