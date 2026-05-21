@@ -81,6 +81,16 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return null;
             }
 
+            // ── 1.5 Check 'Selected' flag (if column exists, skip if not TRUE) ──
+            if (array_key_exists('selected', $row)) {
+                $selectedRaw = $row['selected'];
+                $strSelected = strtoupper(trim((string)$selectedRaw));
+                if ($strSelected !== 'TRUE' && $strSelected !== '1' && $selectedRaw !== true) {
+                    $this->skip("Row not selected for import (Selected = " . (is_bool($selectedRaw) ? 'FALSE' : $strSelected) . ")");
+                    return null;
+                }
+            }
+
             $fullName = $this->col($row, 'full_name');
             if (!$fullName) {
                 $this->skip("Missing Full Name for {$email}");
@@ -108,8 +118,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 $careerCategory = 'Entrepreneur';
             }
 
-            $selectedRaw = $this->col($row, 'selected');
-            $isFeatured = filter_var($selectedRaw, FILTER_VALIDATE_BOOLEAN);
+            $isFeatured = false;
 
             // ── DEBUG: Log critical field values ──
             Log::debug('[FormResponseImport] Row debug', [

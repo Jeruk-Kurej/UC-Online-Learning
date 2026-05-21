@@ -15,7 +15,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
-        {{-- Manual fallback: Read manifest and inject assets --}}
+        <!-- {{-- Manual fallback: Read manifest and inject assets --}}
         @php
             $manifestPath = public_path('build/manifest.json');
             if (file_exists($manifestPath)) {
@@ -31,7 +31,7 @@
         
         @if(isset($jsFile))
             <script type="module" src="/build/{{ $jsFile }}"></script>
-        @endif
+        @endif -->
     </head>
     <body class="font-sans antialiased bg-soft-white">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
