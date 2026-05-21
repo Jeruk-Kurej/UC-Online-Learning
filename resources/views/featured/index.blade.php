@@ -261,11 +261,7 @@
                                         </div>
                                     </div>
                                     
-                                    @if($featuredBusiness->category)
-                                        <span class="inline-flex mt-4 items-center px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider bg-orange-50/80 text-uco-orange-600 border border-orange-100/50">
-                                            {{ $featuredBusiness->category->name }}
-                                        </span>
-                                    @endif
+
                                     
                                     <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
                                         {{ $featuredBusiness->description }}
