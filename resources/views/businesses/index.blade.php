@@ -24,7 +24,7 @@
                      this.updateList(window.location.href, false);
                  });
              },
-             updateList(url = null, pushState = true) {
+             updateList(url = null, pushState = true, shouldScroll = false) {
                  this.isLoading = true;
                  if (!url) {
                      const form = this.$refs.filterForm;
@@ -50,7 +50,9 @@
                      }
                      if (pushState) window.history.pushState({}, '', url);
                      this.isLoading = false;
-                     window.scrollTo({ top: 0, behavior: 'smooth' });
+                     if (shouldScroll) {
+                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                     }
                  })
                  .catch(err => {
                      console.error('Fetch failed:', err);
@@ -74,7 +76,7 @@
                  this.updateList();
              }
           }"
-          @ajax-pagination.window="updateList($event.detail.url)">
+          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>

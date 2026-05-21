@@ -4,7 +4,7 @@
          x-data="{ 
             showImportModal: false,
             isSubmitting: false,
-            updateList(url = null, pushState = true) {
+            updateList(url = null, pushState = true, shouldScroll = false) {
                 this.isSubmitting = true;
                 if (!url) {
                     const form = this.$refs.filterForm;
@@ -27,7 +27,9 @@
                     }
                     if (pushState) window.history.pushState({}, '', url);
                     this.isSubmitting = false;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    if (shouldScroll) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                 })
                 .catch(err => {
                     console.error('Fetch failed:', err);
@@ -35,7 +37,7 @@
                 });
             }
          }"
-         @ajax-pagination.window="updateList($event.detail.url)">
+         @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
             <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-1">
@@ -49,7 +51,7 @@
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        <span class="featured-count">{{ $featuredBusinessesCount }}</span>/8 Featured
+                        <span><span class="featured-count">{{ $featuredBusinessesCount }}</span>/8 Featured</span>
                     </span>
                     <button @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>

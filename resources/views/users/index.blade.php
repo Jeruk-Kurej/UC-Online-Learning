@@ -10,7 +10,7 @@
                     this.updateList(window.location.href, false);
                 });
             },
-            updateList(url = null, pushState = true) {
+            updateList(url = null, pushState = true, shouldScroll = false) {
                 this.isSubmitting = true;
                 if (!url) {
                     const form = this.$refs.filterForm;
@@ -36,7 +36,9 @@
                     }
                     if (pushState) window.history.pushState({}, '', url);
                     this.isSubmitting = false;
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    if (shouldScroll) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
                 })
                 .catch(err => {
                     console.error('Fetch failed:', err);
@@ -53,8 +55,8 @@
                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
             }
         }"
-        @ajax-pagination.window="updateList($event.detail.url)"
-        @ajax-update-list.window="updateList()">
+        @ajax-pagination.window="updateList($event.detail.url, true, true)"
+        @ajax-update-list.window="updateList(window.location.href, false, false)">
         
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
@@ -70,7 +72,7 @@
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        {{ $featuredUserCount }}/4 Featured
+                        <span><span id="stat-featured">{{ $featuredUserCount }}</span>/4 Featured</span>
                     </span>
                     <button @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
@@ -97,6 +99,8 @@
                         document.getElementById('stat-entrepreneurs').textContent = d.entrepreneurs;
                         document.getElementById('stat-intrapreneurs').textContent = d.intrapreneurs;
                         document.getElementById('stat-alumni').textContent = d.alumni;
+                        const statFeatured = document.getElementById('stat-featured');
+                        if(statFeatured) statFeatured.textContent = d.featured;
                     })">
             <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
@@ -225,6 +229,7 @@
                         .then(data => {
                             if (data.success) {
                                 window.dispatchEvent(new CustomEvent('ajax-update-list'));
+                                window.dispatchEvent(new CustomEvent('ajax-update-stats'));
                                 window.dispatchEvent(new CustomEvent('notify', {
                                     detail: { message: data.message, type: 'success' }
                                 }));
