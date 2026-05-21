@@ -49,6 +49,7 @@ class User extends Authenticatable
         // Platform management
         'is_visible',
         'is_featured',
+        'is_featured_testimony',
         'student_status',
 
         // AI Analysis
@@ -70,6 +71,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_visible' => 'boolean',
             'is_featured' => 'boolean',
+            'is_featured_testimony' => 'boolean',
         ];
     }
 

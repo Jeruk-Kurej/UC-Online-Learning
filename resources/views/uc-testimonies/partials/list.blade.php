@@ -16,17 +16,17 @@
             <div class="absolute top-4 right-4 z-20">
                 <button type="button"
                         data-user-id="{{ $user->id }}"
-                        data-featured="{{ $user->is_featured ? '1' : '0' }}"
+                        data-featured="{{ $user->is_featured_testimony ? '1' : '0' }}"
                         onclick="toggleFeatured({{ $user->id }}, this)"
-                        title="{{ !$user->is_visible ? 'User must be visible to be featured' : ($user->is_featured ? 'Remove from featured' : 'Add to featured') }}"
+                        title="{{ !$user->is_visible ? 'User must be visible to be featured' : ($user->is_featured_testimony ? 'Remove from featured' : 'Add to featured') }}"
                         {{ !$user->is_visible ? 'disabled' : '' }}
                         class="w-10 h-10 rounded-full inline-flex items-center justify-center transition-all duration-300 border shadow-md focus:outline-none
                             {{ !$user->is_visible 
                                 ? 'bg-gray-200/90 border-gray-300 text-gray-400 cursor-not-allowed'
-                                : ($user->is_featured
+                                : ($user->is_featured_testimony
                                     ? 'bg-[#ff8a00] border-[#ff8a00] text-white hover:bg-orange-600'
                                     : 'bg-white/90 border-gray-200 text-gray-400 hover:text-[#ff8a00] hover:border-[#ff8a00]') }}">
-                    <i class="bi {{ $user->is_featured ? 'bi-star-fill' : 'bi-star' }} text-lg leading-none"></i>
+                    <i class="bi {{ $user->is_featured_testimony ? 'bi-star-fill' : 'bi-star' }} text-lg leading-none"></i>
                 </button>
             </div>
 

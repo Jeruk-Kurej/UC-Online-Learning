@@ -153,7 +153,7 @@
             buttonElement.disabled = true;
 
             const token = document.querySelector('meta[name="csrf-token"]').content;
-            const url = `/users/${userId}/toggle-featured`;
+            const url = `/admin/testimonies/${userId}/toggle-featured`;
 
             fetch(url, {
                 method: 'POST',

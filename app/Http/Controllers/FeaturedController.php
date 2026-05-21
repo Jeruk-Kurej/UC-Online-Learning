@@ -41,7 +41,7 @@ class FeaturedController extends Controller
         // Community Voices: users with AI-approved testimonies (NOT tied to is_featured toggle)
         // is_featured only controls Featured Students + Featured Ventures sections above.
         $testimonies = User::where('is_visible', true)
-            ->where('is_featured', true)
+            ->where('is_featured_testimony', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->whereNotNull('profile_photo_url')

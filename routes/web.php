@@ -76,6 +76,7 @@ Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/businesses/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
     
     Route::get('/admin/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
+    Route::post('/admin/testimonies/{user}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');
 });
 
 // This must be LAST to avoid matching static routes like 'create'

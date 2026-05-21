@@ -36,9 +36,9 @@ class UcTestimonyController extends Controller
         }
 
         if ($featured === '1') {
-            $query->where('is_featured', true);
+            $query->where('is_featured_testimony', true);
         } elseif ($featured === '0') {
-            $query->where('is_featured', false);
+            $query->where('is_featured_testimony', false);
         }
 
         $users = $query->orderByDesc('submitted_at')
@@ -47,7 +47,7 @@ class UcTestimonyController extends Controller
 
         // Fetch stats
         $totalTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->count();
-        $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured', true)->count();
+        $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured_testimony', true)->count();
 
         if ($request->ajax()) {
             return response()
@@ -108,5 +108,28 @@ class UcTestimonyController extends Controller
         return redirect()
             ->route('uc-testimonies.my')
             ->with('success', 'Your testimony has been saved successfully!');
+    }
+
+    /**
+     * Toggle the featured status of a testimony for the homepage.
+     */
+    public function toggleFeatured(Request $request, User $user)
+    {
+        if (!Auth::user()->isAdmin()) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        }
+
+        if (!$user->is_visible) {
+            return response()->json(['success' => false, 'message' => 'Cannot feature an invisible user.'], 400);
+        }
+
+        $user->is_featured_testimony = !$user->is_featured_testimony;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'is_featured' => $user->is_featured_testimony,
+            'message' => 'Testimony featured status updated successfully.'
+        ]);
     }
 }
