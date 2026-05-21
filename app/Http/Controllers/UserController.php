@@ -282,11 +282,16 @@ class UserController extends Controller
             $query->where('is_visible', true)->with('category');
         }]);
 
+        $ownedBusinessIds = $user->businesses->pluck('id');
+        $memberBusinesses = $user->memberOfBusinesses->reject(function ($business) use ($ownedBusinessIds) {
+            return $ownedBusinessIds->contains($business->id);
+        });
+
         // We use view users.profile instead of users.show
         return view('users.profile', [
             'user' => $user,
             'ownedBusinesses' => $user->businesses,
-            'memberBusinesses' => $user->memberOfBusinesses
+            'memberBusinesses' => $memberBusinesses
         ]);
     }
 
