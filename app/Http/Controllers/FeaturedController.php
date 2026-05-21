@@ -20,7 +20,7 @@ class FeaturedController extends Controller
             ->whereNotNull('profile_photo_url')
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
-            ->take(3)
+            ->take(4)
             ->get();
 
         // Spotlight businesses
