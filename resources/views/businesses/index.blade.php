@@ -50,6 +50,7 @@
                      }
                      if (pushState) window.history.pushState({}, '', url);
                      this.isLoading = false;
+                     window.scrollTo({ top: 0, behavior: 'smooth' });
                  })
                  .catch(err => {
                      console.error('Fetch failed:', err);

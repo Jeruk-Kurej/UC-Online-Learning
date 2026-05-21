@@ -162,7 +162,11 @@ class BusinessController extends Controller
             $query->where('name', 'LIKE', "%{$search}%");
         }
 
-        $businesses = $query->latest()->paginate(20)->withQueryString();
+        $businesses = $query->latest()->paginate(10)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('businesses.admin.partials.list', compact('businesses'))->render();
+        }
 
         return view('businesses.admin.index', compact(
             'businesses', 

@@ -98,7 +98,7 @@ class UserController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        $users = $query->paginate(20);
+        $users = $query->paginate(10);
 
         // Filter dropdown sources
         $availableMajors = User::query()

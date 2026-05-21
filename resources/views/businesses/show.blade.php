@@ -71,15 +71,7 @@
                                 <i class="bi bi-person-workspace text-[10px]"></i>
                                 {{ ucfirst($business->type ?? 'Entrepreneur') }}
                             </span>
-                            <span
-                                class="inline-flex items-center gap-1.5 px-3 py-1 bg-soft-gray-100 text-soft-gray-700 text-xs font-semibold rounded-xl max-w-[220px]"
-                                title="{{ $businessTypeName }}">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
-                                </svg>
-                                <span class="truncate">{{ $businessTypeName }}</span>
-                            </span>
+
                             <span
                                 class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-xl
                             {{ $isBothMode ? 'bg-purple-100 text-purple-700' : ($isProductMode ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700') }}">
@@ -402,7 +394,9 @@
                         </div>
                     @endif
                 </div>
-                     {{-- ═══ FLOWING SECTIONS: Products → Services → Gallery → Contacts ═══ --}}
+            </div>
+            
+            {{-- ═══ FLOWING SECTIONS: Products → Services → Gallery → Contacts ═══ --}}
             <div class="mt-4 space-y-6">
 
                 {{-- ── PRODUCTS SECTION ── --}}
@@ -468,7 +462,7 @@
                                                         <h4 class="font-semibold text-gray-900 mb-1">{{ $product->name }}</h4>
                                                     </div>
                                                     <span class="text-orange-600 font-bold text-lg">
-                                                        Rp {{ number_format($product->price, 0, ',', '.') }}
+                                                        Rp {{ number_format((float) $product->price, 0, ',', '.') }}
                                                     </span>
                                                 </div>
                                                 <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ $product->description }}</p>
@@ -478,20 +472,8 @@
                                     @endforeach
                                 </div>
                             @else
-                                {{-- Compact empty prompt for owner only --}}
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                                    <div class="flex items-center gap-3 text-gray-500">
-                                        <i class="bi bi-box-seam text-xl text-gray-400"></i>
-                                        <span class="text-sm">No products added yet. Start building your product catalog.</span>
-                                    </div>
-                                    <div class="flex items-center gap-2 flex-shrink-0">
-                                        @if ($hasProductsCreateRoute)
-                                            <a href="{{ route('businesses.products.create', $business) }}"
-                                                class="btn-uco btn-uco-primary">
-                                                <i class="bi bi-plus-lg"></i> Add Product
-                                            </a>
-                                        @endif
-                                    </div>
+                                <div class="flex items-center justify-center py-6 px-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+                                    <span class="text-sm text-gray-500">No products added yet. Start building your product catalog.</span>
                                 </div>
                             @endif
                         </div>
@@ -533,7 +515,7 @@
                                                     <h4 class="font-semibold text-gray-900 mb-1">{{ $service->name }}</h4>
                                                     <p class="text-sm text-gray-600 mb-3">{{ $service->description }}</p>
                                                     <div class="flex items-center gap-2">
-                                                        <span class="text-orange-600 font-bold">Rp {{ number_format($service->price, 0, ',', '.') }}</span>
+                                                        <span class="text-orange-600 font-bold">Rp {{ number_format((float) $service->price, 0, ',', '.') }}</span>
                                                         <span class="text-xs text-gray-500">/ {{ $service->price_type }}</span>
                                                     </div>
                                                 </div>
@@ -569,18 +551,8 @@
                                     @endforeach
                                 </div>
                             @else
-                                {{-- Compact empty prompt for owner only --}}
-                                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 px-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                                    <div class="flex items-center gap-3 text-gray-500">
-                                        <i class="bi bi-wrench text-xl text-gray-400"></i>
-                                        <span class="text-sm">No services added yet. Add your first service to showcase what you offer.</span>
-                                    </div>
-                                    @if ($hasServicesCreateRoute)
-                                        <a href="{{ route('businesses.services.create', $business) }}"
-                                            class="btn-uco btn-uco-primary flex-shrink-0">
-                                            <i class="bi bi-plus-lg"></i> Add Service
-                                        </a>
-                                    @endif
+                                <div class="flex items-center justify-center py-6 px-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
+                                    <span class="text-sm text-gray-500">No services added yet. Add your first service to showcase what you offer.</span>
                                 </div>
                             @endif
                         </div>
@@ -731,9 +703,7 @@
                         </div>
                     </div>
                 @endif
-
             </div>
-        </div>
         </div>
 
         {{-- Fullscreen Photo Modal --}}

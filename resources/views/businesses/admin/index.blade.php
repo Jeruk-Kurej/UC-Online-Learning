@@ -1,7 +1,41 @@
 <x-app-layout>
     <div class="w-full max-w-[1600px] mx-auto py-8 px-4" 
          @start-import.window="showImportModal = false"
-         x-data="{ showImportModal: false }">
+         x-data="{ 
+            showImportModal: false,
+            isSubmitting: false,
+            updateList(url = null, pushState = true) {
+                this.isSubmitting = true;
+                if (!url) {
+                    const form = this.$refs.filterForm;
+                    if (!form) { this.isSubmitting = false; return; }
+                    const formData = new FormData(form);
+                    const params = new URLSearchParams(formData);
+                    url = `${form.action}?${params.toString()}`;
+                }
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                    credentials: 'same-origin'
+                })
+                .then(res => res.text())
+                .then(html => {
+                    const container = document.getElementById('businesses-admin-list-container');
+                    if (container) {
+                        container.innerHTML = html;
+                        container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+                    }
+                    if (pushState) window.history.pushState({}, '', url);
+                    this.isSubmitting = false;
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                })
+                .catch(err => {
+                    console.error('Fetch failed:', err);
+                    this.isSubmitting = false;
+                });
+            }
+         }"
+         @ajax-pagination.window="updateList($event.detail.url)">
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
             <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-1">
@@ -17,12 +51,12 @@
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
                         <span class="featured-count">{{ $featuredBusinessesCount }}</span>/8 Featured
                     </span>
-                    <button @click="showImportModal = true" class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-50 transition shadow-sm">
+                    <button @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
 
-                    <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-4 py-2 bg-gray-900 text-white text-sm font-medium rounded-md hover:bg-black transition shadow-sm">
+                    <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm">
                         <i class="bi bi-plus-lg mr-2"></i>
                         Create Business
                     </a>
@@ -52,7 +86,7 @@
 
         {{-- Filters & Search --}}
         <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
-            <form action="{{ route('businesses.admin') }}" method="GET">
+            <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
                 <div class="flex flex-col md:flex-row md:items-center gap-3">
                     {{-- Search Input --}}
                     <div class="relative flex-1">
@@ -93,138 +127,21 @@
                 </div>
             </form>
         </div>
+        <script>
+            // Intercept pagination clicks
+            document.addEventListener('click', function(e) {
+                const link = e.target.closest('.pagination-ajax a');
+                if (link) {
+                    e.preventDefault();
+                    window.dispatchEvent(new CustomEvent('ajax-pagination', {
+                        detail: { url: link.href }
+                    }));
+                }
+            });
+        </script>
 
-        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-500">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th scope="col" class="px-6 py-4">Business</th>
-                            <th scope="col" class="px-6 py-4">Owner</th>
-                            <th scope="col" class="px-6 py-4">Category</th>
-                            <th scope="col" class="px-6 py-4">Location</th>
-                            <th scope="col" class="px-6 py-4">Status</th>
-                            <th scope="col" class="px-6 py-4 text-center">Visible</th>
-                            <th scope="col" class="px-6 py-4 text-center">Featured</th>
-                            <th scope="col" class="px-6 py-4 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($businesses as $b)
-                            <tr class="bg-white border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
-                                            @if($b->logo_url)
-                                                <img src="{{ $b->logo_url }}" class="w-full h-full object-cover">
-                                            @else
-                                                <i class="bi bi-shop text-gray-400 text-xl"></i>
-                                            @endif
-                                        </div>
-                                        <div>
-                                            <div class="font-bold text-gray-900">{{ $b->name }}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-2">
-                                        @php
-                                            $ownerName = optional($b->user)->name ?? 'Unknown';
-                                            $ownerPhoto = optional($b->user)->profile_photo_url ?? 'https://ui-avatars.com/api/?name=' . urlencode($ownerName) . '&color=4B5563&background=F3F4F6';
-                                        @endphp
-                                        <div class="w-7 h-7 rounded-full bg-gray-100 border border-gray-200 flex items-center justify-center overflow-hidden">
-                                            <img src="{{ $ownerPhoto }}" class="w-full h-full object-cover">
-                                        </div>
-                                        <span class="font-bold text-gray-700 text-xs">{{ $ownerName }}</span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 italic">
-                                    {{ optional($b->category)->name ?? 'Uncategorized' }}
-                                </td>
-                                <td class="px-6 py-4 text-xs font-medium">
-                                    {{ $b->city }}, {{ $b->province }}
-                                </td>
-                                <td class="px-6 py-4">
-                                    @php
-                                        $statusClasses = match($b->status) {
-                                            'approved' => 'bg-green-100 text-green-700 border-green-200',
-                                            'pending' => 'bg-amber-100 text-amber-700 border-amber-200',
-                                            'rejected' => 'bg-red-100 text-red-700 border-red-200',
-                                            'need_revision' => 'bg-blue-100 text-blue-700 border-blue-200',
-                                            default => 'bg-gray-100 text-gray-700 border-gray-200',
-                                        };
-                                    @endphp
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase border {{ $statusClasses }}">
-                                        {{ $b->status_label }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <span class="w-3 h-3 rounded-full inline-block {{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block toggle-featured-form">
-                                         @csrf
-                                         <button type="submit"
-                                                 {{ !$b->is_visible ? 'disabled' : '' }}
-                                                 class="relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border
-                                                     {{ !$b->is_visible 
-                                                         ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
-                                                         : ($b->is_featured
-                                                             ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                             : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
-                                             <i class="bi bi-star-fill text-[10px]"></i>
-                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider tooltip-text">
-                                                     {{ !$b->is_visible ? 'Requires approved business' : ($b->is_featured ? 'Remove featured' : 'Make featured') }}
-                                                 </div>
-                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                             </div>
-                                         </button>
-                                     </form>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                         <a href="{{ route('businesses.show', $b) }}" 
-                                            class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-green-100 text-green-600 hover:bg-green-500 hover:text-white transition-all duration-200 shadow-sm">
-                                             <i class="bi bi-eye-fill text-sm"></i>
-                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                                     View Details
-                                                 </div>
-                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                             </div>
-                                         </a>
-                                         
-                                         <button type="button" 
-                                                 onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason]) }})"
-                                                 class="relative group w-9 h-9 rounded-xl flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-900 hover:text-white transition-all duration-200 shadow-sm">
-                                             <i class="bi bi-pencil-square text-sm"></i>
-                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-30 flex flex-col items-center">
-                                                 <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
-                                                     Change Status
-                                                 </div>
-                                                 <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                             </div>
-                                         </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="px-6 py-20 text-center text-gray-400 italic">
-                                    No businesses found matching the criteria.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-            
-            @if($businesses->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
-                    {{ $businesses->links() }}
-                </div>
-            @endif
+        <div id="businesses-admin-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
+            @include('businesses.admin.partials.list')
         </div>
     </div>
 
