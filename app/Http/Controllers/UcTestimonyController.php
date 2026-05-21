@@ -50,7 +50,9 @@ class UcTestimonyController extends Controller
         $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured', true)->count();
 
         if ($request->ajax()) {
-            return view('uc-testimonies.partials.list', compact('users'))->render();
+            return response()
+                ->view('uc-testimonies.partials.list', compact('users', 'search'))
+                ->header('Vary', 'X-Requested-With');
         }
 
         return view('uc-testimonies.admin', compact('users', 'totalTestimonies', 'featuredTestimonies'));

@@ -114,7 +114,9 @@ class BusinessController extends Controller
         }
 
         if ($request->ajax()) {
-            return view('businesses.partials.list', compact('businesses', 'viewType'))->render();
+            return response()
+                ->view('businesses.partials.list', compact('businesses', 'viewType'))
+                ->header('Vary', 'X-Requested-With');
         }
 
         return view('businesses.index', compact(
@@ -165,7 +167,9 @@ class BusinessController extends Controller
         $businesses = $query->latest()->paginate(10)->withQueryString();
 
         if ($request->ajax()) {
-            return view('businesses.admin.partials.list', compact('businesses'))->render();
+            return response()
+                ->view('businesses.admin.partials.list', compact('businesses'))
+                ->header('Vary', 'X-Requested-With');
         }
 
         return view('businesses.admin.index', compact(

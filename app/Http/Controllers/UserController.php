@@ -125,7 +125,9 @@ class UserController extends Controller
         $featuredUserCount = User::where('role', '!=', 'admin')->where('is_featured', true)->count();
 
         if ($request->ajax()) {
-            return view('users.partials.list', compact('users'))->render();
+            return response()
+                ->view('users.partials.list', compact('users'))
+                ->header('Vary', 'X-Requested-With');
         }
 
         return view('users.index', compact(
