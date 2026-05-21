@@ -1,6 +1,6 @@
 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
     @forelse($users as $user)
-        <div class="w-full max-w-[380px] bg-white border border-gray-100 rounded-[24px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-1 flex flex-col relative"
+        <div class="w-full max-w-[320px] bg-white border border-gray-100 rounded-[20px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-1 flex flex-col relative"
              id="testimony-card-{{ $user->id }}">
             
             {{-- Status Badge (Top Left) --}}
@@ -31,7 +31,7 @@
             </div>
 
             {{-- Top Section: Image & Info --}}
-            <div class="relative h-[420px] w-full flex-shrink-0">
+            <div class="relative h-[300px] w-full flex-shrink-0">
                 @if($user->profile_photo_url)
                     <img src="{{ $user->profile_photo_url }}" 
                          alt="{{ $user->name }}"
@@ -47,26 +47,26 @@
                 <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
                 
                 {{-- Text Content on Image --}}
-                <div style="position: absolute; bottom: 55px; left: 25px; right: 25px; color: white;">
-                    <h3 style="font-size: 20px; font-weight: 900; margin-bottom: 4px; letter-spacing: -0.5px; line-height: 1.2;">{{ $user->name }}</h3>
-                    <p style="color: #cbd5e1; font-size: 12px; font-weight: 600; margin-bottom: 2px;">
+                <div style="position: absolute; bottom: 45px; left: 20px; right: 20px; color: white;">
+                    <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 2px; letter-spacing: -0.5px; line-height: 1.2;">{{ $user->name }}</h3>
+                    <p style="color: #cbd5e1; font-size: 11px; font-weight: 600; margin-bottom: 2px;">
                         {{ $user->current_status ?? 'Member' }} at UCO Community
                     </p>
-                    <p style="color: #ff8a00; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+                    <p style="color: #ff8a00; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
                         {{ $user->major ?? 'Student' }}
                     </p>
                 </div>
             </div>
 
             {{-- Bottom Section: Testimony content --}}
-            <div style="position: relative; padding: 45px 30px 35px 30px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[24px]">
+            <div style="position: relative; padding: 35px 20px 25px 20px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[20px]">
                 {{-- Quote Icon --}}
-                <div class="absolute -top-6 left-1/2 -translate-x-1/2 w-12 h-12 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
-                    <i class="fa-solid fa-quote-left text-lg"></i>
+                <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
+                    <i class="fa-solid fa-quote-left text-base"></i>
                 </div>
 
-                <p style="color: #334155; font-weight: 600; line-height: 1.7; font-size: 14px; font-style: italic; margin: 0;">
-                    “{{ $user->testimony }}”
+                <p style="color: #334155; font-weight: 600; line-height: 1.6; font-size: 13px; font-style: italic; margin: 0;">
+                    “{{ Str::limit($user->testimony, 200) }}”
                 </p>
             </div>
         </div>
