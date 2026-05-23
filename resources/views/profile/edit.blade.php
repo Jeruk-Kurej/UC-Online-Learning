@@ -94,7 +94,7 @@
                             <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Phone Number</label><input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
                             <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Mobile Number</label><input type="text" name="mobile_number" value="{{ old('mobile_number', $user->mobile_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
                             <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">WhatsApp</label><input type="text" name="whatsapp" value="{{ old('whatsapp', $user->whatsapp) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
-                            <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">LinkedIn URL</label><input type="url" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
+                            <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">LinkedIn Username</label><input type="text" name="linkedin" value="{{ old('linkedin', $user->linkedin) }}" placeholder="e.g. johndoe" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
                         </div>
                     </div>
 
@@ -121,16 +121,21 @@
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 25px 0; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; letter-spacing: -0.5px;">Additional Documents</h2>
                         
-                        <div style="display: flex; align-items: center; gap: 25px;">
-                            <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px;">Activities Doc</label>
-                            <div style="flex: 1; display: flex; align-items: center; gap: 12px;">
-                                <div style="flex: 1; position: relative;">
-                                    <input type="file" name="activities_file" id="activities_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('act-name').innerText = this.files[0].name">
-                                    <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="act-name">Documentation file...</span></div>
-                                </div>
-                                @if($user->activities_doc_url) <a href="{{ $user->activities_doc_url }}" target="_blank" class="btn-uco btn-uco-sm btn-uco-neutral">View</a> @endif
-                            </div>
-                        </div>
+                        <div style="display: flex; align-items: flex-start; gap: 25px;">
+                             <label style="width: 140px; font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 8px;">Activities Doc</label>
+                             <div style="flex: 1; display: flex; flex-direction: column; gap: 12px;">
+                                 <div style="flex: 1; position: relative;">
+                                     <input type="file" name="activities_file" id="activities_file" style="position: absolute; opacity: 0; inset: 0; cursor: pointer; z-index: 10;" onchange="document.getElementById('act-name').innerText = this.files[0].name">
+                                     <div style="height: 44px; border: 1.5px dashed #cbd5e1; border-radius: 7px; display: flex; align-items: center; padding: 0 15px; color: #64748b; font-size: 12px; font-weight: 500; background: #f8fafc;"><span id="act-name">Documentation file...</span></div>
+                                 </div>
+                                 @if($user->activities_doc_url)
+                                     <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; max-width: 360px;">
+                                         <p style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 12px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">Current Document</p>
+                                         <img src="{{ $user->activities_doc_url }}" alt="Activities Document" style="width: 100%; display: block; object-fit: cover;">
+                                     </div>
+                                 @endif
+                             </div>
+                         </div>
                     </div>
                 </div>
             </div>

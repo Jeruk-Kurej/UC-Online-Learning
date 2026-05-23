@@ -217,7 +217,7 @@ class BusinessController extends Controller
         // Removed admin check to allow students to create businesses
 
         $categories = Category::all();
-        $users = User::orderBy('name')->get();
+        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
         $availableCities = \App\Models\Regency::pluck('name')->sort();
         $provinces = \App\Models\Province::orderBy('name')->get();
         return view('businesses.create', compact('categories', 'users', 'availableCities', 'provinces'));
@@ -269,7 +269,7 @@ class BusinessController extends Controller
         $business->load(['user', 'category', 'products', 'members', 'legalDocuments', 'certifications']);
         
         $categories = Category::all();
-        $users = User::orderBy('name')->get();
+        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
         $provinces = \App\Models\Province::orderBy('name')->get();
         
         $selectedProvinceId = \App\Models\Province::where('name', $business->province)->first()?->id;

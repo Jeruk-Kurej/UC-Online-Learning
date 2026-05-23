@@ -85,8 +85,8 @@
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory
                     </span>
-                    <h1 class="text-3xl font-extrabold text-gray-900 md:text-4xl">Showcase Directory</h1>
-                    <p class="text-sm text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
+                    <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Showcase Directory</h1>
+                    <p class="text-base text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
                 </div>
 
                 @auth

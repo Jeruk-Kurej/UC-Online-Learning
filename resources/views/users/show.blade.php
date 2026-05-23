@@ -55,7 +55,7 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-[13px] font-medium text-gray-500">Focus</span>
-                            <span class="text-[13px] font-bold text-gray-900">{{ $user->role ?: '-' }}</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $user->current_status ?: (ucfirst($user->role) ?: '-') }}</span>
                         </div>
                     </div>
 
@@ -238,9 +238,6 @@
                                                 <span class="text-6xl font-black opacity-20 tracking-tighter">{{ substr($biz->name, 0, 1) }}</span>
                                             </div>
                                         @endif
-                                        <div class="absolute top-4 right-4 rounded-xl bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-gray-600 border border-white/50 backdrop-blur-md shadow-sm">
-                                            Entrepreneur
-                                        </div>
                                     </div>
                                     <div class="md:col-span-8 lg:col-span-9 p-6 md:p-8 flex flex-col justify-between space-y-4 min-w-0 h-full">
                                         <div class="space-y-2">
@@ -248,7 +245,9 @@
                                                 <h3 class="font-black text-gray-900 text-2xl leading-snug group-hover:text-gray-700 transition">{{ $biz->name }}</h3>
                                             </div>
                                             @if($biz->category)
-                                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">{{ $biz->category->name }}</span>
+                                                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-1 block">
+                                                    {{ $biz->category->name }}
+                                                </span>
                                             @endif
                                             @if($biz->unique_value_proposition || $biz->description)
                                                 <p class="text-sm text-gray-500 font-normal leading-relaxed mt-1">
@@ -286,9 +285,6 @@
                                                         <span class="text-5xl font-black opacity-20 tracking-tighter">{{ substr($biz->name, 0, 1) }}</span>
                                                     </div>
                                                 @endif
-                                                <div class="absolute top-4 right-4 rounded-xl bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-gray-600 border border-white/50 backdrop-blur-md shadow-sm">
-                                                    Entrepreneur
-                                                </div>
                                             </div>
                                             <div class="p-5 flex flex-col justify-between flex-1 space-y-3">
                                                 <div class="space-y-1.5">
@@ -296,7 +292,9 @@
                                                         <h3 class="font-bold text-gray-900 text-lg leading-snug group-hover:text-gray-700 transition">{{ $biz->name }}</h3>
                                                     </div>
                                                     @if($biz->category)
-                                                        <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">{{ $biz->category->name }}</span>
+                                                        <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-1 block">
+                                                            {{ $biz->category->name }}
+                                                        </span>
                                                     @endif
                                                     @if($biz->unique_value_proposition || $biz->description)
                                                         <p class="text-xs text-gray-500 font-normal leading-relaxed line-clamp-2 mt-1">
@@ -345,17 +343,14 @@
                                                 <span class="text-6xl font-black opacity-20 tracking-tighter">{{ substr($biz->name, 0, 1) }}</span>
                                             </div>
                                         @endif
-                                        <div class="absolute top-4 right-4 rounded-xl bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-gray-600 border border-white/50 backdrop-blur-md shadow-sm">
-                                            Team Member
-                                        </div>
                                     </div>
                                     <div class="md:col-span-8 lg:col-span-9 p-6 md:p-8 flex flex-col justify-between space-y-4 min-w-0 h-full">
                                         <div class="space-y-2">
                                             <div class="flex items-center justify-between">
                                                 <h3 class="font-black text-gray-900 text-2xl leading-snug group-hover:text-gray-700 transition">{{ $biz->name }}</h3>
                                             </div>
-                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-widest block">
-                                                {{ $biz->pivot->position ?? 'Co-Owner' }}
+                                            <span class="text-[9px] font-bold uppercase tracking-wider text-blue-600 mt-1 block">
+                                                {{ $biz->pivot->position ?? 'Co-Owner' }} (Team Member)
                                             </span>
                                             @if($biz->unique_value_proposition || $biz->description)
                                                 <p class="text-sm text-gray-500 font-normal leading-relaxed mt-1">
@@ -393,17 +388,14 @@
                                                         <span class="text-5xl font-black opacity-20 tracking-tighter">{{ substr($biz->name, 0, 1) }}</span>
                                                     </div>
                                                 @endif
-                                                <div class="absolute top-4 right-4 rounded-xl bg-white/90 px-3 py-1 text-[9px] font-black uppercase tracking-wider text-gray-600 border border-white/50 backdrop-blur-md shadow-sm">
-                                                    Team Member
-                                                </div>
                                             </div>
                                             <div class="p-5 flex flex-col justify-between flex-1 space-y-3">
                                                 <div class="space-y-1.5">
                                                     <div class="flex items-center justify-between">
                                                         <h3 class="font-bold text-gray-900 text-lg leading-snug group-hover:text-gray-700 transition">{{ $biz->name }}</h3>
                                                     </div>
-                                                    <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest block">
-                                                        {{ $biz->pivot->position ?? 'Co-Owner' }}
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider text-blue-600 mt-1 block">
+                                                        {{ $biz->pivot->position ?? 'Co-Owner' }} (Team Member)
                                                     </span>
                                                     @if($biz->unique_value_proposition || $biz->description)
                                                         <p class="text-xs text-gray-500 font-normal leading-relaxed line-clamp-2 mt-1">

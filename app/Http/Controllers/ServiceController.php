@@ -62,14 +62,21 @@ class ServiceController extends Controller
         $this->authorizeBusinessAccess($business);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'name'       => 'required|string|max:255',
+            'description'=> 'required|string',
+            'price'      => 'required|numeric|min:0',
             'price_type' => 'required|in:fixed,starting_from',
+            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
         $validated['business_id'] = $business->id;
         $validated['type'] = 'service';
+
+        // Handle Photo Upload
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('services', 'public');
+            $validated['photo_url'] = $path;
+        }
 
         $service = Product::create($validated);
 
@@ -104,11 +111,21 @@ class ServiceController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'name'       => 'required|string|max:255',
+            'description'=> 'required|string',
+            'price'      => 'required|numeric|min:0',
             'price_type' => 'required|in:fixed,starting_from',
+            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
+
+        // Handle Photo Upload (delete old one if it exists)
+        if ($request->hasFile('photo')) {
+            if ($service->getRawOriginal('photo_url')) {
+                Product::deleteCloudinaryImage($service->getRawOriginal('photo_url'));
+            }
+            $path = $request->file('photo')->store('services', 'public');
+            $validated['photo_url'] = $path;
+        }
 
         $service->update($validated);
 
@@ -126,6 +143,11 @@ class ServiceController extends Controller
 
         if ($service->business_id !== $business->id || $service->type !== 'service') {
             abort(404);
+        }
+
+        // Delete photo if it exists
+        if ($service->getRawOriginal('photo_url')) {
+            Product::deleteCloudinaryImage($service->getRawOriginal('photo_url'));
         }
 
         $service->delete();

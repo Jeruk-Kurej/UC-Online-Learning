@@ -195,7 +195,7 @@ class UserController extends Controller
             'phone_number' => 'nullable|string|max:50',
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
-            'linkedin' => 'nullable|url|max:255',
+            'linkedin' => 'nullable|string|max:255',
             
             // Academic & Career
             'nis' => 'nullable|string|max:255',
@@ -345,7 +345,7 @@ class UserController extends Controller
             'phone_number' => 'nullable|string|max:50',
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
-            'linkedin' => 'nullable|url|max:255',
+            'linkedin' => 'nullable|string|max:255',
             
             // Academic & Career
             'nis' => 'nullable|string|max:255',

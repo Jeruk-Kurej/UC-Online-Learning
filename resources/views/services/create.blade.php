@@ -76,7 +76,7 @@
 
         <div class="bg-white shadow-sm sm:rounded-xl">
             <div class="p-6">
-                <form method="POST" action="{{ route('businesses.services.store', $business) }}" class="space-y-6">
+                <form method="POST" action="{{ route('businesses.services.store', $business) }}" class="space-y-6" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Service Name --}}
@@ -151,6 +151,27 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
+                    </div>
+
+                    {{-- Service Photo (Optional) --}}
+                    <div>
+                        <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">
+                            Service Photo <span class="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        <div x-data="{ preview: null }">
+                            <input type="file"
+                                   name="photo"
+                                   id="photo"
+                                   accept="image/*"
+                                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-uco-orange-50 file:text-uco-orange-700 hover:file:bg-uco-orange-100 cursor-pointer"
+                                   @change="preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null">
+                            <div x-show="preview" class="mt-3">
+                                <img :src="preview" class="h-40 rounded-xl object-cover border border-gray-200" alt="Preview">
+                            </div>
+                        </div>
+                        @error('photo')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Submit Buttons --}}

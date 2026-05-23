@@ -207,11 +207,10 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             // ── 4. Determine path: Entrepreneur vs Intrapreneur ──
             $status = strtolower($this->col($row, 'current_status') ?? '');
 
-            // ── 4a. Entrepreneur → Business ──
             $businessName = $this->col($row, 'business_name');
             if ($businessName) {
                 $categoryId = null;
-                $catName = $this->col($row, 'category');
+                $catName = $this->col($row, 'industry_category');
                 if ($catName) {
                     try {
                         $cat = $this->getOrCreateCategory($catName);
