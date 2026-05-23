@@ -346,65 +346,65 @@
                     <div class="space-y-6">
                         <div class="relative mb-4">
                             <div class="flex items-center gap-2.5">
-                                <span class="w-1.5 h-6 bg-gray-800 rounded-full flex-shrink-0"></span>
-                                <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Employment History</h2>
+                                <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                                <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Employment <span class="uco-text-gradient-orange">History</span></h2>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 gap-6">
                             @foreach($user->companies as $company)
-                                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
-                                    <div class="flex flex-col md:flex-row gap-6 items-start">
-                                        @if($company->logo_url)
-                                            <div class="w-20 h-20 bg-gray-50 flex items-center justify-center border border-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                                                <img src="{{ $company->logo_url }}" class="w-full h-full object-contain p-2 group-hover:scale-105 transition duration-500">
-                                            </div>
-                                        @endif
-                                        <div class="flex-1 space-y-3">
-                                            <div>
-                                                <h3 class="font-black text-gray-900 text-xl leading-snug group-hover:text-gray-700 transition">{{ $company->name }}</h3>
-                                                <div class="flex flex-wrap items-center gap-2 mt-1">
-                                                    @if($company->position)
-                                                        <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-0.5 rounded-full">
-                                                            {{ $company->position }}
-                                                        </span>
-                                                    @endif
-                                                    @if($company->level_position)
-                                                        <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2.5 py-0.5 rounded-full">
-                                                            {{ $company->level_position }}
-                                                        </span>
-                                                    @endif
-                                                    @if($company->category)
-                                                        <span class="text-xs font-bold text-gray-500 bg-gray-50 px-2.5 py-0.5 rounded-full border border-gray-100">
-                                                            {{ $company->category->name }}
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                            </div>
-
-                                            @if($company->job_description)
-                                                <div class="text-sm text-gray-600 font-normal leading-relaxed">
-                                                    <strong>Job Description:</strong>
-                                                    <p class="mt-1 text-gray-500">{{ $company->job_description }}</p>
+                                <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-orange-200 hover:shadow-lg transition-all duration-300 group flex flex-col sm:flex-row shadow-[0_8px_30px_rgb(0,0,0,0.02)] relative">
+                                    <a href="{{ route('intrapreneurs.show', $company) }}" class="block flex-1 flex flex-col sm:flex-row">
+                                        {{-- Logo Box on Left --}}
+                                        <div class="w-full sm:w-52 h-48 sm:h-auto bg-gray-50 flex items-center justify-center relative border-b sm:border-b-0 sm:border-r border-gray-100 overflow-hidden flex-shrink-0">
+                                            @if($company->logo_url)
+                                                <img src="{{ $company->logo_url }}" alt="{{ $company->name }}" class="w-full h-full object-contain p-4 group-hover:scale-105 transition duration-500">
+                                            @else
+                                                <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-200 select-none absolute inset-0">
+                                                    <span class="text-4xl font-black opacity-20 tracking-tighter">{{ substr($company->name, 0, 1) }}</span>
                                                 </div>
                                             @endif
+                                        </div>
 
-                                            @if($company->achievement)
-                                                <div class="text-sm text-gray-600 font-normal leading-relaxed">
-                                                    <strong>Achievements:</strong>
-                                                    <p class="mt-1 text-gray-500">{{ $company->achievement }}</p>
+                                        {{-- Content Box on Right --}}
+                                        <div class="p-6 flex flex-col justify-between flex-1 space-y-3">
+                                            <div class="space-y-1.5">
+                                                <h3 class="font-extrabold text-gray-900 text-base leading-tight group-hover:text-orange-600 transition-colors line-clamp-1">{{ $company->name }}</h3>
+                                                @if($company->position)
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-1 block line-clamp-1">
+                                                        {{ $company->position }}@if($company->level_position) · {{ $company->level_position }}@endif
+                                                    </span>
+                                                @elseif($company->category)
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-1 block">
+                                                        {{ $company->category->name }}
+                                                    </span>
+                                                @endif
+                                                @if($company->job_description)
+                                                    <p class="text-xs text-gray-500 font-normal leading-relaxed line-clamp-2 mt-2">
+                                                        {{ $company->job_description }}
+                                                    </p>
+                                                @endif
+                                            </div>
+
+                                            <div class="flex items-center justify-between border-t border-gray-50 pt-3 mt-auto gap-3">
+                                                <div class="flex flex-wrap gap-x-4 gap-y-1 min-w-0">
+                                                    @if($company->year_started_working)
+                                                        <span class="flex items-center gap-1 text-[11px] font-bold text-gray-500">
+                                                            <i class="bi bi-calendar-check text-orange-500"></i>
+                                                            Since {{ $company->year_started_working }}
+                                                        </span>
+                                                    @endif
+                                                    @if($company->company_scale)
+                                                        <span class="text-[11px] font-bold text-gray-400 line-clamp-1" title="{{ $company->company_scale }}">
+                                                            {{ $company->company_scale }}
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            @endif
-
-                                            <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-gray-400 pt-3 border-t border-gray-50">
-                                                @if($company->year_started_working)
-                                                    <span>Started Working: {{ $company->year_started_working }}</span>
-                                                @endif
-                                                @if($company->company_scale)
-                                                    <span>Company Scale: {{ $company->company_scale }}</span>
-                                                @endif
+                                                <span class="text-xs font-bold text-gray-800 flex items-center gap-1 group-hover:text-orange-600 transition duration-300 flex-shrink-0">
+                                                    View Details <i class="bi bi-arrow-right"></i>
+                                                </span>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </div>
                             @endforeach
                         </div>
