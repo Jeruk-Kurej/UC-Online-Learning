@@ -43,7 +43,6 @@ class User extends Authenticatable
 
         'profile_photo_url',
         'activities_doc_url',
-        'cv_url',
         'expertise_certification_url',
 
         // Platform management

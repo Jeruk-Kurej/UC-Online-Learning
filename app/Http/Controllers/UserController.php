@@ -272,27 +272,51 @@ class UserController extends Controller
     {
         // Publicly accessible catalog - removed admin guard
 
-        // Load owned businesses with relationships
-        $user->load(['businesses' => function ($query) {
-            $query->where('is_visible', true)->with('category');
-        }]);
-
-        // Load businesses they are a member of
-        $user->load(['memberOfBusinesses' => function ($query) {
-            $query->where('is_visible', true)->with('category');
-        }]);
-
-        $ownedBusinessIds = $user->businesses->pluck('id');
-        $memberBusinesses = $user->memberOfBusinesses->reject(function ($business) use ($ownedBusinessIds) {
-            return $ownedBusinessIds->contains($business->id);
-        });
-
-        // We use view users.profile instead of users.show
-        return view('users.profile', [
-            'user' => $user,
-            'ownedBusinesses' => $user->businesses,
-            'memberBusinesses' => $memberBusinesses
+        // Load relationships
+        $user->load([
+            'businesses' => function ($query) {
+                $query->where('is_visible', true)->with('category');
+            },
+            'memberOfBusinesses' => function ($query) use ($user) {
+                $query->where('is_visible', true)
+                    ->where('businesses.user_id', '!=', $user->id)
+                    ->with('category');
+            },
+            'skills',
+            'companies.category'
         ]);
+
+        return view('users.show', [
+            'user' => $user,
+        ]);
+    }
+
+    /**
+     * Proxy public Google Drive image/file download to bypass browser cookies and CORS issues.
+     */
+    public function proxyGoogleDriveImage($id)
+    {
+        $url = "https://drive.google.com/uc?export=view&id=" . $id;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
+        
+        $data = curl_exec($ch);
+        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200 || !$data) {
+            return redirect($url);
+        }
+
+        return response($data)
+            ->header('Content-Type', $contentType)
+            ->header('Cache-Control', 'public, max-age=86400');
     }
 
     /**
@@ -424,7 +448,7 @@ class UserController extends Controller
 
 
         return redirect()
-            ->route('users.index')
+            ->route('users.show', $user)
             ->with('success', "Success! The profile for '{$user->name}' has been updated.");
     }
 

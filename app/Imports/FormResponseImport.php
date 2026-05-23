@@ -151,7 +151,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'graduate_year'     => $graduateYear,
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
-                'cv_url'            => $this->col($row, 'curriculum_vitae'),
                 'profile_photo_url' => $this->uploadToCloudinary($this->col($row, 'professional_profile_photo'), 'users', $fullName),
                 'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
                 'expertise_certification_url' => $this->col($row, 'expertise_certification'),

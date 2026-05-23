@@ -26,6 +26,7 @@ Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
 Route::get('/businesses', [BusinessController::class, 'index'])->name('businesses.index');
 Route::get('/intrapreneurs/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
 Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
+Route::get('/google-drive-image/{id}', [UserController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
 
 // ============================================================
 // AUTHENTICATED ROUTES
