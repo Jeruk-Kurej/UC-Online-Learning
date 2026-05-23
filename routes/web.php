@@ -55,6 +55,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Products and Services CRUD
     Route::resource('businesses.products', ProductController::class)->except(['index']);
     Route::resource('businesses.services', ServiceController::class)->except(['index', 'show']);
+
+    // Intrapreneur Achievements
+    Route::get('/intrapreneurs/{company}/achievements/create', [BusinessController::class, 'createAchievement'])->name('intrapreneurs.create_achievement');
+    Route::post('/intrapreneurs/{company}/achievements', [BusinessController::class, 'addAchievement'])->name('intrapreneurs.add_achievement');
+    Route::delete('/intrapreneurs/{company}/achievements', [BusinessController::class, 'deleteAchievement'])->name('intrapreneurs.delete_achievement');
 });
 
 // ============================================================

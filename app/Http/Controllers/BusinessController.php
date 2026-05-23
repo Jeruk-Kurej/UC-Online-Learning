@@ -545,6 +545,77 @@ class BusinessController extends Controller
         }
     }
 
+    public function createAchievement(\App\Models\Company $company)
+    {
+        if (Auth::id() !== $company->user_id && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        return view('businesses.add_achievement', compact('company'));
+    }
+
+    public function addAchievement(\App\Models\Company $company, Request $request)
+    {
+        if (Auth::id() !== $company->user_id && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'achievement' => 'required|string|max:500',
+        ]);
+
+        $newAchievement = trim($request->achievement);
+        
+        $existing = trim($company->achievement);
+        if (empty($existing)) {
+            $updated = "- " . $newAchievement;
+        } else {
+            $updated = $existing . "\n- " . $newAchievement;
+        }
+
+        $company->update(['achievement' => $updated]);
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Achievement added successfully!',
+                'achievements' => $company->achievements_list
+            ]);
+        }
+
+        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Achievement added successfully!');
+    }
+
+    public function deleteAchievement(\App\Models\Company $company, Request $request)
+    {
+        if (Auth::id() !== $company->user_id && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $request->validate([
+            'index' => 'required|integer|min:0',
+        ]);
+
+        $achievements = $company->achievements_list;
+        $index = (int) $request->index;
+
+        if (isset($achievements[$index])) {
+            unset($achievements[$index]);
+            $updated = empty($achievements) ? null : implode("\n", array_map(fn($item) => "- " . $item, $achievements));
+            $company->update(['achievement' => $updated]);
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Achievement deleted successfully!',
+                'achievements' => $company->achievements_list ?? []
+            ]);
+        }
+
+        return back()->with('success', 'Achievement deleted successfully!');
+    }
+
     /**
      * Peek at the raw file to determine which importer to use.
      */

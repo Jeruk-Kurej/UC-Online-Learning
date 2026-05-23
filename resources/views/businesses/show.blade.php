@@ -50,6 +50,17 @@
     $watch('fullscreenOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal) { document.body.style.overflow = ''; } })">
         {{-- Hero Section with Elegant Back Button --}}
         <div class="mb-8 px-4 sm:px-0">
+            {{-- Breadcrumbs --}}
+            <nav class="flex pt-4 sm:pt-6 mb-8 text-sm font-medium" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="{{ route('businesses.index') }}?view=entrepreneur" class="text-gray-400 hover:text-uco-orange-500 transition">Directory</a></li>
+                    <li class="flex items-center space-x-2">
+                        <svg class="h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                        <span class="text-gray-900">{{ $business->name }}</span>
+                    </li>
+                </ol>
+            </nav>
+
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
 
                 <div class="flex-1 flex flex-row items-center sm:items-start gap-4 sm:gap-5">
@@ -246,7 +257,7 @@
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Academic Heritage</p>
-                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800 whitespace-nowrap">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
+                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
                                 <p class="text-[9px] text-gray-400 font-medium mt-0.5">Founding academic batch</p>
                             </div>
                         </div>
@@ -1014,12 +1025,12 @@
                 </div>
 
                 {{-- ✨ Elegant Owner Card --}}
-                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group hover:border-orange-200 cursor-pointer">
+                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group/card hover:border-orange-200 cursor-pointer">
                     {{-- Invisible link that stretches over the whole card --}}
-                    <a href="{{ route('users.show', $owner) }}" class="absolute inset-0 z-0" aria-label="View {{ $owner->name }} Profile"></a>
+                    <a href="{{ route('users.show', $owner) }}" class="absolute inset-0 z-10" aria-label="View {{ $owner->name }} Profile"></a>
 
                     {{-- Arrow Icon (visual only now) --}}
-                    <div class="absolute top-4 right-4 text-gray-300 group-hover:text-orange-500 transition-colors z-10">
+                    <div class="absolute top-4 right-4 text-gray-300 group-hover/card:text-orange-500 transition-colors z-10">
                         <i class="bi bi-box-arrow-up-right text-xs"></i>
                     </div>
 

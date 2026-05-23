@@ -67,7 +67,17 @@ class Business extends Model
     public function getNameAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
+        $name = trim(strip_tags($cleaned));
+
+        if ($name === strtoupper($name)) {
+            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
+        }
+
+        $name = preg_replace('/\bPt\b/i', 'PT', $name);
+        $name = preg_replace('/\bCv\b/i', 'CV', $name);
+        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
+
+        return $name;
     }
 
     public function getDescriptionAttribute($value)
