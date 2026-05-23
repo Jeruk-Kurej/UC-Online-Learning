@@ -123,7 +123,10 @@
                 <div class="space-y-4 relative">
                     {{-- Outline background text --}}
                     <div class="uco-outline-bg-text uco-outline-bg-text--blue uco-parallax-text">STUDENTS</div>
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue relative z-10">Featured <span class="uco-text-gradient-blue">Students</span></h2>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue relative z-10">
+                        Featured <span class="uco-text-gradient-blue">Students</span>
+                        <span class="text-2xl font-semibold text-blue-500/80 ml-2 inline-block translate-y-[-2px]">({{ $topIntrapreneurs->count() }})</span>
+                    </h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Meet our outstanding intrapreneurs and professionals driving innovation within corporate ecosystems.
                     </p>
@@ -223,7 +226,10 @@
                 <div class="space-y-4 relative">
                     {{-- Outline background text --}}
                     <div class="uco-outline-bg-text uco-outline-bg-text--orange uco-parallax-text">VENTURES</div>
-                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">Featured <span class="uco-text-gradient-orange">Ventures</span></h2>
+                    <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">
+                        Featured <span class="uco-text-gradient-orange">Ventures</span>
+                        <span class="text-2xl font-semibold text-uco-orange-500/80 ml-2 inline-block translate-y-[-2px]">({{ $spotlightBusinesses->count() }})</span>
+                    </h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Discover startup founders and student-led enterprises shaping the future of business.
                     </p>

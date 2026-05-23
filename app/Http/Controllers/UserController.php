@@ -472,13 +472,7 @@ class UserController extends Controller
             return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
         }
 
-        // Check limit (max 4 featured users) when adding
-        if (!$user->is_featured && User::where('is_featured', true)->count() >= 4) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Maximum of 4 users can be featured.'], 422);
-            }
-            return back()->withErrors(['featured' => 'Maximum of 4 users can be featured.']);
-        }
+
 
         $user->update(['is_featured' => !$user->is_featured]);
 

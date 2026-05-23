@@ -13,14 +13,13 @@ class FeaturedController extends Controller
     public function index(Request $request)
     {
 
-        // Top 3 featured intrapreneur student profiles (have photo)
+        // Top featured intrapreneur student profiles (have photo)
         $topIntrapreneurs = User::where('is_visible', true)
             ->where('is_featured', true)
             ->where('current_status', 'Intrapreneur')
             ->whereNotNull('profile_photo_url')
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
-            ->take(4)
             ->get();
 
         // Spotlight businesses
@@ -29,7 +28,6 @@ class FeaturedController extends Controller
             ->where('is_featured', true)
             ->latest()
             ->with(['category', 'user'])
-            ->take(8)
             ->get();
 
         // Categories

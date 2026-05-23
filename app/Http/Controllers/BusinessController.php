@@ -465,14 +465,6 @@ class BusinessController extends Controller
             return back()->with('success', $msg);
         }
 
-        $featuredCount = Business::where('is_featured', true)->count();
-        if ($featuredCount >= 8) {
-            $msg = 'Maximum of 8 featured businesses reached. Un-feature one first.';
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $msg], 422);
-            }
-            return back()->withErrors(['featured' => $msg]);
-        }
 
         $business->update(['is_featured' => true]);
         $msg = "\"{$business->name}\" is now featured.";

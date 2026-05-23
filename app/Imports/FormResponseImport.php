@@ -81,15 +81,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return null;
             }
 
-            // ── 1.5 Check 'Selected' flag (if column exists, skip if not TRUE) ──
-            if (array_key_exists('selected', $row)) {
-                $selectedRaw = $row['selected'];
-                $strSelected = strtoupper(trim((string)$selectedRaw));
-                if ($strSelected !== 'TRUE' && $strSelected !== '1' && $selectedRaw !== true) {
-                    $this->skip("Row not selected for import (Selected = " . (is_bool($selectedRaw) ? 'FALSE' : $strSelected) . ")");
-                    return null;
-                }
-            }
 
             $fullName = $this->col($row, 'full_name');
             if (!$fullName) {
@@ -119,6 +110,11 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
 
             $isFeatured = false;
+            if (array_key_exists('selected', $row)) {
+                $selectedRaw = $row['selected'];
+                $strSelected = strtoupper(trim((string)$selectedRaw));
+                $isFeatured = ($strSelected === 'TRUE' || $strSelected === '1' || $selectedRaw === true);
+            }
 
             // ── DEBUG: Log critical field values ──
             Log::debug('[FormResponseImport] Row debug', [
@@ -246,6 +242,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
                     'type'                    => 'entrepreneur',
+                    'is_featured'             => $isFeatured,
                 ];
 
                 // Smart dedup: try exact match first, then fallback to user's first business

@@ -94,7 +94,7 @@
                         @if (auth()->user()->isAdmin())
                             <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-black rounded-xl">
                                 <i class="bi bi-star-fill text-yellow-500"></i>
-                                {{ $featuredBusinessCount }}/8 Featured
+                                {{ $featuredBusinessCount }} Featured
                             </span>
                         @endif
                     </div>
