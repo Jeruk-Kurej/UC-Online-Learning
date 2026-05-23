@@ -477,6 +477,14 @@
 
                     const track = this.$refs.track;
                     const scrollLeft = track.scrollLeft;
+                    const maxScrollLeft = track.scrollWidth - track.clientWidth;
+
+                    // If max rounded scroll position is reached, safely set the active slide to the last index.
+                    if (Math.ceil(scrollLeft) >= maxScrollLeft - 5) {
+                        this.activeSlide = this.totalSlides - 1;
+                        return;
+                    }
+
                     let closestIndex = 0;
                     let minDistance = Infinity;
 
