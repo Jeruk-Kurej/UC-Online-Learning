@@ -59,6 +59,44 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     }
 
     /**
+     * Parse Google Form "Selected" column (featured flag).
+     * Excel/CSV may provide boolean true/false, 1/0, or strings TRUE/FALSE.
+     * Returns null when the column is absent so re-imports do not wipe featured state.
+     */
+    private function parseSelectedFeatured(array $row): ?bool
+    {
+        if (!array_key_exists('selected', $row)) {
+            return null;
+        }
+
+        $raw = $row['selected'];
+
+        if ($raw === null || $raw === '') {
+            return false;
+        }
+
+        if (is_bool($raw)) {
+            return $raw;
+        }
+
+        if (is_int($raw) || is_float($raw)) {
+            return (int) $raw === 1;
+        }
+
+        $normalized = strtolower(trim((string) $raw));
+
+        if (in_array($normalized, ['true', '1', 'yes', 'y'], true)) {
+            return true;
+        }
+
+        if (in_array($normalized, ['false', '0', 'no', 'n'], true)) {
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
      * Process each CSV row → creates User + (Business OR Company) + Products + pivots.
      */
     public function model(array $row)
@@ -109,12 +147,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 $careerCategory = 'Entrepreneur';
             }
 
-            $isFeatured = false;
-            if (array_key_exists('selected', $row)) {
-                $selectedRaw = $row['selected'];
-                $strSelected = strtoupper(trim((string)$selectedRaw));
-                $isFeatured = ($strSelected === 'TRUE' || $strSelected === '1' || $selectedRaw === true);
-            }
+            $isFeatured = $this->parseSelectedFeatured($row);
 
             // ── DEBUG: Log critical field values ──
             Log::debug('[FormResponseImport] Row debug', [
@@ -125,6 +158,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'graduate_year_resolved' => $graduateYear,
                 'student_status'         => $studentStatus,
                 'career_category'        => $careerCategory,
+                'is_featured'            => $isFeatured,
+                'selected_raw'           => $row['selected'] ?? '<<KEY MISSING>>',
                 'business_name'          => $row['business_name']  ?? '<<KEY MISSING>>',
                 'company_name'           => $row['company_name_']  ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
             ]);
@@ -151,9 +186,12 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
                 'expertise_certification_url' => $this->col($row, 'expertise_certification'),
                 'student_status'    => $studentStatus,
-                'is_featured'       => $isFeatured,
                 'email_verified_at' => now(),
             ];
+
+            if ($isFeatured !== null) {
+                $userData['is_featured'] = $isFeatured;
+            }
 
             $existingUser = User::where('email', $email)->first();
             if ($existingUser) {
@@ -242,8 +280,11 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
                     'type'                    => 'entrepreneur',
-                    'is_featured'             => $isFeatured,
                 ];
+
+                if ($isFeatured !== null) {
+                    $businessData['is_featured'] = $isFeatured;
+                }
 
                 // Smart dedup: try exact match first, then fallback to user's first business
                 $business = Business::where('user_id', $user->id)->where('name', $businessName)->first()

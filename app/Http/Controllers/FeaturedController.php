@@ -13,12 +13,23 @@ class FeaturedController extends Controller
     public function index(Request $request)
     {
 
-        // Top featured intrapreneur student profiles (have photo)
-        $topIntrapreneurs = User::where('is_visible', true)
+        $featuredStudentQuery = fn () => User::query()
+            ->where('is_visible', true)
             ->where('is_featured', true)
-            ->where('current_status', 'Intrapreneur')
-            ->whereNotNull('profile_photo_url')
+            ->where('role', '!=', 'admin')
+            ->whereNotNull('profile_photo_url');
+
+        // Featured intrapreneur students (admin-starred + intrapreneur status)
+        $topIntrapreneurs = $featuredStudentQuery()
+            ->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
+            ->latest()
+            ->get();
+
+        // Featured entrepreneur students (admin-starred + entrepreneur status)
+        $topEntrepreneurs = $featuredStudentQuery()
+            ->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])
+            ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
             ->latest()
             ->get();
 
@@ -57,6 +68,7 @@ class FeaturedController extends Controller
 
         return view('featured.index', compact(
             'topIntrapreneurs',
+            'topEntrepreneurs',
             'spotlightBusinesses',
             'categories',
             'testimonies',

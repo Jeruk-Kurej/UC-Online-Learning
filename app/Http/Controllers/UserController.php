@@ -20,6 +20,28 @@ use Maatwebsite\Excel\Excel as ExcelFormat;
 class UserController extends Controller
 {
     /**
+     * Featured user counts (total + by career focus).
+     *
+     * @return array{total: int, intrapreneurs: int, entrepreneurs: int}
+     */
+    private function getFeaturedUserStats(): array
+    {
+        $row = User::query()
+            ->where('role', '!=', 'admin')
+            ->where('is_featured', true)
+            ->selectRaw('COUNT(*) as total')
+            ->selectRaw("SUM(CASE WHEN LOWER(current_status) = 'intrapreneur' THEN 1 ELSE 0 END) as intrapreneurs")
+            ->selectRaw("SUM(CASE WHEN LOWER(current_status) = 'entrepreneur' THEN 1 ELSE 0 END) as entrepreneurs")
+            ->first();
+
+        return [
+            'total' => (int) ($row->total ?? 0),
+            'intrapreneurs' => (int) ($row->intrapreneurs ?? 0),
+            'entrepreneurs' => (int) ($row->entrepreneurs ?? 0),
+        ];
+    }
+
+    /**
      * Get authenticated user as User instance
      */
     private function getAuthUser(): User
@@ -122,7 +144,10 @@ class UserController extends Controller
         $totalEntrepreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count();
         $totalIntrapreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
         $totalAlumni = User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count();
-        $featuredUserCount = User::where('role', '!=', 'admin')->where('is_featured', true)->count();
+        $featuredStats = $this->getFeaturedUserStats();
+        $featuredUserCount = $featuredStats['total'];
+        $featuredIntrapreneurCount = $featuredStats['intrapreneurs'];
+        $featuredEntrepreneurCount = $featuredStats['entrepreneurs'];
 
         if ($request->ajax()) {
             return response()
@@ -137,6 +162,8 @@ class UserController extends Controller
             'totalIntrapreneurs',
             'totalAlumni',
             'featuredUserCount',
+            'featuredIntrapreneurCount',
+            'featuredEntrepreneurCount',
             'availableMajors',
             'availableEnrollmentYears'
         ));
@@ -147,12 +174,16 @@ class UserController extends Controller
      */
     public function stats()
     {
+        $featuredStats = $this->getFeaturedUserStats();
+
         return response()->json([
             'total'          => User::where('role', '!=', 'admin')->count(),
             'entrepreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
             'intrapreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
             'alumni'         => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
-            'featured'       => User::where('role', '!=', 'admin')->where('is_featured', true)->count(),
+            'featured'       => $featuredStats['total'],
+            'featured_intrapreneurs' => $featuredStats['intrapreneurs'],
+            'featured_entrepreneurs' => $featuredStats['entrepreneurs'],
         ]);
     }
 

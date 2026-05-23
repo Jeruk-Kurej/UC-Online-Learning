@@ -71,9 +71,16 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
-                        <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        <span><span id="stat-featured">{{ $featuredUserCount }}</span> Featured</span>
+                    <span class="inline-flex flex-col gap-0.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md min-w-[9.5rem]">
+                        <span class="inline-flex items-center gap-1.5">
+                            <i class="bi bi-star-fill text-uco-yellow-500 flex-shrink-0"></i>
+                            <span><span id="stat-featured-total">{{ $featuredUserCount }}</span> Featured</span>
+                        </span>
+                        <span class="text-[10px] font-bold text-uco-yellow-600/90 leading-tight pl-[1.35rem]">
+                            <span class="text-green-600" id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> Intra
+                            <span class="text-uco-yellow-400 mx-0.5">·</span>
+                            <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
+                        </span>
                     </span>
                     @if(auth()->user() && auth()->user()->isAdmin())
                     <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
@@ -102,8 +109,12 @@
                         document.getElementById('stat-entrepreneurs').textContent = d.entrepreneurs;
                         document.getElementById('stat-intrapreneurs').textContent = d.intrapreneurs;
                         document.getElementById('stat-alumni').textContent = d.alumni;
-                        const statFeatured = document.getElementById('stat-featured');
-                        if(statFeatured) statFeatured.textContent = d.featured;
+                        const statFeaturedTotal = document.getElementById('stat-featured-total');
+                        const statFeaturedIntra = document.getElementById('stat-featured-intra');
+                        const statFeaturedEntre = document.getElementById('stat-featured-entre');
+                        if (statFeaturedTotal) statFeaturedTotal.textContent = d.featured;
+                        if (statFeaturedIntra) statFeaturedIntra.textContent = d.featured_intrapreneurs;
+                        if (statFeaturedEntre) statFeaturedEntre.textContent = d.featured_entrepreneurs;
                     })">
             <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>

@@ -51,3 +51,45 @@ test('importer processes selected true and false rows without skipping', functio
     $this->assertNotNull($business2);
     $this->assertFalse($business2->is_featured);
 });
+
+test('importer marks intrapreneur featured when selected is excel boolean true', function () {
+    $import = new FormResponseImport('test-intra-featured');
+
+    $row = [
+        'email_address' => 'intra-featured@example.com',
+        'full_name' => 'Intra Featured',
+        'category' => 'Intrapreneur',
+        'current_status' => 'Student',
+        'selected' => true,
+        'company_name_' => 'PT Sample Corp',
+        'timestamp' => '2026-05-23 22:00:00',
+    ];
+
+    $user = $import->model($row);
+
+    expect($user)->not->toBeNull();
+    expect($user->is_featured)->toBeTrue();
+    expect($user->current_status)->toBe('Intrapreneur');
+});
+
+test('re-import without selected column preserves existing featured flag', function () {
+    $user = User::factory()->create([
+        'email' => 'preserve-featured@example.com',
+        'is_featured' => true,
+        'current_status' => 'Intrapreneur',
+    ]);
+
+    $import = new FormResponseImport('test-preserve-featured');
+    $row = [
+        'email_address' => $user->email,
+        'full_name' => $user->name,
+        'category' => 'Intrapreneur',
+        'current_status' => 'Student',
+        'company_name_' => 'PT Preserve Corp',
+        'timestamp' => '2026-05-23 22:00:00',
+    ];
+
+    $import->model($row);
+
+    expect($user->fresh()->is_featured)->toBeTrue();
+});
