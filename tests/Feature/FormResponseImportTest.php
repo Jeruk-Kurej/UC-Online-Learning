@@ -93,3 +93,39 @@ test('re-import without selected column preserves existing featured flag', funct
 
     expect($user->fresh()->is_featured)->toBeTrue();
 });
+
+test('smart import cross-over featured preservation works correctly', function () {
+    $user = User::factory()->create([
+        'email' => 'intra-preserved@example.com',
+        'is_featured' => true,
+        'current_status' => 'Intrapreneur',
+    ]);
+
+    // Scenario: We import the Entrepreneur CSV sheet.
+    // The sheet lists our Intrapreneur user with selected = FALSE because they are not featured as an Entrepreneur.
+    $entrepreneurImport = new FormResponseImport('test-entrepreneur-import', 'Responses - Copy of Entrepreneur.csv');
+    $row = [
+        'email_address' => $user->email,
+        'full_name' => $user->name,
+        'category' => 'Intrapreneur',
+        'current_status' => 'Student',
+        'selected' => 'FALSE',
+        'company_name_' => 'PT Preserve Corp',
+        'timestamp' => '2026-05-23 22:00:00',
+    ];
+
+    $entrepreneurImport->model($row);
+
+    // Their featured flag should still be TRUE because the Entrepreneur sheet is not the source of truth for Intrapreneurs!
+    expect($user->fresh()->is_featured)->toBeTrue();
+
+    // Scenario 2: We import the Intrapreneur CSV sheet.
+    // The sheet lists our Intrapreneur user with selected = FALSE because they are no longer featured.
+    $intrapreneurImport = new FormResponseImport('test-intrapreneur-import', 'Responses - Copy of Intrapreneur.csv');
+    $row['selected'] = 'FALSE';
+
+    $intrapreneurImport->model($row);
+
+    // Their featured flag should now be FALSE because the Intrapreneur sheet IS the source of truth for Intrapreneurs!
+    expect($user->fresh()->is_featured)->toBeFalse();
+});

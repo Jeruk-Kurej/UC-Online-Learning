@@ -696,13 +696,13 @@ class UserController extends Controller
                 return new UCOStudentImport($importId);
             }
 
-            return new FormResponseImport($importId);
+            return new FormResponseImport($importId, $originalName ?: basename($path));
         }
 
         // For CSV/Raw: read first 2KB and search for markers
         $handle = fopen($path, 'r');
         if (! $handle) {
-            return new FormResponseImport($importId);
+            return new FormResponseImport($importId, $originalName ?: basename($path));
         }
         $peek = fread($handle, 2048);
         fclose($handle);
@@ -712,7 +712,7 @@ class UserController extends Controller
             return new UCOStudentImport($importId);
         }
 
-        return new FormResponseImport($importId);
+        return new FormResponseImport($importId, $originalName ?: basename($path));
     }
 
     /**

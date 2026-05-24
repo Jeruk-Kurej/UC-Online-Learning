@@ -28,14 +28,26 @@ use Carbon\Carbon;
 class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents, ShouldQueue
 {
     public $importId;
+    public $fileName;
+    protected $importType = null; // 'entrepreneur', 'intrapreneur', or null
     protected $errors = [];
     protected $successCount = 0;
     protected $skippedCount = 0;
     private static bool $debugKeysDumped = false; // one-time column key debug
 
-    public function __construct($importId = null)
+    public function __construct($importId = null, $fileName = null)
     {
         $this->importId = $importId;
+        $this->fileName = $fileName;
+
+        if ($fileName) {
+            $lowerName = strtolower($fileName);
+            if (str_contains($lowerName, 'intrapreneur')) {
+                $this->importType = 'intrapreneur';
+            } elseif (str_contains($lowerName, 'entrepreneur')) {
+                $this->importType = 'entrepreneur';
+            }
+        }
     }
 
     public function chunkSize(): int
@@ -148,6 +160,20 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
 
             $isFeatured = $this->parseSelectedFeatured($row);
+
+            // Prevent cross-over wiping of featured states when importing two different files that contain all users
+            if ($isFeatured !== null && $this->importType !== null && $careerCategory !== null) {
+                $lowerCategory = strtolower($careerCategory);
+                if ($this->importType === 'intrapreneur' && $lowerCategory === 'entrepreneur' && $isFeatured === false) {
+                    // This is the Intrapreneur import file. This row is an Entrepreneur, and is marked FALSE here.
+                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Entrepreneurs.
+                    $isFeatured = null;
+                } elseif ($this->importType === 'entrepreneur' && $lowerCategory === 'intrapreneur' && $isFeatured === false) {
+                    // This is the Entrepreneur import file. This row is an Intrapreneur, and is marked FALSE here.
+                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Intrapreneurs.
+                    $isFeatured = null;
+                }
+            }
 
             // ── DEBUG: Log critical field values ──
             Log::debug('[FormResponseImport] Row debug', [

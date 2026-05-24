@@ -55,7 +55,7 @@ class ImportCSVCommand extends Command
             $this->info("Importing file: " . $file->getFilename());
             try {
                 $importId = (string) Str::uuid();
-                Excel::import(new FormResponseImport($importId), $file->getRealPath());
+                Excel::import(new FormResponseImport($importId, $file->getFilename()), $file->getRealPath());
                 $this->info("Successfully imported " . $file->getFilename());
             } catch (\Exception $e) {
                 $this->error("Failed to import " . $file->getFilename() . ": " . $e->getMessage());

@@ -702,7 +702,7 @@ class BusinessController extends Controller
             }
             Log::info('Import: XLSX default → FormResponseImport');
 
-            return new \App\Imports\FormResponseImport($importId);
+            return new \App\Imports\FormResponseImport($importId, $originalName ?: basename($path));
         }
 
         // For CSV/Raw: read first 2KB and search for markers
@@ -718,7 +718,7 @@ class BusinessController extends Controller
 
         Log::info('Import: falling back to Form Response format');
 
-        return new \App\Imports\FormResponseImport($importId);
+        return new \App\Imports\FormResponseImport($importId, $originalName ?: basename($path));
     }
 
     /**
