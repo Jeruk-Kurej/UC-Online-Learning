@@ -71,15 +71,17 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <span class="inline-flex flex-col gap-0.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md min-w-[9.5rem]">
-                        <span class="inline-flex items-center gap-1.5">
-                            <i class="bi bi-star-fill text-uco-yellow-500 flex-shrink-0"></i>
-                            <span><span id="stat-featured-total">{{ $featuredUserCount }}</span> Featured</span>
-                        </span>
-                        <span class="text-[10px] font-bold text-uco-yellow-600/90 leading-tight pl-[1.35rem]">
-                            <span class="text-green-600" id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> Intra
-                            <span class="text-uco-yellow-400 mx-0.5">·</span>
-                            <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
+                    <span class="inline-flex items-center gap-2.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.02)] select-none">
+                        <i class="bi bi-star-fill text-uco-yellow-500 text-sm flex-shrink-0"></i>
+                        <span class="flex flex-col gap-0.5">
+                            <span class="text-xs font-semibold text-uco-yellow-700 leading-none">
+                                <span id="stat-featured-total">{{ $featuredUserCount }}</span> Featured
+                            </span>
+                            <span class="text-[10px] font-bold text-uco-yellow-600/90 leading-none mt-0.5">
+                                <span class="text-green-600" id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> Intra
+                                <span class="text-uco-yellow-400 mx-0.5">·</span>
+                                <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
+                            </span>
                         </span>
                     </span>
                     @php /** @var \App\Models\User|null $authUser */ $authUser = auth()->user(); @endphp
