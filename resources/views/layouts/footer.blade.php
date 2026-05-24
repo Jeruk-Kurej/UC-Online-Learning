@@ -22,19 +22,19 @@
                 <ul class="space-y-2">
                     <li>
                         <a href="{{ route('featured') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
-                            Home
+                            Featured
                         </a>
                     </li>
                     <li>
                         <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
-                            Business Directory
+                            Showcase Directory
                         </a>
                     </li>
-                    <li>
+                    {{-- <li>
                         <a href="{{ route('uc-testimonies.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
                             Community Testimonies
                         </a>
-                    </li>
+                    </li> --}}
                     <li>
                         <a href="{{ route('about') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
                             About UCO
