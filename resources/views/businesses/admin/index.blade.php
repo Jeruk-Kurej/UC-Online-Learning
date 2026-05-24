@@ -5,6 +5,16 @@
          x-data="{ 
             showImportModal: false,
             isSubmitting: false,
+            debounceTimer: null,
+            submitDebounced() {
+                if (this.debounceTimer) clearTimeout(this.debounceTimer);
+                this.debounceTimer = setTimeout(() => this.updateList(), 500);
+            },
+            resetFilters() {
+                this.$refs.filterForm.reset();
+                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+                this.updateList();
+            },
             updateList(url = null, pushState = true, shouldScroll = false) {
                 this.isSubmitting = true;
                 if (!url) {
@@ -101,13 +111,15 @@
                             name="search"
                             value="{{ $search }}"
                             placeholder="Search business name..."
+                            @input="submitDebounced()"
+                            @keydown.enter.prevent="updateList()"
                             class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
                         >
                     </div>
 
                     {{-- Filters & Reset Button --}}
                     <div class="flex items-center gap-3">
-                        <select name="status" onchange="this.form.submit()" 
+                        <select name="status" @change="updateList()" 
                                 class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Status: All</option>
                             <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
@@ -116,16 +128,24 @@
                             <option value="need_revision" {{ $status === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
                         </select>
 
-                        <select name="featured" onchange="this.form.submit()" 
+                        <select name="featured" @change="updateList()" 
                                 class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Featured: All</option>
                             <option value="yes" {{ $featured === 'yes' ? 'selected' : '' }}>Featured</option>
                             <option value="no" {{ $featured === 'no' ? 'selected' : '' }}>Not Featured</option>
                         </select>
                         
-                        <a href="{{ route('businesses.admin') }}" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </a>
+                        </button>
+
+                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
+                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
+                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            </svg>
+                            <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
+                        </div>
                     </div>
                 </div>
             </form>
