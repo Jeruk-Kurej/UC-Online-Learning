@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -96,7 +97,7 @@ class ProfileController extends Controller
         // Handle Cloudinary URL
         if (str_contains($pathOrUrl, 'cloudinary.com')) {
             try {
-                \App\Traits\HasImage::deleteCloudinaryImage($pathOrUrl);
+                User::deleteCloudinaryImage($pathOrUrl);
             } catch (\Throwable $e) {
                 // silently swallow
             }

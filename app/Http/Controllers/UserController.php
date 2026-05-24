@@ -1044,7 +1044,7 @@ class UserController extends Controller
         // Handle Cloudinary URL
         if (str_contains($pathOrUrl, 'cloudinary.com')) {
             try {
-                \App\Traits\HasImage::deleteCloudinaryImage($pathOrUrl);
+                User::deleteCloudinaryImage($pathOrUrl);
             } catch (\Throwable $e) {
                 // silently swallow
             }

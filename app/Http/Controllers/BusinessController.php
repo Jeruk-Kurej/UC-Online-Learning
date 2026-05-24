@@ -679,7 +679,7 @@ class BusinessController extends Controller
         // Handle Cloudinary URL
         if (str_contains($pathOrUrl, 'cloudinary.com')) {
             try {
-                \App\Traits\HasImage::deleteCloudinaryImage($pathOrUrl);
+                Business::deleteCloudinaryImage($pathOrUrl);
             } catch (\Throwable $e) {
                 // silently swallow
             }
