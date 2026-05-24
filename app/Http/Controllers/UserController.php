@@ -410,9 +410,13 @@ class UserController extends Controller
             'current_status' => 'nullable|string|max:255',
             'testimony' => 'nullable|string',
             
-            // Files
+            // Files & Deletion flags
             'profile_photo_url' => 'nullable|image|max:5120',
-            'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
+            'delete_profile_photo_url' => 'nullable|boolean',
+            'activities_docs' => ['nullable', 'array'],
+            'activities_docs.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:10240'],
+            'delete_activities_files' => ['nullable', 'array'],
+            'delete_activities_files.*' => ['string'],
             
             'is_visible' => 'nullable|boolean',
             'owned_businesses' => 'nullable|array',
@@ -444,20 +448,51 @@ class UserController extends Controller
             $userData['password'] = Hash::make($validated['password']);
         }
 
+        // Handle profile photo deletion
+        if ($request->boolean('delete_profile_photo_url')) {
+            $this->deleteFileFromStorage($user->profile_photo_url);
+            $userData['profile_photo_url'] = null;
+        }
+
         // Handle File Uploads
         if ($request->hasFile('profile_photo_url')) {
+            // Delete old file if exists
+            $this->deleteFileFromStorage($user->profile_photo_url);
+            
             $file = $request->file('profile_photo_url');
             $path = $file->storeAs('profile-photos', Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
             $userData['profile_photo_url'] = '/storage/' . $path;
         }
 
-
-
-        if ($request->hasFile('activities_doc_url')) {
-            $file = $request->file('activities_doc_url');
-            $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['activities_doc_url'] = '/storage/' . $path;
+        // Handle activities files deletion and uploading
+        $existingUrls = [];
+        if ($user->activities_doc_url) {
+            $existingUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
         }
+
+        // Delete flagged URLs
+        if ($request->has('delete_activities_files')) {
+            $toDelete = (array) $request->input('delete_activities_files');
+            foreach ($toDelete as $urlToDelete) {
+                if (($key = array_search($urlToDelete, $existingUrls)) !== false) {
+                    $this->deleteFileFromStorage($urlToDelete);
+                    unset($existingUrls[$key]);
+                }
+            }
+            $existingUrls = array_values($existingUrls);
+        }
+
+        // Upload new files
+        $newUrls = [];
+        if ($request->hasFile('activities_docs')) {
+            foreach ($request->file('activities_docs') as $file) {
+                $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension(), 'public');
+                $newUrls[] = '/storage/' . $path;
+            }
+        }
+
+        $finalUrls = array_merge($existingUrls, $newUrls);
+        $userData['activities_doc_url'] = count($finalUrls) > 0 ? implode(';', $finalUrls) : null;
 
         // Update the user
         $user->update($userData);
@@ -475,8 +510,6 @@ class UserController extends Controller
                     ->update(['user_id' => $user->id]);
             }
         }
-
-
 
         return redirect()
             ->route('users.show', $user)
@@ -996,5 +1029,43 @@ class UserController extends Controller
         $writer->save($tempFile);
         
         return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
+    }
+
+    /**
+     * Safely delete a file from local public storage or Cloudinary.
+     */
+    private function deleteFileFromStorage(?string $pathOrUrl): void
+    {
+        if (!$pathOrUrl) {
+            return;
+        }
+
+        // Handle Cloudinary URL
+        if (str_contains($pathOrUrl, 'cloudinary.com')) {
+            try {
+                \App\Traits\HasImage::deleteCloudinaryImage($pathOrUrl);
+            } catch (\Throwable $e) {
+                // silently swallow
+            }
+            return;
+        }
+
+        // Normalize local storage path
+        $relativePath = $pathOrUrl;
+        if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
+            $relativePath = parse_url($relativePath, PHP_URL_PATH);
+        }
+
+        if (str_starts_with($relativePath, '/storage/')) {
+            $relativePath = substr($relativePath, strlen('/storage/'));
+        } elseif (str_starts_with($relativePath, 'storage/')) {
+            $relativePath = substr($relativePath, strlen('storage/'));
+        }
+
+        $relativePath = ltrim($relativePath, '/');
+
+        if (Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
+        }
     }
 }

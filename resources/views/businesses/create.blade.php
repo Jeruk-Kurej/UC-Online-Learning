@@ -16,7 +16,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('businesses.store') }}" class="space-y-6">
+    <form method="POST" action="{{ route('businesses.store') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
@@ -81,6 +81,56 @@
                     <textarea name="description" id="description" rows="3" required
                               class="form-input-custom">{{ old('description') }}</textarea>
                     @error('description')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Business Logo --}}
+                <div class="md:col-span-2 relative pb-5" x-data="{
+                    newLogoSelected: false,
+                    newLogoName: '',
+                    newLogoUrl: ''
+                }">
+                    <label class="form-label-custom">Business Logo</label>
+
+                    <!-- Selection Preview -->
+                    <div x-show="newLogoSelected" class="flex items-center gap-4 mb-3">
+                        <div class="w-20 h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex items-center justify-center p-2 flex-shrink-0">
+                            <img :src="newLogoUrl" class="max-w-full max-h-full object-contain">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider" x-text="newLogoName">Selected Logo</span>
+                            <button type="button" @click="
+                                document.getElementById('logo').value = '';
+                                newLogoSelected = false;
+                                newLogoName = '';
+                                newLogoUrl = '';
+                            " 
+                                    class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                <i class="bi bi-x-circle text-sm"></i>
+                                <span>Clear Selection</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Input Container -->
+                    <div x-show="!newLogoSelected" class="form-file-container-custom group relative">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+                                <i class="bi bi-cloud-upload text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight">Upload or drop a logo</span>
+                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP — Max 10MB</span>
+                            </div>
+                        </div>
+                        <input type="file" name="logo" id="logo" accept="image/*"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                               @change="const [file] = $event.target.files; if (file) { 
+                                   newLogoSelected = true; 
+                                   newLogoName = file.name; 
+                                   newLogoUrl = URL.createObjectURL(file);
+                               }">
+                    </div>
+                    @error('logo')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>

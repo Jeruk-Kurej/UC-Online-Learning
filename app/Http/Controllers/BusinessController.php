@@ -350,8 +350,17 @@ class BusinessController extends Controller
         }
         $data['is_featured'] = $request->boolean('is_featured');
         
+        // Handle logo deletion
+        if ($request->boolean('delete_logo')) {
+            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+            $data['logo_url'] = null;
+        }
+
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
+            // Delete old file if exists
+            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+            
             $path = $request->file('logo')->store('logos', 'public');
             $data['logo_url'] = $path; // Fixed: using logo_url as per model
         }
@@ -656,5 +665,43 @@ class BusinessController extends Controller
 
         Log::info("Import: falling back to Form Response format");
         return new \App\Imports\FormResponseImport($importId);
+    }
+
+    /**
+     * Safely delete a file from local public storage or Cloudinary.
+     */
+    private function deleteFileFromStorage(?string $pathOrUrl): void
+    {
+        if (!$pathOrUrl) {
+            return;
+        }
+
+        // Handle Cloudinary URL
+        if (str_contains($pathOrUrl, 'cloudinary.com')) {
+            try {
+                \App\Traits\HasImage::deleteCloudinaryImage($pathOrUrl);
+            } catch (\Throwable $e) {
+                // silently swallow
+            }
+            return;
+        }
+
+        // Normalize local storage path
+        $relativePath = $pathOrUrl;
+        if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
+            $relativePath = parse_url($relativePath, PHP_URL_PATH);
+        }
+
+        if (str_starts_with($relativePath, '/storage/')) {
+            $relativePath = substr($relativePath, strlen('/storage/'));
+        } elseif (str_starts_with($relativePath, 'storage/')) {
+            $relativePath = substr($relativePath, strlen('storage/'));
+        }
+
+        $relativePath = ltrim($relativePath, '/');
+
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($relativePath)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($relativePath);
+        }
     }
 }

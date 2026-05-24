@@ -235,21 +235,51 @@
                 </div>
 
                 {{-- Profile Photo --}}
-                <div class="relative">
-                    <label for="profile_photo_url" class="form-label-custom">Profile Photo</label>
-                    <div class="form-file-container-custom group">
+                <div class="relative" x-data="{
+                    newPhotoSelected: false,
+                    newPhotoName: '',
+                    newPhotoUrl: ''
+                }">
+                    <label class="form-label-custom">Profile Photo</label>
+
+                    <!-- Selection Preview -->
+                    <div x-show="newPhotoSelected" class="flex items-center gap-4 mb-3">
+                        <div class="w-16 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex-shrink-0">
+                            <img :src="newPhotoUrl" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <span class="text-xs font-bold text-gray-500 uppercase tracking-wider" x-text="newPhotoName">Selected Photo</span>
+                            <button type="button" @click="
+                                document.getElementById('profile_photo_url').value = '';
+                                newPhotoSelected = false;
+                                newPhotoName = '';
+                                newPhotoUrl = '';
+                            " 
+                                    class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                <i class="bi bi-x-circle text-sm"></i>
+                                <span>Clear Selection</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Upload Input Container -->
+                    <div x-show="!newPhotoSelected" class="form-file-container-custom group relative">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
                                 <i class="bi bi-cloud-upload text-base"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="profile_photo_label">Upload or drop a file</span>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight">Upload or drop a photo</span>
                                 <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP</span>
                             </div>
                         </div>
                         <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*"
                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('profile_photo_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
+                               @change="const [file] = $event.target.files; if (file) { 
+                                   newPhotoSelected = true; 
+                                   newPhotoName = file.name; 
+                                   newPhotoUrl = URL.createObjectURL(file);
+                               }">
                     </div>
                     @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
@@ -300,21 +330,52 @@
                 </div>
 
                 {{-- Activities Documentation File --}}
-                <div class="relative">
-                    <label for="activities_doc_url" class="form-label-custom">Activities Documentation File</label>
-                    <div class="form-file-container-custom group">
+                <div class="relative" x-data="{
+                    newDocSelected: false,
+                    newDocName: ''
+                }">
+                    <label class="form-label-custom">Activities Documentation File</label>
+
+                    <!-- Selected Document Card -->
+                    <div x-show="newDocSelected" 
+                         class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-xl shadow-sm mb-3">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center flex-shrink-0 text-red-500">
+                                <i class="bi bi-file-earmark-pdf-fill text-xl"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-xs font-bold text-slate-700 truncate max-w-[240px]" x-text="newDocName">Selected File</p>
+                                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PDF document selected</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="
+                            document.getElementById('activities_doc_url').value = '';
+                            newDocSelected = false;
+                            newDocName = '';
+                        " 
+                                class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-red-500 hover:text-red-700 transition-colors shadow-sm"
+                                title="Clear Selection">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+
+                    <!-- Upload Input Container -->
+                    <div x-show="!newDocSelected" class="form-file-container-custom group relative">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
                                 <i class="bi bi-folder2-open text-base"></i>
                             </div>
                             <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="activities_label">Upload or drop a file</span>
+                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight">Upload or drop a file</span>
                                 <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">PDF ONLY</span>
                             </div>
                         </div>
                         <input type="file" name="activities_doc_url" id="activities_doc_url" accept=".pdf"
                                class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('activities_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
+                               @change="const [file] = $event.target.files; if (file) { 
+                                   newDocSelected = true; 
+                                   newDocName = file.name; 
+                               }">
                     </div>
                     @error('activities_doc_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
