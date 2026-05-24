@@ -38,7 +38,7 @@ class StoreBusinessRequest extends FormRequest
             // Basic fields
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
-            'business_type_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'business_mode' => 'required|in:product,service,both',
             'user_id' => 'nullable|exists:users,id',
             'owner_ids' => 'nullable|array',
@@ -61,7 +61,6 @@ class StoreBusinessRequest extends FormRequest
             'certification_path' => 'nullable|file|mimes:pdf|max:5120',
             'legal_documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'product_certifications.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'business_challenges' => 'nullable|array',
 
             // Additional data fields
             'phone' => 'nullable|string|max:50',

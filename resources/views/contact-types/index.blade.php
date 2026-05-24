@@ -8,7 +8,7 @@
             if (str_contains($name, 'twitter') || str_contains($name, ' x ')) return ['bg' => 'bg-sky-50', 'text' => 'text-sky-500'];
             if (str_contains($name, 'email') || str_contains($name, 'gmail') || str_contains($name, 'surat')) return ['bg' => 'bg-red-50', 'text' => 'text-red-500'];
             if (str_contains($name, 'phone') || str_contains($name, 'telepon') || str_contains($name, 'mobile') || str_contains($name, 'hp')) return ['bg' => 'bg-blue-50', 'text' => 'text-blue-600'];
-            if (str_contains($name, 'website') || str_contains($name, 'url') || str_contains($name, 'link')) return ['bg' => 'bg-slate-50', 'text' => 'text-slate-600'];
+            if (str_contains($name, 'website') || str_contains($name, 'url') || str_contains($name, 'link')) return ['bg' => 'bg-gray-50', 'text' => 'text-gray-600'];
             if (str_contains($name, 'telegram')) return ['bg' => 'bg-sky-50', 'text' => 'text-sky-400'];
             if (str_contains($name, 'tiktok')) return ['bg' => 'bg-gray-100', 'text' => 'text-gray-900'];
             if (str_contains($name, 'linkedin')) return ['bg' => 'bg-blue-50', 'text' => 'text-blue-800'];
@@ -16,13 +16,13 @@
             return ['bg' => 'bg-orange-50', 'text' => 'text-orange-600'];
         };
     @endphp
-    <div class="space-y-6">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-uco-orange-700">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         Admin Dashboard
                     </span>
                     <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Contact Type Management</h1>
@@ -31,7 +31,8 @@
 
                 <div class="flex items-center gap-3 relative z-10 reveal-on-scroll" style="transition-delay: 100ms;">
                     @auth
-                        @if(auth()->user()->isAdmin())
+                        @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                        @if($authUser->isAdmin())
                             <a href="/contact-types/create" 
                                class="inline-flex items-center gap-2 rounded-xl bg-uco-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-uco-orange-200 transition hover:-translate-y-0.5 hover:bg-uco-orange-600">
                                 <i class="bi bi-plus-circle"></i>
@@ -44,23 +45,24 @@
         </section>
 
         {{-- Contact Types Table Card --}}
-        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden reveal-on-scroll" style="transition-delay: 150ms;">
             <div class="overflow-x-auto">
                 <table class="w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">
+                            <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[15%]">
                                 Icon Preview
                             </th>
                             <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[40%]">
                                 Platform Name
                             </th>
-                            <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[20%]">
+                            <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[20%]">
                                 Usage Count
                             </th>
                             @auth
-                                @if(auth()->user()->isAdmin())
-                                    <th scope="col" class="px-4 py-3.5 text-center text-xs font-medium text-gray-600 uppercase tracking-wider w-[25%]">
+                                @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                                @if($authUser->isAdmin())
+                                    <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[25%]">
                                         Actions
                                     </th>
                                 @endif
@@ -72,7 +74,7 @@
                             <tr class="hover:bg-gray-50 transition">
                                 {{-- Icon Preview --}}
                                 <td class="px-4 py-4">
-                                    <div class="flex items-center justify-center">
+                                    <div class="flex items-center justify-start">
                                         @php $colors = $getPlatformColor($type->platform_name); @endphp
                                         <div class="w-12 h-12 rounded-lg {{ $colors['bg'] }} flex items-center justify-center {{ $colors['text'] }} text-xl shadow-sm border {{ str_replace('bg-', 'border-', $colors['bg']) }}">
                                             <i class="{{ $type->icon_class }}"></i>
@@ -86,7 +88,7 @@
                                 </td>
 
                                 {{-- Usage Count --}}
-                                <td class="px-4 py-4 text-center">
+                                <td class="px-4 py-4">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium
                                         {{ $type->business_contacts_count > 0 ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600' }}">
                                         {{ $type->business_contacts_count ?? 0 }}
@@ -95,9 +97,10 @@
 
                                 {{-- Actions --}}
                                 @auth
-                                    @if(auth()->user()->isAdmin())
+                                    @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                                    @if($authUser->isAdmin())
                                         <td class="px-4 py-4">
-                                            <div class="flex items-center justify-center gap-2">
+                                            <div class="flex items-center justify-start gap-2">
                                                 <a href="{{ route('contact-types.show', $type) }}" 
                                                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
                                                    title="View Details">
@@ -156,7 +159,7 @@
 
         {{-- Stats Summary --}}
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-orange-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 200ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Type</p>
@@ -168,7 +171,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-blue-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 250ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Total Contact</p>
@@ -180,7 +183,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-emerald-500 hover:shadow-md transition">
+            <div class="bg-white rounded-xl shadow-sm p-4 border-l-4 border-emerald-500 hover:shadow-md transition reveal-on-scroll" style="transition-delay: 300ms;">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Avg per Type</p>

@@ -1,12 +1,15 @@
 <?php
 
 test('registration screen can be rendered', function () {
+    putenv('REGISTRATION_OPEN=true');
     $response = $this->get('/register');
 
     $response->assertStatus(200);
 });
 
 test('new users can register', function () {
+    $this->withoutExceptionHandling();
+    putenv('REGISTRATION_OPEN=true');
     $response = $this->post('/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
@@ -15,5 +18,6 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('featured', absolute: false));
 });
+

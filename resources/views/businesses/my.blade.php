@@ -6,8 +6,9 @@
             <p class="text-lg text-gray-500 max-w-2xl leading-relaxed mb-8">Manage and grow your entrepreneurial ventures within the UCO community.</p>
             
             @if($myBusinesses->count() > 0)
-                <a href="{{ route('businesses.create') }}" class="inline-flex items-center justify-center px-6 py-3.5 bg-uco-orange-500 text-white font-bold rounded-2xl hover:bg-uco-orange-600 hover:-translate-y-1 shadow-lg shadow-uco-orange-200 transition-all duration-300 group">
-                    <i class="bi bi-plus-circle-fill mr-2.5 text-lg group-hover:rotate-90 transition-transform duration-300"></i>
+                <a href="{{ route('businesses.create') }}" 
+                   class="btn-uco btn-uco-primary">
+                    <i class="bi bi-plus-circle-fill"></i>
                     Register New Business
                 </a>
             @endif
@@ -19,12 +20,14 @@
                 @foreach($myBusinesses as $b)
                     @php $delay = ($loop->index % 12) * 50; @endphp
                     <a href="{{ route('businesses.show', $b) }}" 
-                       class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
+                       class="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
                        style="transition-delay: {{ $delay }}ms;">
                         {{-- Cover Image / Logo --}}
                         <div class="h-48 bg-gray-50 relative overflow-hidden">
-                            @php 
-                                $cover = $b->photos->where('is_primary', true)->first()?->photo_path ?? ($b->photos->first()?->photo_path ?? null);
+                            @php
+                                // Ensure photos is a collection before calling collection methods to avoid null errors
+                                $photos = collect($b->photos ?? []);
+                                $cover = optional($photos->where('is_primary', true)->first())->photo_path ?? optional($photos->first())->photo_path ?? null;
                                 $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
                             @endphp
                             @if($coverUrl)
@@ -63,7 +66,7 @@
                         <div class="p-6 flex-1 flex flex-col">
                             <div class="mb-4 text-left">
                                 <span class="inline-block px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                    {{ $b->businessType->name }}
+                                    {{ optional(optional($b->category))->name ?? 'Uncategorized' }}
                                 </span>
                                 <h3 class="text-xl font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-1">{{ $b->name }}</h3>
                             </div>
@@ -90,14 +93,15 @@
                     </a>
                 @endforeach
         @else
-            <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-20 text-center reveal-on-scroll">
+            <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-20 text-center reveal-on-scroll">
                 <div class="w-24 h-24 bg-soft-gray-50 text-soft-gray-300 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
                     <i class="bi bi-shop-window text-5xl"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">No Businesses Found</h2>
                 <p class="text-gray-500 max-w-md mx-auto mb-10 leading-relaxed italic">You haven't registered any businesses yet. Start showcasing your ventures to the UCO community today!</p>
-                <a href="{{ route('businesses.create') }}" class="inline-flex items-center px-8 py-4 bg-uco-orange-500 text-white font-bold rounded-2xl hover:bg-uco-orange-600 hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 shadow-xl shadow-uco-orange-100">
-                    <i class="bi bi-plus-lg mr-2"></i>
+                <a href="{{ route('businesses.create') }}" 
+                   class="btn-uco btn-uco-primary" style="padding: 10px 20px !important; font-size: 14px !important;">
+                    <i class="bi bi-plus-lg"></i>
                     Register Your First Business
                 </a>
             </div>

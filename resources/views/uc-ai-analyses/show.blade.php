@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="w-full max-w-[1200px] mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-[1600px] mx-auto py-6 sm:py-10 px-4 sm:px-6 lg:px-8">
         {{-- Back Button & Header Section --}}
         <div class="mb-6">
             <a href="{{ route('ai-analyses.index') }}"
@@ -10,7 +10,7 @@
         </div>
 
         {{-- Hero Header --}}
-        <section class="relative overflow-hidden rounded-3xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8">
             <div class="uco-hero-mesh"></div>
             <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
                 <div class="space-y-2 reveal-on-scroll">
@@ -26,7 +26,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {{-- Left Column: Content --}}
             <div class="lg:col-span-2 space-y-6">
-                <div class="bg-white border text-gray-900 border-gray-200 rounded-2xl p-6 md:p-8 shadow-sm reveal-on-scroll" style="transition-delay: 100ms;">
+                <div class="bg-white border text-gray-900 border-gray-200 rounded-lg p-6 md:p-8 shadow-sm reveal-on-scroll" style="transition-delay: 100ms;">
                     <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                         <div class="flex items-center gap-4">
                             <div class="w-12 h-12 bg-uco-orange-100 text-uco-orange-700 rounded-full flex items-center justify-center font-bold text-xl uppercase shrink-0">
@@ -51,7 +51,7 @@
                 </div>
 
                 {{-- Moderation Context --}}
-                <div class="bg-white border text-gray-900 border-gray-200 rounded-2xl p-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
+                <div class="bg-white border text-gray-900 border-gray-200 rounded-lg p-6 shadow-sm reveal-on-scroll" style="transition-delay: 150ms;">
                     <div class="flex items-center justify-between mb-5">
                         <h3 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                             <i class="bi bi-robot text-uco-orange-500"></i> Automated Review
@@ -91,7 +91,7 @@
             {{-- Right Column: Admin Actions --}}
             <div class="lg:col-span-1 space-y-6">
                 @if(auth()->user()?->isAdmin())
-                    <div class="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-2xl p-6 shadow-sm sticky top-6 reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="bg-gradient-to-br from-white to-gray-50 border border-gray-200 rounded-lg p-6 shadow-sm sticky top-6 reveal-on-scroll" style="transition-delay: 200ms;">
                         <h3 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-4 mb-5">Review Actions</h3>
                         
                         <p class="text-sm text-gray-600 mb-6">Review and make a final decision on this testimonial.</p>

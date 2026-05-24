@@ -2,179 +2,203 @@
 
 namespace Database\Seeders;
 
-use App\Models\Business;
-use App\Models\BusinessType;
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\Business;
+use App\Models\User;
+use App\Models\Category;
+use Illuminate\Support\Str;
 
 class EnhancedBusinessSeeder extends Seeder
 {
     /**
-     * Seed enhanced business data for testing
-     * Based on 42-column Excel requirements
+     * Run the database seeds.
      */
     public function run(): void
     {
-        $this->command->info('🔄 Seeding Enhanced Business Data...');
+        $admin = User::where('role', 'admin')->first();
+        $studentUser = User::where('email', 'student@uco.com')->first();
+        $budiUser = User::where('email', 'budi@uco.com')->first();
+        $sitiUser = User::where('email', 'siti@uco.com')->first();
+        $agusUser = User::where('email', 'agus@uco.com')->first();
 
-        // Get or create a user
-        $user = User::first();
-        if (!$user) {
-            $this->command->error('❌ No users found! Please seed users first.');
-            return;
+        $category = Category::first();
+        $techCategory = Category::where('name', 'like', '%Tech%')->orWhere('name', 'like', '%digital%')->first() ?? $category;
+        $creativeCategory = Category::where('name', 'like', '%Creative%')->orWhere('name', 'like', '%jasa%')->first() ?? $category;
+
+        if ($admin && $category) {
+            $biz1 = Business::firstOrCreate([
+                'name' => 'Sample Venture',
+            ], [
+                'user_id' => $admin->id,
+                'category_id' => $category->id,
+                'slug' => Str::slug('Sample Venture'),
+                'description' => 'A wonderful sample business venture for all entrepreneurs.',
+                'is_visible' => true,
+                'is_featured' => true,
+                'type' => 'entrepreneur',
+                'operational_status' => 'active',
+                'offering_type' => 'product',
+                'phone_number' => '08123456789',
+                'address' => 'Jl. Jendral Sudirman No. 12',
+                'city' => 'Jakarta',
+                'province' => 'DKI Jakarta',
+            ]);
+
+            // Create some products
+            $biz1->products()->firstOrCreate([
+                'name' => 'Signature T-Shirt',
+            ], [
+                'description' => 'High quality premium cotton t-shirt.',
+                'price' => 149000,
+                'sort_order' => 1,
+            ]);
+
+            $biz1->products()->firstOrCreate([
+                'name' => 'Premium Hoodie',
+            ], [
+                'description' => 'Comfortable and warm premium hoodie.',
+                'price' => 299000,
+                'sort_order' => 2,
+            ]);
+
+            // Add additional owners / members in the pivot table
+            if ($studentUser) {
+                $biz1->members()->syncWithoutDetaching([
+                    $studentUser->id => ['position' => 'Co-Owner'],
+                ]);
+            }
         }
 
-        // Update user with employment status
-        $user->update([
-            'current_employment_status' => 'entrepreneur',
-            'has_side_business' => false,
-        ]);
+        if ($studentUser && $category) {
+            $biz2 = Business::firstOrCreate([
+                'name' => 'EcoFresh Catering',
+            ], [
+                'user_id' => $studentUser->id,
+                'category_id' => $category->id,
+                'slug' => Str::slug('EcoFresh Catering'),
+                'description' => 'Providing healthy and eco-friendly catering services for schools and events.',
+                'is_visible' => true,
+                'is_featured' => false,
+                'type' => 'entrepreneur',
+                'operational_status' => 'active',
+                'offering_type' => 'service',
+                'phone_number' => '08234567890',
+                'address' => 'Jl. Kebon Jeruk No. 5',
+                'city' => 'Surabaya',
+                'province' => 'Jawa Timur',
+            ]);
 
-        // Ensure we have business types
-        $foodType = BusinessType::firstOrCreate(['name' => 'Food & Beverage']);
-        $techType = BusinessType::firstOrCreate(['name' => 'Technology']);
-        $fashionType = BusinessType::firstOrCreate(['name' => 'Fashion & Retail']);
+            // Create some services
+            $biz2->products()->firstOrCreate([
+                'name' => 'Daily Student Meal Box',
+            ], [
+                'description' => 'Balanced nutrition daily meal box for active students.',
+                'price' => 35000,
+                'sort_order' => 1,
+            ]);
 
-        // Sample Business 1: From College Project, Continued After Graduation
-        $business1 = Business::create([
-            'user_id' => $user->id,
-            'business_type_id' => $foodType->id,
-            'business_mode' => 'product',
-            'name' => 'Warung Kopi Mahasiswa',
-            'description' => 'Coffee shop yang dimulai dari project entrepreneurship kampus. Sekarang sudah berkembang dengan 2 cabang dan melayani ratusan pelanggan setiap hari.',
-            
-            // Enhanced fields from 42-column Excel
-            'logo_url' => 'businesses/logos/warung-kopi.png',
-            'established_date' => now()->subYears(2)->subMonths(3),
-            'address' => 'Jl. Kampus Raya No. 15, Kelurahan Kemanggisan, Jakarta Barat 11480',
-            'employee_count' => 8,
-            'revenue_range' => '10jt - 50jt',
-            'is_from_college_project' => true,
-            'is_continued_after_graduation' => true,
-            'legal_documents' => [
-                'SIUP' => '12345/SIUP/2023',
-                'NIB' => '9876543210123456',
-                'TDP' => 'TDP-001-2023-JKT',
-                'NPWP' => '12.345.678.9-012.000'
-            ],
-            'product_certifications' => [
-                'Halal' => 'MUI-HALAL-12345-2023',
-                'PIRT' => 'PIRT-2023-001-JKT',
-                'BPOM' => 'MD-123456789'
-            ],
-            'business_challenges' => [
-                'Pemasaran digital masih terbatas, perlu optimize social media',
-                'Persaingan dengan coffee shop franchise besar',
-                'Manajemen stok bahan baku yang efisien',
-                'Mencari supplier kopi berkualitas dengan harga terjangkau'
-            ],
-        ]);
+            $biz2->products()->firstOrCreate([
+                'name' => 'Event Buffet Service',
+            ], [
+                'description' => 'Premium healthy buffet setup for events.',
+                'price' => 125000,
+                'sort_order' => 2,
+            ]);
 
-        $this->command->info("✅ Created: {$business1->name}");
+            // Add additional owners / members in the pivot table
+            if ($budiUser) {
+                $biz2->members()->syncWithoutDetaching([
+                    $budiUser->id => ['position' => 'Partner & Head of Operations'],
+                ]);
+            }
+        }
 
-        // Sample Business 2: Not from College Project, Professional Business
-        $business2 = Business::create([
-            'user_id' => $user->id,
-            'business_type_id' => $techType->id,
-            'business_mode' => 'service',
-            'name' => 'Digital Solutions Pro',
-            'description' => 'Perusahaan jasa pembuatan website, aplikasi mobile, dan digital marketing untuk UMKM. Membantu bisnis lokal go digital dengan solusi terjangkau.',
-            
-            // Enhanced fields
-            'logo_url' => 'businesses/logos/digital-solutions.png',
-            'established_date' => now()->subYears(5),
-            'address' => 'Rukan Permata Hijau Blok A15-16, Jakarta Selatan 12210',
-            'employee_count' => 15,
-            'revenue_range' => '50jt - 100jt',
-            'is_from_college_project' => false,
-            'is_continued_after_graduation' => true,
-            'legal_documents' => [
-                'SIUP' => '54321/SIUP/2019',
-                'NIB' => '1234567890987654',
-                'TDP' => 'TDP-002-2019-JKT',
-                'NPWP' => '98.765.432.1-043.000',
-                'Akta Pendirian' => 'No. 123/2019'
-            ],
-            'product_certifications' => [],
-            'business_challenges' => [
-                'Menemukan talent developer yang qualified dan berpengalaman',
-                'Kompetisi dengan agency digital besar dengan budget marketing tinggi',
-                'Client retention dan mendapatkan repeat order',
-                'Perkembangan teknologi yang cepat, harus terus belajar'
-            ],
-        ]);
+        if ($budiUser && $techCategory) {
+            $biz3 = Business::firstOrCreate([
+                'name' => 'Budi Solutions',
+            ], [
+                'user_id' => $budiUser->id,
+                'category_id' => $techCategory->id,
+                'slug' => Str::slug('Budi Solutions'),
+                'description' => 'Modern digital marketing and SEO consultancy services.',
+                'is_visible' => true,
+                'is_featured' => false,
+                'type' => 'intrapreneur',
+                'operational_status' => 'active',
+                'offering_type' => 'service',
+                'phone_number' => '08111222333',
+                'address' => 'Jl. Gajah Mada No. 44',
+                'city' => 'Semarang',
+                'province' => 'Jawa Tengah',
+            ]);
 
-        $this->command->info("✅ Created: {$business2->name}");
+            // Create some services
+            $biz3->products()->firstOrCreate([
+                'name' => 'SEO Audit & Optimization',
+            ], [
+                'description' => 'Complete technical SEO audit and site performance enhancement.',
+                'price' => 2500000,
+                'sort_order' => 1,
+            ]);
 
-        // Sample Business 3: Startup from College, Recently Graduated
-        $business3 = Business::create([
-            'user_id' => $user->id,
-            'business_type_id' => $fashionType->id,
-            'business_mode' => 'product',
-            'name' => 'EcoFashion Store',
-            'description' => 'Toko online fashion sustainable dari bahan ramah lingkungan. Menjual pakaian dan aksesori yang eco-friendly dengan desain modern dan harga terjangkau.',
-            
-            // Enhanced fields - Early stage business
-            'logo_url' => 'businesses/logos/ecofashion.png',
-            'established_date' => now()->subMonths(8),
-            'address' => 'Virtual Office - Marketplace: Tokopedia, Shopee, Instagram',
-            'employee_count' => 3,
-            'revenue_range' => '10jt - 50jt',
-            'is_from_college_project' => true,
-            'is_continued_after_graduation' => true,
-            'legal_documents' => [
-                'NIB' => '5555555555444444',
-                'NPWP' => '11.222.333.4-055.000'
-            ],
-            'product_certifications' => [
-                'Eco Label' => 'ECO-2024-001',
-                'SNI Tekstil' => 'SNI-7617-2013'
-            ],
-            'business_challenges' => [
-                'Modal terbatas untuk inventory dan produksi massal',
-                'Brand awareness masih rendah di market',
-                'Logistik dan pengiriman yang reliable',
-                'Scaling production sambil maintain kualitas sustainable',
-                'Edukasi customer tentang pentingnya sustainable fashion'
-            ],
-        ]);
+            $biz3->products()->firstOrCreate([
+                'name' => 'Monthly Digital Marketing',
+            ], [
+                'description' => 'Social media management and targeted advertising.',
+                'price' => 5000000,
+                'sort_order' => 2,
+            ]);
 
-        $this->command->info("✅ Created: {$business3->name}");
+            // Add additional owners / members in the pivot table
+            if ($sitiUser) {
+                $biz3->members()->syncWithoutDetaching([
+                    $sitiUser->id => ['position' => 'Lead Marketing Specialist'],
+                ]);
+            }
+        }
 
-        // Sample Business 4: Service Business, No Longer Operating
-        $business4 = Business::create([
-            'user_id' => $user->id,
-            'business_type_id' => $techType->id,
-            'business_mode' => 'service',
-            'name' => 'Bimbel Kampus',
-            'description' => 'Bimbingan belajar untuk mahasiswa, dimulai dari project entrepreneurship. Sudah tidak beroperasi setelah lulus.',
-            
-            // Enhanced fields
-            'established_date' => now()->subYears(3),
-            'address' => 'Jl. Universitas No. 45, Jakarta Barat',
-            'employee_count' => 5,
-            'revenue_range' => '< 10jt',
-            'is_from_college_project' => true,
-            'is_continued_after_graduation' => false, // Stopped after graduation
-            'legal_documents' => [],
-            'product_certifications' => [],
-            'business_challenges' => [
-                'Waktu terbatas karena masih kuliah',
-                'Kompetisi dengan bimbel established',
-                'Sulit maintain consistency jadwal'
-            ],
-        ]);
+        if ($sitiUser && $creativeCategory) {
+            $biz4 = Business::firstOrCreate([
+                'name' => 'Siti Creatives',
+            ], [
+                'user_id' => $sitiUser->id,
+                'category_id' => $creativeCategory->id,
+                'slug' => Str::slug('Siti Creatives'),
+                'description' => 'Premium graphic design, brand identity, and content marketing.',
+                'is_visible' => true,
+                'is_featured' => true,
+                'type' => 'entrepreneur',
+                'operational_status' => 'active',
+                'offering_type' => 'product',
+                'phone_number' => '08556677889',
+                'address' => 'Jl. Merdeka No. 10',
+                'city' => 'Bandung',
+                'province' => 'Jawa Barat',
+            ]);
 
-        $this->command->info("✅ Created: {$business4->name}");
+            // Create some products
+            $biz4->products()->firstOrCreate([
+                'name' => 'Brand Identity Package',
+            ], [
+                'description' => 'Complete visual guidelines, logos, and typography guidelines.',
+                'price' => 4500000,
+                'sort_order' => 1,
+            ]);
 
-        $this->command->newLine();
-        $this->command->info('✅ Enhanced business data seeded successfully!');
-        $this->command->info('📊 Created 4 businesses with comprehensive data:');
-        $this->command->line('   - 3 Active businesses (continued after graduation)');
-        $this->command->line('   - 1 Inactive business (stopped after graduation)');
-        $this->command->line('   - 3 From college projects');
-        $this->command->line('   - Various revenue ranges (Mikro to Menengah)');
-        $this->command->line('   - Complete legal documents & certifications');
-        $this->command->line('   - Business challenges documented');
+            $biz4->products()->firstOrCreate([
+                'name' => 'Custom UI/UX Website Design',
+            ], [
+                'description' => 'Bespoke modern UI/UX design prototype for web and mobile.',
+                'price' => 6000000,
+                'sort_order' => 2,
+            ]);
+
+            // Add additional owners / members in the pivot table
+            if ($agusUser) {
+                $biz4->members()->syncWithoutDetaching([
+                    $agusUser->id => ['position' => 'Creative Director'],
+                ]);
+            }
+        }
     }
 }

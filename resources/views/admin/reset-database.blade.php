@@ -64,7 +64,7 @@
                                 🔥 RESET DATABASE NOW
                             </button>
                             
-                            <a href="{{ route('dashboard') }}" 
+                            <a href="{{ route('users.index') }}" 
                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg text-center transition-colors">
                                 ← Cancel & Go Back
                             </a>

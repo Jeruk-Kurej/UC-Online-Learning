@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>UCO Platform - Student & Alumni Business Directory</title>
+    <title>Universitas Ciputra Online</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/Logo UCO.png') }}">
     
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
@@ -37,10 +38,10 @@
     <div class="h-screen flex flex-col overflow-hidden relative">
         {{-- Main Content --}}
         <main class="flex-1 flex items-center relative overflow-hidden z-10">
-            <div class="max-w-[1600px] mx-auto px-6 w-full relative z-10">
+            <div class="max-w-6xl mx-auto px-8 w-full relative z-10">
                 <div class="grid lg:grid-cols-2 gap-16 items-center">
                     {{-- Left: Content --}}
-                    <div class="space-y-6 relative">
+                    <div class="space-y-6 relative reveal-on-scroll">
                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-soft-gray-200 rounded-full shadow-sm">
                             <div class="w-2 h-2 bg-gradient-to-r from-uco-orange-400 to-uco-yellow-400 rounded-full"></div>
                             <span class="text-xs font-semibold text-soft-gray-700">For UC Students & Alumni</span>
@@ -70,23 +71,23 @@
                     </div>
                     
                     {{-- Right: Login Form --}}
-                    <div class="bg-white border border-soft-gray-100 rounded-2xl p-8 shadow-xl relative overflow-hidden">
+                    <div class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] relative overflow-hidden reveal-on-scroll" style="transition-delay: 200ms;">
                         {{-- Decorative corner elements --}}
-                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-uco-orange-100 to-uco-yellow-100 rounded-bl-full opacity-40"></div>
-                        <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 rounded-tr-full opacity-30"></div>
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-uco-orange-100 to-uco-yellow-100 rounded-bl-[4rem] opacity-50"></div>
+                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 rounded-tr-[4rem] opacity-40"></div>
                         
-                        <div class="mb-6 relative z-10">
-                            <h2 class="text-2xl font-bold text-soft-gray-900 mb-1">Sign in</h2>
-                            <p class="text-sm text-soft-gray-600">Access your entrepreneurial hub</p>
+                        <div class="mb-8 relative z-10">
+                            <h2 class="text-3xl font-black text-gray-900 mb-1.5 tracking-tight">Sign in</h2>
+                            <p class="text-sm font-medium text-gray-500">Access your entrepreneurial hub</p>
                         </div>
                         
 
                         
-                        <form method="POST" action="/login" class="space-y-4 relative z-10">
+                        <form method="POST" action="/login" class="space-y-5 relative z-10">
                             @csrf
                             
                             <div>
-                                <label for="email" class="block text-sm font-semibold text-soft-gray-700 mb-2">Email</label>
+                                <label for="email" class="block text-xs font-black uppercase tracking-wider text-gray-600 mb-2">Email</label>
                                 <input id="email" 
                                        type="email" 
                                        name="email" 
@@ -94,18 +95,18 @@
                                        required 
                                        autofocus 
                                        autocomplete="username"
-                                       class="w-full px-4 py-3 bg-soft-gray-50 border border-soft-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-soft-gray-400 focus:border-transparent transition-all @error('email') border-red-500 @enderror"
+                                       class="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-[1rem] text-sm font-medium focus:outline-none focus:ring-4 focus:ring-uco-orange-500/20 focus:border-uco-orange-500 focus:bg-white transition-all @error('email') border-red-500 @enderror"
                                        placeholder="name@example.com">
                                 @error('email')
-                                    <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             
                             <div>
                                 <div class="flex items-center justify-between mb-2">
-                                    <label for="password" class="block text-sm font-semibold text-soft-gray-700">Password</label>
+                                    <label for="password" class="block text-xs font-black uppercase tracking-wider text-gray-600">Password</label>
                                     @if (Route::has('password.request'))
-                                        <a href="/forgot-password" class="text-xs font-medium text-soft-gray-600 hover:text-soft-gray-900 transition-colors">
+                                        <a href="/forgot-password" class="text-xs font-bold text-uco-orange-500 hover:text-uco-orange-600 transition-colors">
                                             Forgot password?
                                         </a>
                                     @endif
@@ -115,10 +116,10 @@
                                        name="password" 
                                        required 
                                        autocomplete="current-password"
-                                       class="w-full px-4 py-3 bg-soft-gray-50 border border-soft-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-soft-gray-400 focus:border-transparent transition-all @error('password') border-red-500 @enderror"
+                                       class="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-[1rem] text-sm font-medium focus:outline-none focus:ring-4 focus:ring-uco-orange-500/20 focus:border-uco-orange-500 focus:bg-white transition-all @error('password') border-red-500 @enderror"
                                        placeholder="Enter your password">
                                 @error('password')
-                                    <p class="mt-2 text-xs text-red-600">{{ $message }}</p>
+                                    <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             
@@ -126,26 +127,46 @@
                                 <input id="remember_me" 
                                        type="checkbox" 
                                        name="remember"
-                                       class="w-4 h-4 text-soft-gray-900 border-soft-gray-300 rounded focus:ring-soft-gray-500">
-                                <label for="remember_me" class="ml-2 text-sm text-soft-gray-600">Remember me</label>
+                                       class="w-4 h-4 text-uco-orange-500 border-gray-300 rounded focus:ring-uco-orange-500">
+                                <label for="remember_me" class="ml-2 text-sm font-medium text-gray-600">Remember me</label>
                             </div>
                             
                             <button type="submit" 
-                                    class="w-full py-3 bg-soft-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-soft-gray-800 hover:shadow-lg transition-all duration-200">
+                                    class="w-full py-3 bg-uco-orange-500 text-white text-sm font-semibold tracking-wide rounded-xl shadow-sm hover:bg-uco-orange-600 hover:shadow transition-all duration-200">
                                 Sign in to Dashboard
                             </button>
+
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-soft-gray-200"></div>
+                                </div>
+                                <div class="relative flex justify-center text-xs">
+                                    <span class="bg-white/90 px-2 text-gray-400 font-medium">or continue with</span>
+                                </div>
+                            </div>
+
+                            <a href="{{ route('auth.google.redirect') }}"
+                               class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white text-gray-700 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900 transition-all duration-200 shadow-sm">
+                                <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                </svg>
+                                <span>Sign in with Google</span>
+                            </a>
                         </form>
                         
                         {{-- Back to Home Button --}}
-                        <div class="mt-4 pt-4 border-t border-soft-gray-100 relative z-10">
+                        <div class="mt-6 pt-6 border-t border-gray-100 relative z-10">
                             @if(auth()->check())
                                 <a href="{{ route('businesses.index') }}" 
-                                   class="block w-full py-3 text-center bg-soft-gray-50 text-soft-gray-700 text-sm font-medium rounded-xl border border-soft-gray-200 hover:bg-soft-gray-100 hover:border-soft-gray-300 transition-all duration-200">
+                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
                                     Browse Businesses
                                 </a>
                             @else
                                 <a href="{{ route('featured') }}" 
-                                   class="block w-full py-3 text-center bg-soft-gray-50 text-soft-gray-700 text-sm font-medium rounded-xl border border-soft-gray-200 hover:bg-soft-gray-100 hover:border-soft-gray-300 transition-all duration-200">
+                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
                                     Browse as Guest
                                 </a>
                             @endif
@@ -188,103 +209,27 @@
 
             {{-- Global Toast Notifications --}}
             <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
-                @if (session('success'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('success') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('status'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-blue-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-info-circle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('status') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('error') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 5000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-                            <span class="text-sm font-medium">Validasi Gagal! Periksa input Anda.</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
+                {{-- Handled by dynamic script below --}}
             </div>
 
             {{-- Dynamic JS Toast Trigger --}}
             <div x-data="{ 
                     toasts: [], 
+                    init() {
+                        @if(session('success')) this.add({ detail: { message: '{{ session('success') }}', type: 'success' } }); @endif
+                        @if(session('error')) this.add({ detail: { message: '{{ session('error') }}', type: 'error' } }); @endif
+                        @if(session('status')) this.add({ detail: { message: '{{ session('status') }}', type: 'status' } }); @endif
+                        @if($errors->any()) 
+                            @foreach($errors->all() as $error)
+                                this.add({ detail: { message: '{{ $error }}', type: 'error' } });
+                            @endforeach
+                        @endif
+                    },
                     add(e) { 
-                        const id = Date.now();
+                        const id = Date.now() + Math.random();
                         const { message, type } = e.detail;
                         this.toasts.push({ id, message, type: type || 'success' });
-                        setTimeout(() => this.remove(id), 4000);
+                        setTimeout(() => this.remove(id), 5000);
                     },
                     remove(id) {
                         this.toasts = this.toasts.filter(t => t.id !== id);

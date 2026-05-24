@@ -5,7 +5,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'UCO Student & Alumni') }}</title>
+        <title>Universitas Ciputra Online</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/Logo UCO.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -14,7 +15,7 @@
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
-        {{-- Manual fallback: Read manifest and inject assets --}}
+        <!-- {{-- Manual fallback: Read manifest and inject assets --}}
         @php
             $manifestPath = public_path('build/manifest.json');
             if (file_exists($manifestPath)) {
@@ -30,7 +31,7 @@
         
         @if(isset($jsFile))
             <script type="module" src="/build/{{ $jsFile }}"></script>
-        @endif
+        @endif -->
     </head>
     <body class="font-sans antialiased bg-soft-white">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
@@ -42,108 +43,32 @@
                 </a>
             </div>
 
-            <div class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-8 bg-white shadow-xl rounded-2xl border border-soft-gray-100">
+            <div class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-8 bg-white shadow-xl rounded-lg border border-soft-gray-100">
                 {{ $slot }}
             </div>
 
             <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
-                @if (session('success'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-emerald-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-check-circle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('success') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('status'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-blue-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-info-circle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('status') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if (session('error'))
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 4000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-                            <span class="text-sm font-medium">{{ session('error') }}</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
-
-                @if ($errors->any())
-                    <div x-data="{ show: true }" 
-                         x-show="show" 
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         x-init="setTimeout(() => show = false, 5000)" 
-                         class="pointer-events-auto max-w-sm w-full bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg flex items-start justify-between gap-3" 
-                         role="alert">
-                        <div class="flex items-center gap-2">
-                            <i class="bi bi-exclamation-triangle-fill text-lg"></i>
-                            <span class="text-sm font-medium">Validasi Gagal! Periksa input Anda.</span>
-                        </div>
-                        <button @click="show = false" class="text-white opacity-90 hover:opacity-100 transition-opacity flex-shrink-0 mt-0.5">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                @endif
+                {{-- Handled by dynamic script below --}}
             </div>
 
             {{-- Dynamic JS Toast Trigger --}}
             <div x-data="{ 
                     toasts: [], 
+                    init() {
+                        @if(session('success')) this.add({ detail: { message: '{{ session('success') }}', type: 'success' } }); @endif
+                        @if(session('error')) this.add({ detail: { message: '{{ session('error') }}', type: 'error' } }); @endif
+                        @if(session('status')) this.add({ detail: { message: '{{ session('status') }}', type: 'status' } }); @endif
+                        @if($errors->any()) 
+                            @foreach($errors->all() as $error)
+                                this.add({ detail: { message: '{{ $error }}', type: 'error' } });
+                            @endforeach
+                        @endif
+                    },
                     add(e) { 
-                        const id = Date.now();
+                        const id = Date.now() + Math.random();
                         const { message, type } = e.detail;
                         this.toasts.push({ id, message, type: type || 'success' });
-                        setTimeout(() => this.remove(id), 4000);
+                        setTimeout(() => this.remove(id), 5000);
                     },
                     remove(id) {
                         this.toasts = this.toasts.filter(t => t.id !== id);

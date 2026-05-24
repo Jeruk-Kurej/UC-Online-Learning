@@ -32,14 +32,14 @@
         {{-- Success / Error flash --}}
 
         {{-- Business Info Card --}}
-        <div class="mb-6 bg-white border border-slate-200 shadow-sm rounded-xl p-4">
+        <div class="mb-6 bg-white border border-gray-200 shadow-sm rounded-xl p-4">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-400 flex items-center justify-center text-white flex-shrink-0 shadow-sm">
                     <i class="bi bi-building text-2xl"></i>
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="font-semibold text-gray-900 truncate">{{ $business->name }}</h3>
-                    <p class="text-sm text-gray-500">{{ $business->businessType->name }} &bull; {{ $business->address ?? 'No address set' }}</p>
+                    <p class="text-sm text-gray-500">{{ optional($business->category)->name }} &bull; {{ $business->address ?? 'No address set' }}</p>
                 </div>
                 <div class="text-right flex-shrink-0">
                     <p class="text-xs text-gray-400 uppercase tracking-wider">Total Gallery Photos</p>
@@ -49,7 +49,7 @@
         </div>
 
         {{-- Photos Grid --}}
-        <div class="bg-white border border-slate-200 shadow-sm rounded-xl">
+        <div class="bg-white border border-gray-200 shadow-sm rounded-xl">
             @if($photos->count() > 0)
                 <div class="p-6">
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -98,7 +98,7 @@
                                         }
                                     }
                                 }"
-                                class="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
+                                class="bg-white border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200">
 
                                 {{-- Photo Display --}}
                                 <div class="relative group">

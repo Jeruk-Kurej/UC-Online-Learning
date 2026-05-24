@@ -38,7 +38,7 @@ class UpdateBusinessRequest extends FormRequest
             // Basic fields
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
-            'business_type_id' => 'required|exists:categories,id',
+            'category_id' => 'required|exists:categories,id',
             'business_mode' => 'required|in:product,service,both',
             'user_id' => 'nullable|exists:users,id',
             'owner_ids' => 'nullable|array',
@@ -52,6 +52,8 @@ class UpdateBusinessRequest extends FormRequest
 
             // Enhanced fields
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:20480',
+            'delete_logo' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean',
             'established_date' => 'nullable|date',
             'employee_count' => 'nullable|integer|min:0',
             'revenue_range' => 'nullable|string|max:255',
@@ -61,7 +63,6 @@ class UpdateBusinessRequest extends FormRequest
             'certification_path' => 'nullable|file|mimes:pdf|max:5120',
             'legal_documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'product_certifications.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
-            'business_challenges' => 'nullable|array',
             'remove_legal_docs' => 'nullable|array',
             'remove_certifications' => 'nullable|array',
             'remove_legal_document' => 'nullable|boolean',

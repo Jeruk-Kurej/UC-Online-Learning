@@ -13,7 +13,7 @@
             {{-- Left Column: Details --}}
             <div class="lg:col-span-2 space-y-8">
                 {{-- Business Main Info --}}
-                <div class="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
+                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                     <div class="h-64 bg-gray-100 relative">
                         @php 
                             $cover = $business->photos->where('is_primary', true)->first()?->photo_path ?? ($business->photos->first()?->photo_path ?? null);
@@ -31,9 +31,9 @@
                         <div class="absolute -bottom-10 left-8">
                             @php $logo = $business->logo_url ? storage_image_url($business->logo_url, 'logo_thumb') : null; @endphp
                             @if($logo)
-                                <img src="{{ $logo }}" class="w-24 h-24 rounded-2xl bg-white p-2 shadow-xl border border-white">
+                                <img src="{{ $logo }}" class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white">
                             @else
-                                <div class="w-24 h-24 rounded-2xl bg-white p-2 shadow-xl border border-white flex items-center justify-center text-gray-300">
+                                <div class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white flex items-center justify-center text-gray-300">
                                     <i class="bi bi-building text-4xl"></i>
                                 </div>
                             @endif
@@ -45,7 +45,7 @@
                             <div>
                                 <div class="flex items-center gap-3 mb-2">
                                     <span class="px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider">
-                                        {{ $business->businessType->name }}
+                                        {{ optional($business->category)->name }}
                                     </span>
                                     <span class="px-2.5 py-1 rounded-lg bg-soft-gray-900 text-white text-[10px] font-bold uppercase tracking-wider">
                                         {{ $business->status_label }}
@@ -61,15 +61,15 @@
                 {{-- Business Details Grid --}}
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- General Info --}}
-                    <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <i class="bi bi-info-circle text-uco-orange-500"></i>
                             General Information
                         </h3>
                         <dl class="space-y-4">
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Business Mode</p>
-                                <dd class="text-sm font-semibold text-gray-700 capitalize">{{ $business->business_mode }}</dd>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Business Mode</p>
+                                <dd class="text-sm font-semibold text-gray-700 capitalize">{{ $business->offering_type }}</dd>
                             </div>
                             <div>
                                 <dt class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Established Date</dt>
@@ -80,14 +80,14 @@
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->employee_count ?: 'N/A' }} employees</dd>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Revenue Range</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Revenue Range</p>
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->revenue_range ?: 'N/A' }}</dd>
                             </div>
                         </dl>
                     </div>
 
                     {{-- Location & Contact --}}
-                    <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                         <h3 class="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <i class="bi bi-geo-alt text-uco-orange-500"></i>
                             Contact & Location
@@ -98,13 +98,13 @@
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->address ?: 'N/A' }}</dd>
                             </div>
                             <div>
-                                <p class="text-xs text-slate-400 font-medium uppercase tracking-wider mb-1">Location</p>
+                                <p class="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Location</p>
                                 <dd class="text-sm font-semibold text-gray-700">{{ $business->city ?: 'N/A' }}, {{ $business->province ?: 'N/A' }}</dd>
                             </div>
-                            @if($business->phone)
+                            @if($business->phone_number)
                             <div>
                                 <dt class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Phone</dt>
-                                <dd class="text-sm font-semibold text-gray-700">{{ $business->phone }}</dd>
+                                <dd class="text-sm font-semibold text-gray-700">{{ $business->phone_number }}</dd>
                             </div>
                             @endif
                         </dl>
@@ -115,7 +115,7 @@
             {{-- Right Column: Admin Actions --}}
             <div class="space-y-6">
                 {{-- Owner Card --}}
-                <div class="bg-white border border-gray-200 rounded-3xl p-6 shadow-sm">
+                <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
                     <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Underlying User</h3>
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-xl bg-uco-orange-50 text-uco-orange-500 flex items-center justify-center text-xl font-bold">
@@ -129,8 +129,8 @@
                 </div>
 
                 {{-- Action Card --}}
-                <div class="bg-white border border-gray-200 rounded-3xl p-8 shadow-xl">
-                    <h2 class="text-lg font-bold text-slate-800 mb-4">Moderation Action</h2>
+                <div class="bg-white border border-gray-200 rounded-xl p-8 shadow-xl">
+                    <h2 class="text-lg font-bold text-gray-800 mb-4">Moderation Action</h2>
                     
                     <div class="space-y-4">
                         <form action="{{ route('admin.business-approvals.approve', $business) }}" method="POST">
@@ -159,12 +159,12 @@
 
                     {{-- Revision Modal --}}
                     <div x-show="showRevisionModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm text-left">
-                        <div @click.away="showRevisionModal = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden p-8 reveal-on-scroll">
+                        <div @click.away="showRevisionModal = false" class="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden p-8 reveal-on-scroll">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest font-semibold text-uco-orange-600">Moderation System</p>
-                                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">Request Revision</h1>
-                                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Explain what needs to be changed before approval.</p>
+                                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1">Request Revision</h1>
+                                    <p class="text-gray-600 mt-2 text-sm sm:text-base">Explain what needs to be changed before approval.</p>
                                 </div>
                                 <button @click="showRevisionModal = false" class="text-gray-400 hover:text-gray-600">
                                     <i class="bi bi-x-lg"></i>
@@ -174,17 +174,17 @@
                             <form action="{{ route('admin.business-approvals.need-revision', $business) }}" method="POST">
                                 @csrf
                                 <div class="mb-8">
-                                    <label for="rejection_reason_revision" class="block text-sm font-semibold text-slate-700 mb-2">Revision Notes</label>
+                                    <label for="rejection_reason_revision" class="block text-sm font-semibold text-gray-700 mb-2">Revision Notes</label>
                                     <textarea name="rejection_reason" id="rejection_reason_revision" rows="4" required
-                                              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
+                                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm"
                                               placeholder="E.g., Please upload a clearer logo, or fix the address..."></textarea>
                                 </div>
                                 
                                 <div class="flex items-center gap-4">
-                                    <button type="button" @click="showRevisionModal = false" class="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all">
+                                    <button type="button" @click="showRevisionModal = false" class="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-lg hover:bg-gray-200 transition-all">
                                         Cancel
                                     </button>
-                                    <button type="submit" class="flex-1 py-4 bg-blue-500 text-white font-black rounded-2xl hover:bg-blue-600 transition-all shadow-lg shadow-blue-100">
+                                    <button type="submit" class="flex-1 py-4 bg-blue-500 text-white font-black rounded-lg hover:bg-blue-600 transition-all shadow-lg shadow-blue-100">
                                         Send Request
                                     </button>
                                 </div>
@@ -194,12 +194,12 @@
 
                     {{-- Reject Modal --}}
                     <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm text-left">
-                        <div @click.away="showRejectModal = false" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden p-8 reveal-on-scroll">
+                        <div @click.away="showRejectModal = false" class="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden p-8 reveal-on-scroll">
                             <div class="flex items-center justify-between mb-6">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest font-semibold text-uco-orange-600">Moderation System</p>
-                                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1">Reject Business</h1>
-                                    <p class="text-slate-600 mt-2 text-sm sm:text-base">Provide a reason for rejecting this registration.</p>
+                                    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1">Reject Business</h1>
+                                    <p class="text-gray-600 mt-2 text-sm sm:text-base">Provide a reason for rejecting this registration.</p>
                                 </div>
                                 <button @click="showRejectModal = false" class="text-gray-400 hover:text-gray-600">
                                     <i class="bi bi-x-lg"></i>
@@ -209,17 +209,17 @@
                             <form action="{{ route('admin.business-approvals.reject', $business) }}" method="POST">
                                 @csrf
                                 <div class="mb-8">
-                                    <label for="rejection_reason_reject" class="block text-sm font-semibold text-slate-700 mb-2">Rejection Reason</label>
+                                    <label for="rejection_reason_reject" class="block text-sm font-semibold text-gray-700 mb-2">Rejection Reason</label>
                                     <textarea name="rejection_reason" id="rejection_reason_reject" rows="4" required
-                                              class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-red-500 focus:border-red-500 transition-all duration-200 text-sm"
+                                              class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-red-500 focus:border-red-500 transition-all duration-200 text-sm"
                                               placeholder="Provide a reason for rejecting..."></textarea>
                                 </div>
                                 
                                 <div class="flex items-center gap-4">
-                                    <button type="button" @click="showRejectModal = false" class="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-2xl hover:bg-gray-200 transition-all">
+                                    <button type="button" @click="showRejectModal = false" class="flex-1 py-4 bg-gray-100 text-gray-600 font-bold rounded-lg hover:bg-gray-200 transition-all">
                                         Cancel
                                     </button>
-                                    <button type="submit" class="flex-1 py-4 bg-red-500 text-white font-black rounded-2xl hover:bg-red-600 transition-all shadow-lg shadow-red-100">
+                                    <button type="submit" class="flex-1 py-4 bg-red-500 text-white font-black rounded-lg hover:bg-red-600 transition-all shadow-lg shadow-red-100">
                                         Confirm Rejection
                                     </button>
                                 </div>

@@ -1,8 +1,8 @@
 @php
     // configurable limit: pass $limit when including this component, default to 6
     $limit = $limit ?? 6;
-    $total = $businessTypes->count();
-    $visibleTypes = $businessTypes->take($limit);
+    $total = $categories->count();
+    $visibleTypes = $categories->take($limit);
     $moreCount = max(0, $total - $limit);
     $queryBase = request()->except('page');
 @endphp
@@ -37,7 +37,7 @@
             </div>
             <div class="p-4 max-h-80 overflow-y-auto">
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    @foreach($businessTypes as $type)
+                    @foreach($categories as $type)
                         <a href="{{ route('businesses.index', array_merge($queryBase, ['type' => $type->id])) }}" @click="modalOpen = false" class="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
                             <div class="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-400 flex items-center justify-center text-white font-semibold text-sm">{{ strtoupper(substr($type->name,0,1)) }}</div>
                             <div class="min-w-0">

@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class Business extends Model
 {
     use HasFactory, \App\Traits\HasImage;
@@ -36,13 +40,15 @@ class Business extends Model
         'academic_heritage',
         'company_profile_url',
         'logo_url',
-        'business_challenge',
         'business_scale',
         'business_legality',
         'product_legality',
 
         // Platform management
         'is_visible',
+        'approval_status',
+        'rejection_reason',
+        'is_featured',
         'type',
     ];
 
@@ -51,7 +57,13 @@ class Business extends Model
         return [
             'established_date' => 'date',
             'is_visible' => 'boolean',
+            'is_featured' => 'boolean',
         ];
+    }
+
+    public function getRouteKeyName()
+    {
+        return 'slug';
     }
 
     // ─── Accessors ───
@@ -64,13 +76,40 @@ class Business extends Model
     public function getNameAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
+        $name = trim(strip_tags($cleaned));
+
+        if ($name === strtoupper($name)) {
+            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
+        }
+
+        $name = preg_replace('/\bPt\b/i', 'PT', $name);
+        $name = preg_replace('/\bCv\b/i', 'CV', $name);
+        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
+
+        return $name;
     }
 
     public function getDescriptionAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
         return trim(strip_tags($cleaned));
+    }
+
+    public function getStatusAttribute(): string
+    {
+        return $this->approval_status ?? ($this->is_visible ? 'approved' : 'pending');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        $status = $this->status;
+        return match($status) {
+            'approved' => 'Approved',
+            'pending' => 'Pending Approval',
+            'rejected' => 'Rejected',
+            'need_revision' => 'Need Revision',
+            default => 'Pending Approval',
+        };
     }
 
     public function getProfileQualityScoreAttribute()
@@ -177,5 +216,15 @@ class Business extends Model
         }
 
         return $this->members()->where('users.id', $user->id)->exists();
+    }
+
+    public function isProductMode(): bool
+    {
+        return $this->offering_type === 'product' || $this->offering_type === 'both';
+    }
+
+    public function isServiceMode(): bool
+    {
+        return $this->offering_type === 'service' || $this->offering_type === 'both';
     }
 }

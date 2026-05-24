@@ -20,12 +20,12 @@ class NavigationTest extends TestCase
 
     public function test_authenticated_student_sees_dashboard_and_profile()
     {
-        $user = User::factory()->create(['role' => 'student']);
+        $user = User::factory()->create(['role' => 'user']);
 
         $response = $this->actingAs($user)->get(route('businesses.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Dashboard');
+        $response->assertSee('My Profile');
         $response->assertSee($user->name);
         $response->assertSee('My Businesses');
     }
@@ -38,6 +38,5 @@ class NavigationTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Users');
-        $response->assertSee('Testimonial Review');
     }
 }

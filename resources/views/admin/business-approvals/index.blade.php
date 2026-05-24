@@ -1,14 +1,18 @@
 <x-app-layout>
-    <div class="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto py-8">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {{-- Page Header --}}
-        <div class="mb-12">
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-12 reveal-on-scroll">
+            <div class="uco-hero-mesh"></div>
+            <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">Business Approvals</h1>
-                    <p class="text-lg text-gray-500 max-w-2xl leading-relaxed mb-0">Review and moderate business registrations before they go public.</p>
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
+                        Admin Portal
+                    </span>
+                    <h1 class="text-3xl font-extrabold text-gray-900 md:text-4xl">Business Approvals</h1>
+                    <p class="text-sm text-gray-500 mt-1">Review and moderate business registrations before they go public.</p>
                 </div>
                 
-                <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-2xl">
+                <div class="flex flex-wrap gap-2 bg-gray-100 p-1.5 rounded-lg">
                     <a href="{{ route('admin.business-approvals.index', ['status' => 'pending']) }}" 
                        class="px-6 py-2.5 rounded-xl text-sm font-bold transition-all {{ $status === 'pending' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700' }}">
                         Pending
@@ -27,13 +31,13 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </section>
 
         @if($businesses->count() > 0)
             {{-- Businesses Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 mb-12">
                 @foreach($businesses as $b)
-                    <div class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col">
+                    <div class="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
                         {{-- Cover Image / Logo --}}
                         <div class="h-48 bg-gray-50 relative overflow-hidden">
                             @php 
@@ -68,7 +72,7 @@
                         <div class="p-6 flex-1 flex flex-col">
                             <div class="mb-4 text-left">
                                 <span class="inline-block px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                    {{ $b->businessType->name }}
+                                    {{ optional($b->category)->name }}
                                 </span>
                                 <div class="flex items-center justify-between gap-2">
                                     <h3 class="text-xl font-bold text-gray-900 line-clamp-1">{{ $b->name }}</h3>
@@ -105,7 +109,7 @@
                 {{ $businesses->links() }}
             </div>
         @else
-            <div class="bg-white border-2 border-dashed border-gray-200 rounded-3xl p-20 text-center">
+            <div class="bg-white border-2 border-dashed border-gray-200 rounded-xl p-20 text-center">
                 <div class="w-24 h-24 bg-soft-gray-50 text-soft-gray-300 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
                     <i class="bi bi-journal-check text-5xl"></i>
                 </div>
