@@ -66,8 +66,8 @@
                             {{-- Edit Button (Admin only) --}}
                             @if(Auth::check() && Auth::user()->isAdmin())
                                 <div class="mt-3">
-                                    <a href="{{ route('users.edit', $user) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 text-slate-700 hover:text-slate-900 text-xs font-bold rounded-xl transition shadow-sm">
-                                        <i class="bi bi-pencil text-xs"></i>
+                                    <a href="{{ route('users.edit', $user) }}" class="btn-uco btn-uco-secondary">
+                                        <i class="bi bi-pencil"></i>
                                         <span>Edit User</span>
                                     </a>
                                 </div>

@@ -91,10 +91,9 @@
     @endpush
 
     <div class="mb-6 flex items-center gap-4">
-        <a href="{{ route('users.index') }}" 
-           class="group inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
-            <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-            <span>Back</span>
+        <a href="{{ route('users.index') }}" class="btn-uco btn-uco-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
         </a>
         <div class="flex-1">
             <h1 class="text-2xl font-bold text-gray-900">Create New User</h1>
@@ -412,13 +411,12 @@
 
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between pb-10">
-            <a href="{{ route('users.index') }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
+            <a href="{{ route('users.index') }}" class="btn-uco btn-uco-neutral">
                 Cancel
             </a>
-            <button type="submit" 
-                    class="btn-uco btn-uco-primary px-8 py-3.5">
-                <i class="bi bi-person-plus-fill text-lg"></i>
-                <span>Create User</span>
+            <button type="submit" class="btn-uco btn-uco-primary">
+                <i class="bi bi-person-plus-fill"></i>
+                Create User
             </button>
         </div>
     </form>

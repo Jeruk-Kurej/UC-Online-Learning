@@ -7,10 +7,9 @@
     <div class="max-w-5xl mx-auto">
         {{-- Page Header - Elegant Design --}}
         <div class="mb-8 flex items-center gap-4">
-            <a href="{{ route('businesses.products.show', [$business, $product]) }}" 
-               class="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200 mb-4 sm:mb-0">
-                <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                <span>Back</span>
+            <a href="{{ route('businesses.products.show', [$business, $product]) }}" class="btn-uco btn-uco-secondary mb-4 sm:mb-0">
+                <i class="bi bi-arrow-left"></i>
+                Back
             </a>
             <div class="flex-1">
                 <h1 class="text-3xl font-bold text-soft-gray-900 tracking-tight">Edit Product</h1>
@@ -113,24 +112,20 @@
 
                     {{-- Submit Buttons - Elegant Design --}}
                     <div class="flex items-center justify-between pt-6 border-t-2 border-soft-gray-100">
-                        <a href="{{ route('businesses.show', $business) }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
+                        <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">
                             Cancel
                         </a>
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
                             <button type="button" 
                                     onclick="deleteProduct()"
-                                    class="inline-flex items-center gap-2 px-4 py-2.5 bg-red-600 text-white rounded-xl font-semibold hover:bg-red-700 shadow-md hover:shadow-lg transition-all duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                </svg>
+                                    class="btn-uco btn-uco-danger">
+                                <i class="bi bi-trash"></i>
                                 Delete
                             </button>
 
                             <button type="submit" 
-                                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-soft-gray-900 hover:bg-soft-gray-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width.5="2.5" d="M5 13l4 4L19 7"/>
-                                </svg>
+                                    class="btn-uco btn-uco-primary">
+                                <i class="bi bi-check-lg"></i>
                                 Update Product
                             </button>
                         </div>

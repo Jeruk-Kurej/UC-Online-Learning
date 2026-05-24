@@ -7,10 +7,9 @@
     <div class="max-w-5xl mx-auto">
         {{-- Page Header - Elegant Design --}}
         <div class="mb-8 flex items-center gap-4">
-            <a href="{{ route('businesses.show', $business) }}" 
-               class="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200 mb-4 sm:mb-0">
-                <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                <span>Back</span>
+            <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-secondary mb-4 sm:mb-0">
+                <i class="bi bi-arrow-left"></i>
+                Back
             </a>
             <div class="flex-1">
                 <h1 class="text-3xl font-bold text-soft-gray-900 tracking-tight">Add New Product</h1>
@@ -96,14 +95,11 @@
 
                     {{-- Submit Buttons - Elegant Design --}}
                     <div class="flex items-center justify-between pt-6 border-t-2 border-soft-gray-100">
-                        <a href="{{ route('businesses.show', $business) }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
+                        <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">
                             Cancel
                         </a>
-                        <button type="submit" 
-                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-soft-gray-900 hover:bg-soft-gray-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                            </svg>
+                        <button type="submit" class="btn-uco btn-uco-primary">
+                            <i class="bi bi-check-lg"></i>
                             Create Product
                         </button>
                     </div>
