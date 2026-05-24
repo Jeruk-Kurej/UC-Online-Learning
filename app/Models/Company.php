@@ -34,6 +34,11 @@ class Company extends Model
         ];
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     // ─── Accessors ───
 
     public function getLogoUrlAttribute($value)

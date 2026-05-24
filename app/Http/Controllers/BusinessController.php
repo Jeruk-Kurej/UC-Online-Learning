@@ -250,6 +250,24 @@ class BusinessController extends Controller
     }
 
     /**
+     * Resolve /showcase/{slug} to either a Business or a Company.
+     */
+    public function resolveShowcase($slug)
+    {
+        $business = Business::where('slug', $slug)->first();
+        if ($business) {
+            return $this->show($business);
+        }
+
+        $company = \App\Models\Company::where('slug', $slug)->first();
+        if ($company) {
+            return $this->showIntrapreneur($company);
+        }
+
+        abort(404);
+    }
+
+    /**
      * Display the specified intrapreneur (Company).
      */
     public function showIntrapreneur(\App\Models\Company $company)
