@@ -82,14 +82,15 @@
                             <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
                         </span>
                     </span>
-                    @if(auth()->user() && auth()->user()->isAdmin())
+                    @php /** @var \App\Models\User|null $authUser */ $authUser = auth()->user(); @endphp
+                    @if($authUser && $authUser->isAdmin())
                     <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
                     @endif
 
-                    @if(auth()->user() && auth()->user()->isAdmin())
+                    @if($authUser && $authUser->isAdmin())
                         <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm">
                             <i class="bi bi-person-plus-fill mr-2"></i>
                             Create User

@@ -13,19 +13,54 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
+/**
+ * Class ProfileController
+ *
+ * Handles user profile editing, updates, file uploading (profile photos and activity documents),
+ * and account deletion processes.
+ */
 class ProfileController extends Controller
 {
-    public function edit(Request $request): RedirectResponse|View
-    {
-        if ($request->user()->isAdmin()) {
-            return Redirect::route('users.index');
-        }
-        return view('profile.edit', ['user' => $request->user()]);
-    }
-
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    /**
+     * Retrieve the currently authenticated user as a typed User instance.
+     *
+     * @param  Request  $request  Current request instance
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthenticated
+     */
+    private function getUser(Request $request): User
     {
         $user = $request->user();
+        if (! $user instanceof User) {
+            abort(401);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Show the profile edit form.
+     *
+     * @param  Request  $request  Current request instance
+     */
+    public function edit(Request $request): RedirectResponse|View
+    {
+        $user = $this->getUser($request);
+        if ($user->isAdmin()) {
+            return Redirect::route('users.index');
+        }
+
+        return view('profile.edit', ['user' => $user]);
+    }
+
+    /**
+     * Update the authenticated user's profile details.
+     *
+     * @param  ProfileUpdateRequest  $request  Form request with validation rules
+     */
+    public function update(ProfileUpdateRequest $request): RedirectResponse
+    {
+        $user = $this->getUser($request);
         $validated = $request->validated();
 
         $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'password'])->toArray());
@@ -39,11 +74,17 @@ class ProfileController extends Controller
         if ($request->hasFile('profile_photo')) {
             // Delete old file if exists
             $this->deleteFileFromStorage($user->profile_photo_url);
-            
+
             $file = $request->file('profile_photo');
-            $slug = Str::slug($user->name, '_');
-            $path = $file->storeAs('profile-photos', $slug . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $user->profile_photo_url = Storage::disk('public')->url($path);
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+                $publicDisk = Storage::disk('public');
+                $slug = Str::slug($user->name, '_');
+                $path = $file->storeAs('profile-photos', $slug.'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                if (is_string($path)) {
+                    $user->profile_photo_url = $publicDisk->url($path);
+                }
+            }
         }
 
         // Handle activities files deletion and uploading
@@ -67,9 +108,17 @@ class ProfileController extends Controller
         // Upload new files
         $newUrls = [];
         if ($request->hasFile('activities_files')) {
-            foreach ($request->file('activities_files') as $file) {
-                $path = $file->storeAs('student-activities', 'act_' . $user->id . '_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension(), 'public');
-                $newUrls[] = Storage::disk('public')->url($path);
+            /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+            $publicDisk = Storage::disk('public');
+            $files = $request->file('activities_files');
+            $files = is_array($files) ? $files : [$files];
+            foreach ($files as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $file->storeAs('student-activities', 'act_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
+                    if (is_string($path)) {
+                        $newUrls[] = $publicDisk->url($path);
+                    }
+                }
             }
         }
 
@@ -77,7 +126,7 @@ class ProfileController extends Controller
         $user->activities_doc_url = count($finalUrls) > 0 ? implode(';', $finalUrls) : null;
 
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $user->password = Hash::make($request->input('password'));
         }
 
         $user->save();
@@ -87,10 +136,12 @@ class ProfileController extends Controller
 
     /**
      * Safely delete a file from local public storage or Cloudinary.
+     *
+     * @param  string|null  $pathOrUrl  Relative storage path or external URL
      */
     private function deleteFileFromStorage(?string $pathOrUrl): void
     {
-        if (!$pathOrUrl) {
+        if (! $pathOrUrl) {
             return;
         }
 
@@ -101,13 +152,14 @@ class ProfileController extends Controller
             } catch (\Throwable $e) {
                 // silently swallow
             }
+
             return;
         }
 
         // Normalize local storage path
         $relativePath = $pathOrUrl;
         if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
-            $relativePath = parse_url($relativePath, PHP_URL_PATH);
+            $relativePath = (string) (parse_url($relativePath, PHP_URL_PATH) ?? $relativePath);
         }
 
         if (str_starts_with($relativePath, '/storage/')) {
@@ -123,14 +175,20 @@ class ProfileController extends Controller
         }
     }
 
+    /**
+     * Delete the user's account.
+     *
+     * @param  Request  $request  Current request instance
+     */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate(['password' => ['required', 'current_password']]);
-        $user = $request->user();
+        $this->validate($request, ['password' => ['required', 'current_password']]);
+        $user = $this->getUser($request);
         Auth::logout();
         $user->delete();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return Redirect::to('/');
     }
 }

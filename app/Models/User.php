@@ -6,6 +6,61 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Class User
+ *
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ *
+ * ── Database columns ──────────────────────────────────────────
+ * @property int                             $id
+ * @property string                          $name
+ * @property string                          $email
+ * @property string|null                     $password
+ * @property string|null                     $google_id
+ * @property string                          $role
+ * @property \Illuminate\Support\Carbon|null $email_verified_at
+ * @property string|null                     $remember_token
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ *
+ * @property string|null                     $slug
+ * @property string|null                     $prefix_title
+ * @property string|null                     $suffix_title
+ * @property string|null                     $personal_email
+ * @property string|null                     $phone_number
+ * @property string|null                     $mobile_number
+ * @property string|null                     $whatsapp
+ * @property string|null                     $linkedin
+ * @property string|null                     $current_status
+ * @property string|null                     $nis
+ * @property string|null                     $year_of_enrollment
+ * @property string|null                     $graduate_year
+ * @property string|null                     $major
+ * @property string|null                     $testimony
+ * @property string|null                     $profile_photo_url
+ * @property string|null                     $activities_doc_url
+ * @property string|null                     $expertise_certification_url
+ * @property bool                            $is_visible
+ * @property bool                            $is_featured
+ * @property bool                            $is_featured_testimony
+ * @property string|null                     $student_status
+ * @property string|null                     $ai_sentiment
+ * @property float|null                      $ai_score
+ * @property string|null                     $ai_rejection_reason
+ * @property \Illuminate\Support\Carbon|null $submitted_at
+ *
+ * ── Computed / Accessor properties ────────────────────────────
+ * @property-read string                     $full_titled_name
+ * @property-read string                     $display_status
+ *
+ * ── Relationships ──────────────────────────────────────────────
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Business>  $businesses
+ * @property-read int|null                   $businesses_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Company>   $companies
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Skill>     $skills
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Business>  $memberOfBusinesses
+ */
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, \App\Traits\HasImage;

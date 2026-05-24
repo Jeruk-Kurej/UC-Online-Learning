@@ -3,16 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business;
-use App\Models\Company;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
+/**
+ * Class FeaturedController
+ *
+ * Coordinates and retrieves showcase aggregates for the landing or featured ventures/students dashboard,
+ * combining top entrepreneur/intrapreneur students, spotlights, dynamic category counts, and high-scoring AI-approved testimonies.
+ */
 class FeaturedController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a showcase listing of featured students, ventures, and voices.
+     */
+    public function index(Request $request): View
     {
-
         $featuredStudentQuery = fn () => User::query()
             ->where('is_visible', true)
             ->where('is_featured', true)
@@ -48,7 +56,6 @@ class FeaturedController extends Controller
             ->get();
 
         // Community Voices: users with AI-approved testimonies (NOT tied to is_featured toggle)
-        // is_featured only controls Featured Students + Featured Ventures sections above.
         $testimonies = User::where('is_visible', true)
             ->where('is_featured_testimony', true)
             ->whereNotNull('testimony')
@@ -57,9 +64,9 @@ class FeaturedController extends Controller
             ->where(function ($q) {
                 // Prefer AI-approved testimonies (score >= 80), but fallback to any visible testimony
                 $q->where('ai_score', '>=', 80)
-                  ->orWhere(function ($q2) {
-                      $q2->whereNull('ai_score')->where('is_visible', true);
-                  });
+                    ->orWhere(function ($q2) {
+                        $q2->whereNull('ai_score')->where('is_visible', true);
+                    });
             })
             ->orderByDesc('ai_score')
             ->latest()
@@ -71,7 +78,7 @@ class FeaturedController extends Controller
             'topEntrepreneurs',
             'spotlightBusinesses',
             'categories',
-            'testimonies',
+            'testimonies'
         ));
     }
 }

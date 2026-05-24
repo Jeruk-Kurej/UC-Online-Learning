@@ -2,22 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Imports\FormResponseImport;
+use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Province;
-
-use App\Imports\UCOStudentImport;
-use App\Imports\FormResponseImport;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rules;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Excel as ExcelFormat;
 
+/**
+ * Class UserController
+ *
+ * Handles student/user directory lists, administrative CRUD operations,
+ * profile catalog show views, Google Drive media proxies, and background CSV/Excel imports.
+ */
 class UserController extends Controller
 {
     /**
@@ -36,9 +41,9 @@ class UserController extends Controller
             ->first();
 
         return [
-            'total' => (int) ($row->total ?? 0),
-            'intrapreneurs' => (int) ($row->intrapreneurs ?? 0),
-            'entrepreneurs' => (int) ($row->entrepreneurs ?? 0),
+            'total' => (int) ($row?->total ?? 0),
+            'intrapreneurs' => (int) ($row?->intrapreneurs ?? 0),
+            'entrepreneurs' => (int) ($row?->entrepreneurs ?? 0),
         ];
     }
 
@@ -49,11 +54,11 @@ class UserController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        
-        if (!$user) {
+
+        if (! $user) {
             abort(401, 'Unauthenticated.');
         }
-        
+
         return $user;
     }
 
@@ -63,7 +68,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         // ✅ CHANGED: Use Gate instead of authorize for better error handling
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can view user list.');
         }
 
@@ -75,16 +80,16 @@ class UserController extends Controller
         $major = $request->get('major');
         $yearOfEnrollment = $request->get('year_of_enrollment');
 
-        if (!in_array($sortName, ['asc', 'desc'], true)) {
+        if (! in_array($sortName, ['asc', 'desc'], true)) {
             $sortName = null;
         }
 
-        if (!in_array($sortYear, ['asc', 'desc'], true)) {
+        if (! in_array($sortYear, ['asc', 'desc'], true)) {
             $sortYear = null;
         }
 
         $allowedStudentStatuses = ['active', 'inactive', 'cuti', 'alumni'];
-        if (!in_array($studentStatus, $allowedStudentStatuses, true)) {
+        if (! in_array($studentStatus, $allowedStudentStatuses, true)) {
             $studentStatus = null;
         }
 
@@ -115,7 +120,7 @@ class UserController extends Controller
         }
 
         // Stable fallback ordering
-        if (!$sortName && !$sortYear) {
+        if (! $sortName && ! $sortYear) {
             $query->latest();
         } else {
             $query->orderBy('created_at', 'desc');
@@ -177,12 +182,12 @@ class UserController extends Controller
     {
         $featuredStats = $this->getFeaturedUserStats();
 
-        return response()->json([
-            'total'          => User::where('role', '!=', 'admin')->count(),
-            'entrepreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
-            'intrapreneurs'  => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
-            'alumni'         => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
-            'featured'       => $featuredStats['total'],
+        return new JsonResponse([
+            'total' => User::where('role', '!=', 'admin')->count(),
+            'entrepreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
+            'intrapreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
+            'alumni' => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
+            'featured' => $featuredStats['total'],
             'featured_intrapreneurs' => $featuredStats['intrapreneurs'],
             'featured_entrepreneurs' => $featuredStats['entrepreneurs'],
         ]);
@@ -193,7 +198,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can create users.');
         }
 
@@ -209,7 +214,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can create users.');
         }
 
@@ -219,7 +224,7 @@ class UserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
             'student_status' => 'required_if:role,user|nullable|string',
-            
+
             // Identity & Contact
             'prefix_title' => 'nullable|string|max:255',
             'suffix_title' => 'nullable|string|max:255',
@@ -228,7 +233,7 @@ class UserController extends Controller
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
             'linkedin' => 'nullable|string|max:255',
-            
+
             // Academic & Career
             'nis' => 'nullable|string|max:255',
             'year_of_enrollment' => 'nullable|string|max:50',
@@ -236,10 +241,10 @@ class UserController extends Controller
             'major' => 'nullable|string|max:255',
             'current_status' => 'nullable|string|max:255',
             'testimony' => 'nullable|string',
-            
+
             'profile_photo_url' => 'nullable|image|max:5120',
             'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
-            
+
             'is_visible' => 'nullable|boolean',
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
@@ -271,24 +276,27 @@ class UserController extends Controller
         // Handle File Uploads
         if ($request->hasFile('profile_photo_url')) {
             $file = $request->file('profile_photo_url');
-            $path = $file->storeAs('profile-photos', Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['profile_photo_url'] = '/storage/' . $path;
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                $userData['profile_photo_url'] = '/storage/'.$path;
+            }
         }
-
-
 
         if ($request->hasFile('activities_doc_url')) {
             $file = $request->file('activities_doc_url');
-            $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['activities_doc_url'] = '/storage/' . $path;
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                $userData['activities_doc_url'] = '/storage/'.$path;
+            }
         }
 
         // Create the user
         $newUser = User::create($userData);
 
         // Assign businesses if selected
-        if (!empty($request->owned_businesses)) {
-            Business::whereIn('id', $request->owned_businesses)
+        $ownedBusinesses = (array) $request->input('owned_businesses');
+        if (! empty($ownedBusinesses)) {
+            Business::whereIn('id', $ownedBusinesses)
                 ->update(['user_id' => $newUser->id]);
         }
 
@@ -315,7 +323,7 @@ class UserController extends Controller
                     ->with('category');
             },
             'skills',
-            'companies.category'
+            'companies.category',
         ]);
 
         return view('users.show', [
@@ -328,21 +336,25 @@ class UserController extends Controller
      */
     public function proxyGoogleDriveImage($id)
     {
-        $url = "https://drive.google.com/uc?export=view&id=" . $id;
+        $url = 'https://drive.google.com/uc?export=view&id='.$id;
 
         $ch = curl_init();
+        if ($ch === false) {
+            return redirect($url);
+        }
+
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-        
+
         $data = curl_exec($ch);
-        $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
+        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($httpCode !== 200 || !$data) {
+        if ($httpCode !== 200 || ! $data) {
             return redirect($url);
         }
 
@@ -356,7 +368,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can edit users.');
         }
 
@@ -383,17 +395,17 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can update users.');
         }
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
             'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
             'role' => 'required|in:user,admin',
             'student_status' => 'required_if:role,user|nullable|string',
-            
+
             // Identity & Contact
             'prefix_title' => 'nullable|string|max:255',
             'suffix_title' => 'nullable|string|max:255',
@@ -402,7 +414,7 @@ class UserController extends Controller
             'mobile_number' => 'nullable|string|max:50',
             'whatsapp' => 'nullable|string|max:50',
             'linkedin' => 'nullable|string|max:255',
-            
+
             // Academic & Career
             'nis' => 'nullable|string|max:255',
             'year_of_enrollment' => 'nullable|string|max:50',
@@ -410,7 +422,7 @@ class UserController extends Controller
             'major' => 'nullable|string|max:255',
             'current_status' => 'nullable|string|max:255',
             'testimony' => 'nullable|string',
-            
+
             // Files & Deletion flags
             'profile_photo_url' => 'nullable|image|max:5120',
             'delete_profile_photo_url' => 'nullable|boolean',
@@ -418,7 +430,7 @@ class UserController extends Controller
             'activities_docs.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:10240'],
             'delete_activities_files' => ['nullable', 'array'],
             'delete_activities_files.*' => ['string'],
-            
+
             'is_visible' => 'nullable|boolean',
             'owned_businesses' => 'nullable|array',
             'owned_businesses.*' => 'exists:businesses,id',
@@ -445,7 +457,7 @@ class UserController extends Controller
             'is_visible' => $request->has('is_visible'),
         ];
 
-        if (!empty($validated['password'])) {
+        if (! empty($validated['password'])) {
             $userData['password'] = Hash::make($validated['password']);
         }
 
@@ -459,10 +471,12 @@ class UserController extends Controller
         if ($request->hasFile('profile_photo_url')) {
             // Delete old file if exists
             $this->deleteFileFromStorage($user->profile_photo_url);
-            
+
             $file = $request->file('profile_photo_url');
-            $path = $file->storeAs('profile-photos', Str::slug($userData['name']) . '_' . time() . '.' . $file->getClientOriginalExtension(), 'public');
-            $userData['profile_photo_url'] = '/storage/' . $path;
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                $userData['profile_photo_url'] = '/storage/'.$path;
+            }
         }
 
         // Handle activities files deletion and uploading
@@ -486,9 +500,13 @@ class UserController extends Controller
         // Upload new files
         $newUrls = [];
         if ($request->hasFile('activities_docs')) {
-            foreach ($request->file('activities_docs') as $file) {
-                $path = $file->storeAs('student-activities', 'act_' . Str::slug($userData['name']) . '_' . time() . '_' . Str::random(5) . '.' . $file->getClientOriginalExtension(), 'public');
-                $newUrls[] = '/storage/' . $path;
+            $files = $request->file('activities_docs');
+            $files = is_array($files) ? $files : [$files];
+            foreach ($files as $file) {
+                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                    $path = $file->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
+                    $newUrls[] = '/storage/'.$path;
+                }
             }
         }
 
@@ -496,18 +514,20 @@ class UserController extends Controller
         $userData['activities_doc_url'] = count($finalUrls) > 0 ? implode(';', $finalUrls) : null;
 
         // Update the user
-        $user->update($userData);
+        $user->fill($userData);
+        $user->save();
 
         // Update business ownership if selected
         if ($request->has('owned_businesses')) {
+            $ownedBusinesses = (array) $request->input('owned_businesses');
             // Remove this user from businesses they no longer own
             Business::where('user_id', $user->id)
-                ->whereNotIn('id', $request->owned_businesses ?? [])
+                ->whereNotIn('id', $ownedBusinesses)
                 ->update(['user_id' => null]);
-            
+
             // Transfer selected businesses to this user
-            if (!empty($request->owned_businesses)) {
-                Business::whereIn('id', $request->owned_businesses)
+            if (! empty($ownedBusinesses)) {
+                Business::whereIn('id', $ownedBusinesses)
                     ->update(['user_id' => $user->id]);
             }
         }
@@ -520,34 +540,34 @@ class UserController extends Controller
     /**
      * Toggle the featured status of a user.
      */
-    public function toggleFeatured(User $user)
+    public function toggleFeatured(Request $request, User $user)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
+        if (! $this->getAuthUser()->isAdmin()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
             }
             abort(403, 'Only administrators can toggle featured status.');
         }
 
         // Cannot feature an inactive user
-        if (!$user->is_visible && !$user->is_featured) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
+        if (! $user->is_visible && ! $user->is_featured) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
             }
-            return back()->with('error', "Cannot feature an inactive user. Please activate the user first.");
+
+            return back()->with('error', 'Cannot feature an inactive user. Please activate the user first.');
         }
 
-
-
-        $user->update(['is_featured' => !$user->is_featured]);
+        $user->is_featured = ! $user->is_featured;
+        $user->save();
 
         $status = $user->is_featured ? 'added to' : 'removed from';
 
-        if (request()->ajax() || request()->wantsJson()) {
-            return response()->json([
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse([
                 'success' => true,
                 'is_featured' => $user->is_featured,
-                'message' => "User '{$user->name}' has been {$status} featured list."
+                'message' => "User '{$user->name}' has been {$status} featured list.",
             ]);
         }
 
@@ -557,39 +577,39 @@ class UserController extends Controller
     /**
      * Toggle the visibility status of a user.
      */
-    public function toggleStatus(User $user)
+    public function toggleStatus(Request $request, User $user)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Only administrators can toggle user status.'], 403);
+        if (! $this->getAuthUser()->isAdmin()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle user status.'], 403);
             }
             abort(403, 'Only administrators can toggle user status.');
         }
 
-        $newVisibility = !$user->is_visible;
+        $newVisibility = ! $user->is_visible;
         $updateData = ['is_visible' => $newVisibility];
-        
+
         // If deactivating, also turn off featured status
-        if (!$newVisibility) {
+        if (! $newVisibility) {
             $updateData['is_featured'] = false;
         }
 
-        $user->update($updateData);
+        $user->fill($updateData);
+        $user->save();
 
         $status = $user->is_visible ? 'activated' : 'deactivated';
 
-        if (request()->ajax() || request()->wantsJson()) {
-            return response()->json([
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse([
                 'success' => true,
                 'is_visible' => $user->is_visible,
                 'is_featured' => $user->is_featured,
-                'message' => "User '{$user->name}' has been {$status} successfully."
+                'message' => "User '{$user->name}' has been {$status} successfully.",
             ]);
         }
 
         return back()->with('success', "User '{$user->name}' has been {$status} successfully.");
     }
-
 
     /**
      * Remove the specified user from storage.
@@ -600,13 +620,12 @@ class UserController extends Controller
         abort(405, 'Delete action is disabled. Use Toggle Status instead.');
     }
 
-
     /**
      * Import users from Excel file.
      */
     public function import(Request $request)
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can import users.');
         }
 
@@ -622,41 +641,46 @@ class UserController extends Controller
             $importId = (string) Str::uuid();
             $file = $request->file('file');
 
+            if (! $file instanceof \Illuminate\Http\UploadedFile) {
+                throw new \RuntimeException('No valid file was uploaded.');
+            }
+
             // Store file so queue worker can access it
             $path = $file->store('imports', 'local');
 
             // Peek at the file to auto-detect format
-            $importer = $this->detectImporter($file->getRealPath(), $importId, $file->getClientOriginalName());
+            $importer = $this->detectImporter((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
 
             // Queue it — runs in background via artisan queue:work
-            Excel::queueImport($importer, $path, 'local');
+            Excel::queueImport($importer, (string) $path, 'local');
 
             $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
-            
+
             session(['active_user_import_id' => $importId]);
 
             if ($request->wantsJson()) {
-                return response()->json([
+                return new JsonResponse([
                     'success' => true,
                     'importId' => $importId,
                     'format' => $format,
-                    'message' => "Import started ({$format})! Format auto-detected."
+                    'message' => "Import started ({$format})! Format auto-detected.",
                 ]);
             }
 
             return back()
                 ->with('import_success', "Import started ({$format})! Format auto-detected. Please wait.");
         } catch (\Exception $e) {
-            Log::error('User import exception: ' . $e->getMessage());
+            Log::error('User import exception: '.$e->getMessage());
             if ($request->wantsJson()) {
-                return response()->json([
+                return new JsonResponse([
                     'success' => false,
-                    'message' => 'Import failed: ' . $e->getMessage()
+                    'message' => 'Import failed: '.$e->getMessage(),
                 ], 500);
             }
+
             return redirect()
                 ->route('users.index')
-                ->with('error', 'Import failed: ' . $e->getMessage());
+                ->with('error', 'Import failed: '.$e->getMessage());
         }
     }
 
@@ -671,12 +695,15 @@ class UserController extends Controller
             if (stripos($originalName, 'UCO') !== false || stripos($originalName, 'Student') !== false) {
                 return new UCOStudentImport($importId);
             }
+
             return new FormResponseImport($importId);
         }
 
         // For CSV/Raw: read first 2KB and search for markers
         $handle = fopen($path, 'r');
-        if (!$handle) return new FormResponseImport($importId);
+        if (! $handle) {
+            return new FormResponseImport($importId);
+        }
         $peek = fread($handle, 2048);
         fclose($handle);
 
@@ -684,7 +711,7 @@ class UserController extends Controller
         if (stripos($peek, 'NIS') !== false && stripos($peek, 'Sub Prodi') !== false) {
             return new UCOStudentImport($importId);
         }
-        
+
         return new FormResponseImport($importId);
     }
 
@@ -693,7 +720,7 @@ class UserController extends Controller
      */
     public function downloadTemplate()
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403, 'Only administrators can download import template.');
         }
 
@@ -705,7 +732,7 @@ class UserController extends Controller
             'password',
             'role',
             'is_active',
-            
+
             // Student Info
             'nis',
             'nisn',
@@ -716,7 +743,7 @@ class UserController extends Controller
             'is_graduate',
             'cgpa',
             'edu_level',
-            
+
             // Personal Data
             'gender',
             'birth_date',
@@ -724,7 +751,7 @@ class UserController extends Controller
             'religion',
             'citizenship',
             'citizenship_no',
-            
+
             // Contact Info - Primary
             'address',
             'address_city',
@@ -733,7 +760,7 @@ class UserController extends Controller
             'zip_code',
             'phone_number',
             'mobile_number',
-            
+
             // Contact Info - Secondary
             'address2',
             'address_city2',
@@ -742,7 +769,7 @@ class UserController extends Controller
             'zip_code2',
             'phone_number2',
             'mobile_number2',
-            
+
             // Social Media
             'whatsapp',
             'bbm',
@@ -750,7 +777,7 @@ class UserController extends Controller
             'facebook',
             'twitter',
             'instagram',
-            
+
             // Academic History
             'academic_advisor',
             'previous_school_name',
@@ -759,13 +786,13 @@ class UserController extends Controller
             'start_year',
             'end_year',
             'score',
-            
+
             // Certificates
             'certificate_no_1',
             'certificate_date_1',
             'certificate_no_2',
             'certificate_date_2',
-            
+
             // Father Data - Basic
             'father_name',
             'father_birth_city',
@@ -776,7 +803,7 @@ class UserController extends Controller
             'father_npwp_no',
             'father_religion',
             'father_bpjs_no',
-            
+
             // Father Data - Contact
             'father_address',
             'father_address_city',
@@ -784,7 +811,7 @@ class UserController extends Controller
             'father_mobile',
             'father_email',
             'father_bbm',
-            
+
             // Father Data - Education & Work
             'father_education',
             'father_education_major',
@@ -796,7 +823,7 @@ class UserController extends Controller
             'father_business_title',
             'father_business_revenue',
             'father_special_need',
-            
+
             // Mother Data - Basic
             'mother_name',
             'mother_birth_city',
@@ -807,7 +834,7 @@ class UserController extends Controller
             'mother_npwp_no',
             'mother_religion',
             'mother_bpjs_no',
-            
+
             // Mother Data - Contact
             'mother_address',
             'mother_address_city',
@@ -815,7 +842,7 @@ class UserController extends Controller
             'mother_mobile',
             'mother_email',
             'mother_bbm',
-            
+
             // Mother Data - Education & Work
             'mother_education',
             'mother_education_major',
@@ -827,7 +854,7 @@ class UserController extends Controller
             'mother_business_title',
             'mother_business_revenue',
             'mother_special_need',
-            
+
             // Graduation Data
             'final_project_indonesia',
             'final_project_english',
@@ -856,7 +883,7 @@ class UserController extends Controller
             'password123',                 // password
             'student',                     // role
             '1',                          // is_active
-            
+
             // Student Info
             '12345678',                    // nis
             '1234567890',                  // nisn
@@ -867,7 +894,7 @@ class UserController extends Controller
             '0',                          // is_graduate
             '3.85',                        // cgpa
             'Bachelor',                    // edu_level
-            
+
             // Personal Data
             'Male',                        // gender
             '2000-01-01',                  // birth_date
@@ -875,7 +902,7 @@ class UserController extends Controller
             'Islam',                       // religion
             'Indonesian',                  // citizenship
             '3201010101000001',           // citizenship_no
-            
+
             // Contact Info - Primary
             'Jl. Example No. 123',        // address
             'Jakarta',                     // address_city
@@ -884,7 +911,7 @@ class UserController extends Controller
             '12345',                       // zip_code
             '021-1234567',                // phone_number
             '0812-3456-7890',             // mobile_number
-            
+
             // Contact Info - Secondary
             '',                           // address2
             '',                           // address_city2
@@ -893,7 +920,7 @@ class UserController extends Controller
             '',                           // zip_code2
             '',                           // phone_number2
             '',                           // mobile_number2
-            
+
             // Social Media
             '0812-3456-7890',             // whatsapp
             '',                           // bbm
@@ -901,7 +928,7 @@ class UserController extends Controller
             '',                           // facebook
             '',                           // twitter
             '',                           // instagram
-            
+
             // Academic History
             'Dr. Jane Smith',             // academic_advisor
             'SMA Example',                // previous_school_name
@@ -910,13 +937,13 @@ class UserController extends Controller
             '2018',                        // start_year
             '2021',                        // end_year
             '85.5',                        // score
-            
+
             // Certificates
             '',                           // certificate_no_1
             '',                           // certificate_date_1
             '',                           // certificate_no_2
             '',                           // certificate_date_2
-            
+
             // Father Data - Basic
             'John Doe Sr.',               // father_name
             'Jakarta',                     // father_birth_city
@@ -927,7 +954,7 @@ class UserController extends Controller
             '',                           // father_npwp_no
             'Islam',                       // father_religion
             '',                           // father_bpjs_no
-            
+
             // Father Data - Contact
             'Jl. Example No. 123',        // father_address
             'Jakarta',                     // father_address_city
@@ -935,7 +962,7 @@ class UserController extends Controller
             '0811-1111-1111',             // father_mobile
             'father@example.com',         // father_email
             '',                           // father_bbm
-            
+
             // Father Data - Education & Work
             'Bachelor',                    // father_education
             'Business',                    // father_education_major
@@ -947,7 +974,7 @@ class UserController extends Controller
             'CEO',                         // father_business_title
             '> 1B',                        // father_business_revenue
             '',                           // father_special_need
-            
+
             // Mother Data - Basic
             'Jane Doe',                    // mother_name
             'Jakarta',                     // mother_birth_city
@@ -958,7 +985,7 @@ class UserController extends Controller
             '',                           // mother_npwp_no
             'Islam',                       // mother_religion
             '',                           // mother_bpjs_no
-            
+
             // Mother Data - Contact
             'Jl. Example No. 123',        // mother_address
             'Jakarta',                     // mother_address_city
@@ -966,7 +993,7 @@ class UserController extends Controller
             '0822-2222-2222',             // mother_mobile
             'mother@example.com',         // mother_email
             '',                           // mother_bbm
-            
+
             // Mother Data - Education & Work
             'Bachelor',                    // mother_education
             'Education',                   // mother_education_major
@@ -978,7 +1005,7 @@ class UserController extends Controller
             'Principal',                   // mother_business_title
             '500M - 1B',                   // mother_business_revenue
             '',                           // mother_special_need
-            
+
             // Graduation Data
             '',                           // final_project_indonesia
             '',                           // final_project_english
@@ -999,21 +1026,21 @@ class UserController extends Controller
             '',                           // business_title
         ];
 
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
 
         // Add headers
         $col = 'A';
         foreach ($headers as $header) {
-            $sheet->setCellValue($col . '1', $header);
-            $sheet->getStyle($col . '1')->getFont()->setBold(true);
+            $sheet->setCellValue($col.'1', $header);
+            $sheet->getStyle($col.'1')->getFont()->setBold(true);
             $col++;
         }
 
         // Add sample data
         $col = 'A';
         foreach ($sampleData as $value) {
-            $sheet->setCellValue($col . '2', $value);
+            $sheet->setCellValue($col.'2', $value);
             $col++;
         }
 
@@ -1023,12 +1050,12 @@ class UserController extends Controller
         }
 
         $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        
-        $fileName = 'users_import_template_' . date('Y-m-d') . '.xlsx';
+
+        $fileName = 'users_import_template_'.date('Y-m-d').'.xlsx';
         $tempFile = tempnam(sys_get_temp_dir(), $fileName);
-        
+
         $writer->save($tempFile);
-        
+
         return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 
@@ -1037,7 +1064,7 @@ class UserController extends Controller
      */
     private function deleteFileFromStorage(?string $pathOrUrl): void
     {
-        if (!$pathOrUrl) {
+        if (! $pathOrUrl) {
             return;
         }
 
@@ -1048,13 +1075,14 @@ class UserController extends Controller
             } catch (\Throwable $e) {
                 // silently swallow
             }
+
             return;
         }
 
         // Normalize local storage path
         $relativePath = $pathOrUrl;
         if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
-            $relativePath = parse_url($relativePath, PHP_URL_PATH);
+            $relativePath = (string) (parse_url($relativePath, PHP_URL_PATH) ?? $relativePath);
         }
 
         if (str_starts_with($relativePath, '/storage/')) {

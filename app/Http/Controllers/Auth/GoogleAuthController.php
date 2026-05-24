@@ -26,13 +26,13 @@ class GoogleAuthController extends Controller
 
         $email = $googleUser->getEmail();
 
-        if (!$email) {
+        if (! $email) {
             return redirect()->route('login')->with('error', 'Your Google account does not have an email address.');
         }
 
         $user = User::where('email', $email)->first();
 
-        if (!$user) {
+        if (! $user) {
             return redirect()->route('login')->with('error', 'No account found for this email. Please contact the admin.');
         }
 

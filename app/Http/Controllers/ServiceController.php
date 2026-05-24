@@ -5,34 +5,45 @@ namespace App\Http\Controllers;
 use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
+/**
+ * Class ServiceController
+ *
+ * Handles creation, storage, editing, updating, and deletion of services associated with businesses.
+ */
 class ServiceController extends Controller
 {
     /**
-     * Get authenticated user as User instance
+     * Get authenticated user as User instance.
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthenticated
      */
     private function getAuthUser(): User
     {
         /** @var User $user */
         $user = Auth::user();
-        
-        if (!$user) {
+
+        if (! $user) {
             abort(401, 'Unauthenticated.');
         }
-        
+
         return $user;
     }
 
     /**
-     * Check if user can manage business
+     * Check if user can manage business.
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthorized
      */
     private function authorizeBusinessAccess(Business $business): void
     {
         $user = $this->getAuthUser();
-        
-        if (!$business->canBeManagedBy($user)) {
+
+        if (! $business->canBeManagedBy($user)) {
             abort(403, 'Unauthorized action.');
         }
     }
@@ -40,12 +51,12 @@ class ServiceController extends Controller
     /**
      * Show the form for creating a new service.
      */
-    public function create(Business $business)
+    public function create(Business $business): RedirectResponse|View
     {
         $this->authorizeBusinessAccess($business);
 
         // Prevent creating services if NOT in service mode
-        if (!$business->isServiceMode()) {
+        if (! $business->isServiceMode()) {
             return redirect()
                 ->route('businesses.show', $business)
                 ->withErrors(['business_mode' => 'This business is not in Service mode.']);
@@ -57,16 +68,16 @@ class ServiceController extends Controller
     /**
      * Store a newly created service in storage.
      */
-    public function store(Request $request, Business $business)
+    public function store(Request $request, Business $business): RedirectResponse
     {
         $this->authorizeBusinessAccess($business);
 
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'description'=> 'required|string',
-            'price'      => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
             'price_type' => 'required|in:fixed,starting_from',
-            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
         $validated['business_id'] = $business->id;
@@ -74,7 +85,9 @@ class ServiceController extends Controller
 
         // Handle Photo Upload
         if ($request->hasFile('photo')) {
-            $path = $request->file('photo')->store('services', 'public');
+            /** @var \Illuminate\Http\UploadedFile $photoFile */
+            $photoFile = $request->file('photo');
+            $path = $photoFile->store('services', 'public');
             $validated['photo_url'] = $path;
         }
 
@@ -88,7 +101,7 @@ class ServiceController extends Controller
     /**
      * Show the form for editing the specified service.
      */
-    public function edit(Business $business, Product $service)
+    public function edit(Business $business, Product $service): View
     {
         $this->authorizeBusinessAccess($business);
 
@@ -102,7 +115,7 @@ class ServiceController extends Controller
     /**
      * Update the specified service in storage.
      */
-    public function update(Request $request, Business $business, Product $service)
+    public function update(Request $request, Business $business, Product $service): RedirectResponse
     {
         $this->authorizeBusinessAccess($business);
 
@@ -111,11 +124,11 @@ class ServiceController extends Controller
         }
 
         $validated = $request->validate([
-            'name'       => 'required|string|max:255',
-            'description'=> 'required|string',
-            'price'      => 'required|numeric|min:0',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
             'price_type' => 'required|in:fixed,starting_from',
-            'photo'      => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
         // Handle Photo Upload (delete old one if it exists)
@@ -123,11 +136,14 @@ class ServiceController extends Controller
             if ($service->getRawOriginal('photo_url')) {
                 Product::deleteCloudinaryImage($service->getRawOriginal('photo_url'));
             }
-            $path = $request->file('photo')->store('services', 'public');
+            /** @var \Illuminate\Http\UploadedFile $photoFile */
+            $photoFile = $request->file('photo');
+            $path = $photoFile->store('services', 'public');
             $validated['photo_url'] = $path;
         }
 
-        $service->update($validated);
+        $service->fill($validated);
+        $service->save();
 
         return redirect()
             ->route('businesses.show', $business)
@@ -137,7 +153,7 @@ class ServiceController extends Controller
     /**
      * Remove the specified service from storage.
      */
-    public function destroy(Business $business, Product $service)
+    public function destroy(Business $business, Product $service): RedirectResponse
     {
         $this->authorizeBusinessAccess($business);
 
