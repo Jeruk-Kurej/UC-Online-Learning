@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Universitas Ciputra Online</title>
-        <link rel="icon" type="image/png" href="{{ asset('images/Logo UCO.png') }}">
+        <link rel="icon" type="image/png" href="{{ asset('images/logo-uco.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -37,7 +37,7 @@
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
             <div class="relative z-10">
                 <a href="/" class="flex flex-col items-center gap-3">
-                    <img src="{{ storage_image_url('assets/logo_uco.png') }}" alt="UCO Logo" class="w-20 h-20 object-contain shadow-lg">
+                    <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-20 h-20 object-contain shadow-lg">
                     <h1 class="text-2xl font-bold text-soft-gray-900">UCO Platform</h1>
                     <p class="text-sm text-soft-gray-600">Student & Alumni Community</p>
                 </a>
