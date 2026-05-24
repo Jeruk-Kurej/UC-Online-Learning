@@ -5,8 +5,8 @@
     $highlight = $isIntra ? $student->companies->first() : $student->businesses->first();
 @endphp
 
-<article
-    class="reveal-on-scroll uco-premium-card {{ $isIntra ? 'uco-premium-card--blue hover:border-blue-100/70' : 'uco-premium-card--orange hover:border-orange-100/70' }} group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl w-full flex flex-col justify-between"
+<a href="{{ route('users.show', $student) }}"
+    class="reveal-on-scroll uco-premium-card {{ $isIntra ? 'uco-premium-card--blue hover:border-blue-100/70' : 'uco-premium-card--orange hover:border-orange-100/70' }} group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl w-full flex flex-col justify-between cursor-pointer"
     style="transition-delay: {{ $delay }}ms"
 >
     <div>
@@ -22,7 +22,7 @@
             </div>
 
             <div class="min-w-0 flex-1">
-                <h3 class="truncate text-lg font-[900] text-gray-950">{{ $student->name }}</h3>
+                <h3 class="truncate text-lg font-[900] text-gray-950 group-hover:text-blue-600 transition-colors">{{ $student->name }}</h3>
                 <p class="text-xs font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
             </div>
         </div>
@@ -35,8 +35,8 @@
                     <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
                 </div>
                 <div>
-                    <p class="text-gray-400 font-medium">Graduate Year</p>
-                    <p class="text-gray-700 font-bold">{{ $student->graduate_year ?? 'N/A' }}</p>
+                    <p class="text-gray-400 font-medium">Batch</p>
+                    <p class="text-gray-700 font-bold">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
                 </div>
             </div>
         </div>
@@ -45,8 +45,15 @@
     <div class="mt-6">
         @if($isIntra && $highlight)
             <div class="rounded-xl bg-slate-50 p-4 border border-slate-100/80">
-                <p class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Career Highlight</p>
-                <p class="mt-1 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                <div class="flex items-center gap-3 mb-2">
+                    @if($highlight->logo_url)
+                        <img src="{{ $highlight->logo_url }}" class="h-8 w-8 rounded-md object-cover border border-slate-200" alt="Logo">
+                    @endif
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Career Highlight</p>
+                        <p class="mt-0.5 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                    </div>
+                </div>
                 @if($highlight->category)
                     <span class="inline-block mt-1 text-[9px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                         {{ $highlight->category->name }}
@@ -58,8 +65,15 @@
             </div>
         @elseif(!$isIntra && $highlight)
             <div class="rounded-xl bg-orange-50/50 p-4 border border-orange-100/80">
-                <p class="text-[9px] font-black uppercase tracking-[0.25em] text-orange-400/90">Venture Highlight</p>
-                <p class="mt-1 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                <div class="flex items-center gap-3 mb-2">
+                    @if($highlight->logo_url)
+                        <img src="{{ $highlight->logo_url }}" class="h-8 w-8 rounded-md object-cover border border-orange-200/60" alt="Logo">
+                    @endif
+                    <div>
+                        <p class="text-[9px] font-black uppercase tracking-[0.25em] text-orange-400/90">Venture Highlight</p>
+                        <p class="mt-0.5 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                    </div>
+                </div>
                 @if($highlight->category)
                     <span class="inline-block mt-1 text-[9px] font-bold text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-md">
                         {{ $highlight->category->name }}
@@ -81,4 +95,4 @@
             </div>
         @endif
     </div>
-</article>
+</a>

@@ -227,7 +227,7 @@
                     @php
                         $student = $featuredBusiness->user;
                     @endphp
-                    <article class="reveal-on-scroll uco-premium-card uco-premium-card--orange group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col md:flex-row overflow-hidden" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col md:flex-row overflow-hidden cursor-pointer" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
                         {{-- Left Column: Business Details --}}
                         <div class="flex-grow p-6 bg-gradient-to-br from-orange-50/10 to-white flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100/80">
@@ -244,7 +244,7 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <h3 class="text-2xl font-[900] text-gray-950 mt-0.5 leading-tight">{{ $featuredBusiness->name }}</h3>
+                                            <h3 class="text-2xl font-[900] text-gray-950 mt-0.5 leading-tight group-hover:text-uco-orange-600 transition-colors">{{ $featuredBusiness->name }}</h3>
                                         </div>
                                     </div>
                                     
@@ -256,9 +256,9 @@
                                 </div>
                                 
                                 <div class="mt-6 pt-4 border-t border-gray-50">
-                                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 hover:text-uco-orange-700 transition">
-                                        Visit Venture <i class="bi bi-arrow-right text-base"></i>
-                                    </a>
+                                    <span class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">
+                                        Visit Venture <i class="bi bi-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
+                                    </span>
                                 </div>
                             @else
                                 <div class="h-full flex flex-col items-center justify-center text-center py-12">
@@ -300,14 +300,14 @@
                                             <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
                                         </div>
                                         <div>
-                                            <p class="text-gray-400 font-medium">Graduate Year</p>
-                                            <p class="text-gray-700 font-bold">{{ $student->graduate_year ?? 'N/A' }}</p>
+                                            <p class="text-gray-400 font-medium">Batch</p>
+                                            <p class="text-gray-700 font-bold">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </article>
+                    </a>
                 @empty
                     <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
                         <div class="relative z-10 space-y-4">
