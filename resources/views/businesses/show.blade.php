@@ -441,13 +441,43 @@
                                         <div @if($product->getRawOriginal('photo_url')) 
                                                 @click="openFullscreen('{{ $product->photo_url }}', '{{ addslashes($product->name) }}')"
                                              @endif
-                                            class="group flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $product->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $product->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            
+                                            {{-- Manager Actions Overlay --}}
+                                            @auth
+                                                @if ($canManageBusiness)
+                                                    <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10" @click.stop>
+                                                        <a href="{{ route('businesses.products.edit', [$business, $product]) }}"
+                                                            class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-white text-gray-700 hover:text-uco-orange-600 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                            title="Edit Product">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <form action="{{ route('businesses.products.destroy', [$business, $product]) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                                            class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                                title="Delete Product">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endif
+                                            @endauth
+
                                             {{-- Product Image --}}
                                             <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 @if ($product->getRawOriginal('photo_url'))
                                                     <img src="{{ $product->photo_url }}"
                                                         alt="{{ $product->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <i class="bi bi-zoom-in text-[10px]"></i>
+                                                        <span>Zoom</span>
+                                                    </div>
                                                 @else
                                                     <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
@@ -465,15 +495,30 @@
                                                     {{ $product->description }}
                                                 </p>
 
-                                                {{-- Price --}}
-                                                <div class="mt-auto">
-                                                    @if(is_numeric($product->price))
-                                                        <span class="text-base font-extrabold text-[#f7931e]">
-                                                            Rp {{ number_format((float) $product->price, 0, ',', '.') }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
-                                                            Price Unspecified
+                                                {{-- Price & Price Type --}}
+                                                <div class="mt-auto flex flex-col items-start gap-1">
+                                                    <div>
+                                                        @if(is_numeric($product->price) && $product->price_type !== 'unspecified' && $product->price_type !== 'customize')
+                                                            <span class="text-base font-extrabold text-[#f7931e]">
+                                                                Rp {{ number_format((float) $product->price, 0, ',', '.') }}
+                                                            </span>
+                                                        @elseif($product->price_type === 'customize')
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Customize by Order
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Price Unspecified
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    @if(is_numeric($product->price) && in_array($product->price_type, ['fixed', 'negotiable']))
+                                                        <span class="inline-flex items-center text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                            @if($product->price_type === 'fixed')
+                                                                Fixed Price
+                                                            @elseif($product->price_type === 'negotiable')
+                                                                Negotiable
+                                                            @endif
                                                         </span>
                                                     @endif
                                                 </div>
@@ -513,67 +558,95 @@
                             @endauth
                         </div>
 
-                        {{-- Services List --}}
+                        {{-- Services Grid --}}
                         <div class="p-6">
                             @if ($businessServices->count() > 0)
-                                <div class="space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessServices as $service)
-                                        <div class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 bg-white">
-                                            {{-- Service Photo --}}
-                                            @if ($service->getRawOriginal('photo_url'))
-                                                <div class="relative h-40 bg-gray-100 overflow-hidden cursor-zoom-in"
-                                                     @click="openFullscreen('{{ $service->photo_url }}', '{{ addslashes($service->name) }}')">
-                                                    <img src="{{ $service->photo_url }}"
-                                                         alt="{{ $service->name }}"
-                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm">
-                                                        <i class="bi bi-zoom-in text-[10px]"></i>
-                                                        <span>View</span>
+                                        <div @if($service->getRawOriginal('photo_url')) 
+                                                @click="openFullscreen('{{ $service->photo_url }}', '{{ addslashes($service->name) }}')"
+                                             @endif
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $service->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            
+                                            {{-- Manager Actions Overlay --}}
+                                            @auth
+                                                @if ($canManageBusiness)
+                                                    <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10" @click.stop>
+                                                        <a href="{{ route('businesses.services.edit', [$business, $service]) }}"
+                                                            class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-white text-gray-700 hover:text-uco-orange-600 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                            title="Edit Service">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this service?');"
+                                                            class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                                title="Delete Service">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
-                                                </div>
-                                            @endif
-                                            <div class="p-5 flex items-start justify-between">
-                                                <div class="flex-1">
-                                                    <h4 class="font-semibold text-gray-900 mb-1">{{ $service->name }}</h4>
-                                                    <p class="text-sm text-gray-600 mb-3">{{ $service->description }}</p>
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="text-orange-600 font-bold">
-                                                            @if(is_numeric($service->price))
+                                                @endif
+                                            @endauth
+
+                                            {{-- Service Image --}}
+                                            <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                @if ($service->getRawOriginal('photo_url'))
+                                                    <img src="{{ $service->photo_url }}"
+                                                        alt="{{ $service->name }}"
+                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <i class="bi bi-zoom-in text-[10px]"></i>
+                                                        <span>Zoom</span>
+                                                    </div>
+                                                @else
+                                                    <i class="bi bi-image text-5xl text-gray-300"></i>
+                                                @endif
+                                            </div>
+
+                                            {{-- Service Info --}}
+                                            <div class="pt-4 px-4 pb-3 flex flex-col flex-grow">
+                                                {{-- Name --}}
+                                                <h4 class="font-bold text-gray-800 text-sm line-clamp-2 leading-snug mb-1.5 group-hover:text-uco-orange-600 transition-colors" title="{{ $service->name }}">
+                                                    {{ $service->name }}
+                                                    </h4>
+
+                                                {{-- Description --}}
+                                                <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                                                    {{ $service->description }}
+                                                </p>
+
+                                                {{-- Price & Price Type --}}
+                                                <div class="mt-auto flex flex-col items-start gap-1">
+                                                    <div>
+                                                        @if(is_numeric($service->price) && $service->price_type !== 'unspecified' && $service->price_type !== 'customize')
+                                                            <span class="text-base font-extrabold text-[#f7931e]">
                                                                 Rp {{ number_format((float) $service->price, 0, ',', '.') }}
-                                                            @else
-                                                                Unspecified
+                                                            </span>
+                                                        @elseif($service->price_type === 'customize')
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Customize by Order
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Price Unspecified
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    @if(is_numeric($service->price) && in_array($service->price_type, ['fixed', 'negotiable']))
+                                                        <span class="inline-flex items-center text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                            @if($service->price_type === 'fixed')
+                                                                Fixed Price
+                                                            @elseif($service->price_type === 'negotiable')
+                                                                Negotiable
                                                             @endif
                                                         </span>
-                                                        <span class="text-xs text-gray-500">/ {{ $service->price_type }}</span>
-                                                    </div>
-                                                </div>
-                                                @auth
-                                                    @if ($canManageBusiness && ($hasServicesEditRoute || $hasServicesDestroyRoute))
-                                                        <div class="flex items-center gap-2 ml-4">
-                                                            @if ($hasServicesEditRoute)
-                                                                <a href="{{ route('businesses.services.edit', [$business, $service]) }}"
-                                                                    class="inline-flex items-center justify-center w-8 h-8 bg-orange-50 text-orange-600 rounded hover:bg-orange-100 transition duration-150"
-                                                                    title="Edit Service">
-                                                                    <i class="bi bi-pencil"></i>
-                                                                </a>
-                                                            @endif
-                                                            @if ($hasServicesDestroyRoute)
-                                                                <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
-                                                                    method="POST"
-                                                                    onsubmit="return confirm('Delete {{ $service->name }}?');"
-                                                                    class="inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="inline-flex items-center justify-center w-8 h-8 bg-red-50 text-red-600 rounded hover:bg-red-100 transition duration-150"
-                                                                        title="Delete Service">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </div>
                                                     @endif
-                                                @endauth
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach

@@ -75,7 +75,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
+            'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
@@ -95,18 +96,6 @@ class ProductController extends Controller
         return redirect()
             ->route('businesses.show', $business)
             ->with('success', "Success! The product '{$product->name}' has been added.");
-    }
-
-    /**
-     * Display the specified product.
-     */
-    public function show(Business $business, Product $product): View
-    {
-        if ($product->business_id !== $business->id || $product->type !== 'product') {
-            abort(404);
-        }
-
-        return view('products.show', compact('business', 'product'));
     }
 
     /**
@@ -137,7 +126,8 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
+            'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
+            'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
         ]);
 
@@ -157,7 +147,7 @@ class ProductController extends Controller
         $product->save();
 
         return redirect()
-            ->route('businesses.products.show', [$business, $product])
+            ->route('businesses.show', $business)
             ->with('success', "Success! The product '{$product->name}' has been updated.");
     }
 

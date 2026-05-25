@@ -110,10 +110,35 @@
                         @enderror
                     </div>
 
+                    {{-- Price Type --}}
+                    @php
+                        $selectedPriceType = old('price_type', $service->price_type);
+                        if (($service->price === null || trim($service->price) === '') && !in_array($selectedPriceType, ['unspecified', 'customize'])) {
+                            $selectedPriceType = 'unspecified';
+                        }
+                    @endphp
+                    <div>
+                        <label for="price_type" class="block text-sm font-medium text-gray-700 mb-2">
+                            Price Type <span class="text-red-500">*</span>
+                        </label>
+                        <select name="price_type" 
+                                id="price_type" 
+                                required
+                                class="block w-full">
+                            <option value="fixed" {{ $selectedPriceType === 'fixed' ? 'selected' : '' }}>Fixed Price</option>
+                            <option value="negotiable" {{ $selectedPriceType === 'negotiable' ? 'selected' : '' }}>Negotiable</option>
+                            <option value="customize" {{ $selectedPriceType === 'customize' ? 'selected' : '' }}>Customize by Order</option>
+                            <option value="unspecified" {{ $selectedPriceType === 'unspecified' ? 'selected' : '' }}>Unspecified Price</option>
+                        </select>
+                        @error('price_type')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Price --}}
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                            Price (Rp) <span class="text-red-500">*</span>
+                            Price (Rp) <span class="text-red-500" id="price-required-star">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">Rp</span>
@@ -131,47 +156,61 @@
                         @enderror
                     </div>
 
-                    {{-- Price Type --}}
-                    <div>
-                        <label for="price_type" class="block text-sm font-medium text-gray-700 mb-2">
-                            Price Type <span class="text-red-500">*</span>
-                        </label>
-                        <select name="price_type" 
-                                id="price_type" 
-                                required
-                                class="block w-full">
-                            <option value="fixed" {{ old('price_type', $service->price_type) === 'fixed' ? 'selected' : '' }}>Fixed Price</option>
-                            <option value="starting_from" {{ old('price_type', $service->price_type) === 'starting_from' ? 'selected' : '' }}>Starting From</option>
-                        </select>
-                        @error('price_type')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    {{-- Service Photo (Optional) --}}
-                    <div x-data="{ preview: null }">
-                        <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">
+                    {{-- Service Photo Management --}}
+                    <div x-data="{ 
+                        previewUrl: '{{ $service->photo_url ?? '' }}',
+                        hasPhoto: {{ $service->photo_url ? 'true' : 'false' }},
+                        handleFileChange(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                this.previewUrl = URL.createObjectURL(file);
+                                this.hasPhoto = true;
+                            }
+                        },
+                        triggerUpload() {
+                            document.getElementById('photo').click();
+                        }
+                    }" class="space-y-4 pt-6 border-t border-gray-100">
+                        <label class="block text-sm font-medium text-gray-700">
                             Service Photo <span class="text-gray-400 font-normal">(Optional)</span>
                         </label>
 
-                        {{-- Current Photo Preview --}}
-                        @if($service->getRawOriginal('photo_url'))
-                            <div class="mb-3">
-                                <p class="text-xs text-gray-500 mb-1.5">Current photo:</p>
-                                <img src="{{ $service->photo_url }}" class="h-40 rounded-xl object-cover border border-gray-200" alt="Current service photo">
-                            </div>
-                        @endif
+                        {{-- Interactive Hover-to-Change Photo Container --}}
+                        <div class="relative w-48 h-48 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 group cursor-pointer"
+                             @click="triggerUpload()">
+                            
+                            {{-- Display current photo or preview --}}
+                            <template x-if="hasPhoto">
+                                <img :src="previewUrl" 
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                     alt="Service Photo">
+                            </template>
 
-                        <input type="file"
-                               name="photo"
-                               id="photo"
-                               accept="image/*"
-                               class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-uco-orange-50 file:text-uco-orange-700 hover:file:bg-uco-orange-100 cursor-pointer"
-                               @change="preview = $event.target.files[0] ? URL.createObjectURL($event.target.files[0]) : null">
-                        <div x-show="preview" class="mt-3">
-                            <p class="text-xs text-gray-500 mb-1.5">New photo preview:</p>
-                            <img :src="preview" class="h-40 rounded-xl object-cover border border-gray-200" alt="New photo preview">
+                            {{-- Display placeholder if no photo --}}
+                            <template x-if="!hasPhoto">
+                                <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center text-gray-400">
+                                    <i class="bi bi-cloud-arrow-up text-3xl mb-2 text-gray-300"></i>
+                                    <p class="text-[11px] font-bold uppercase tracking-wider">Upload Photo</p>
+                                    <p class="text-[9px] text-gray-400 mt-1">Click to choose image</p>
+                                </div>
+                            </template>
+
+                            {{-- Hover Overlay --}}
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-center p-4">
+                                <i class="bi bi-camera text-2xl mb-1.5"></i>
+                                <span class="text-xs font-extrabold uppercase tracking-wider" x-text="hasPhoto ? 'Change Photo' : 'Upload Photo'"></span>
+                                <span class="text-[9px] text-white/70 mt-1">Max 10MB</span>
+                            </div>
                         </div>
+
+                        {{-- Hidden File Input --}}
+                        <input type="file" 
+                               name="photo" 
+                               id="photo" 
+                               accept="image/*" 
+                               class="sr-only"
+                               @change="handleFileChange($event)">
+
                         @error('photo')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
@@ -216,14 +255,43 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        // Initialize TomSelect for price type
         const priceTypeSelect = document.getElementById("price_type");
+        const priceInput = document.getElementById("price");
+        const star = document.getElementById("price-required-star");
+
+        const handlePriceTypeChange = (value) => {
+            if (value === 'unspecified' || value === 'customize') {
+                priceInput.value = '';
+                priceInput.disabled = true;
+                priceInput.required = false;
+                priceInput.placeholder = value === 'unspecified' ? 'Price not specified' : 'Customized by order';
+                if (star) star.style.display = 'none';
+            } else {
+                priceInput.disabled = false;
+                priceInput.required = true;
+                priceInput.placeholder = '50000';
+                if (star) star.style.display = 'inline';
+            }
+        };
+
         if (priceTypeSelect && window.TomSelect) {
-            new TomSelect(priceTypeSelect, {
+            const ts = new TomSelect(priceTypeSelect, {
                 create: false,
                 placeholder: "-- Select Price Type --",
                 searchField: ["text"],
             });
+
+            ts.on('change', (val) => {
+                handlePriceTypeChange(val);
+            });
+
+            // Run initially
+            handlePriceTypeChange(ts.getValue());
+        } else if (priceTypeSelect) {
+            priceTypeSelect.addEventListener('change', (e) => {
+                handlePriceTypeChange(e.target.value);
+            });
+            handlePriceTypeChange(priceTypeSelect.value);
         }
     });
     </script>

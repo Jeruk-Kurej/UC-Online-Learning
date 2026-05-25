@@ -52,7 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 
     // Products and Services CRUD
-    Route::resource('showcase.products', ProductController::class)->parameters(['showcase' => 'business'])->names('businesses.products')->except(['index']);
+    Route::resource('showcase.products', ProductController::class)->parameters(['showcase' => 'business'])->names('businesses.products')->except(['index', 'show']);
     Route::resource('showcase.services', ServiceController::class)->parameters(['showcase' => 'business'])->names('businesses.services')->except(['index', 'show']);
 
     // Intrapreneur Achievements

@@ -1,7 +1,63 @@
 <x-app-layout>
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
         <style>
-            /* Custom styling if any */
+            .ts-wrapper {
+                width: 100% !important;
+                display: block !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .ts-wrapper .ts-control {
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 0.75rem !important;
+                padding: 10px 16px !important; 
+                min-height: 42px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+                background: white !important;
+                display: flex !important;
+                align-items: center !important;
+            }
+
+            .ts-wrapper.focus .ts-control {
+                border-color: #111827 !important; /* Soft Gray 900 */
+                box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
+                ring: none !important;
+            }
+
+            .ts-dropdown {
+                background-color: white !important;
+                border: 1px solid #e2e8f0 !important;
+                border-radius: 1rem !important;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+                margin-top: 6px !important;
+                padding: 6px !important;
+                z-index: 1000 !important;
+            }
+
+            .ts-dropdown .option {
+                padding: 8px 12px !important;
+                font-size: 13px !important;
+                color: #475569 !important;
+                border-radius: 0.75rem !important;
+                margin-bottom: 2px !important;
+                transition: all 0.15s ease !important;
+            }
+
+            .ts-dropdown .option.active {
+                background-color: #fff7ed !important;
+                color: #f97316 !important;
+                font-weight: 600 !important;
+            }
+
+            .ts-wrapper .ts-control>input {
+                font-size: 14px !important;
+            }
         </style>
     @endpush
     <div class="max-w-5xl mx-auto">
@@ -55,26 +111,30 @@
                         @enderror
                     </div>
 
-                    {{-- Product Photo --}}
+                    {{-- Price Type --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Product Photo <span class="text-gray-400 font-normal">(Optional)</span>
+                        <label for="price_type" class="block text-sm font-medium text-gray-700 mb-2">
+                            Price Type <span class="text-red-500">*</span>
                         </label>
-                        <x-image-preview 
-                            input-id="photo" 
-                            preview-id="product-photo"
-                            multiple="false"
-                            height="h-48"
-                            placeholder="Click or drag photo here"
-                            hint="Select one image — Max 10MB"
-                        />
-                        <input type="file" name="photo" id="photo" accept="image/*" class="sr-only">
+                        <select name="price_type" 
+                                id="price_type" 
+                                required
+                                class="block w-full">
+                            <option value="">-- Select Price Type --</option>
+                            <option value="fixed" {{ old('price_type') === 'fixed' ? 'selected' : '' }}>Fixed Price</option>
+                            <option value="negotiable" {{ old('price_type') === 'negotiable' ? 'selected' : '' }}>Negotiable</option>
+                            <option value="customize" {{ old('price_type') === 'customize' ? 'selected' : '' }}>Customize by Order</option>
+                            <option value="unspecified" {{ old('price_type') === 'unspecified' ? 'selected' : '' }}>Unspecified Price</option>
+                        </select>
+                        @error('price_type')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     {{-- Price --}}
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                            Price (Rp) <span class="text-red-500">*</span>
+                            Price (Rp) <span class="text-red-500" id="price-required-star">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">Rp</span>
@@ -93,6 +153,68 @@
                         @enderror
                     </div>
 
+                    {{-- Product Photo --}}
+                    <div x-data="{ 
+                        previewUrl: '',
+                        hasPhoto: false,
+                        handleFileChange(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                this.previewUrl = URL.createObjectURL(file);
+                                this.hasPhoto = true;
+                            }
+                        },
+                        triggerUpload() {
+                            document.getElementById('photo').click();
+                        }
+                    }" class="space-y-4">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Product Photo <span class="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        
+                        {{-- Interactive Upload Box --}}
+                        <div class="relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 hover:border-orange-300 shadow-sm bg-gray-50 group cursor-pointer transition-colors"
+                             @click="triggerUpload()">
+                            
+                            {{-- Display preview if uploaded --}}
+                            <template x-if="hasPhoto">
+                                <img :src="previewUrl" 
+                                     class="w-full h-full object-cover"
+                                     alt="Preview Product Photo">
+                            </template>
+
+                            {{-- Display placeholder if no photo --}}
+                            <template x-if="!hasPhoto">
+                                <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center text-gray-400">
+                                    <i class="bi bi-cloud-arrow-up text-3xl mb-2 text-gray-300"></i>
+                                    <p class="text-[11px] font-bold uppercase tracking-wider">Upload Photo</p>
+                                    <p class="text-[9px] text-gray-400 mt-1">Click to choose image</p>
+                                </div>
+                            </template>
+
+                            {{-- Hover Overlay --}}
+                            <template x-if="hasPhoto">
+                                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-center p-4">
+                                    <i class="bi bi-camera text-2xl mb-1.5"></i>
+                                    <span class="text-xs font-extrabold uppercase tracking-wider">Change Photo</span>
+                                    <span class="text-[9px] text-white/70 mt-1">Max 10MB</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Hidden File Input --}}
+                        <input type="file" 
+                               name="photo" 
+                               id="photo" 
+                               accept="image/*" 
+                               class="sr-only"
+                               @change="handleFileChange($event)">
+
+                        @error('photo')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Submit Buttons - Elegant Design --}}
                     <div class="flex items-center justify-between pt-6 border-t-2 border-soft-gray-100">
                         <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">
@@ -107,11 +229,48 @@
             </div>
         </div>
     </div>
+
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            if (typeof ucoInitImagePreview === 'function') {
-                ucoInitImagePreview('photo', 'product-photo', 1, false);
+            const priceTypeSelect = document.getElementById("price_type");
+            const priceInput = document.getElementById("price");
+            const star = document.getElementById("price-required-star");
+
+            const handlePriceTypeChange = (value) => {
+                if (value === 'unspecified' || value === 'customize') {
+                    priceInput.value = '';
+                    priceInput.disabled = true;
+                    priceInput.required = false;
+                    priceInput.placeholder = value === 'unspecified' ? 'Price not specified' : 'Customized by order';
+                    if (star) star.style.display = 'none';
+                } else {
+                    priceInput.disabled = false;
+                    priceInput.required = true;
+                    priceInput.placeholder = '15000';
+                    if (star) star.style.display = 'inline';
+                }
+            };
+
+            if (priceTypeSelect && window.TomSelect) {
+                const ts = new TomSelect(priceTypeSelect, {
+                    create: false,
+                    placeholder: "-- Select Price Type --",
+                    searchField: ["text"],
+                });
+
+                ts.on('change', (val) => {
+                    handlePriceTypeChange(val);
+                });
+
+                // Run initially
+                handlePriceTypeChange(priceTypeSelect.value);
+            } else if (priceTypeSelect) {
+                priceTypeSelect.addEventListener('change', (e) => {
+                    handlePriceTypeChange(e.target.value);
+                });
+                handlePriceTypeChange(priceTypeSelect.value);
             }
         });
     </script>
