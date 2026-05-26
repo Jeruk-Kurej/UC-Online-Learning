@@ -142,6 +142,12 @@ class Business extends Model
                 $business->slug = static::generateUniqueSlug($business->name);
             }
         });
+
+        static::saving(function (Business $business) {
+            if ($business->approval_status !== 'approved') {
+                $business->is_featured = false;
+            }
+        });
     }
 
     private static function generateUniqueSlug(string $name): string
@@ -192,6 +198,7 @@ class Business extends Model
     public function scopeVisible($query)
     {
         return $query->where('is_visible', true)
+            ->where('approval_status', 'approved')
             ->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 

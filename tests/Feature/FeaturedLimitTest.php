@@ -42,6 +42,7 @@ test('admin can feature more than 8 businesses', function () {
             'is_visible' => true,
             'is_featured' => true,
             'type' => 'entrepreneur',
+            'approval_status' => 'approved',
         ]);
     }
 
@@ -55,6 +56,7 @@ test('admin can feature more than 8 businesses', function () {
         'is_visible' => true,
         'is_featured' => false,
         'type' => 'entrepreneur',
+        'approval_status' => 'approved',
     ]);
 
     $response = $this->actingAs($admin)
@@ -78,6 +80,7 @@ test('non-admin cannot toggle featured status of users or businesses', function 
         'is_visible' => true,
         'is_featured' => false,
         'type' => 'entrepreneur',
+        'approval_status' => 'approved',
     ]);
 
     // Try user

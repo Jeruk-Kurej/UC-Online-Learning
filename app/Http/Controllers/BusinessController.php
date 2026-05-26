@@ -522,6 +522,14 @@ class BusinessController extends Controller
             abort(403);
         }
 
+        if ($business->approval_status !== 'approved') {
+            $msg = 'Only approved businesses can be featured.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => $msg], 422);
+            }
+            return back()->withErrors(['approval' => $msg]);
+        }
+
         if ($business->is_featured) {
             $business->is_featured = false;
             $business->save();

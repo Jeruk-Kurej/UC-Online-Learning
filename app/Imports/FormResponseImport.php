@@ -306,6 +306,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
                     'type'                    => 'entrepreneur',
+                    'approval_status'         => 'approved',
+                    'is_visible'              => true,
                 ];
 
                 if ($isFeatured !== null) {
@@ -391,6 +393,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'achievement'          => $this->col($row, 'achievement'),
                     'company_scale'        => $this->col($row, 'company_scale'),
                     'logo_url'             => $this->uploadToCloudinary($this->col($row, 'businesscompany_logo', 'business_company_logo'), 'companies', $companyName),
+                    'is_visible'           => true,
                 ];
 
                 // Smart dedup for companies too
