@@ -35,7 +35,7 @@
                 @if($user->profile_photo_url)
                     <img src="{{ $user->profile_photo_url }}" 
                          alt="{{ $user->name }}"
-                         style="width: 100%; height: 100%; object-fit: cover;">
+                         class="w-full h-auto">
                 @else
                     <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">
