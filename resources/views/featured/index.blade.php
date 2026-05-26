@@ -222,90 +222,77 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full relative z-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full relative z-10">
                 @forelse($spotlightBusinesses as $featuredBusiness)
                     @php
                         $student = $featuredBusiness->user;
                     @endphp
-                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2.5rem] border border-gray-100 bg-white shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col md:flex-row overflow-hidden cursor-pointer" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer" style="transition-delay: {{ $loop->index * 80 }}ms">
                         
-                        {{-- Left Column: Business Details --}}
-                        <div class="flex-grow p-6 bg-gradient-to-br from-orange-50/10 to-white flex flex-col justify-between border-b md:border-b-0 md:border-r border-gray-100/80">
-                            @if($featuredBusiness)
-                                <div>
-                                    <div class="flex items-center gap-4">
-                                        <div class="h-16 w-16 overflow-hidden rounded-[1.2rem] bg-white p-2 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
-                                            @if($featuredBusiness->logo_url)
-                                                <img src="{{ $featuredBusiness->logo_url }}" class="h-full w-full object-contain">
-                                            @else
-                                                <div class="flex h-full w-full items-center justify-center text-2xl font-black text-uco-orange-500 bg-orange-50 rounded-[0.8rem]">
-                                                    {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
-                                                </div>
-                                            @endif
+                        {{-- Top Part: Venture Info & Description --}}
+                        <div>
+                            <div class="flex items-start gap-4">
+                                <div class="h-16 w-16 overflow-hidden rounded-[1.2rem] bg-white p-2 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
+                                    @if($featuredBusiness->logo_url)
+                                        <img src="{{ $featuredBusiness->logo_url }}" class="h-full w-full object-contain">
+                                    @else
+                                        <div class="flex h-full w-full items-center justify-center text-2xl font-black text-uco-orange-500 bg-orange-50 rounded-[0.8rem]">
+                                            {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
                                         </div>
-                                        <div>
-                                            <h3 class="text-2xl font-[900] text-gray-950 mt-0.5 leading-tight group-hover:text-uco-orange-600 transition-colors">{{ $featuredBusiness->name }}</h3>
-                                        </div>
-                                    </div>
-                                    
-
-                                    
-                                    <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
-                                        {{ $featuredBusiness->description }}
-                                    </p>
+                                    @endif
                                 </div>
-                                
-                                <div class="mt-6 pt-4 border-t border-gray-50">
-                                    <span class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">
-                                        Visit Venture <i class="bi bi-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
-                                    </span>
-                                </div>
-                            @else
-                                <div class="h-full flex flex-col items-center justify-center text-center py-12">
-                                    <div class="h-12 w-12 rounded-full bg-gray-50 border border-dashed border-gray-200 flex items-center justify-center mb-3">
-                                        <i class="bi bi-shop text-gray-300 text-lg"></i>
-                                    </div>
-                                    <p class="text-sm font-bold text-gray-400">No Venture Registered</p>
-                                    <p class="text-xs text-gray-400 max-w-[200px] mt-1">This founder is currently developing their venture.</p>
-                                </div>
-                            @endif
-                        </div>
-                        
-                        {{-- Right Column: Founder Profile --}}
-                        <div class="w-full md:w-[210px] p-6 flex flex-col justify-between bg-white flex-shrink-0">
-                            <div>
-                                <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-4">Owned By</p>
-                                
-                                <div class="flex flex-col items-start">
-                                    <div class="h-14 w-14 overflow-hidden rounded-[1.2rem] border border-orange-100 bg-gray-50 shadow-sm mb-3">
-                                        @if($student->profile_photo_url)
-                                            <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
-                                        @else
-                                            <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-xl">
-                                                {{ strtoupper(substr($student->name, 0, 1)) }}
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <div>
-                                        <h4 class="text-sm font-[900] text-gray-950 leading-tight">{{ $student->name }}</h4>
-                                        <p class="text-[10px] font-semibold text-gray-400 mt-1">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="mt-6 pt-4 border-t border-gray-50">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">Academic Profile</p>
-                                    <div class="space-y-3 text-xs">
-                                        <div>
-                                            <p class="text-gray-400 font-medium">Major</p>
-                                            <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
-                                        </div>
-                                        <div>
-                                            <p class="text-gray-400 font-medium">Batch</p>
-                                            <p class="text-gray-700 font-bold">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
-                                        </div>
-                                    </div>
+                                <div class="min-w-0 flex-1">
+                                    @if($featuredBusiness->category)
+                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mb-1.5">
+                                            {{ $featuredBusiness->category->name }}
+                                        </span>
+                                    @endif
+                                    <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
                                 </div>
                             </div>
+                            
+                            <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
+                                {{ $featuredBusiness->description }}
+                            </p>
+                        </div>
+                        
+                        {{-- Middle Part: Founder Profile & Academic Specs --}}
+                        <div class="mt-6 border-t border-gray-50 pt-5">
+                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">Owned By</p>
+                            
+                            <div class="flex items-center gap-3">
+                                <div class="h-10 w-10 overflow-hidden rounded-full border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
+                                    @if($student->profile_photo_url)
+                                        <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
+                                    @else
+                                        <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-sm">
+                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <h4 class="text-sm font-black text-gray-950 truncate leading-tight">{{ $student->name }}</h4>
+                                    <p class="text-[10px] font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 bg-orange-50/20 rounded-xl p-3 border border-orange-100/30 grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <p class="text-[9px] font-black uppercase tracking-[0.1em] text-gray-400">Major</p>
+                                    <p class="text-gray-700 font-bold truncate mt-0.5">{{ $student->major ?? 'General Studies' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black uppercase tracking-[0.1em] text-gray-400">Batch</p>
+                                    <p class="text-gray-700 font-bold mt-0.5">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {{-- Bottom Part: Visit CTA --}}
+                        <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                            <span class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">
+                                Visit Venture <i class="bi bi-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
+                            </span>
                         </div>
                     </a>
                 @empty
