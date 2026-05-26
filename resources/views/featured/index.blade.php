@@ -135,7 +135,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full relative z-10">
                 @forelse($topIntrapreneurs as $student)
-                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'intra', 'delay' => $loop->index * 80])
+                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'intra', 'delay' => $loop->index * 40])
                 @empty
                     <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
                         <div class="relative z-10 space-y-4">
@@ -177,7 +177,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full relative z-10">
                 @forelse($topEntrepreneurs as $student)
-                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'entre', 'delay' => $loop->index * 80])
+                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'entre', 'delay' => $loop->index * 40])
                 @empty
                     <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
                         <div class="relative z-10 space-y-4">
@@ -227,7 +227,7 @@
                     @php
                         $student = $featuredBusiness->user;
                     @endphp
-                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer" style="transition-delay: {{ $loop->index * 80 }}ms">
+                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer" style="transition-delay: {{ $loop->index * 40 }}ms">
                         
                         {{-- Top Part: Venture Info & Description --}}
                         <div>
@@ -242,12 +242,12 @@
                                     @endif
                                 </div>
                                 <div class="min-w-0 flex-1">
+                                    <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
                                     @if($featuredBusiness->category)
-                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mb-1.5">
+                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mt-1.5">
                                             {{ $featuredBusiness->category->name }}
                                         </span>
                                     @endif
-                                    <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
                                 </div>
                             </div>
                             
@@ -340,7 +340,7 @@
                 <div x-ref="track" @scroll.passive="updateScroll" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden" style="scrollbar-width: none; -ms-overflow-style: none;">
                     @forelse($testimonies as $student)
                         <div data-carousel-slide class="snap-start shrink-0 w-[min(100%,17rem)] sm:w-[calc(50%-0.75rem)] md:w-[calc((100%-3rem)/3)] lg:w-[calc((100%-4.5rem)/4)] flex h-auto">
-                            <div class="w-full bg-white border border-gray-100 rounded-[20px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 80 }}ms">
+                            <div class="w-full bg-white border border-gray-100 rounded-[20px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange" style="transition-delay: {{ $loop->index * 40 }}ms">
                                 
                                 {{-- Top Section: Image & Info --}}
                                 <div class="relative h-[280px] w-full flex-shrink-0">
@@ -506,7 +506,7 @@
 
                 // Disable default transitions only for items we are going to animate to avoid FOUC
                 const animatedElements = document.querySelectorAll(
-                    'section:nth-of-type(2) article, section:nth-of-type(3) article, section:nth-of-type(4) article, section:nth-of-type(5) .reveal-on-scroll'
+                    'section:nth-of-type(2) .reveal-on-scroll, section:nth-of-type(3) .reveal-on-scroll, section:nth-of-type(4) .reveal-on-scroll, section:nth-of-type(5) .reveal-on-scroll'
                 );
                 animatedElements.forEach(el => {
                     el.style.opacity = '0';
@@ -515,43 +515,43 @@
                 });
 
                 // Featured Intrapreneur Students
-                gsap.to("section:nth-of-type(2) article", {
+                gsap.to("section:nth-of-type(2) .reveal-on-scroll", {
                     opacity: 1,
                     y: 0,
-                    duration: 0.9,
-                    stagger: 0.1,
-                    ease: "power3.out",
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: "power2.out",
                     scrollTrigger: {
                         trigger: "section:nth-of-type(2)",
-                        start: "top 80%",
+                        start: "top 90%",
                         toggleActions: "play none none none"
                     }
                 });
 
                 // Featured Entrepreneur Students
-                gsap.to("section:nth-of-type(3) article", {
+                gsap.to("section:nth-of-type(3) .reveal-on-scroll", {
                     opacity: 1,
                     y: 0,
-                    duration: 0.9,
-                    stagger: 0.1,
-                    ease: "power3.out",
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: "power2.out",
                     scrollTrigger: {
                         trigger: "section:nth-of-type(3)",
-                        start: "top 80%",
+                        start: "top 90%",
                         toggleActions: "play none none none"
                     }
                 });
 
                 // Featured Ventures
-                gsap.to("section:nth-of-type(4) article", {
+                gsap.to("section:nth-of-type(4) .reveal-on-scroll", {
                     opacity: 1,
                     y: 0,
-                    duration: 0.9,
-                    stagger: 0.1,
-                    ease: "power3.out",
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: "power2.out",
                     scrollTrigger: {
                         trigger: "section:nth-of-type(4)",
-                        start: "top 80%",
+                        start: "top 90%",
                         toggleActions: "play none none none"
                     }
                 });
@@ -560,12 +560,12 @@
                 gsap.to("section:nth-of-type(5) .reveal-on-scroll", {
                     opacity: 1,
                     y: 0,
-                    duration: 0.9,
-                    stagger: 0.1,
-                    ease: "power3.out",
+                    duration: 0.6,
+                    stagger: 0.05,
+                    ease: "power2.out",
                     scrollTrigger: {
                         trigger: "section:nth-of-type(5)",
-                        start: "top 80%",
+                        start: "top 90%",
                         toggleActions: "play none none none"
                     }
                 });
