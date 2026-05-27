@@ -36,4 +36,13 @@ return [
     */
 
     'request_timeout' => env('GEMINI_REQUEST_TIMEOUT', 30),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Additional Moderation Settings
+    |--------------------------------------------------------------------------
+    */
+    'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+    'skip_moderation' => env('SKIP_AI_MODERATION', false),
+    'debug' => env('GEMINI_DEBUG', false),
 ];

@@ -22,7 +22,7 @@ class MigrateImagesToCloudinary extends Command
 
     public function handle()
     {
-        $disk = config('filesystems.default', env('FILESYSTEM_DISK', 'public'));
+        $disk = config('filesystems.default', config('filesystems.disks.public.driver', 'public'));
         $tablesOption = $this->option('tables') ?? 'users.profile_photo_url,businesses.logo_url,companies.logo_url';
         $tables = array_map('trim', explode(',', $tablesOption));
         $limit = (int) $this->option('limit');
@@ -30,8 +30,8 @@ class MigrateImagesToCloudinary extends Command
         $domain = $this->option('domain');
         $includeLocal = $this->option('include-local');
 
-        // Load UC cookies from .env for authenticated downloads
-        $ucCookieRaw = env('UC_COOKIE_RAW', '');
+        // Load UC cookies from config for authenticated downloads
+        $ucCookieRaw = config('services.uc.cookie_raw', '');
 
         $this->info("Using disk: {$disk}");
         if ($ucCookieRaw) {

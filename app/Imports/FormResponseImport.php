@@ -591,7 +591,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             
             $isUniversityPortal = str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
             if ($isUniversityPortal) {
-                $cookie = env('UC_COOKIE_RAW', '');
+                $cookie = config('services.uc.cookie_raw', '');
                 if ($cookie) $curlHeaders[] = "Cookie: " . trim($cookie);
             }
             
