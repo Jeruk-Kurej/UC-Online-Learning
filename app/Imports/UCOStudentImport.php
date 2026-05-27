@@ -251,6 +251,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             'job_description'      => $cell(25),
             'year_started_working' => $cell(24),
             'logo_url'             => $logoUrl,
+            'is_visible'           => true,
         ], fn($v) => $v !== null);
 
         $company = Company::where('user_id', $user->id)->where('name', $companyName)->first()
@@ -293,6 +294,8 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             'academic_heritage' => $cell(10) ? 'Batch ' . $cell(10) : null,
             'logo_url'          => $logoUrl,
             'type'              => 'entrepreneur',
+            'approval_status'   => 'approved',
+            'is_visible'        => true,
         ], fn($v) => $v !== null);
 
         $business = Business::where('user_id', $user->id)->where('name', $bizName)->first()

@@ -63,10 +63,9 @@
     <div class="max-w-5xl mx-auto">
         {{-- Page Header --}}
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-4">
-            <a href="{{ route('businesses.show', $business) }}" 
-               class="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
-                <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                <span>Back</span>
+            <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-secondary">
+                <i class="bi bi-arrow-left"></i>
+                Back
             </a>
             <div class="flex-1">
                 <h1 class="text-2xl font-bold text-gray-900">Add New Service</h1>
@@ -76,7 +75,7 @@
 
         <div class="bg-white shadow-sm sm:rounded-xl">
             <div class="p-6">
-                <form method="POST" action="{{ route('businesses.services.store', $business) }}" class="space-y-6">
+                <form method="POST" action="{{ route('businesses.services.store', $business) }}" class="space-y-6" enctype="multipart/form-data">
                     @csrf
 
                     {{-- Service Name --}}
@@ -112,10 +111,30 @@
                         @enderror
                     </div>
 
+                    {{-- Price Type --}}
+                    <div>
+                        <label for="price_type" class="block text-sm font-medium text-gray-700 mb-2">
+                            Price Type <span class="text-red-500">*</span>
+                        </label>
+                        <select name="price_type" 
+                                id="price_type" 
+                                required
+                                class="block w-full">
+                            <option value="">-- Select Price Type --</option>
+                            <option value="fixed" {{ old('price_type') === 'fixed' ? 'selected' : '' }}>Fixed Price</option>
+                            <option value="negotiable" {{ old('price_type') === 'negotiable' ? 'selected' : '' }}>Negotiable</option>
+                            <option value="customize" {{ old('price_type') === 'customize' ? 'selected' : '' }}>Customize by Order</option>
+                            <option value="unspecified" {{ old('price_type') === 'unspecified' ? 'selected' : '' }}>Unspecified Price</option>
+                        </select>
+                        @error('price_type')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Price --}}
                     <div>
                         <label for="price" class="block text-sm font-medium text-gray-700 mb-2">
-                            Price (Rp) <span class="text-red-500">*</span>
+                            Price (Rp) <span class="text-red-500" id="price-required-star">*</span>
                         </label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">Rp</span>
@@ -134,33 +153,75 @@
                         @enderror
                     </div>
 
-                    {{-- Price Type --}}
-                    <div>
-                        <label for="price_type" class="block text-sm font-medium text-gray-700 mb-2">
-                            Price Type <span class="text-red-500">*</span>
+                    {{-- Service Photo --}}
+                    <div x-data="{ 
+                        previewUrl: '',
+                        hasPhoto: false,
+                        handleFileChange(event) {
+                            const file = event.target.files[0];
+                            if (file) {
+                                this.previewUrl = URL.createObjectURL(file);
+                                this.hasPhoto = true;
+                            }
+                        },
+                        triggerUpload() {
+                            document.getElementById('photo').click();
+                        }
+                    }" class="space-y-4">
+                        <label class="block text-sm font-medium text-gray-700">
+                            Service Photo <span class="text-red-500">*</span>
                         </label>
-                        <select name="price_type" 
-                                id="price_type" 
-                                required
-                                class="block w-full">
-                            <option value="">-- Select Price Type --</option>
-                            <option value="fixed" {{ old('price_type') === 'fixed' ? 'selected' : '' }}>Fixed Price</option>
-                            <option value="starting_from" {{ old('price_type') === 'starting_from' ? 'selected' : '' }}>Starting From</option>
-                        </select>
-                        @error('price_type')
+                        
+                        {{-- Interactive Upload Box --}}
+                        <div class="relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 hover:border-orange-300 shadow-sm bg-gray-50 group cursor-pointer transition-colors"
+                             @click="triggerUpload()">
+                            
+                            {{-- Display preview if uploaded --}}
+                            <template x-if="hasPhoto">
+                                <img :src="previewUrl" 
+                                     class="w-full h-full object-cover"
+                                     alt="Preview Service Photo">
+                            </template>
+
+                            {{-- Display placeholder if no photo --}}
+                            <template x-if="!hasPhoto">
+                                <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center text-gray-400">
+                                    <i class="bi bi-cloud-arrow-up text-3xl mb-2 text-gray-300"></i>
+                                    <p class="text-[11px] font-bold uppercase tracking-wider">Upload Photo</p>
+                                    <p class="text-[9px] text-gray-400 mt-1">Click to choose image</p>
+                                </div>
+                            </template>
+
+                            {{-- Hover Overlay --}}
+                            <template x-if="hasPhoto">
+                                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white text-center p-4">
+                                    <i class="bi bi-camera text-2xl mb-1.5"></i>
+                                    <span class="text-xs font-extrabold uppercase tracking-wider">Change Photo</span>
+                                    <span class="text-[9px] text-white/70 mt-1">Max 10MB</span>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Hidden File Input --}}
+                        <input type="file" 
+                               name="photo" 
+                               id="photo" 
+                               accept="image/*" 
+                               class="sr-only"
+                               @change="handleFileChange($event)">
+
+                        @error('photo')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-
                     </div>
 
                     {{-- Submit Buttons --}}
                     <div class="flex items-center justify-between pt-6 border-t border-gray-200">
-                        <a href="{{ route('businesses.show', $business) }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 hover:text-gray-900 rounded-xl transition duration-150">
-    Cancel
-</a>
-                        <button type="submit" 
-                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200">
-                            <i class="bi bi-check-lg me-2"></i>
+                        <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn-uco btn-uco-primary">
+                            <i class="bi bi-check-lg"></i>
                             Create Service
                         </button>
                     </div>
@@ -173,12 +234,42 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const priceTypeSelect = document.getElementById("price_type");
+            const priceInput = document.getElementById("price");
+            const star = document.getElementById("price-required-star");
+
+            const handlePriceTypeChange = (value) => {
+                if (value === 'unspecified' || value === 'customize') {
+                    priceInput.value = '';
+                    priceInput.disabled = true;
+                    priceInput.required = false;
+                    priceInput.placeholder = value === 'unspecified' ? 'Price not specified' : 'Customized by order';
+                    if (star) star.style.display = 'none';
+                } else {
+                    priceInput.disabled = false;
+                    priceInput.required = true;
+                    priceInput.placeholder = '50000';
+                    if (star) star.style.display = 'inline';
+                }
+            };
+
             if (priceTypeSelect && window.TomSelect) {
-                new TomSelect(priceTypeSelect, {
+                const ts = new TomSelect(priceTypeSelect, {
                     create: false,
                     placeholder: "-- Select Price Type --",
                     searchField: ["text"],
                 });
+
+                ts.on('change', (val) => {
+                    handlePriceTypeChange(val);
+                });
+
+                // Run initially
+                handlePriceTypeChange(priceTypeSelect.value);
+            } else if (priceTypeSelect) {
+                priceTypeSelect.addEventListener('change', (e) => {
+                    handlePriceTypeChange(e.target.value);
+                });
+                handlePriceTypeChange(priceTypeSelect.value);
             }
         });
     </script>

@@ -6,7 +6,7 @@
 	.reveal-on-scroll {
 		opacity: 0;
 		transform: translateY(20px);
-		transition: opacity 700ms ease, transform 700ms ease;
+		transition: opacity 400ms ease, transform 400ms ease;
 		will-change: opacity, transform;
 	}
 
@@ -252,6 +252,57 @@
         font-size: 14px !important;
     }
 
+    /* Selected Pill Tag Styling (Single & Multiple Selects) */
+    .ts-control .item,
+    .ts-wrapper.multi .ts-control > div,
+    .ts-wrapper.multi .ts-control .item {
+        background-color: #f1f5f9 !important;
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 2px 4px 2px 0 !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+        transition: all 0.15s ease !important;
+    }
+
+    .ts-control .item:hover,
+    .ts-wrapper.multi .ts-control > div:hover,
+    .ts-wrapper.multi .ts-control .item:hover {
+        background-color: #e2e8f0 !important;
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    .ts-control .item .remove,
+    .ts-wrapper.multi .ts-control > div .remove,
+    .ts-wrapper.multi .ts-control .item .remove {
+        border: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: bold !important;
+        margin-left: 4px !important;
+        padding: 0 2px !important;
+        transition: color 0.15s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+    }
+
+    .ts-control .item .remove:hover,
+    .ts-wrapper.multi .ts-control > div .remove:hover,
+    .ts-wrapper.multi .ts-control .item .remove:hover {
+        color: #ef4444 !important;
+        background: transparent !important;
+    }
+
     .form-input-custom {
         width: 100% !important;
         border: 1.5px solid #e2e8f0 !important;
@@ -448,47 +499,6 @@
     position: relative;
     overflow: hidden;
     transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.uco-premium-card::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    border-radius: inherit;
-    padding: 1.5px;
-    background: linear-gradient(135deg, transparent, transparent);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-    transition: background 400ms ease;
-    z-index: 10;
-}
-.uco-premium-card--blue:hover::before {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), transparent, rgba(96, 165, 250, 0.4));
-}
-.uco-premium-card--orange:hover::before {
-    background: linear-gradient(135deg, rgba(247, 147, 30, 0.4), transparent, rgba(255, 176, 92, 0.4));
-}
-
-/* Card Spotlight Glow */
-.uco-premium-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: radial-gradient(350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(247, 147, 30, 0.06), transparent 80%);
-    opacity: 0;
-    transition: opacity 350ms ease;
-    pointer-events: none;
-    z-index: 1;
-}
-
-.uco-premium-card--blue::after {
-    background: radial-gradient(350px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(59, 130, 246, 0.07), transparent 80%);
-}
-
-.uco-premium-card:hover::after {
-    opacity: 1;
 }
 
 /* Reusable Floating Background Shapes (Ada Kehidupan) */

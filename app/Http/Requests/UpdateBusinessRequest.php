@@ -52,6 +52,7 @@ class UpdateBusinessRequest extends FormRequest
 
             // Enhanced fields
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:20480',
+            'delete_logo' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
             'established_date' => 'nullable|date',
             'employee_count' => 'nullable|integer|min:0',

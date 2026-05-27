@@ -30,7 +30,7 @@ function initRevealOnScroll() {
 					window.__ucoRevealObserver.unobserve(entry.target);
 				}
 			});
-		}, { threshold: 0.12 });
+		}, { threshold: 0.02 });
 	}
 
 	targets.forEach((target) => {

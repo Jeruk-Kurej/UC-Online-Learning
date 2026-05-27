@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
 
+/**
+ * Class RegisteredUserController
+ *
+ * Handles showing the user registration view and processing incoming signup requests.
+ */
 class RegisteredUserController extends Controller
 {
     /**
@@ -35,12 +40,16 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $name = (string) $request->input('name');
+        $email = (string) $request->input('email');
+        $password = (string) $request->input('password');
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'username' => strtolower(str_replace(' ', '_', $request->name)) . rand(100, 999), 
+            'name' => $name,
+            'email' => $email,
+            'username' => strtolower(str_replace(' ', '_', $name)).rand(100, 999),
             'role' => 'user',
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($password),
         ]);
 
         event(new Registered($user));

@@ -16,11 +16,11 @@
                         <div class="flex flex-col gap-1 mb-2">
                             <div class="flex items-center gap-2">
                             </div>
-                            <h3 class="font-extrabold text-gray-900 text-xl md:text-2xl leading-tight group-hover:text-gray-700 transition-colors line-clamp-2">
+                            <h3 class="font-extrabold text-gray-900 text-lg md:text-xl leading-tight group-hover:text-gray-700 transition-colors line-clamp-2">
                                 {{ $business->name }}
                             </h3>
                             @if($business->category)
-                                <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-0.5">
+                                <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider text-gray-500 mt-0.5">
                                     {{ $business->category->name }}
                                 </span>
                             @endif
@@ -29,6 +29,12 @@
                             <div class="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wide">
                                 <i class="bi bi-geo-alt-fill text-orange-500"></i>
                                 {{ $business->city }}
+                            </div>
+                        @endif
+                        @if($viewType === 'intrapreneur' && $business->position)
+                            <div class="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wide truncate" title="{{ $business->position }}">
+                                <i class="bi bi-person-badge-fill text-orange-500 flex-shrink-0"></i>
+                                {{ $business->position }}
                             </div>
                         @endif
                     </div>

@@ -3,24 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business;
-use App\Models\Company;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
+/**
+ * Class FeaturedController
+ *
+ * Coordinates and retrieves showcase aggregates for the landing or featured ventures/students dashboard,
+ * combining top entrepreneur/intrapreneur students, spotlights, dynamic category counts, and high-scoring AI-approved testimonies.
+ */
 class FeaturedController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * Display a showcase listing of featured students, ventures, and voices.
+     */
+    public function index(Request $request): View
     {
-
-        // Top 3 featured intrapreneur student profiles (have photo)
-        $topIntrapreneurs = User::where('is_visible', true)
+        $featuredStudentQuery = fn () => User::query()
+            ->where('is_visible', true)
             ->where('is_featured', true)
-            ->where('current_status', 'Intrapreneur')
-            ->whereNotNull('profile_photo_url')
+            ->where('role', '!=', 'admin')
+            ->whereNotNull('profile_photo_url');
+
+        // Featured intrapreneur students (admin-starred + intrapreneur status)
+        $topIntrapreneurs = $featuredStudentQuery()
+            ->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
-            ->take(4)
+            ->get();
+
+        // Featured entrepreneur students (admin-starred + entrepreneur status)
+        $topEntrepreneurs = $featuredStudentQuery()
+            ->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])
+            ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
+            ->latest()
             ->get();
 
         // Spotlight businesses
@@ -29,7 +47,6 @@ class FeaturedController extends Controller
             ->where('is_featured', true)
             ->latest()
             ->with(['category', 'user'])
-            ->take(8)
             ->get();
 
         // Categories
@@ -39,7 +56,6 @@ class FeaturedController extends Controller
             ->get();
 
         // Community Voices: users with AI-approved testimonies (NOT tied to is_featured toggle)
-        // is_featured only controls Featured Students + Featured Ventures sections above.
         $testimonies = User::where('is_visible', true)
             ->where('is_featured_testimony', true)
             ->whereNotNull('testimony')
@@ -48,9 +64,9 @@ class FeaturedController extends Controller
             ->where(function ($q) {
                 // Prefer AI-approved testimonies (score >= 80), but fallback to any visible testimony
                 $q->where('ai_score', '>=', 80)
-                  ->orWhere(function ($q2) {
-                      $q2->whereNull('ai_score')->where('is_visible', true);
-                  });
+                    ->orWhere(function ($q2) {
+                        $q2->whereNull('ai_score')->where('is_visible', true);
+                    });
             })
             ->orderByDesc('ai_score')
             ->latest()
@@ -59,9 +75,10 @@ class FeaturedController extends Controller
 
         return view('featured.index', compact(
             'topIntrapreneurs',
+            'topEntrepreneurs',
             'spotlightBusinesses',
             'categories',
-            'testimonies',
+            'testimonies'
         ));
     }
 }

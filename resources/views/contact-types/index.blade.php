@@ -31,7 +31,8 @@
 
                 <div class="flex items-center gap-3 relative z-10 reveal-on-scroll" style="transition-delay: 100ms;">
                     @auth
-                        @if(auth()->user()->isAdmin())
+                        @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                        @if($authUser->isAdmin())
                             <a href="/contact-types/create" 
                                class="inline-flex items-center gap-2 rounded-xl bg-uco-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-md shadow-uco-orange-200 transition hover:-translate-y-0.5 hover:bg-uco-orange-600">
                                 <i class="bi bi-plus-circle"></i>
@@ -59,7 +60,8 @@
                                 Usage Count
                             </th>
                             @auth
-                                @if(auth()->user()->isAdmin())
+                                @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                                @if($authUser->isAdmin())
                                     <th scope="col" class="px-4 py-3.5 text-left text-xs font-medium text-gray-600 uppercase tracking-wider w-[25%]">
                                         Actions
                                     </th>
@@ -95,7 +97,8 @@
 
                                 {{-- Actions --}}
                                 @auth
-                                    @if(auth()->user()->isAdmin())
+                                    @php /** @var \App\Models\User $authUser */ $authUser = auth()->user(); @endphp
+                                    @if($authUser->isAdmin())
                                         <td class="px-4 py-4">
                                             <div class="flex items-center justify-start gap-2">
                                                 <a href="{{ route('contact-types.show', $type) }}" 

@@ -3,21 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+/**
+ * Class UcTestimonyController
+ *
+ * Manages public listing of testimonies, user submit forms, administrative feature toggles,
+ * and background approval processes.
+ */
 class UcTestimonyController extends Controller
 {
     /**
      * Display a listing of testimonies for admin management.
      */
-    public function adminIndex(Request $request)
+    public function adminIndex(Request $request): View|Response
     {
         /** @var User $user */
         $user = Auth::user();
-        if (!$user || !$user->isAdmin()) {
+        if (! $user || ! $user->isAdmin()) {
             abort(403, 'Only administrators can view testimonies management.');
         }
 
@@ -65,7 +73,7 @@ class UcTestimonyController extends Controller
     {
         /** @var User $user */
         $user = Auth::user();
-        
+
         return view('uc-testimonies.my', [
             'user' => $user,
         ]);
@@ -113,23 +121,24 @@ class UcTestimonyController extends Controller
     /**
      * Toggle the featured status of a testimony for the homepage.
      */
-    public function toggleFeatured(Request $request, User $user)
+    public function toggleFeatured(Request $request, User $user): JsonResponse
     {
-        if (!Auth::user()->isAdmin()) {
-            return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+        $authUser = Auth::user();
+        if (! $authUser instanceof User || ! $authUser->isAdmin()) {
+            return new JsonResponse(['success' => false, 'message' => 'Unauthorized'], 403);
         }
 
-        if (!$user->is_visible) {
-            return response()->json(['success' => false, 'message' => 'Cannot feature an invisible user.'], 400);
+        if (! $user->is_visible) {
+            return new JsonResponse(['success' => false, 'message' => 'Cannot feature an invisible user.'], 400);
         }
 
-        $user->is_featured_testimony = !$user->is_featured_testimony;
+        $user->is_featured_testimony = ! $user->is_featured_testimony;
         $user->save();
 
-        return response()->json([
+        return new JsonResponse([
             'success' => true,
             'is_featured' => $user->is_featured_testimony,
-            'message' => 'Testimony featured status updated successfully.'
+            'message' => 'Testimony featured status updated successfully.',
         ]);
     }
 }

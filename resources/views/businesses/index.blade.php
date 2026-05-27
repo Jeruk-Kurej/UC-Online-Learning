@@ -1,6 +1,6 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
-    @section('title', 'Business Directory')
+    @section('title', 'Showcase Directory')
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
           x-data="{ 
              showImportModal: false, 
@@ -85,8 +85,8 @@
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory
                     </span>
-                    <h1 class="text-3xl font-extrabold text-gray-900 md:text-4xl">Business Directory</h1>
-                    <p class="text-sm text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
+                    <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Showcase Directory</h1>
+                    <p class="text-base text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
                 </div>
 
                 @auth
@@ -94,7 +94,7 @@
                         @if (auth()->user()->isAdmin())
                             <span class="inline-flex items-center gap-1.5 px-4 py-2 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-black rounded-xl">
                                 <i class="bi bi-star-fill text-yellow-500"></i>
-                                {{ $featuredBusinessCount }}/8 Featured
+                                {{ $featuredBusinessCount }} Featured
                             </span>
                         @endif
                     </div>

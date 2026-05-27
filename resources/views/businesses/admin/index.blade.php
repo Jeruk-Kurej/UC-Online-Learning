@@ -1,9 +1,20 @@
 <x-app-layout>
     <div class="w-full max-w-[1600px] mx-auto py-8 px-4" 
          @start-import.window="showImportModal = false"
+         @close-import-modal.window="showImportModal = false"
          x-data="{ 
             showImportModal: false,
             isSubmitting: false,
+            debounceTimer: null,
+            submitDebounced() {
+                if (this.debounceTimer) clearTimeout(this.debounceTimer);
+                this.debounceTimer = setTimeout(() => this.updateList(), 500);
+            },
+            resetFilters() {
+                this.$refs.filterForm.reset();
+                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+                this.updateList();
+            },
             updateList(url = null, pushState = true, shouldScroll = false) {
                 this.isSubmitting = true;
                 if (!url) {
@@ -51,9 +62,9 @@
                 <div class="flex items-center gap-3">
                     <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        <span><span class="featured-count">{{ $featuredBusinessesCount }}</span>/8 Featured</span>
+                        <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
                     </span>
-                    <button @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
+                    <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
@@ -100,13 +111,15 @@
                             name="search"
                             value="{{ $search }}"
                             placeholder="Search business name..."
+                            @input="submitDebounced()"
+                            @keydown.enter.prevent="updateList()"
                             class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
                         >
                     </div>
 
                     {{-- Filters & Reset Button --}}
                     <div class="flex items-center gap-3">
-                        <select name="status" onchange="this.form.submit()" 
+                        <select name="status" @change="updateList()" 
                                 class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Status: All</option>
                             <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
@@ -115,16 +128,24 @@
                             <option value="need_revision" {{ $status === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
                         </select>
 
-                        <select name="featured" onchange="this.form.submit()" 
+                        <select name="featured" @change="updateList()" 
                                 class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Featured: All</option>
                             <option value="yes" {{ $featured === 'yes' ? 'selected' : '' }}>Featured</option>
                             <option value="no" {{ $featured === 'no' ? 'selected' : '' }}>Not Featured</option>
                         </select>
                         
-                        <a href="{{ route('businesses.admin') }}" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </a>
+                        </button>
+
+                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
+                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
+                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                            </svg>
+                            <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -145,7 +166,6 @@
         <div id="businesses-admin-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
             @include('businesses.admin.partials.list')
         </div>
-    </div>
 
     {{-- Status Modal --}}
     <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
@@ -286,12 +306,26 @@
             }
         });
     </script>
-    </div>
 
-    {{-- Import Modal --}}
-    @if (auth()->user()?->isAdmin())
-        <div x-show="showImportModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div class="bg-white rounded-lg shadow-2xl max-w-lg w-full p-8" @click.away="showImportModal = false"
+        {{-- Import Modal --}}
+        @if (auth()->user()?->isAdmin())
+        <div x-show="showImportModal"
+             x-cloak
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             @click.self="showImportModal = false"
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8"
+                 x-transition:enter="transition ease-out duration-200 transform"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-150 transform"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-2"
                  x-data="{
                     isDragging: false,
                     handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
@@ -305,32 +339,39 @@
                             document.getElementById('biz_file_name').textContent = file.name;
                         }
                     }
-                 }">
-                <h3 class="text-2xl font-black text-gray-900 mb-2">Import Businesses</h3>
+                 }"
+                 @click.stop>
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-2xl font-black text-gray-900">Import Businesses</h3>
+                    <button type="button" @click="$dispatch('close-import-modal')" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
+                        <i class="bi bi-x-lg text-lg"></i>
+                    </button>
+                </div>
                 <p class="text-sm text-gray-500 mb-6">Upload the UC Online Form Responses CSV file to sync profiles.</p>
-                
+
                 <form action="{{ route('businesses.import') }}" method="POST" enctype="multipart/form-data" @submit.prevent="$dispatch('start-import', $el)" class="space-y-6">
                     @csrf
-                    <div class="border-2 border-dashed rounded-xl p-10 text-center transition group"
-                         :class="isDragging ? 'border-gray-900 bg-orange-50' : 'border-gray-200 hover:border-gray-300'"
+                    <div class="border-2 border-dashed rounded-lg p-10 text-center transition group"
+                         :class="isDragging ? 'border-uco-orange-500 bg-orange-50' : 'border-gray-200 hover:border-uco-orange-300'"
                          @dragover="handleDragOver"
                          @dragleave="handleDragLeave"
                          @drop="handleDrop">
                         <input type="file" name="file" required class="hidden" id="biz_csv_file" onchange="document.getElementById('biz_file_name').textContent = this.files[0].name">
                         <label for="biz_csv_file" class="cursor-pointer">
-                            <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-gray-900 transition"></i>
+                            <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
                             <p class="mt-4 text-sm font-bold text-gray-600" id="biz_file_name">Click to select or drag CSV/Excel file here</p>
                         </label>
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="button" @click="showImportModal = false" class="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">Cancel</button>
-                        <button type="submit" class="flex-1 px-6 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition">Start Import</button>
+                        <button type="button" @click="$dispatch('close-import-modal')" class="btn-uco btn-uco-neutral flex-1 py-3">Cancel</button>
+                        <button type="submit" class="btn-uco btn-uco-primary flex-1 py-3">Start Import</button>
                     </div>
                 </form>
             </div>
         </div>
-    @endif
+        @endif
 
-    @include('partials.import-progress')
+        @include('partials.import-progress')
+    </div>
 </x-app-layout>

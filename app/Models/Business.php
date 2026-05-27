@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @mixin \Illuminate\Database\Eloquent\Model
+ * @mixin \Illuminate\Database\Eloquent\Builder
+ */
 class Business extends Model
 {
     use HasFactory, \App\Traits\HasImage;
@@ -57,6 +61,11 @@ class Business extends Model
         ];
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     // ─── Accessors ───
 
     public function getLogoUrlAttribute($value)
@@ -67,7 +76,17 @@ class Business extends Model
     public function getNameAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
+        $name = trim(strip_tags($cleaned));
+
+        if ($name === strtoupper($name)) {
+            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
+        }
+
+        $name = preg_replace('/\bPt\b/i', 'PT', $name);
+        $name = preg_replace('/\bCv\b/i', 'CV', $name);
+        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
+
+        return $name;
     }
 
     public function getDescriptionAttribute($value)
@@ -123,6 +142,12 @@ class Business extends Model
                 $business->slug = static::generateUniqueSlug($business->name);
             }
         });
+
+        static::saving(function (Business $business) {
+            if ($business->approval_status !== 'approved') {
+                $business->is_featured = false;
+            }
+        });
     }
 
     private static function generateUniqueSlug(string $name): string
@@ -173,6 +198,7 @@ class Business extends Model
     public function scopeVisible($query)
     {
         return $query->where('is_visible', true)
+            ->where('approval_status', 'approved')
             ->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 

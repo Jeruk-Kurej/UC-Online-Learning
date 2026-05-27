@@ -21,6 +21,7 @@ test('business owner can create, edit and delete products', function () {
             'name' => 'Choco Milkshake',
             'description' => 'A sweet milkshake',
             'price' => 25000,
+            'price_type' => 'fixed',
         ]);
 
     $response->assertSessionHasNoErrors();
@@ -31,6 +32,7 @@ test('business owner can create, edit and delete products', function () {
         'name' => 'Choco Milkshake',
         'type' => 'product',
         'price' => 25000,
+        'price_type' => 'fixed',
     ]);
 
     $product = Product::where('name', 'Choco Milkshake')->first();
@@ -41,10 +43,11 @@ test('business owner can create, edit and delete products', function () {
             'name' => 'Sweet Choco Milkshake',
             'description' => 'A very sweet milkshake',
             'price' => 27000,
+            'price_type' => 'fixed',
         ]);
 
     $response->assertSessionHasNoErrors();
-    $response->assertRedirect(route('businesses.products.show', [$business, $product]));
+    $response->assertRedirect(route('businesses.show', $business));
 
     $this->assertDatabaseHas('products', [
         'id' => $product->id,
@@ -81,7 +84,8 @@ test('business owner can create, edit and delete services', function () {
             'name' => 'Logo Design',
             'description' => 'Professional logo design',
             'price' => 500000,
-            'price_type' => 'starting_from',
+            'price_type' => 'fixed',
+            'photo' => \Illuminate\Http\UploadedFile::fake()->image('service.jpg'),
         ]);
 
     $response->assertSessionHasNoErrors();
@@ -92,7 +96,7 @@ test('business owner can create, edit and delete services', function () {
         'name' => 'Logo Design',
         'type' => 'service',
         'price' => 500000,
-        'price_type' => 'starting_from',
+        'price_type' => 'fixed',
     ]);
 
     $service = Product::where('name', 'Logo Design')->first();
@@ -163,6 +167,7 @@ test('non-owners cannot manage products or services', function () {
             'name' => 'Coffee',
             'description' => 'Hot coffee',
             'price' => 10000,
+            'price_type' => 'fixed',
         ]);
     $response->assertStatus(403);
 
@@ -187,6 +192,7 @@ test('non-owners cannot manage products or services', function () {
             'description' => 'Clean clothes',
             'price' => 30000,
             'price_type' => 'fixed',
+            'photo' => \Illuminate\Http\UploadedFile::fake()->image('service.jpg'),
         ]);
     $response->assertStatus(403);
 

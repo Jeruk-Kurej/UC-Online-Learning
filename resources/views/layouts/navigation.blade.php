@@ -4,14 +4,14 @@
             {{-- Logo & Brand --}}
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
-                    <img src="{{ asset('images/Logo UCO.png') }}" alt="UCO Logo" class="w-9 h-9 object-contain">
+                    <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-9 h-9 object-contain">
                     <span class="text-lg font-bold text-soft-gray-900">UC Online Learning</span>
                 </a>
             </div>
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.*') && !request()->routeIs('businesses.admin')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Businesses</a>
+                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.*') && !request()->routeIs('businesses.admin')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
                 {{-- <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.index') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a> --}}
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                 
@@ -20,7 +20,9 @@
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
                             @if(auth()->user()->isAdmin())
-                                <img src="{{ asset('images/Logo UCO.png') }}" alt="UCO Logo" class="w-7 h-7 object-contain rounded-md">
+                                <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-7 h-7 object-contain rounded-md">
+                            @elseif(auth()->user()->profile_photo_url && !str_contains(auth()->user()->profile_photo_url, 'ui-avatars.com'))
+                                <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" class="w-7 h-7 object-cover rounded-md">
                             @else
                                 <div class="w-7 h-7 bg-uco-orange-500 rounded-md flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
                             @endif

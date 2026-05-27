@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Universitas Ciputra Online - @yield('title', 'Dashboard')</title>
-        <link rel="icon" type="image/png" href="{{ asset('images/Logo UCO.png') }}">
+        <title>Universitas Ciputra Online Learning - @yield('title', 'Dashboard')</title>
+        <link rel="icon" type="image/png" href="{{ asset('images/logo-uco.png') }}">
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

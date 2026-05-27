@@ -22,8 +22,12 @@ class ProfileUpdateRequest extends FormRequest
             'graduate_year'      => ['nullable', 'string', 'max:50'],
             'testimony'          => ['nullable', 'string'],
             'profile_photo'      => ['nullable', 'image', 'max:10240'],
+            'delete_profile_photo' => ['nullable', 'boolean'],
 
-            'activities_file'    => ['nullable', 'file', 'max:50120'],
+            'activities_files'   => ['nullable', 'array'],
+            'activities_files.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:50120'],
+            'delete_activities_files' => ['nullable', 'array'],
+            'delete_activities_files.*' => ['string'],
             'password'           => ['nullable', 'confirmed', 'min:8'],
         ];
     }

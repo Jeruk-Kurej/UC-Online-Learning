@@ -2,28 +2,42 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBusinessRequest;
+use App\Http\Requests\UpdateBusinessRequest;
 use App\Models\Business;
 use App\Models\Category;
+use App\Models\Company;
+use App\Models\Province;
+use App\Models\Regency;
 use App\Models\User;
-use App\Http\Requests\UpdateBusinessRequest;
-use App\Imports\FormResponseImport;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 
+/**
+ * Class BusinessController
+ *
+ * Handles showcase listings, detail views, and CRUD management for Businesses (Entrepreneurship)
+ * and Companies (Intrapreneurship), as well as administration statuses, CSV importing, and achievements.
+ */
 class BusinessController extends Controller
 {
     /**
      * Get authenticated user as User instance.
+     *
+     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthenticated
      */
     private function getAuthUser(): User
     {
-        /** @var User|null $user */
         $user = Auth::user();
-
-        if (!$user) {
+        if (! $user instanceof User) {
             abort(401, 'Unauthenticated.');
         }
 
@@ -31,22 +45,32 @@ class BusinessController extends Controller
     }
 
     /**
+     * Check if current authenticated user is an admin.
+     */
+    private function isUserAdmin(): bool
+    {
+        $user = Auth::user();
+
+        return $user instanceof User && $user->isAdmin();
+    }
+
+    /**
      * Display a listing of the businesses.
      */
-    public function index(Request $request)
+    public function index(Request $request): View|Response
     {
         $search = $request->get('search');
         $viewType = $request->get('view', 'entrepreneur');
 
         if ($viewType === 'intrapreneur') {
-            $query = \App\Models\Company::visible()->with(['user', 'category']);
+            $query = Company::visible()->with(['user', 'category']);
         } else {
             // If admin and explicitly asking for pending, show only invisible
-            if (auth()->check() && auth()->user()->isAdmin() && $request->status === 'pending') {
+            if ($this->isUserAdmin() && $request->get('status') === 'pending') {
                 $query = Business::where('is_visible', false)->with(['user', 'category', 'products'])->entrepreneur();
-            } 
-            // If admin but not filtering for pending, show all (so they can see what needs approval in the main list)
-            elseif (auth()->check() && auth()->user()->isAdmin()) {
+            }
+            // If admin but not filtering for pending, show all
+            elseif ($this->isUserAdmin()) {
                 $query = Business::with(['user', 'category', 'products'])->entrepreneur();
             }
             // Default for students/public: only visible
@@ -56,41 +80,44 @@ class BusinessController extends Controller
         }
 
         if ($search) {
-            $query->where(function($q) use ($search, $viewType) {
+            $query->where(function ($q) use ($search, $viewType) {
                 $q->where('name', 'LIKE', "%{$search}%");
                 if ($viewType === 'entrepreneur') {
                     $q->orWhere('description', 'LIKE', "%{$search}%")
-                      ->orWhere('city', 'LIKE', "%{$search}%")
-                      ->orWhere('province', 'LIKE', "%{$search}%");
+                        ->orWhere('city', 'LIKE', "%{$search}%")
+                        ->orWhere('province', 'LIKE', "%{$search}%");
                 } else {
                     $q->orWhere('job_description', 'LIKE', "%{$search}%");
                 }
             });
         }
-        
+
         $category = $request->get('category');
         if ($category) {
             $query->where('category_id', $category);
         }
 
         if ($viewType === 'entrepreneur') {
-            if ($request->city) {
-                $query->where('city', 'LIKE', "%{$request->city}%");
+            $city = $request->get('city');
+            $province = $request->get('province');
+            if ($city) {
+                $query->where('city', 'LIKE', "%{$city}%");
             }
-            if ($request->province) {
-                $query->where('province', 'LIKE', "%{$request->province}%");
+            if ($province) {
+                $query->where('province', 'LIKE', "%{$province}%");
             }
         }
-        
+
         $businesses = $query->latest()->paginate(12)->withQueryString();
         $categories = Category::all();
-        
+
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
-        
+
         // Dynamic city list based on selected province
         $cityQuery = Business::visible()->whereNotNull('city');
-        if ($request->province) {
-            $cityQuery->where('province', $request->province);
+        $selectedProvince = $request->get('province');
+        if ($selectedProvince) {
+            $cityQuery->where('province', $selectedProvince);
         }
         $availableCities = $cityQuery->distinct()->pluck('city')->sort();
 
@@ -102,14 +129,14 @@ class BusinessController extends Controller
             ->distinct()
             ->get()
             ->groupBy('province')
-            ->map(fn($items) => $items->pluck('city')->sort()->values())
+            ->map(fn ($items) => $items->pluck('city')->sort()->values())
             ->toArray();
 
         $featuredBusinessCount = Business::where('is_featured', true)->count();
 
         // If admin, also get count of businesses waiting for approval
         $pendingCount = 0;
-        if (auth()->check() && auth()->user()->isAdmin()) {
+        if ($this->isUserAdmin()) {
             $pendingCount = Business::where('is_visible', false)->count();
         }
 
@@ -120,10 +147,10 @@ class BusinessController extends Controller
         }
 
         return view('businesses.index', compact(
-            'businesses', 
-            'categories', 
-            'viewType', 
-            'availableCities', 
+            'businesses',
+            'categories',
+            'viewType',
+            'availableCities',
             'availableProvinces',
             'provinceCityMap',
             'featuredBusinessCount',
@@ -131,9 +158,12 @@ class BusinessController extends Controller
         ));
     }
 
-    public function adminIndex(Request $request)
+    /**
+     * Display a listing of businesses for administrative management.
+     */
+    public function adminIndex(Request $request): View|Response
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
+        if (! $this->isUserAdmin()) {
             abort(403);
         }
 
@@ -173,9 +203,9 @@ class BusinessController extends Controller
         }
 
         return view('businesses.admin.index', compact(
-            'businesses', 
-            'status', 
-            'search', 
+            'businesses',
+            'status',
+            'search',
             'featured',
             'totalBusinesses',
             'pendingBusinesses',
@@ -185,107 +215,129 @@ class BusinessController extends Controller
         ));
     }
 
-
     /**
      * Update business status (admin only).
      */
-    public function updateStatus(Request $request, Business $business)
+    public function updateStatus(Request $request, Business $business): RedirectResponse
     {
-        if (!auth()->check() || !auth()->user()->isAdmin()) {
+        if (! $this->isUserAdmin()) {
             abort(403);
         }
 
-        $request->validate([
+        $this->validate($request, [
             'status' => 'required|in:approved,rejected,need_revision,pending',
-            'rejection_reason' => 'required_if:status,rejected,need_revision'
+            'rejection_reason' => 'required_if:status,rejected,need_revision',
         ]);
 
-        $business->update([
-            'approval_status' => $request->status,
-            'rejection_reason' => in_array($request->status, ['rejected', 'need_revision']) ? $request->rejection_reason : null,
-            'is_visible' => $request->status === 'approved'
-        ]);
+        $status = $request->input('status');
+        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
 
-        return back()->with('success', "Business status updated to " . ucfirst(str_replace('_', ' ', $request->status)));
+        $business->fill([
+            'approval_status' => $status,
+            'rejection_reason' => $rejectionReason,
+            'is_visible' => $status === 'approved',
+        ]);
+        $business->save();
+
+        return back()->with('success', 'Business status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
     /**
      * Show the form for creating a new business.
      */
-    public function create()
+    public function create(): View
     {
-        // Removed admin check to allow students to create businesses
-
         $categories = Category::all();
-        $users = User::orderBy('name')->get();
-        $availableCities = \App\Models\Regency::pluck('name')->sort();
-        $provinces = \App\Models\Province::orderBy('name')->get();
+        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
+        $availableCities = Regency::pluck('name')->sort();
+        $provinces = Province::orderBy('name')->get();
+
         return view('businesses.create', compact('categories', 'users', 'availableCities', 'provinces'));
     }
 
     /**
-     * Get regencies for a given province.
+     * Get regencies for a given province via AJAX.
      */
-    public function getRegencies(Request $request)
+    public function getRegencies(Request $request): JsonResponse
     {
         $provinceId = $request->get('province_id');
-        if (!$provinceId) {
-            return response()->json([]);
+        if (! $provinceId) {
+            return new JsonResponse([]);
         }
 
-        $regencies = \App\Models\Regency::where('province_id', $provinceId)
+        $regencies = Regency::where('province_id', $provinceId)
             ->orderBy('name')
             ->get(['id', 'name']);
 
-        return response()->json($regencies);
+        return new JsonResponse($regencies);
     }
 
     /**
      * Display the specified business.
      */
-    public function show(Business $business)
+    public function show(Business $business): View
     {
         $business->load(['user', 'category', 'products', 'legalDocuments', 'certifications', 'members']);
+
         return view('businesses.show', compact('business'));
+    }
+
+    /**
+     * Resolve /showcase/{slug} to either a Business or a Company.
+     *
+     * @param  string  $slug
+     */
+    public function resolveShowcase($slug): View|Response
+    {
+        $business = Business::where('slug', $slug)->first();
+        if ($business) {
+            return $this->show($business);
+        }
+
+        $company = Company::where('slug', $slug)->first();
+        if ($company) {
+            return $this->showIntrapreneur($company);
+        }
+
+        abort(404);
     }
 
     /**
      * Display the specified intrapreneur (Company).
      */
-    public function showIntrapreneur(\App\Models\Company $company)
+    public function showIntrapreneur(Company $company): View
     {
         $company->load(['user', 'category']);
+
         return view('businesses.show_intrapreneur', compact('company'));
     }
 
     /**
      * Show the form for editing the specified business.
      */
-    public function edit(Business $business)
+    public function edit(Business $business): View
     {
         $this->authorize('update', $business);
-        
-        // Load existing relationships
+
         $business->load(['user', 'category', 'products', 'members', 'legalDocuments', 'certifications']);
-        
+
         $categories = Category::all();
-        $users = User::orderBy('name')->get();
-        $provinces = \App\Models\Province::orderBy('name')->get();
-        
-        $selectedProvinceId = \App\Models\Province::where('name', $business->province)->first()?->id;
-        $availableCities = $selectedProvinceId 
-            ? \App\Models\Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
+        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
+        $provinces = Province::orderBy('name')->get();
+
+        $selectedProvinceId = Province::where('name', $business->province)->first()?->id;
+        $availableCities = $selectedProvinceId
+            ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
             : collect();
 
-        // Prepare variables for the view
-        $existingServices = []; // Placeholder as services are not yet separated in DB
-        $legalDocs = $business->legalDocuments; // Use the many-to-many relationship
+        $existingServices = [];
+        $legalDocs = $business->legalDocuments;
 
         return view('businesses.edit', compact(
-            'business', 
-            'categories', 
-            'users', 
-            'existingServices', 
+            'business',
+            'categories',
+            'users',
+            'existingServices',
             'legalDocs',
             'availableCities',
             'provinces',
@@ -296,20 +348,18 @@ class BusinessController extends Controller
     /**
      * Update the specified business.
      */
-    public function update(UpdateBusinessRequest $request, Business $business)
+    public function update(UpdateBusinessRequest $request, Business $business): RedirectResponse
     {
         $this->authorize('update', $business);
 
         $validated = $request->validated();
-        
-        // Map form fields to database columns
         $data = $validated;
 
         // Security: only admins can change visibility or featured status or primary owner
-        if (!auth()->user()->isAdmin()) {
+        if (! $this->isUserAdmin()) {
             unset($data['is_visible'], $data['is_featured'], $data['user_id']);
         }
-        // category_id is now sent directly from the form
+
         if (isset($validated['business_type_id'])) {
             $data['category_id'] = $validated['business_type_id'];
             unset($data['business_type_id']);
@@ -331,51 +381,62 @@ class BusinessController extends Controller
             unset($data['instagram_handle']);
         }
         $data['is_featured'] = $request->boolean('is_featured');
-        
+
+        // Handle logo deletion
+        if ($request->boolean('delete_logo')) {
+            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+            $data['logo_url'] = null;
+        }
+
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('logos', 'public');
-            $data['logo_url'] = $path; // Fixed: using logo_url as per model
+            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+
+            /** @var \Illuminate\Http\UploadedFile $logoFile */
+            $logoFile = $request->file('logo');
+            $path = $logoFile->store('logos', 'public');
+            $data['logo_url'] = $path;
         }
 
         // Resolve Province and City names if IDs are sent
         if (isset($data['province']) && is_numeric($data['province'])) {
-            $data['province'] = \App\Models\Province::find($data['province'])?->name ?? $data['province'];
+            $data['province'] = Province::find($data['province'])?->name ?? $data['province'];
         }
         if (isset($data['city']) && is_numeric($data['city'])) {
-            $data['city'] = \App\Models\Regency::find($data['city'])?->name ?? $data['city'];
+            $data['city'] = Regency::find($data['city'])?->name ?? $data['city'];
         }
 
-        $business->update($data);
-        
-        // Sync members if provided (form uses owner_ids)
+        $business->fill($data);
+        $business->save();
+
+        // Sync members if provided
         if ($request->has('owner_ids')) {
-            $business->members()->sync($request->owner_ids);
+            $ownerIds = (array) $request->input('owner_ids');
+            $business->members()->sync($ownerIds);
         }
 
         return redirect()->route('businesses.show', $business)->with('success', 'Business updated successfully!');
     }
 
     /**
-     * Display user's businesses.
+     * Display the authenticated user's businesses.
      */
-    public function my()
+    public function my(): View
     {
         $user = Auth::user();
         $myBusinesses = Business::with(['category'])->where('user_id', $user->id)->latest()->get();
+
         return view('businesses.my', compact('myBusinesses'));
     }
 
     /**
-     * Store a newly created business (from manual form).
+     * Store a newly created business.
      */
-    public function store(\App\Http\Requests\StoreBusinessRequest $request)
+    public function store(StoreBusinessRequest $request): RedirectResponse
     {
         $validated = $request->validated();
-        
-        // Map form fields to database columns
         $data = $validated;
-        // category_id is now sent directly from the form
+
         if (isset($validated['business_mode'])) {
             $data['offering_type'] = $validated['business_mode'];
             unset($data['business_mode']);
@@ -392,12 +453,12 @@ class BusinessController extends Controller
             $data['instagram'] = $validated['instagram_handle'];
             unset($data['instagram_handle']);
         }
-        
+
         $data['user_id'] = Auth::id();
         $data['type'] = 'entrepreneur';
 
         // Student-created businesses are invisible until approved by admin
-        if (!auth()->user()->isAdmin()) {
+        if (! $this->isUserAdmin()) {
             $data['is_visible'] = false;
         } else {
             $data['is_visible'] = true;
@@ -405,27 +466,30 @@ class BusinessController extends Controller
 
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
-            $path = $request->file('logo')->store('logos', 'public');
+            /** @var \Illuminate\Http\UploadedFile $logoFile */
+            $logoFile = $request->file('logo');
+            $path = $logoFile->store('logos', 'public');
             $data['logo_url'] = $path;
         }
 
         // Resolve Province and City names if IDs are sent
         if (isset($data['province']) && is_numeric($data['province'])) {
-            $data['province'] = \App\Models\Province::find($data['province'])?->name ?? $data['province'];
+            $data['province'] = Province::find($data['province'])?->name ?? $data['province'];
         }
         if (isset($data['city']) && is_numeric($data['city'])) {
-            $data['city'] = \App\Models\Regency::find($data['city'])?->name ?? $data['city'];
+            $data['city'] = Regency::find($data['city'])?->name ?? $data['city'];
         }
 
         $business = Business::create($data);
 
         // Sync members if provided
         if ($request->has('owner_ids')) {
-            $business->members()->sync($request->owner_ids);
+            $ownerIds = (array) $request->input('owner_ids');
+            $business->members()->sync($ownerIds);
         }
 
-        $message = auth()->user()->isAdmin() 
-            ? 'Business created successfully!' 
+        $message = $this->isUserAdmin()
+            ? 'Business created successfully!'
             : 'Business submitted for approval! An admin will review it soon.';
 
         return redirect()->route('businesses.my')->with('success', $message);
@@ -434,61 +498,65 @@ class BusinessController extends Controller
     /**
      * Approve a business (admin only).
      */
-    public function approve(Business $business)
+    public function approve(Business $business): RedirectResponse
     {
-        if (!auth()->user()->isAdmin()) {
+        if (! $this->isUserAdmin()) {
             abort(403);
         }
 
-        $business->update(['is_visible' => true]);
+        $business->is_visible = true;
+        $business->save();
 
         return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
     }
 
-    public function toggleFeatured(Business $business)
+    /**
+     * Toggle the featured status of a business.
+     */
+    public function toggleFeatured(Request $request, Business $business): RedirectResponse|JsonResponse
     {
-        /** @var \App\Models\User|null $user */
-        $user = Auth::user();
-        if (!$user || !$user->isAdmin()) {
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized.'], 403);
+        if (! $this->isUserAdmin()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => 'Unauthorized.'], 403);
             }
             abort(403);
         }
 
-        if ($business->is_featured) {
-            $business->update(['is_featured' => false]);
-            $msg = "\"{$business->name}\" removed from featured.";
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => true, 'message' => $msg]);
+        if ($business->approval_status !== 'approved') {
+            $msg = 'Only approved businesses can be featured.';
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => false, 'message' => $msg], 422);
             }
+            return back()->withErrors(['approval' => $msg]);
+        }
+
+        if ($business->is_featured) {
+            $business->is_featured = false;
+            $business->save();
+            $msg = "\"{$business->name}\" removed from featured.";
+            if ($request->ajax() || $request->wantsJson()) {
+                return new JsonResponse(['success' => true, 'message' => $msg]);
+            }
+
             return back()->with('success', $msg);
         }
 
-        $featuredCount = Business::where('is_featured', true)->count();
-        if ($featuredCount >= 8) {
-            $msg = 'Maximum of 8 featured businesses reached. Un-feature one first.';
-            if (request()->ajax() || request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => $msg], 422);
-            }
-            return back()->withErrors(['featured' => $msg]);
+        $business->is_featured = true;
+        $business->save();
+        $msg = "\"{$business->name}\" is now featured.";
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse(['success' => true, 'message' => $msg]);
         }
 
-        $business->update(['is_featured' => true]);
-        $msg = "\"{$business->name}\" is now featured.";
-        if (request()->ajax() || request()->wantsJson()) {
-            return response()->json(['success' => true, 'message' => $msg]);
-        }
         return back()->with('success', $msg);
     }
 
-
     /**
-     * Import businesses from CSV/Excel using auto-detected importer.
+     * Delete a business.
      */
-    public function destroy(Business $business)
+    public function destroy(Business $business): RedirectResponse
     {
-        if (!$this->getAuthUser()->isAdmin()) {
+        if (! $this->getAuthUser()->isAdmin()) {
             abort(403);
         }
 
@@ -498,67 +566,151 @@ class BusinessController extends Controller
             ->with('success', 'Business deleted successfully.');
     }
 
-    public function import(Request $request)
+    /**
+     * Import businesses from CSV/Excel using auto-detected importer.
+     */
+    public function import(Request $request): RedirectResponse|JsonResponse
     {
-        $request->validate([
+        $this->validate($request, [
             'file' => 'required|mimes:xlsx,xls,csv|max:20480',
         ]);
 
         try {
             $importId = (string) Str::uuid();
+            /** @var \Illuminate\Http\UploadedFile $file */
             $file = $request->file('file');
 
-            // Store file to local temp disk so queue worker can access it
             $path = $file->store('imports', 'local');
 
-            // Peek at the file to auto-detect format using the local temp upload file
             $importer = $this->detectImporter($file->getRealPath(), $importId, $file->getClientOriginalName());
 
-            // Queue it — runs in background via `php artisan queue:work`
             Excel::queueImport($importer, $path, 'local');
 
             $format = $importer instanceof \App\Imports\UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
 
-            // Store importId in session so frontend can poll progress
             session(['active_import' => $importId]);
 
             if ($request->wantsJson()) {
-                return response()->json([
+                return new JsonResponse([
                     'success' => true,
                     'importId' => $importId,
                     'format' => $format,
-                    'message' => "Import queued! Format: {$format}."
+                    'message' => "Import queued! Format: {$format}.",
                 ]);
             }
 
             return back()->with('success', "Import queued! Format: {$format}. Processing ~1500 rows in background...")
-                         ->with('importId', $importId);
+                ->with('importId', $importId);
         } catch (\Exception $e) {
-            Log::error('Import error: ' . $e->getMessage());
+            Log::error('Import error: '.$e->getMessage());
             if ($request->wantsJson()) {
-                return response()->json([
+                return new JsonResponse([
                     'success' => false,
-                    'message' => 'Import failed: ' . $e->getMessage()
+                    'message' => 'Import failed: '.$e->getMessage(),
                 ], 500);
             }
+
             return back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
     /**
+     * Show the form for creating a new company achievement.
+     */
+    public function createAchievement(Company $company): View
+    {
+        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        return view('businesses.add_achievement', compact('company'));
+    }
+
+    /**
+     * Add achievement to a company.
+     */
+    public function addAchievement(Company $company, Request $request): RedirectResponse|JsonResponse
+    {
+        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $this->validate($request, [
+            'achievement' => 'required|string|max:500',
+        ]);
+
+        $newAchievement = trim((string) $request->input('achievement'));
+
+        $existing = trim($company->achievement);
+        if (empty($existing)) {
+            $updated = '- '.$newAchievement;
+        } else {
+            $updated = $existing."\n- ".$newAchievement;
+        }
+
+        $company->achievement = $updated;
+        $company->save();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Achievement added successfully!',
+                'achievements' => $company->achievements_list,
+            ]);
+        }
+
+        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Achievement added successfully!');
+    }
+
+    /**
+     * Delete achievement from a company.
+     */
+    public function deleteAchievement(Company $company, Request $request): RedirectResponse|JsonResponse
+    {
+        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
+            abort(403, 'Unauthorized.');
+        }
+
+        $this->validate($request, [
+            'index' => 'required|integer|min:0',
+        ]);
+
+        $achievements = $company->achievements_list;
+        $index = (int) $request->input('index');
+
+        if (isset($achievements[$index])) {
+            unset($achievements[$index]);
+            $updated = empty($achievements) ? null : implode("\n", array_map(fn ($item) => '- '.$item, $achievements));
+            $company->achievement = $updated;
+            $company->save();
+        }
+
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse([
+                'success' => true,
+                'message' => 'Achievement deleted successfully!',
+                'achievements' => $company->achievements_list ?? [],
+            ]);
+        }
+
+        return back()->with('success', 'Achievement deleted successfully!');
+    }
+
+    /**
      * Peek at the raw file to determine which importer to use.
      */
-    private function detectImporter(string $path, string $importId, string $originalName = '')
+    private function detectImporter(string $path, string $importId, string $originalName = ''): object
     {
-        // For xlsx/xls we can't search raw text easily — check filename heuristic
         $ext = strtolower(pathinfo($originalName ?: $path, PATHINFO_EXTENSION));
         if (in_array($ext, ['xlsx', 'xls'])) {
             if (stripos($originalName, 'UCO') !== false || stripos($originalName, 'Student') !== false) {
-                Log::info("Import: XLSX filename heuristic → UCOStudentImport");
+                Log::info('Import: XLSX filename heuristic → UCOStudentImport');
+
                 return new \App\Imports\UCOStudentImport($importId);
             }
-            Log::info("Import: XLSX default → FormResponseImport");
-            return new \App\Imports\FormResponseImport($importId);
+            Log::info('Import: XLSX default → FormResponseImport');
+
+            return new \App\Imports\FormResponseImport($importId, $originalName ?: basename($path));
         }
 
         // For CSV/Raw: read first 2KB and search for markers
@@ -566,14 +718,53 @@ class BusinessController extends Controller
         $peek = fread($handle, 2048);
         fclose($handle);
 
-        // UCO Student format markers: "NIS" AND "Sub Prodi"
-        // Form Response markers: "Timestamp" OR "Email Address" (row 1)
         if (stripos($peek, 'NIS') !== false && stripos($peek, 'Sub Prodi') !== false) {
-            Log::info("Import: detected UCO Student Profile format via content markers");
+            Log::info('Import: detected UCO Student Profile format via content markers');
+
             return new \App\Imports\UCOStudentImport($importId);
         }
 
-        Log::info("Import: falling back to Form Response format");
-        return new \App\Imports\FormResponseImport($importId);
+        Log::info('Import: falling back to Form Response format');
+
+        return new \App\Imports\FormResponseImport($importId, $originalName ?: basename($path));
+    }
+
+    /**
+     * Safely delete a file from local public storage or Cloudinary.
+     */
+    private function deleteFileFromStorage(?string $pathOrUrl): void
+    {
+        if (! $pathOrUrl) {
+            return;
+        }
+
+        // Handle Cloudinary URL
+        if (str_contains($pathOrUrl, 'cloudinary.com')) {
+            try {
+                Business::deleteCloudinaryImage($pathOrUrl);
+            } catch (\Throwable $e) {
+                // silently swallow
+            }
+
+            return;
+        }
+
+        // Normalize local storage path
+        $relativePath = $pathOrUrl;
+        if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
+            $relativePath = parse_url($relativePath, PHP_URL_PATH);
+        }
+
+        if (str_starts_with($relativePath, '/storage/')) {
+            $relativePath = substr($relativePath, strlen('/storage/'));
+        } elseif (str_starts_with($relativePath, 'storage/')) {
+            $relativePath = substr($relativePath, strlen('storage/'));
+        }
+
+        $relativePath = ltrim($relativePath, '/');
+
+        if (Storage::disk('public')->exists($relativePath)) {
+            Storage::disk('public')->delete($relativePath);
+        }
     }
 }

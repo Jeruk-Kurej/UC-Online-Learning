@@ -91,10 +91,9 @@
     @endpush
 
     <div class="mb-6 flex items-center gap-4">
-        <a href="{{ route('users.index') }}" 
-           class="group inline-flex items-center gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
-            <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-            <span>Back</span>
+        <a href="{{ route('users.show', $userToEdit) }}" class="btn-uco btn-uco-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
         </a>
         <div class="flex-1">
             <h1 class="text-2xl font-bold text-gray-900">Edit User</h1>
@@ -236,27 +235,85 @@
                 </div>
 
                 {{-- Profile Photo --}}
-                <div class="relative">
-                    <label for="profile_photo_url" class="form-label-custom">Profile Photo</label>
-                    <div class="form-file-container-custom group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
-                                <i class="bi bi-cloud-upload text-base"></i>
+                <div class="relative" x-data="{
+                    hasPhoto: {{ $userToEdit->profile_photo_url ? 'true' : 'false' }},
+                    photoDeleted: false,
+                    newPhotoSelected: false
+                }">
+                    <label class="form-label-custom">Profile Photo</label>
+                    <input type="hidden" name="delete_profile_photo_url" :value="photoDeleted ? '1' : '0'">
+
+                    <div class="flex items-start gap-5">
+                        <!-- Clickable Photo Box -->
+                        <div id="pp-container" style="width: 110px; height: 140px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; cursor: pointer; transition: 0.3s;"
+                             class="group hover:border-blue-500 shadow-sm"
+                             onmouseover="this.querySelector('.photo-overlay').style.opacity='1'"
+                             onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
+                            
+                            <!-- Current / New Photo Preview -->
+                            <img id="preview-image-pp" src="{{ $userToEdit->profile_photo_url }}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;"
+                                 x-show="hasPhoto && !photoDeleted">
+                            
+                            <!-- Initials Placeholder -->
+                            <div id="initials-placeholder" style="width: 100%; height: 100%; background: linear-gradient(135deg, #f97316, #ea580c); display: flex; align-items: center; justify-content: center; color: white;"
+                                 x-show="!hasPhoto || photoDeleted">
+                                <span class="text-3xl font-black text-white select-none">{{ strtoupper(substr($userToEdit->name, 0, 1)) }}</span>
                             </div>
-                            <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="profile_photo_label">Upload or drop a file</span>
-                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">JPG, PNG, WEBP</span>
+
+                            <!-- Click to pick trigger -->
+                            <label for="profile_photo_url" class="absolute inset-0 cursor-pointer z-20">
+                                <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*" class="hidden"
+                                       @change="const [file] = $event.target.files; if (file) { 
+                                           document.getElementById('preview-image-pp').src = URL.createObjectURL(file);
+                                           hasPhoto = true;
+                                           photoDeleted = false;
+                                           newPhotoSelected = true;
+                                       }">
+                            </label>
+
+                            <!-- Hover Overlay -->
+                            <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
+                                <i class="bi bi-camera-fill text-white text-lg"></i>
+                                <span class="text-white text-[8px] font-black uppercase tracking-widest mt-1">Change</span>
                             </div>
                         </div>
-                        <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('profile_photo_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
+
+                        <!-- Action Buttons and Help Text -->
+                        <div class="flex flex-col justify-center h-[140px]">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">JPG, PNG, WEBP — Max 5MB</p>
+                            
+                            <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
+                                <button type="button" @click="photoDeleted = true" 
+                                        class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                    <i class="bi bi-trash3 text-sm"></i>
+                                    <span>Remove Photo</span>
+                                </button>
+                            </template>
+                            
+                            <template x-if="photoDeleted">
+                                <button type="button" @click="photoDeleted = false" 
+                                        class="inline-flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-bold transition-all">
+                                    <i class="bi bi-arrow-counterclockwise text-sm"></i>
+                                    <span>Undo Delete</span>
+                                </button>
+                            </template>
+
+                            <template x-if="newPhotoSelected">
+                                <button type="button" @click="
+                                    document.getElementById('profile_photo_url').value = '';
+                                    newPhotoSelected = false;
+                                    hasPhoto = {{ $userToEdit->profile_photo_url ? 'true' : 'false' }};
+                                    photoDeleted = false;
+                                    document.getElementById('preview-image-pp').src = '{{ $userToEdit->profile_photo_url }}';
+                                " 
+                                        class="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-bold transition-all">
+                                    <i class="bi bi-x-circle text-sm"></i>
+                                    <span>Cancel New Photo</span>
+                                </button>
+                            </template>
+                        </div>
                     </div>
-                    @if($userToEdit->profile_photo_url)
-                        <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider">
-                            <i class="bi bi-check-circle-fill me-1"></i> Current file exists
-                        </p>
-                    @endif
                     @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
@@ -303,31 +360,173 @@
                         <option value="Entrepreneur" {{ old('current_status', $userToEdit->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
                         <option value="Intrapreneur" {{ old('current_status', $userToEdit->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
                     </select>
-                </div>
+                </div>                {{-- Activities Documentation Files --}}
+                @php
+                    $activitiesList = [];
+                    if ($userToEdit->activities_doc_url) {
+                        $rawUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $userToEdit->activities_doc_url)));
+                        foreach ($rawUrls as $rawUrl) {
+                            $isGoogleDrive = str_contains($rawUrl, 'drive.google.com') || str_contains($rawUrl, 'docs.google.com');
+                            $previewUrl = null;
+                            $name = basename(parse_url($rawUrl, PHP_URL_PATH) ?? $rawUrl);
 
-                {{-- Activities Documentation File --}}
-                <div class="relative">
-                    <label for="activities_doc_url" class="form-label-custom">Activities Documentation File</label>
-                    <div class="form-file-container-custom group">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
-                                <i class="bi bi-folder2-open text-base"></i>
-                            </div>
-                            <div>
-                                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight" id="activities_label">Upload or drop a file</span>
-                                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">PDF ONLY</span>
+                            if ($isGoogleDrive) {
+                                if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $rawUrl, $matches)) {
+                                    $id = $matches[1];
+                                    $previewUrl = "https://drive.google.com/thumbnail?sz=w400&id=" . $id;
+                                }
+                            } else {
+                                $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+                                if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                                    $previewUrl = $rawUrl;
+                                }
+                            }
+
+                            $activitiesList[] = [
+                                'url' => $rawUrl,
+                                'previewUrl' => $previewUrl,
+                                'name' => $name
+                            ];
+                        }
+                    }
+                @endphp
+                <div class="md:col-span-2 relative" x-data="{
+                    existingFiles: @js(array_values($activitiesList)),
+                    deletedFiles: [],
+                    newFiles: [],
+                    deleteFile(url) {
+                        if (!this.deletedFiles.includes(url)) {
+                            this.deletedFiles.push(url);
+                        }
+                    },
+                    undoDeleteFile(url) {
+                        this.deletedFiles = this.deletedFiles.filter(item => item !== url);
+                    },
+                    isDeleted(url) {
+                        return this.deletedFiles.includes(url);
+                    },
+                    handleNewFiles(event) {
+                        const files = Array.from(event.target.files);
+                        this.newFiles = [];
+                        files.forEach(file => {
+                            const fileObj = {
+                                name: file.name,
+                                size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
+                                type: file.type,
+                                preview: null
+                            };
+                            if (file.type.startsWith('image/')) {
+                                const reader = new FileReader();
+                                reader.onload = (e) => {
+                                    fileObj.preview = e.target.result;
+                                };
+                                reader.readAsDataURL(file);
+                            }
+                            this.newFiles.push(fileObj);
+                        });
+                    }
+                }">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="form-label-custom mb-0">Activities Documentation Files</label>
+                        <div class="relative">
+                            <input type="file" name="activities_docs[]" id="activities_docs" multiple accept="image/*,application/pdf"
+                                   class="hidden"
+                                   @change="handleNewFiles($event)">
+                            <button type="button" @click="document.getElementById('activities_docs').click()"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 text-[10px] font-extrabold rounded-lg transition shadow-sm select-none cursor-pointer">
+                                <i class="bi bi-plus-lg text-[9px]"></i>
+                                <span>Add Files</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    {{-- Hidden input for deleted existing files --}}
+                    <template x-for="url in deletedFiles" :key="url">
+                        <input type="hidden" name="delete_activities_files[]" :value="url">
+                    </template>
+
+                    <div class="flex flex-col gap-4">
+                        {{-- Existing Files Grid --}}
+                        <div x-show="existingFiles.length > 0" class="w-full">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Existing Uploaded Documents</p>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <template x-for="item in existingFiles" :key="item.url">
+                                    <div class="relative group rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-slate-50 transition-all duration-200 hover:shadow-md hover:border-slate-300">
+                                        
+                                        {{-- Image or PDF Thumbnail Preview --}}
+                                        <template x-if="item.previewUrl">
+                                            <img :src="item.previewUrl" class="w-full h-full object-cover">
+                                        </template>
+
+                                        {{-- Local PDF generic Card --}}
+                                        <template x-if="!item.previewUrl">
+                                            <div class="flex flex-col items-center justify-center p-3 text-center">
+                                                <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center text-red-500 mb-1">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-xl"></i>
+                                                </div>
+                                                <span class="text-[10px] font-bold text-slate-600 truncate w-full max-w-[120px]" x-text="item.name"></span>
+                                                <span class="text-[8px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">PDF</span>
+                                            </div>
+                                        </template>
+
+                                        {{-- Hover Delete Overlay --}}
+                                        <div x-show="!isDeleted(item.url)" class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center backdrop-blur-[1px]">
+                                            <button type="button" @click="deleteFile(item.url)" class="w-8 h-8 rounded-lg bg-red-500 text-white hover:bg-red-600 flex items-center justify-center shadow-md transition-colors" title="Delete file">
+                                                <i class="bi bi-trash-fill text-sm"></i>
+                                            </button>
+                                        </div>
+
+                                        {{-- Deleted Overlay --}}
+                                        <div x-show="isDeleted(item.url)" class="absolute inset-0 bg-red-50/90 flex flex-col items-center justify-center p-2 text-center transition-all duration-200">
+                                            <i class="bi bi-trash3 text-red-500 text-lg mb-1"></i>
+                                            <span class="text-[9px] font-bold text-red-600 uppercase tracking-wider mb-1.5">Flagged to Delete</span>
+                                            <button type="button" @click="undoDeleteFile(item.url)" class="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 font-bold text-[9px] rounded border border-slate-200 shadow-sm flex items-center gap-1 transition-colors">
+                                                <i class="bi bi-arrow-counterclockwise"></i>
+                                                <span>Undo</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
                             </div>
                         </div>
-                        <input type="file" name="activities_doc_url" id="activities_doc_url" accept=".pdf"
-                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                               onchange="document.getElementById('activities_label').textContent = this.files[0]?.name || 'Upload or drop a file';">
+
+                        {{-- New Files Selection Previews --}}
+                        <div x-show="newFiles.length > 0" class="w-full bg-slate-50 rounded-xl border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
+                                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1.5">
+                                    <i class="bi bi-check2-circle text-green-500 text-sm"></i>
+                                    <span x-text="newFiles.length + ' New Files Selected'"></span>
+                                </span>
+                                <button type="button" @click="newFiles = []; document.getElementById('activities_docs').value = '';" class="text-[10px] text-amber-600 hover:text-amber-700 font-extrabold flex items-center gap-1 transition-colors">
+                                    <i class="bi bi-trash3-fill"></i>
+                                    <span>Clear Selection</span>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                                <template x-for="(file, idx) in newFiles" :key="idx">
+                                    <div class="relative rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-white">
+                                        
+                                        {{-- Image Preview --}}
+                                        <template x-if="file.preview">
+                                            <img :src="file.preview" class="w-full h-full object-cover">
+                                        </template>
+
+                                        {{-- PDF Preview --}}
+                                        <template x-if="!file.preview">
+                                            <div class="flex flex-col items-center justify-center p-3 text-center">
+                                                <div class="w-8 h-8 rounded-lg bg-red-50 border border-red-100 flex items-center justify-center text-red-500 mb-1">
+                                                    <i class="bi bi-file-earmark-pdf-fill text-lg"></i>
+                                                </div>
+                                                <span class="text-[9px] font-bold text-slate-700 truncate w-full max-w-[120px]" x-text="file.name"></span>
+                                                <span class="text-[7px] text-slate-400 font-extrabold uppercase mt-0.5" x-text="file.size"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
-                    @if($userToEdit->activities_doc_url)
-                        <p class="mt-2 text-[10px] text-blue-600 font-bold uppercase tracking-wider">
-                            <i class="bi bi-check-circle-fill me-1"></i> Current file exists
-                        </p>
-                    @endif
-                    @error('activities_doc_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('activities_docs')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
                 {{-- Testimony --}}
@@ -362,13 +561,12 @@
 
         {{-- Action Buttons --}}
         <div class="flex items-center justify-between pb-10">
-            <a href="{{ route('users.index') }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
+            <a href="{{ route('users.show', $userToEdit) }}" class="btn-uco btn-uco-neutral">
                 Cancel
             </a>
-            <button type="submit" 
-                    class="btn-uco btn-uco-primary px-8 py-3.5">
-                <i class="bi bi-check-circle-fill text-lg"></i>
-                <span>Update User</span>
+            <button type="submit" class="btn-uco btn-uco-primary">
+                <i class="bi bi-check-circle-fill"></i>
+                Update User
             </button>
         </div>
     </form>

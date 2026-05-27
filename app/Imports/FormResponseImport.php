@@ -28,14 +28,26 @@ use Carbon\Carbon;
 class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents, ShouldQueue
 {
     public $importId;
+    public $fileName;
+    protected $importType = null; // 'entrepreneur', 'intrapreneur', or null
     protected $errors = [];
     protected $successCount = 0;
     protected $skippedCount = 0;
     private static bool $debugKeysDumped = false; // one-time column key debug
 
-    public function __construct($importId = null)
+    public function __construct($importId = null, $fileName = null)
     {
         $this->importId = $importId;
+        $this->fileName = $fileName;
+
+        if ($fileName) {
+            $lowerName = strtolower($fileName);
+            if (str_contains($lowerName, 'intrapreneur')) {
+                $this->importType = 'intrapreneur';
+            } elseif (str_contains($lowerName, 'entrepreneur')) {
+                $this->importType = 'entrepreneur';
+            }
+        }
     }
 
     public function chunkSize(): int
@@ -56,6 +68,44 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
         }
         return null;
+    }
+
+    /**
+     * Parse Google Form "Selected" column (featured flag).
+     * Excel/CSV may provide boolean true/false, 1/0, or strings TRUE/FALSE.
+     * Returns null when the column is absent so re-imports do not wipe featured state.
+     */
+    private function parseSelectedFeatured(array $row): ?bool
+    {
+        if (!array_key_exists('selected', $row)) {
+            return null;
+        }
+
+        $raw = $row['selected'];
+
+        if ($raw === null || $raw === '') {
+            return false;
+        }
+
+        if (is_bool($raw)) {
+            return $raw;
+        }
+
+        if (is_int($raw) || is_float($raw)) {
+            return (int) $raw === 1;
+        }
+
+        $normalized = strtolower(trim((string) $raw));
+
+        if (in_array($normalized, ['true', '1', 'yes', 'y'], true)) {
+            return true;
+        }
+
+        if (in_array($normalized, ['false', '0', 'no', 'n'], true)) {
+            return false;
+        }
+
+        return false;
     }
 
     /**
@@ -81,15 +131,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return null;
             }
 
-            // ── 1.5 Check 'Selected' flag (if column exists, skip if not TRUE) ──
-            if (array_key_exists('selected', $row)) {
-                $selectedRaw = $row['selected'];
-                $strSelected = strtoupper(trim((string)$selectedRaw));
-                if ($strSelected !== 'TRUE' && $strSelected !== '1' && $selectedRaw !== true) {
-                    $this->skip("Row not selected for import (Selected = " . (is_bool($selectedRaw) ? 'FALSE' : $strSelected) . ")");
-                    return null;
-                }
-            }
 
             $fullName = $this->col($row, 'full_name');
             if (!$fullName) {
@@ -118,7 +159,21 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 $careerCategory = 'Entrepreneur';
             }
 
-            $isFeatured = false;
+            $isFeatured = $this->parseSelectedFeatured($row);
+
+            // Prevent cross-over wiping of featured states when importing two different files that contain all users
+            if ($isFeatured !== null && $this->importType !== null && $careerCategory !== null) {
+                $lowerCategory = strtolower($careerCategory);
+                if ($this->importType === 'intrapreneur' && $lowerCategory === 'entrepreneur' && $isFeatured === false) {
+                    // This is the Intrapreneur import file. This row is an Entrepreneur, and is marked FALSE here.
+                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Entrepreneurs.
+                    $isFeatured = null;
+                } elseif ($this->importType === 'entrepreneur' && $lowerCategory === 'intrapreneur' && $isFeatured === false) {
+                    // This is the Entrepreneur import file. This row is an Intrapreneur, and is marked FALSE here.
+                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Intrapreneurs.
+                    $isFeatured = null;
+                }
+            }
 
             // ── DEBUG: Log critical field values ──
             Log::debug('[FormResponseImport] Row debug', [
@@ -129,6 +184,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'graduate_year_resolved' => $graduateYear,
                 'student_status'         => $studentStatus,
                 'career_category'        => $careerCategory,
+                'is_featured'            => $isFeatured,
+                'selected_raw'           => $row['selected'] ?? '<<KEY MISSING>>',
                 'business_name'          => $row['business_name']  ?? '<<KEY MISSING>>',
                 'company_name'           => $row['company_name_']  ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
             ]);
@@ -151,14 +208,16 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'graduate_year'     => $graduateYear,
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
-                'cv_url'            => $this->col($row, 'curriculum_vitae'),
                 'profile_photo_url' => $this->uploadToCloudinary($this->col($row, 'professional_profile_photo'), 'users', $fullName),
                 'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
                 'expertise_certification_url' => $this->col($row, 'expertise_certification'),
                 'student_status'    => $studentStatus,
-                'is_featured'       => $isFeatured,
                 'email_verified_at' => now(),
             ];
+
+            if ($isFeatured !== null) {
+                $userData['is_featured'] = $isFeatured;
+            }
 
             $existingUser = User::where('email', $email)->first();
             if ($existingUser) {
@@ -207,11 +266,10 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             // ── 4. Determine path: Entrepreneur vs Intrapreneur ──
             $status = strtolower($this->col($row, 'current_status') ?? '');
 
-            // ── 4a. Entrepreneur → Business ──
             $businessName = $this->col($row, 'business_name');
             if ($businessName) {
                 $categoryId = null;
-                $catName = $this->col($row, 'category');
+                $catName = $this->col($row, 'industry_category');
                 if ($catName) {
                     try {
                         $cat = $this->getOrCreateCategory($catName);
@@ -248,7 +306,13 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
                     'type'                    => 'entrepreneur',
+                    'approval_status'         => 'approved',
+                    'is_visible'              => true,
                 ];
+
+                if ($isFeatured !== null) {
+                    $businessData['is_featured'] = $isFeatured;
+                }
 
                 // Smart dedup: try exact match first, then fallback to user's first business
                 $business = Business::where('user_id', $user->id)->where('name', $businessName)->first()
@@ -329,6 +393,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'achievement'          => $this->col($row, 'achievement'),
                     'company_scale'        => $this->col($row, 'company_scale'),
                     'logo_url'             => $this->uploadToCloudinary($this->col($row, 'businesscompany_logo', 'business_company_logo'), 'companies', $companyName),
+                    'is_visible'           => true,
                 ];
 
                 // Smart dedup for companies too

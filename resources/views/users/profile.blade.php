@@ -165,7 +165,7 @@
             <div class="space-y-6">
                 <div class="relative mb-6">
                     <div class="flex items-center gap-2.5">
-                        <span class="w-1 h-5 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                        <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
                         <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Owned <span class="uco-text-gradient-orange">Businesses</span></h2>
                     </div>
                     <p class="text-xs text-gray-500 font-medium mt-1.5 pl-3 border-l-2 border-gray-100">Businesses directly founded or owned by this profile.</p>
@@ -182,35 +182,48 @@
                 @else
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         @foreach($ownedBusinesses as $biz)
-                            <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-orange-300 hover:shadow-xl transition-all duration-300 relative shadow-sm">
+                            <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-orange-300 hover:shadow-xl transition-all duration-300 relative shadow-sm h-full">
                                 <div class="absolute inset-0 bg-gradient-to-br from-orange-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 
-                                <div class="p-5 relative">
-                                    <div class="flex items-start gap-4">
-                                        <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-orange-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
-                                            @if($biz->logo_url)
-                                                <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
-                                            @else
-                                                <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
-                                            @endif
+                                <div class="p-6 relative flex flex-col justify-between h-full">
+                                    <div>
+                                        <div class="flex items-start gap-5">
+                                            <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-orange-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
+                                                @if($biz->logo_url)
+                                                    <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
+                                                @else
+                                                    <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="flex-1 min-w-0 pt-1">
+                                                <h3 class="font-extrabold text-gray-900 text-base leading-tight group-hover:text-orange-600 transition-colors line-clamp-2">
+                                                    {{ $biz->name }}
+                                                </h3>
+                                                @if($biz->category)
+                                                    <span class="text-[9px] font-bold uppercase tracking-wider text-gray-500 mt-1 block">
+                                                        {{ $biz->category->name }}
+                                                    </span>
+                                                @endif
+                                                @if($biz->city)
+                                                    <div class="flex items-center gap-1.5 mt-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                                                        <i class="bi bi-geo-alt-fill text-orange-500"></i>
+                                                        {{ $biz->city }}
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
-                                        <div class="flex-1 min-w-0 pt-1">
-                                            <h3 class="font-bold text-gray-900 text-base leading-tight truncate group-hover:text-orange-600 transition-colors">
-                                                {{ $biz->name }}
-                                            </h3>
-                                            @if($biz->category)
-                                                <span class="inline-block mt-1 text-[9px] font-black uppercase tracking-wider text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                                                    {{ $biz->category->name }}
-                                                </span>
-                                            @endif
-                                        </div>
+
+                                        @if($biz->unique_value_proposition || $biz->description)
+                                            <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed font-normal mt-4">
+                                                {{ $biz->unique_value_proposition ?? $biz->description }}
+                                            </p>
+                                        @endif
                                     </div>
                                     
-                                    <div class="mt-4 flex items-center justify-between border-t border-gray-50 pt-3">
-                                        <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-                                            <i class="bi bi-geo-alt text-gray-400"></i>
-                                            <span class="truncate max-w-[120px]">{{ $biz->city ?? 'Location N/A' }}</span>
-                                        </div>
+                                    <div class="mt-6 flex items-center justify-between border-t border-gray-50 pt-3">
+                                        <span class="text-xs font-bold text-gray-800 flex items-center gap-1 group-hover:text-orange-600 transition duration-300">
+                                            View Details
+                                        </span>
                                         <div class="w-6 h-6 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center group-hover:bg-orange-500 group-hover:text-white transition-colors">
                                             <i class="bi bi-arrow-right text-xs"></i>
                                         </div>
@@ -227,7 +240,7 @@
             <div class="space-y-6">
                 <div class="relative mb-6">
                     <div class="flex items-center gap-2.5">
-                        <span class="w-1 h-5 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
+                        <span class="w-1.5 h-6 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
                         <h2 class="text-xl font-black text-gray-950 tracking-tight leading-none">Also <span class="uco-text-gradient-blue">Manages</span></h2>
                     </div>
                     <p class="text-xs text-gray-500 font-medium mt-1.5 pl-3 border-l-2 border-gray-100">Businesses where this profile is a team member.</p>
@@ -235,35 +248,48 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     @foreach($memberBusinesses as $biz)
-                        <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative shadow-sm">
+                        <a href="{{ route('businesses.show', $biz) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300 relative shadow-sm h-full">
                             <div class="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                             
-                            <div class="p-5 relative">
-                                <div class="flex items-start gap-4">
-                                    <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
-                                        @if($biz->logo_url)
-                                            <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
-                                        @else
-                                            <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
-                                        @endif
+                            <div class="p-6 relative flex flex-col justify-between h-full">
+                                <div>
+                                    <div class="flex items-start gap-5">
+                                        <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
+                                            @if($biz->logo_url)
+                                                <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
+                                            @else
+                                                <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex-1 min-w-0 pt-1">
+                                            <h3 class="font-extrabold text-gray-900 text-base leading-tight group-hover:text-blue-600 transition-colors line-clamp-2">
+                                                {{ $biz->name }}
+                                            </h3>
+                                            @if($biz->pivot && $biz->pivot->position)
+                                                <span class="text-[9px] font-bold uppercase tracking-wider text-blue-600 mt-1 block">
+                                                    {{ $biz->pivot->position }}
+                                                </span>
+                                            @endif
+                                            @if($biz->city)
+                                                <div class="flex items-center gap-1.5 mt-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wide">
+                                                    <i class="bi bi-geo-alt-fill text-blue-500"></i>
+                                                    {{ $biz->city }}
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="flex-1 min-w-0 pt-1">
-                                        <h3 class="font-bold text-gray-900 text-base leading-tight truncate group-hover:text-blue-600 transition-colors">
-                                            {{ $biz->name }}
-                                        </h3>
-                                        @if($biz->pivot && $biz->pivot->position)
-                                            <span class="inline-block mt-1 text-[9px] font-black uppercase tracking-wider text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
-                                                {{ $biz->pivot->position }}
-                                            </span>
-                                        @endif
-                                    </div>
+
+                                    @if($biz->unique_value_proposition || $biz->description)
+                                        <p class="text-xs text-gray-500 line-clamp-3 leading-relaxed font-normal mt-4">
+                                            {{ $biz->unique_value_proposition ?? $biz->description }}
+                                        </p>
+                                    @endif
                                 </div>
                                 
-                                <div class="mt-4 flex items-center justify-between border-t border-gray-50 pt-3">
-                                    <div class="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
-                                        <i class="bi bi-geo-alt text-gray-400"></i>
-                                        <span class="truncate max-w-[120px]">{{ $biz->city ?? 'Location N/A' }}</span>
-                                    </div>
+                                <div class="mt-6 flex items-center justify-between border-t border-gray-50 pt-3">
+                                    <span class="text-xs font-bold text-gray-800 flex items-center gap-1 group-hover:text-blue-600 transition duration-300">
+                                        View Details
+                                    </span>
                                     <div class="w-6 h-6 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
                                         <i class="bi bi-arrow-right text-xs"></i>
                                     </div>

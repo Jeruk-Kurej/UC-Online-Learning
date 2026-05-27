@@ -3,14 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\View\View;
 
+/**
+ * Class AiAnalysisController
+ *
+ * Handles admin-only views and status toggles for monitoring AI-scored/moderated testimonies.
+ */
 class AiAnalysisController extends Controller
 {
     /**
-     * Display a listing of testimonies (Admin only - for monitoring)
+     * Display a listing of testimonies (Admin only - for monitoring).
      */
-    public function index()
+    public function index(): View
     {
         $testimonies = User::query()
             ->whereNotNull('testimony')
@@ -29,22 +35,22 @@ class AiAnalysisController extends Controller
     }
 
     /**
-     * Toggle testimony visibility (Admin only)
+     * Toggle testimony visibility (Admin only).
      */
-    public function toggle(User $user)
+    public function toggle(User $user): RedirectResponse
     {
-        $user->update([
-            'is_visible' => !$user->is_visible,
-        ]);
+        $user->is_visible = ! $user->is_visible;
+        $user->save();
 
         $status = $user->is_visible ? 'approved and is now visible' : 'rejected (hidden)';
+
         return back()->with('success', "Success! The testimony from '{$user->name}' has been {$status}.");
     }
 
     /**
-     * Display a specific testimony detail (Admin only)
+     * Display a specific testimony detail (Admin only).
      */
-    public function show(User $user)
+    public function show(User $user): View
     {
         return view('ai-analyses.show', compact('user'));
     }

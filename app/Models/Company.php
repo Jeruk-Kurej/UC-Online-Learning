@@ -34,6 +34,11 @@ class Company extends Model
         ];
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     // ─── Accessors ───
 
     public function getLogoUrlAttribute($value)
@@ -44,7 +49,41 @@ class Company extends Model
     public function getNameAttribute($value)
     {
         $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return strtoupper(trim(strip_tags($cleaned)));
+        $name = trim(strip_tags($cleaned));
+
+        if ($name === strtoupper($name)) {
+            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
+        }
+
+        $name = preg_replace('/\bPt\b/i', 'PT', $name);
+        $name = preg_replace('/\bCv\b/i', 'CV', $name);
+        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
+
+        return $name;
+    }
+
+    public function getAchievementsListAttribute(): array
+    {
+        if (empty($this->achievement)) {
+            return [];
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $this->achievement);
+        $items = [];
+        foreach ($lines as $line) {
+            $parts = preg_split('/\s+-\s+/', $line);
+            foreach ($parts as $part) {
+                $part = trim($part);
+                if (empty($part)) continue;
+                if (str_starts_with($part, '-')) {
+                    $part = trim(substr($part, 1));
+                }
+                if (!empty($part)) {
+                    $items[] = $part;
+                }
+            }
+        }
+        return $items;
     }
 
     public function getJobDescriptionAttribute($value)

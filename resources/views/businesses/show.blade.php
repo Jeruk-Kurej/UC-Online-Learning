@@ -50,6 +50,17 @@
     $watch('fullscreenOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal) { document.body.style.overflow = ''; } })">
         {{-- Hero Section with Elegant Back Button --}}
         <div class="mb-8 px-4 sm:px-0">
+            {{-- Breadcrumbs --}}
+            <nav class="flex pt-4 sm:pt-6 mb-8 text-sm font-medium" aria-label="Breadcrumb">
+                <ol class="flex items-center space-x-2">
+                    <li><a href="{{ route('businesses.index') }}?view=entrepreneur" class="text-gray-400 hover:text-uco-orange-500 transition">Directory</a></li>
+                    <li class="flex items-center space-x-2">
+                        <svg class="h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20"><path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/></svg>
+                        <span class="text-gray-900">{{ $business->name }}</span>
+                    </li>
+                </ol>
+            </nav>
+
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
 
                 <div class="flex-1 flex flex-row items-center sm:items-start gap-4 sm:gap-5">
@@ -189,46 +200,46 @@
                     </div>
 
                     {{-- Business Insights - Professional Dossier Metadata (REDESIGNED) --}}
-                    <div class="flex flex-wrap items-center gap-y-6 gap-x-12 py-8 mb-4 border-y border-gray-100">
+                    @php
+                        $showRevenue = Gate::allows('update', $business);
+                    @endphp
+                    <div class="grid grid-cols-1 {{ $showRevenue ? 'sm:grid-cols-2' : 'sm:grid-cols-3' }} gap-y-6 gap-x-4 md:gap-x-6 lg:gap-x-8 py-8 mb-4 border-y border-gray-100">
                         {{-- Revenue (SENSITIVE - PROTECTED) --}}
                         @can('update', $business)
-                        <div class="flex items-start gap-4">
-                            <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm">
-                                <i class="bi bi-cash-stack text-lg"></i>
+                        <div class="flex items-start gap-4 sm:gap-2 md:gap-4 sm:border-r border-gray-100 sm:pr-4 md:pr-6 lg:pr-8">
+                            <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100/50 shadow-sm flex-shrink-0">
+                                <i class="bi bi-cash-stack text-lg sm:text-sm md:text-lg"></i>
                             </div>
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5 flex items-center gap-1.5">
                                     <i class="bi bi-lock-fill text-[9px]"></i> Private Revenue
                                 </p>
-                                <h5 class="text-base font-extrabold text-gray-800">{{ $business->revenue_range ?? 'Not Disclosed' }}</h5>
+                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">{{ $business->revenue_range ?? 'Not Disclosed' }}</h5>
                                 <p class="text-[9px] text-gray-400 font-medium mt-0.5 italic">Visible only to you</p>
                             </div>
                         </div>
-                        <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
                         @endcan
 
                         {{-- Employee Count --}}
-                        <div class="flex items-start gap-4">
-                            <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm">
-                                <i class="bi bi-people-fill text-lg"></i>
+                        <div class="flex items-start gap-4 sm:gap-2 md:gap-4 {{ $showRevenue ? '' : 'sm:border-r border-gray-100 sm:pr-4 md:pr-6 lg:pr-8' }}">
+                            <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm flex-shrink-0">
+                                <i class="bi bi-people-fill text-lg sm:text-sm md:text-lg"></i>
                             </div>
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Team Size</p>
-                                <h5 class="text-base font-extrabold text-gray-800">{{ $business->employee_count ?? '0' }} Professionals</h5>
-                                <p class="text-[9px] text-gray-400 font-medium mt-0.5">Permanent & active staff</p>
+                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">{{ $business->employee_count ?? '0' }} Professionals</h5>
+                                <p class="text-[9px] text-gray-400 font-medium mt-0.5">Active staff</p>
                             </div>
                         </div>
 
-                        <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
-
                         {{-- Venture Inception --}}
-                        <div class="flex items-start gap-4">
-                            <div class="w-11 h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm">
-                                <i class="bi bi-rocket-takeoff-fill text-lg"></i>
+                        <div class="flex items-start gap-4 sm:gap-2 md:gap-4 sm:border-r border-gray-100 sm:pr-4 md:pr-6 lg:pr-8">
+                            <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm flex-shrink-0">
+                                <i class="bi bi-rocket-takeoff-fill text-lg sm:text-sm md:text-lg"></i>
                             </div>
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Venture Inception</p>
-                                <h5 class="text-base font-extrabold text-gray-800">
+                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">
                                     @if($business->established_date)
                                         Est. {{ \Carbon\Carbon::parse($business->established_date)->format('M Y') }}
                                     @else
@@ -239,16 +250,14 @@
                             </div>
                         </div>
 
-                        <div class="hidden lg:block w-px h-10 bg-gray-100"></div>
-
                         {{-- Academic Heritage --}}
-                        <div class="flex items-start gap-4">
-                            <div class="w-11 h-11 rounded-lg bg-orange-50 text-uco-orange-600 flex items-center justify-center border border-orange-100/50 shadow-sm">
-                                <i class="bi bi-mortarboard-fill text-lg"></i>
+                        <div class="flex items-start gap-4 sm:gap-2 md:gap-4">
+                            <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-orange-50 text-uco-orange-600 flex items-center justify-center border border-orange-100/50 shadow-sm flex-shrink-0">
+                                <i class="bi bi-mortarboard-fill text-lg sm:text-sm md:text-lg"></i>
                             </div>
-                            <div>
+                            <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Academic Heritage</p>
-                                <h5 class="text-base font-extrabold text-gray-800">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
+                                <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
                                 <p class="text-[9px] text-gray-400 font-medium mt-0.5">Founding academic batch</p>
                             </div>
                         </div>
@@ -262,7 +271,7 @@
                             {{-- Target Market --}}
                             <div class="space-y-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Target Market</p>
-                                <p class="text-sm font-bold text-gray-800">{{ $business->target_market ?: 'Not specified' }}</p>
+                                <p class="text-sm font-normal text-gray-800">{{ $business->target_market ?: 'Not specified' }}</p>
                             </div>
 
                             {{-- Customer Base --}}
@@ -429,35 +438,90 @@
                             @if ($businessProducts->count() > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessProducts as $product)
-                                        <div @if ($hasProductsShowRoute) @click="if(!event.target.closest('button') && !event.target.closest('a')) window.location='{{ route('businesses.products.show', [$business, $product]) }}'" @endif
-                                            class="group border border-gray-200 rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300 {{ $hasProductsShowRoute ? 'cursor-pointer' : '' }} bg-white">
+                                        <div @if($product->getRawOriginal('photo_url')) 
+                                                @click="openFullscreen('{{ $product->photo_url }}', '{{ addslashes($product->name) }}')"
+                                             @endif
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $product->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            
+                                            {{-- Manager Actions Overlay --}}
+                                            @auth
+                                                @if ($canManageBusiness)
+                                                    <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10" @click.stop>
+                                                        <a href="{{ route('businesses.products.edit', [$business, $product]) }}"
+                                                            class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-white text-gray-700 hover:text-uco-orange-600 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                            title="Edit Product">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <form action="{{ route('businesses.products.destroy', [$business, $product]) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                                            class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                                title="Delete Product">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                @endif
+                                            @endauth
+
                                             {{-- Product Image --}}
-                                            <div class="relative overflow-hidden">
+                                            <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 @if ($product->getRawOriginal('photo_url'))
-                                                    <div class="relative h-48 bg-gray-100">
-                                                        <img src="{{ $product->photo_url }}"
-                                                            alt="{{ $product->name }}"
-                                                            class="w-full h-full object-cover">
+                                                    <img src="{{ $product->photo_url }}"
+                                                        alt="{{ $product->name }}"
+                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <i class="bi bi-zoom-in text-[10px]"></i>
+                                                        <span>Zoom</span>
                                                     </div>
                                                 @else
-                                                    <div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                                                        <i class="bi bi-image text-5xl text-gray-400"></i>
-                                                    </div>
+                                                    <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
                                             </div>
 
                                             {{-- Product Info --}}
-                                            <div class="p-4">
-                                                <div class="flex items-start justify-between mb-2">
-                                                    <div class="flex-1">
-                                                        <h4 class="font-semibold text-gray-900 mb-1">{{ $product->name }}</h4>
+                                            <div class="pt-4 px-4 pb-3 flex flex-col flex-grow">
+                                                {{-- Name --}}
+                                                <h4 class="font-bold text-gray-800 text-sm line-clamp-2 leading-snug mb-1.5 group-hover:text-uco-orange-600 transition-colors" title="{{ $product->name }}">
+                                                    {{ $product->name }}
+                                                </h4>
+
+                                                {{-- Description --}}
+                                                <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                                                    {{ $product->description }}
+                                                </p>
+
+                                                {{-- Price & Price Type --}}
+                                                <div class="mt-auto flex flex-col items-start gap-1">
+                                                    <div>
+                                                        @if(is_numeric($product->price) && $product->price_type !== 'unspecified' && $product->price_type !== 'customize')
+                                                            <span class="text-base font-extrabold text-[#f7931e]">
+                                                                Rp {{ number_format((float) $product->price, 0, ',', '.') }}
+                                                            </span>
+                                                        @elseif($product->price_type === 'customize')
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Customize by Order
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Price Unspecified
+                                                            </span>
+                                                        @endif
                                                     </div>
-                                                    <span class="text-orange-600 font-bold text-lg">
-                                                        Rp {{ number_format((float) $product->price, 0, ',', '.') }}
-                                                    </span>
+                                                    @if(is_numeric($product->price) && in_array($product->price_type, ['fixed', 'negotiable']))
+                                                        <span class="inline-flex items-center text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                            @if($product->price_type === 'fixed')
+                                                                Fixed Price
+                                                            @elseif($product->price_type === 'negotiable')
+                                                                Negotiable
+                                                            @endif
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                                <p class="text-sm text-gray-600 mb-3 line-clamp-2">{{ $product->description }}</p>
-                                                <div class="pt-2"></div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -494,49 +558,95 @@
                             @endauth
                         </div>
 
-                        {{-- Services List --}}
+                        {{-- Services Grid --}}
                         <div class="p-6">
                             @if ($businessServices->count() > 0)
-                                <div class="space-y-3">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessServices as $service)
-                                        <div @if ($hasServicesShowRoute) @click="if(!event.target.closest('button') && !event.target.closest('a')) window.location='{{ route('businesses.services.show', [$business, $service]) }}'" @endif
-                                            class="group border border-gray-200 rounded-lg p-5 hover:bg-gray-50 hover:shadow-md transition-all duration-300 {{ $hasServicesShowRoute ? 'cursor-pointer' : '' }} bg-white">
-                                            <div class="flex items-start justify-between">
-                                                <div class="flex-1">
-                                                    <h4 class="font-semibold text-gray-900 mb-1">{{ $service->name }}</h4>
-                                                    <p class="text-sm text-gray-600 mb-3">{{ $service->description }}</p>
-                                                    <div class="flex items-center gap-2">
-                                                        <span class="text-orange-600 font-bold">Rp {{ number_format((float) $service->price, 0, ',', '.') }}</span>
-                                                        <span class="text-xs text-gray-500">/ {{ $service->price_type }}</span>
+                                        <div @if($service->getRawOriginal('photo_url')) 
+                                                @click="openFullscreen('{{ $service->photo_url }}', '{{ addslashes($service->name) }}')"
+                                             @endif
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $service->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            
+                                            {{-- Manager Actions Overlay --}}
+                                            @auth
+                                                @if ($canManageBusiness)
+                                                    <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10" @click.stop>
+                                                        <a href="{{ route('businesses.services.edit', [$business, $service]) }}"
+                                                            class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-white text-gray-700 hover:text-uco-orange-600 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                            title="Edit Service">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
+                                                            method="POST"
+                                                            onsubmit="return confirm('Are you sure you want to delete this service?');"
+                                                            class="inline">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit"
+                                                                class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-full shadow-md transition-all duration-300 border border-gray-100"
+                                                                title="Delete Service">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
                                                     </div>
-                                                </div>
-                                                @auth
-                                                    @if ($canManageBusiness && ($hasServicesEditRoute || $hasServicesDestroyRoute))
-                                                        <div class="flex items-center gap-2 ml-4">
-                                                            @if ($hasServicesEditRoute)
-                                                                <a href="{{ route('businesses.services.edit', [$business, $service]) }}"
-                                                                    class="inline-flex items-center justify-center w-8 h-8 bg-orange-50 text-orange-600 rounded hover:bg-orange-100 transition duration-150"
-                                                                    title="Edit Service">
-                                                                    <i class="bi bi-pencil"></i>
-                                                                </a>
+                                                @endif
+                                            @endauth
+
+                                            {{-- Service Image --}}
+                                            <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                                @if ($service->getRawOriginal('photo_url'))
+                                                    <img src="{{ $service->photo_url }}"
+                                                        alt="{{ $service->name }}"
+                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                        <i class="bi bi-zoom-in text-[10px]"></i>
+                                                        <span>Zoom</span>
+                                                    </div>
+                                                @else
+                                                    <i class="bi bi-image text-5xl text-gray-300"></i>
+                                                @endif
+                                            </div>
+
+                                            {{-- Service Info --}}
+                                            <div class="pt-4 px-4 pb-3 flex flex-col flex-grow">
+                                                {{-- Name --}}
+                                                <h4 class="font-bold text-gray-800 text-sm line-clamp-2 leading-snug mb-1.5 group-hover:text-uco-orange-600 transition-colors" title="{{ $service->name }}">
+                                                    {{ $service->name }}
+                                                    </h4>
+
+                                                {{-- Description --}}
+                                                <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+                                                    {{ $service->description }}
+                                                </p>
+
+                                                {{-- Price & Price Type --}}
+                                                <div class="mt-auto flex flex-col items-start gap-1">
+                                                    <div>
+                                                        @if(is_numeric($service->price) && $service->price_type !== 'unspecified' && $service->price_type !== 'customize')
+                                                            <span class="text-base font-extrabold text-[#f7931e]">
+                                                                Rp {{ number_format((float) $service->price, 0, ',', '.') }}
+                                                            </span>
+                                                        @elseif($service->price_type === 'customize')
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Customize by Order
+                                                            </span>
+                                                        @else
+                                                            <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                                                                Price Unspecified
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                    @if(is_numeric($service->price) && in_array($service->price_type, ['fixed', 'negotiable']))
+                                                        <span class="inline-flex items-center text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-wider">
+                                                            @if($service->price_type === 'fixed')
+                                                                Fixed Price
+                                                            @elseif($service->price_type === 'negotiable')
+                                                                Negotiable
                                                             @endif
-                                                            @if ($hasServicesDestroyRoute)
-                                                                <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
-                                                                    method="POST"
-                                                                    onsubmit="return confirm('Delete {{ $service->name }}?');"
-                                                                    class="inline">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit"
-                                                                        class="inline-flex items-center justify-center w-8 h-8 bg-red-50 text-red-600 rounded hover:bg-red-100 transition duration-150"
-                                                                        title="Delete Service">
-                                                                        <i class="bi bi-trash"></i>
-                                                                    </button>
-                                                                </form>
-                                                            @endif
-                                                        </div>
+                                                        </span>
                                                     @endif
-                                                @endauth
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -977,102 +1087,105 @@
                 $additionalOwners = $business->members()->where('users.id', '!=', $business->user_id)->get();
             @endphp
 
-            {{-- Section Title: Owned By --}}
-            <div class="relative mb-4">
-                <div class="flex items-center gap-2">
-                    <span class="w-1 h-5 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
-                    <h4 class="text-sm font-black uppercase tracking-[0.15em] text-gray-700">Owned <span class="uco-text-gradient-orange">By</span></h4>
-                </div>
-            </div>
-
-            {{-- ✨ Elegant Owner Card --}}
-            <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group hover:border-orange-200 cursor-pointer">
-                {{-- Invisible link that stretches over the whole card --}}
-                <a href="{{ route('users.show', $owner) }}" class="absolute inset-0 z-0" aria-label="View {{ $owner->name }} Profile"></a>
-
-                {{-- Arrow Icon (visual only now) --}}
-                <div class="absolute top-4 right-4 text-gray-300 group-hover:text-orange-500 transition-colors z-10">
-                    <i class="bi bi-box-arrow-up-right text-xs"></i>
+            {{-- Owner Section (Title & Card) --}}
+            <div class="flex flex-col gap-3">
+                {{-- Section Title: Owned By --}}
+                <div class="relative">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                        <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">Owned <span class="uco-text-gradient-orange">By</span></h4>
+                    </div>
                 </div>
 
-                {{-- Header: Avatar & Name --}}
-                <div class="flex items-center gap-5 relative z-10 pointer-events-none">
-                    <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                        @if ($ownerPhotoUrl)
-                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" class="w-full h-full object-cover">
-                        @else
-                            <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($owner->name, 0, 1)) }}</span>
+                {{-- ✨ Elegant Owner Card --}}
+                <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group/card hover:border-orange-200 cursor-pointer">
+                    {{-- Invisible link that stretches over the whole card --}}
+                    <a href="{{ route('users.show', $owner) }}" class="absolute inset-0 z-10" aria-label="View {{ $owner->name }} Profile"></a>
+
+                    {{-- Arrow Icon (visual only now) --}}
+                    <div class="absolute top-4 right-4 text-gray-300 group-hover/card:text-orange-500 transition-colors z-10">
+                        <i class="bi bi-box-arrow-up-right text-xs"></i>
+                    </div>
+
+                    {{-- Header: Avatar & Name --}}
+                    <div class="flex items-center gap-5 relative z-10 pointer-events-none">
+                        <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                            @if ($ownerPhotoUrl)
+                                <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($owner->name, 0, 1)) }}</span>
+                            @endif
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $owner->name }}</h2>
+                            <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $owner->student_status ?: 'Active' }}</p>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-px bg-gray-100 my-5"></div>
+
+                    {{-- Academic Details --}}
+                    <div class="space-y-3">
+                        <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Academic Details</h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Major</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $owner->major ?: '-' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Batch</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $owner->year_of_enrollment ?: '-' }}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-[13px] font-medium text-gray-500">Focus</span>
+                            <span class="text-[13px] font-bold text-gray-900">{{ $owner->current_status ?: ($ownerRoleLabel ?: '-') }}</span>
+                        </div>
+                    </div>
+
+                    {{-- Contacts / WhatsApp --}}
+                    @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                    <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
+                    <div class="space-y-4 relative z-20">
+                        @if($owner->whatsapp)
+                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                                    <i class="bi bi-whatsapp text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">WhatsApp</p>
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-green-600 transition-colors leading-tight mt-0.5">{{ $owner->whatsapp }}</p>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
+                        </a>
+                        @endif
+
+                        @if($ownerPerso['instagram'] ?? false)
+                        <a href="https://instagram.com/{{ ltrim($ownerPerso['instagram'], '@') }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
+                                    <i class="bi bi-instagram text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Instagram</p>
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-pink-600 transition-colors leading-tight mt-0.5">{{ $ownerPerso['instagram'] }}</p>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-pink-500 transition-colors text-sm"></i>
+                        </a>
                         @endif
                     </div>
-                    <div class="flex-1 min-w-0">
-                        <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $owner->name }}</h2>
-                        <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $owner->student_status ?: 'Active' }}</p>
-                    </div>
-                </div>
-
-                <div class="w-full h-px bg-gray-100 my-5"></div>
-
-                {{-- Academic Details --}}
-                <div class="space-y-3">
-                    <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Academic Details</h3>
-                    <div class="flex items-center justify-between">
-                        <span class="text-[13px] font-medium text-gray-500">Major</span>
-                        <span class="text-[13px] font-bold text-gray-900">{{ $owner->major ?: '-' }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-[13px] font-medium text-gray-500">Batch</span>
-                        <span class="text-[13px] font-bold text-gray-900">{{ $owner->year_of_enrollment ?: '-' }}</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-[13px] font-medium text-gray-500">Focus</span>
-                        <span class="text-[13px] font-bold text-gray-900">{{ $ownerRoleLabel ?: '-' }}</span>
-                    </div>
-                </div>
-
-                {{-- Contacts / WhatsApp --}}
-                @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
-                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
-                <div class="space-y-4 relative z-20">
-                    @if($owner->whatsapp)
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $owner->whatsapp) }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                                <i class="bi bi-whatsapp text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">WhatsApp</p>
-                                <p class="text-sm font-bold text-gray-800 group-hover:text-green-600 transition-colors leading-tight mt-0.5">{{ $owner->whatsapp }}</p>
-                            </div>
-                        </div>
-                        <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
-                    </a>
-                    @endif
-
-                    @if($ownerPerso['instagram'] ?? false)
-                    <a href="https://instagram.com/{{ ltrim($ownerPerso['instagram'], '@') }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
-                        <div class="flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
-                                <i class="bi bi-instagram text-lg"></i>
-                            </div>
-                            <div>
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Instagram</p>
-                                <p class="text-sm font-bold text-gray-800 group-hover:text-pink-600 transition-colors leading-tight mt-0.5">{{ $ownerPerso['instagram'] }}</p>
-                            </div>
-                        </div>
-                        <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-pink-500 transition-colors text-sm"></i>
-                    </a>
                     @endif
                 </div>
-                @endif
             </div>
 
-            {{-- Additional Owners --}}
+            {{-- Additional Owners Section (Title & Grid) --}}
             @if ($additionalOwners->isNotEmpty())
-                <div class="mt-6 space-y-3.5">
+                <div class="flex flex-col gap-3">
                     <div class="relative">
                         <div class="flex items-center gap-2">
-                            <span class="w-1 h-4 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
-                            <h4 class="text-[10px] font-black uppercase tracking-[0.15em] text-gray-700">Also Managed <span class="uco-text-gradient-blue">By</span></h4>
+                            <span class="w-1.5 h-6 bg-gradient-to-b from-[#2563eb] to-[#60a5fa] rounded-full flex-shrink-0"></span>
+                            <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">Also Managed <span class="uco-text-gradient-blue">By</span></h4>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">

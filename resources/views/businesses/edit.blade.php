@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('businesses.update', $business) }}" class="space-y-6">
+    <form method="POST" action="{{ route('businesses.update', $business) }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -81,6 +81,90 @@
                     <textarea name="description" id="description" rows="3" required
                               class="form-input-custom">{{ old('description', $business->description) }}</textarea>
                     @error('description')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
+                </div>
+
+                {{-- Business Logo --}}
+                <div class="md:col-span-2 relative pb-5" x-data="{
+                    hasLogo: {{ $business->logo_url && !str_contains($business->logo_url, 'ui-avatars.com') ? 'true' : 'false' }},
+                    logoDeleted: false,
+                    newLogoSelected: false
+                }">
+                    <label class="form-label-custom">Business Logo</label>
+                    <input type="hidden" name="delete_logo" :value="logoDeleted ? '1' : '0'">
+
+                    <div class="flex items-start gap-5">
+                        <!-- Clickable Logo Box -->
+                        <div id="logo-container" style="width: 120px; height: 120px; border-radius: 12px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; cursor: pointer; transition: 0.3s;"
+                             class="group hover:border-blue-500 shadow-sm flex items-center justify-center p-2"
+                             onmouseover="this.querySelector('.photo-overlay').style.opacity='1'"
+                             onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
+                            
+                            <!-- Current / New Logo Preview -->
+                            <img id="preview-image-logo" src="{{ $business->logo_url }}" 
+                                 style="max-w-full max-h-full object-contain;"
+                                 x-show="hasLogo && !logoDeleted">
+                            
+                            <!-- Initials Placeholder -->
+                            <div id="logo-placeholder" style="width: 100%; height: 100%; background: linear-gradient(135deg, #f97316, #ea580c); display: flex; align-items: center; justify-content: center; color: white;"
+                                 x-show="!hasLogo || logoDeleted">
+                                <span class="text-3xl font-black text-white select-none">{{ strtoupper(substr($business->name, 0, 1)) }}</span>
+                            </div>
+
+                            <!-- Click to pick trigger -->
+                            <label for="logo" class="absolute inset-0 cursor-pointer z-20">
+                                <input type="file" name="logo" id="logo" accept="image/*" class="hidden"
+                                       @change="const [file] = $event.target.files; if (file) { 
+                                           document.getElementById('preview-image-logo').src = URL.createObjectURL(file);
+                                           hasPhoto = true; /* just in case */
+                                           hasLogo = true;
+                                           logoDeleted = false;
+                                           newLogoSelected = true;
+                                       }">
+                            </label>
+
+                            <!-- Hover Overlay -->
+                            <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
+                                <i class="bi bi-camera-fill text-white text-lg"></i>
+                                <span class="text-white text-[8px] font-black uppercase tracking-widest mt-1">Change</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons and Help Text -->
+                        <div class="flex flex-col justify-center h-[120px]">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">JPG, PNG, WEBP — Max 20MB</p>
+                            
+                            <template x-if="hasLogo && !logoDeleted && !newLogoSelected">
+                                <button type="button" @click="logoDeleted = true" 
+                                        class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                    <i class="bi bi-trash3 text-sm"></i>
+                                    <span>Remove Logo</span>
+                                </button>
+                            </template>
+                            
+                            <template x-if="logoDeleted">
+                                <button type="button" @click="logoDeleted = false" 
+                                        class="inline-flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-bold transition-all">
+                                    <i class="bi bi-arrow-counterclockwise text-sm"></i>
+                                    <span>Undo Delete</span>
+                                </button>
+                            </template>
+
+                            <template x-if="newLogoSelected">
+                                <button type="button" @click="
+                                    document.getElementById('logo').value = '';
+                                    newLogoSelected = false;
+                                    hasLogo = {{ $business->logo_url ? 'true' : 'false' }};
+                                    logoDeleted = false;
+                                    document.getElementById('preview-image-logo').src = '{{ $business->logo_url }}';
+                                " 
+                                        class="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-bold transition-all">
+                                    <i class="bi bi-x-circle text-sm"></i>
+                                    <span>Cancel New Logo</span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                    @error('logo')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
             </div>
         </div>
