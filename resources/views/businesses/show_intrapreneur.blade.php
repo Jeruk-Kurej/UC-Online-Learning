@@ -243,7 +243,7 @@
                             <div class="flex items-center gap-5 relative z-10 pointer-events-none">
                                 <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
                                     @if ($studentPhotoUrl)
-                                        <img src="{{ $studentPhotoUrl }}" alt="{{ $student->name }}" class="w-full h-full object-cover">
+                                        <img src="{{ $studentPhotoUrl }}" alt="{{ $student->name }}" class="aspect-square size-full object-cover">
                                     @else
                                         <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
                                     @endif

@@ -42,7 +42,7 @@
                     <div class="pt-6">
                         <a href="{{ route('businesses.index') }}"
                             class="group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
-                            Explore Businesses
+                            Explore Showcase
                             <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
                         </a>
                     </div>
@@ -327,7 +327,7 @@
                     <div class="uco-outline-bg-text uco-outline-bg-text--purple uco-parallax-text">VOICES</div>
                     <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">Community <span class="uco-text-gradient-orange">Voices</span></h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
-                        Real stories, journeys, and experiences shared by members of the UCO community.
+                        Real stories, journeys, and experiences shared by UCO community.
                     </p>
                 </div>
                 <div class="flex items-center gap-4 text-xs font-black text-gray-300 uppercase tracking-[0.25em]">

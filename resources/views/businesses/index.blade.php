@@ -86,7 +86,7 @@
                         UCO Directory
                     </span>
                     <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Showcase Directory</h1>
-                    <p class="text-base text-gray-500 mt-1">Explore businesses and startups from our student and alumni network.</p>
+                    <p class="text-base text-gray-500 mt-1">Explore businesses and innovations from our student and alumni network.</p>
                 </div>
 
                 @auth

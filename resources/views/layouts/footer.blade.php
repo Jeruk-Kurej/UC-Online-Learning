@@ -40,13 +40,6 @@
                             About UCO
                         </a>
                     </li>
-                    @auth
-                        <li>
-                            <a href="{{ route('profile.edit') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
-                                My Profile
-                            </a>
-                        </li>
-                    @endauth
                 </ul>
             </div>
 
