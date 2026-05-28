@@ -15,18 +15,18 @@ class AiModerationService
 
     public function analyze(string $content, int $rating = 0, string $customerName = ''): array
     {
-        if (env('SKIP_AI_MODERATION', false)) {
+        if (config('gemini.skip_moderation', false)) {
             return $this->fallbackAnalysis($content, $rating);
         }
 
         try {
             $prompt = $this->buildPrompt($content, $rating, $customerName);
-            $model = env('GEMINI_MODEL', 'gemini-2.5-flash');
+            $model = config('gemini.model', 'gemini-2.5-flash');
 
             $response = Gemini::generativeModel(model: $model)->generateContent($prompt);
             $rawText = $response->text();
 
-            if (env('GEMINI_DEBUG', false) || config('app.debug')) {
+            if (config('gemini.debug', false) || config('app.debug')) {
                 Log::debug('Gemini raw response', [
                     'model' => $model,
                     'rating' => $rating,

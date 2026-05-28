@@ -17,7 +17,7 @@
                     {{-- Top Section: Image & Info --}}
                     <div style="position: relative; height: 420px;">
                         <img src="{{ $user->profile_photo_url }}" 
-                             class="object-contain">
+                             style="width: 100%; height: 100%; object-fit: cover;">
                         
                         {{-- Overlay Gradient --}}
                         <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>

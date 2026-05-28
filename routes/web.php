@@ -21,11 +21,13 @@ Route::get('/', function () {
 })->name('home');
 
 
-Route::get('/about', AboutController::class)->name('about');
-Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
-Route::get('/showcase', [BusinessController::class, 'index'])->name('businesses.index');
-Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
-Route::get('/google-drive-image/{id}', [UserController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
+Route::middleware(['throttle:showcase'])->group(function () {
+    Route::get('/about', AboutController::class)->name('about');
+    Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
+    Route::get('/showcase', [BusinessController::class, 'index'])->name('businesses.index');
+    Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
+    Route::get('/google-drive-image/{id}', [UserController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
+});
 
 // ============================================================
 // AUTHENTICATED ROUTES
@@ -84,15 +86,19 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/testimonies/{user:id}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');
 });
 
-// Universal showcase resolver for incoming requests
-Route::get('/showcase/{slug}', [BusinessController::class, 'resolveShowcase'])->name('showcase.resolve');
+Route::middleware(['throttle:showcase'])->group(function () {
+    // Universal showcase resolver for incoming requests
+    Route::get('/showcase/{slug}', [BusinessController::class, 'resolveShowcase'])->name('showcase.resolve');
 
-// These routes must be defined AFTER the resolver. They are used to preserve reverse routing (url generation) 
-// for existing Blade views without needing to refactor all route() calls.
-Route::get('/showcase/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
-Route::get('/showcase/{business}', [BusinessController::class, 'show'])->name('businesses.show');
+    // These routes must be defined AFTER the resolver. They are used to preserve reverse routing (url generation) 
+    // for existing Blade views without needing to refactor all route() calls.
+    Route::get('/showcase/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
+    Route::get('/showcase/{business}', [BusinessController::class, 'show'])->name('businesses.show');
+});
 
 require __DIR__.'/auth.php';
 
 // Catch-all route for user profiles (must be at the very bottom to avoid intercepting other routes like /login or /about)
-Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+Route::middleware(['throttle:showcase'])->group(function () {
+    Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+});
