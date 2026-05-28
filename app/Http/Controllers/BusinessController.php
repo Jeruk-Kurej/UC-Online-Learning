@@ -158,10 +158,55 @@ class BusinessController extends Controller
             abort(403);
         }
 
+        $viewType = $request->get('type', 'entrepreneur'); // 'entrepreneur' or 'intrapreneur'
         $status = $request->get('status');
         $search = $request->get('search');
         $featured = $request->get('featured');
 
+        if ($viewType === 'intrapreneur') {
+            // ── Intrapreneur (Company) mode ──────────────────────────────────
+            $query = Company::with(['user', 'category']);
+
+            $totalBusinesses = Company::count();
+            $approvedBusinesses = Company::where('is_visible', true)->count();
+            $pendingBusinesses = Company::where('is_visible', false)->count();
+            $rejectedBusinesses = 0;
+            $featuredBusinessesCount = 0;
+
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                      ->orWhere('position', 'LIKE', "%{$search}%")
+                      ->orWhereHas('user', function ($uq) use ($search) {
+                          $uq->where('name', 'LIKE', "%{$search}%");
+                      });
+                });
+            }
+
+            $businesses = $query->latest()->paginate(10)->withQueryString();
+
+            if ($request->ajax()) {
+                return response()
+                    ->view('businesses.admin.partials.list', compact('businesses', 'viewType'))
+                    ->header('Vary', 'X-Requested-With');
+            }
+
+            return view('businesses.admin.index', compact(
+                'businesses',
+                'viewType',
+                'status',
+                'search',
+                'featured',
+                'totalBusinesses',
+                'pendingBusinesses',
+                'approvedBusinesses',
+                'rejectedBusinesses',
+                'featuredBusinessesCount'
+            ));
+        }
+
+        // ── Entrepreneur (Business) mode ─────────────────────────────────────
+        $viewType = 'entrepreneur';
         $query = Business::with(['user', 'category'])->entrepreneur();
 
         // Calculate statistics
@@ -194,12 +239,13 @@ class BusinessController extends Controller
 
         if ($request->ajax()) {
             return response()
-                ->view('businesses.admin.partials.list', compact('businesses'))
+                ->view('businesses.admin.partials.list', compact('businesses', 'viewType'))
                 ->header('Vary', 'X-Requested-With');
         }
 
         return view('businesses.admin.index', compact(
             'businesses',
+            'viewType',
             'status',
             'search',
             'featured',

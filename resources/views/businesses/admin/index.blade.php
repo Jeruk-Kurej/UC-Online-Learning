@@ -2,17 +2,32 @@
     <div class="w-full max-w-[1600px] mx-auto py-8 px-4" 
          @start-import.window="showImportModal = false"
          @close-import-modal.window="showImportModal = false"
+         data-view-type="{{ $viewType ?? 'entrepreneur' }}"
          x-data="{ 
             showImportModal: false,
             isSubmitting: false,
             debounceTimer: null,
+            viewType: '',
             submitDebounced() {
                 if (this.debounceTimer) clearTimeout(this.debounceTimer);
                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
             },
             resetFilters() {
+                const currentType = this.viewType;
                 this.$refs.filterForm.reset();
                 this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+                // Re-apply viewType after reset
+                const typeInput = this.$refs.filterForm.querySelector('[name=type]');
+                if (typeInput) typeInput.value = currentType;
+                this.updateList();
+            },
+            switchType(type) {
+                this.viewType = type;
+                const typeInput = this.$refs.filterForm.querySelector('[name=type]');
+                if (typeInput) typeInput.value = type;
+                // Reset other filters
+                const searchInput = this.$refs.filterForm.querySelector('[name=search]');
+                if (searchInput) searchInput.value = '';
                 this.updateList();
             },
             updateList(url = null, pushState = true, shouldScroll = false) {
@@ -48,6 +63,7 @@
                 });
             }
          }"
+         x-init="viewType = $el.dataset.viewType || 'entrepreneur'"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
             <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -80,19 +96,31 @@
         {{-- Statistics --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Businesses</p>
+                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+                    <span x-show="viewType === 'entrepreneur'">Total Businesses</span>
+                    <span x-show="viewType === 'intrapreneur'">Total Career Profiles</span>
+                </p>
                 <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalBusinesses }}</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
-                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Approved</p>
+                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">
+                    <span x-show="viewType === 'entrepreneur'">Approved</span>
+                    <span x-show="viewType === 'intrapreneur'">Active / Visible</span>
+                </p>
                 <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $approvedBusinesses }}</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
-                <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">Pending Approval</p>
+                <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">
+                    <span x-show="viewType === 'entrepreneur'">Pending Approval</span>
+                    <span x-show="viewType === 'intrapreneur'">Hidden</span>
+                </p>
                 <p class="text-2xl sm:text-3xl font-bold text-amber-600">{{ $pendingBusinesses }}</p>
             </div>
             <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
-                <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">Rejected / Revision</p>
+                <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">
+                    <span x-show="viewType === 'entrepreneur'">Rejected / Revision</span>
+                    <span x-show="viewType === 'intrapreneur'">— N/A —</span>
+                </p>
                 <p class="text-2xl sm:text-3xl font-bold text-red-600">{{ $rejectedBusinesses }}</p>
             </div>
         </div>
@@ -100,6 +128,9 @@
         {{-- Filters & Search --}}
         <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
             <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
+                {{-- Hidden type input (kept in sync by switchType()) --}}
+                <input type="hidden" name="type" :value="viewType">
+
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     {{-- Search Input --}}
                     <div class="relative flex-1 w-full">
@@ -110,7 +141,7 @@
                             type="text"
                             name="search"
                             value="{{ $search }}"
-                            placeholder="Search business or owner name..."
+                            :placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'"
                             @input="submitDebounced()"
                             @keydown.enter.prevent="updateList()"
                             class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
@@ -119,26 +150,44 @@
 
                     {{-- Filters & Reset Button --}}
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-                        <select name="status" @change="updateList()" 
-                                class="flex-1 sm:flex-initial min-w-[120px] sm:min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                            <option value="">Status: All</option>
-                            <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
-                            <option value="approved" {{ $status === 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="rejected" {{ $status === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            <option value="need_revision" {{ $status === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
+
+                        {{-- Type dropdown --}}
+                        <select x-model="viewType"
+                                @change="switchType($event.target.value)"
+                                class="flex-1 sm:flex-initial min-w-[175px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                            <option value="entrepreneur">Type: Entrepreneur</option>
+                            <option value="intrapreneur">Type: Intrapreneur</option>
                         </select>
 
-                        <select name="featured" @change="updateList()" 
-                                class="flex-1 sm:flex-initial min-w-[120px] sm:min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                            <option value="">Featured: All</option>
-                            <option value="yes" {{ $featured === 'yes' ? 'selected' : '' }}>Featured</option>
-                            <option value="no" {{ $featured === 'no' ? 'selected' : '' }}>Not Featured</option>
-                        </select>
-                        
-                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
+                        {{-- Status filter (entrepreneur only) --}}
+                        <template x-if="viewType === 'entrepreneur'">
+                            <select name="status" @change="updateList()"
+                                    class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                                <option value="">Status: All</option>
+                                <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
+                                <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
+                                <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
+                            </select>
+                        </template>
+
+                        {{-- Featured filter (entrepreneur only) --}}
+                        <template x-if="viewType === 'entrepreneur'">
+                            <select name="featured" @change="updateList()"
+                                    class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                                <option value="">Featured: All</option>
+                                <option value="yes" {{ ($featured ?? '') === 'yes' ? 'selected' : '' }}>Featured</option>
+                                <option value="no" {{ ($featured ?? '') === 'no' ? 'selected' : '' }}>Not Featured</option>
+                            </select>
+                        </template>
+
+                        {{-- Reset --}}
+                        <button type="button" @click="resetFilters()" title="Reset Filters"
+                                class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
 
+                        {{-- Loading spinner --}}
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
                             <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>

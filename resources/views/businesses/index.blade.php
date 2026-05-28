@@ -2,10 +2,11 @@
 <x-app-layout>
     @section('title', 'Showcase Directory')
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
+          data-view-type="{{ $viewType }}"
           x-data="{ 
              showImportModal: false, 
              isLoading: false,
-             viewType: '{{ $viewType }}',
+             viewType: '',
              isPending: {{ request('status') === 'pending' ? 'true' : 'false' }},
              debounceTimer: null,
              
@@ -76,6 +77,7 @@
                  this.updateList();
              }
           }"
+          x-init="viewType = $el.dataset.viewType || 'entrepreneur'; init()"
           @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
