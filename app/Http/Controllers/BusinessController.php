@@ -427,8 +427,9 @@ class BusinessController extends Controller
     {
         $user = Auth::user();
         $myBusinesses = Business::with(['category'])->where('user_id', $user->id)->latest()->get();
+        $myCompanies = Company::with(['category'])->where('user_id', $user->id)->latest()->get();
 
-        return view('businesses.my', compact('myBusinesses'));
+        return view('businesses.my', compact('myBusinesses', 'myCompanies'));
     }
 
     /**
@@ -768,5 +769,106 @@ class BusinessController extends Controller
         if (Storage::disk('public')->exists($relativePath)) {
             Storage::disk('public')->delete($relativePath);
         }
+    }
+
+    /**
+     * Show form to create a company work profile (Intrapreneur).
+     */
+    public function createCompany(): View
+    {
+        $categories = Category::all();
+        return view('businesses.create_intrapreneur', compact('categories'));
+    }
+
+    /**
+     * Store a newly created company work profile (Intrapreneur).
+     */
+    public function storeCompany(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'position' => 'required|string|max:255',
+            'level_position' => 'nullable|string|max:255',
+            'company_scale' => 'nullable|string|max:255',
+            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
+            'job_description' => 'required|string|min:10',
+            'logo_url' => 'nullable|image|max:5120',
+        ]);
+
+        $data = $validated;
+        $data['user_id'] = Auth::id();
+        $data['is_visible'] = true;
+
+        if ($request->hasFile('logo_url')) {
+            $file = $request->file('logo_url');
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                $data['logo_url'] = '/storage/'.$path;
+            }
+        }
+
+        $company = Company::create($data);
+
+        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile registered successfully!');
+    }
+
+    /**
+     * Show form to edit a company work profile (Intrapreneur).
+     */
+    public function editCompany(Company $company): View
+    {
+        if (Auth::id() !== $company->user_id && !$this->isUserAdmin()) {
+            abort(403);
+        }
+
+        $categories = Category::all();
+        return view('businesses.edit_intrapreneur', compact('company', 'categories'));
+    }
+
+    /**
+     * Update a company work profile (Intrapreneur).
+     */
+    public function updateCompany(Company $company, Request $request): RedirectResponse
+    {
+        if (Auth::id() !== $company->user_id && !$this->isUserAdmin()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'position' => 'required|string|max:255',
+            'level_position' => 'nullable|string|max:255',
+            'company_scale' => 'nullable|string|max:255',
+            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
+            'job_description' => 'required|string|min:10',
+            'logo_url' => 'nullable|image|max:5120',
+        ]);
+
+        $data = $validated;
+
+        if ($request->hasFile('logo_url')) {
+            $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
+            $file = $request->file('logo_url');
+            if ($file instanceof \Illuminate\Http\UploadedFile) {
+                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+                $data['logo_url'] = '/storage/'.$path;
+            }
+        }
+
+        if ($validated['name'] !== $company->name) {
+            $slug = Str::slug($validated['name']);
+            $original = $slug;
+            $i = 1;
+            while (Company::where('slug', $slug)->where('id', '!=', $company->id)->exists()) {
+                $slug = $original . '-' . $i++;
+            }
+            $data['slug'] = $slug;
+        }
+
+        $company->update($data);
+
+        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile updated successfully!');
     }
 }

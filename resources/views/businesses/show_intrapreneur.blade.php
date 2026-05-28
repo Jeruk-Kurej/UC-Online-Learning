@@ -55,6 +55,16 @@
                         </h1>
                     </div>
                 </div>
+                @auth
+                    @if ($canManage)
+                        <a href="{{ route('intrapreneurs.edit', $company) }}"
+                            class="btn-uco btn-uco-secondary flex-shrink-0">
+                            <i class="bi bi-pencil-square"></i>
+                            <span class="hidden sm:inline">Edit Work Profile</span>
+                            <span class="sm:hidden">Edit</span>
+                        </a>
+                    @endif
+                @endauth
             </div>
         </div>
 

@@ -11,7 +11,7 @@
 
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
-                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.*') && !request()->routeIs('businesses.admin')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
+                <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.index', 'businesses.show', 'intrapreneurs.show', 'showcase.resolve')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Showcase</a>
                 {{-- <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.index') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a> --}}
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                 
@@ -47,7 +47,7 @@
                             @if(!auth()->user()->isAdmin())
                                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Profile</a>
                                 <a href="{{ route('uc-testimonies.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Testimony</a>
-                                <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Businesses</a>
+                                <a href="{{ route('businesses.my') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Showcase</a>
                             @endif
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
@@ -89,7 +89,7 @@
 
                     @if(!auth()->user()->isAdmin())
                         <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
-                        <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Businesses</a>
+                        <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Showcase</a>
                         <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a>
                     @endif
                     <form method="POST" action="{{ route('logout') }}">

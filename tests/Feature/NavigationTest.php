@@ -27,7 +27,7 @@ class NavigationTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('My Profile');
         $response->assertSee($user->name);
-        $response->assertSee('My Businesses');
+        $response->assertSee('My Showcase');
     }
 
     public function test_admin_sees_admin_links()

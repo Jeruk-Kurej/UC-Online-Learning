@@ -61,6 +61,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/intrapreneurs/{company}/achievements/create', [BusinessController::class, 'createAchievement'])->name('intrapreneurs.create_achievement');
     Route::post('/intrapreneurs/{company}/achievements', [BusinessController::class, 'addAchievement'])->name('intrapreneurs.add_achievement');
     Route::delete('/intrapreneurs/{company}/achievements', [BusinessController::class, 'deleteAchievement'])->name('intrapreneurs.delete_achievement');
+
+    // Intrapreneur / Company Management
+    Route::get('/intrapreneurs/create', [BusinessController::class, 'createCompany'])->name('intrapreneurs.create');
+    Route::post('/intrapreneurs', [BusinessController::class, 'storeCompany'])->name('intrapreneurs.store');
+    Route::get('/intrapreneurs/{company}/edit', [BusinessController::class, 'editCompany'])->name('intrapreneurs.edit');
+    Route::put('/intrapreneurs/{company}', [BusinessController::class, 'updateCompany'])->name('intrapreneurs.update');
 });
 
 // ============================================================
