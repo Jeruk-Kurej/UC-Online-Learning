@@ -48,12 +48,12 @@
                         </div>
                         
                         <h1 class="text-5xl font-bold text-soft-gray-900 leading-tight tracking-tight">
-                            Business directory<br>
-                            for <span class="text-soft-gray-900">entrepreneurs</span>
+                            Business showcase<br>
+                            for <span class="text-soft-gray-900">UC Online Learning Students</span>
                         </h1>
                         
                         <p class="text-lg text-soft-gray-600 leading-relaxed max-w-lg">
-                            Connect with Universitas Ciputra's entrepreneurial community. Discover businesses, showcase your products, and grow your network.
+                            Connect with Universitas Ciputra's professional community. Discover businesses, explore achievements, showcase products, and grow your network.
                         </p>
                         
                         {{-- Feature Pills --}}
@@ -78,7 +78,7 @@
                         
                         <div class="mb-8 relative z-10">
                             <h2 class="text-3xl font-black text-gray-900 mb-1.5 tracking-tight">Sign in</h2>
-                            <p class="text-sm font-medium text-gray-500">Access your entrepreneurial hub</p>
+                            <p class="text-sm font-medium text-gray-500">Access your showcase hub</p>
                         </div>
                         
 
@@ -87,7 +87,7 @@
                             @csrf
                             
                             <div>
-                                <label for="email" class="block text-xs font-black uppercase tracking-wider text-gray-600 mb-2">Email</label>
+                                <label for="email" class="form-label-custom">Email</label>
                                 <input id="email" 
                                        type="email" 
                                        name="email" 
@@ -95,7 +95,7 @@
                                        required 
                                        autofocus 
                                        autocomplete="username"
-                                       class="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-[1rem] text-sm font-medium focus:outline-none focus:ring-4 focus:ring-uco-orange-500/20 focus:border-uco-orange-500 focus:bg-white transition-all @error('email') border-red-500 @enderror"
+                                       class="form-input-custom @error('email') border-red-500 @enderror"
                                        placeholder="name@example.com">
                                 @error('email')
                                     <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
@@ -103,36 +103,21 @@
                             </div>
                             
                             <div>
-                                <div class="flex items-center justify-between mb-2">
-                                    <label for="password" class="block text-xs font-black uppercase tracking-wider text-gray-600">Password</label>
-                                    @if (Route::has('password.request'))
-                                        <a href="/forgot-password" class="text-xs font-bold text-uco-orange-500 hover:text-uco-orange-600 transition-colors">
-                                            Forgot password?
-                                        </a>
-                                    @endif
-                                </div>
+                                <label for="password" class="form-label-custom">Password</label>
                                 <input id="password" 
                                        type="password" 
                                        name="password" 
                                        required 
                                        autocomplete="current-password"
-                                       class="w-full px-5 py-3.5 bg-gray-50/50 border border-gray-200 rounded-[1rem] text-sm font-medium focus:outline-none focus:ring-4 focus:ring-uco-orange-500/20 focus:border-uco-orange-500 focus:bg-white transition-all @error('password') border-red-500 @enderror"
+                                       class="form-input-custom @error('password') border-red-500 @enderror"
                                        placeholder="Enter your password">
                                 @error('password')
                                     <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
                                 @enderror
                             </div>
                             
-                            <div class="flex items-center">
-                                <input id="remember_me" 
-                                       type="checkbox" 
-                                       name="remember"
-                                       class="w-4 h-4 text-uco-orange-500 border-gray-300 rounded focus:ring-uco-orange-500">
-                                <label for="remember_me" class="ml-2 text-sm font-medium text-gray-600">Remember me</label>
-                            </div>
-                            
                             <button type="submit" 
-                                    class="w-full py-3 bg-uco-orange-500 text-white text-sm font-semibold tracking-wide rounded-xl shadow-sm hover:bg-uco-orange-600 hover:shadow transition-all duration-200">
+                                    class="w-full py-3 bg-uco-orange-500 hover:bg-uco-orange-600 text-white text-sm font-bold tracking-wide rounded-[7px] shadow-sm transition-all duration-200 uppercase">
                                 Sign in to Dashboard
                             </button>
 
@@ -146,7 +131,7 @@
                             </div>
 
                             <a href="{{ route('auth.google.redirect') }}"
-                               class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white text-gray-700 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900 transition-all duration-200 shadow-sm">
+                               class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white text-gray-700 text-sm font-semibold rounded-[7px] border border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-900 transition-all duration-200 shadow-sm">
                                 <svg class="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
                                     <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -161,12 +146,12 @@
                         <div class="mt-6 pt-6 border-t border-gray-100 relative z-10">
                             @if(auth()->check())
                                 <a href="{{ route('businesses.index') }}" 
-                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
+                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-[7px] border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
                                     Browse Businesses
                                 </a>
                             @else
                                 <a href="{{ route('featured') }}" 
-                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
+                                   class="block w-full py-3 text-center bg-gray-50 text-gray-600 text-sm font-semibold rounded-[7px] border border-gray-200 hover:bg-gray-100 hover:text-gray-900 transition-all duration-200">
                                     Browse as Guest
                                 </a>
                             @endif

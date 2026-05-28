@@ -397,10 +397,10 @@
                 
                 {{-- Carousel Dots --}}
                 <div class="flex justify-center items-center gap-2 mt-4" x-show="totalSlides > 1" x-cloak>
-                    <template x-for="(_, index) in totalSlides" :key="index">
-                        <button @click="scrollTo(index)"
+                    <template x-for="slideIndex in dotIndices" :key="slideIndex">
+                        <button @click="scrollTo(slideIndex)"
                                 class="h-2 rounded-full transition-all duration-300"
-                                :class="activeSlide === index ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
+                                :class="activeSlide === slideIndex ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
                         </button>
                     </template>
                 </div>
@@ -415,6 +415,7 @@
                 activeSlide: 0,
                 totalSlides: 0,
                 slides: [],
+                dotIndices: [],
                 autoScrollInterval: null,
                 init() {
                     this.$nextTick(() => {
@@ -435,16 +436,38 @@
                 refreshSlides() {
                     if (!this.$refs.track) return;
                     this.slides = Array.from(this.$refs.track.querySelectorAll('[data-carousel-slide]'));
-                    this.totalSlides = this.slides.length;
+                    
+                    const track = this.$refs.track;
+                    const maxScrollLeft = track.scrollWidth - track.clientWidth;
+                    
+                    const indices = [];
+                    this.slides.forEach((slide, index) => {
+                        const scrollLeftVal = this.getSlideScrollLeft(index);
+                        if (scrollLeftVal < maxScrollLeft - 15) {
+                            indices.push(index);
+                        }
+                    });
+                    
+                    if (this.slides.length > 0) {
+                        const lastIndex = this.slides.length - 1;
+                        if (!indices.includes(lastIndex)) {
+                            indices.push(lastIndex);
+                        }
+                    }
+                    
+                    this.dotIndices = indices;
+                    this.totalSlides = this.dotIndices.length;
                 },
                 startAutoScroll() {
                     this.stopAutoScroll();
+                    if (this.totalSlides <= 1) return;
                     this.autoScrollInterval = setInterval(() => {
-                        let nextSlide = this.activeSlide + 1;
-                        if (nextSlide >= this.totalSlides) {
-                            nextSlide = 0;
+                        let currentIndex = this.dotIndices.indexOf(this.activeSlide);
+                        let nextIndex = currentIndex + 1;
+                        if (nextIndex >= this.totalSlides || nextIndex < 0) {
+                            nextIndex = 0;
                         }
-                        this.scrollTo(nextSlide);
+                        this.scrollTo(this.dotIndices[nextIndex]);
                     }, 4000);
                 },
                 stopAutoScroll() {
@@ -460,27 +483,21 @@
                     return slide.offsetLeft - track.offsetLeft;
                 },
                 updateScroll() {
-                    if (!this.$refs.track || this.totalSlides === 0) return;
+                    if (!this.$refs.track || this.slides.length === 0 || this.dotIndices.length === 0) return;
 
                     const track = this.$refs.track;
                     const scrollLeft = track.scrollLeft;
                     const maxScrollLeft = track.scrollWidth - track.clientWidth;
 
-                    // If max rounded scroll position is reached, safely set the active slide to the last index.
-                    if (Math.ceil(scrollLeft) >= maxScrollLeft - 5) {
-                        this.activeSlide = this.totalSlides - 1;
-                        return;
-                    }
-
-                    let closestIndex = 0;
+                    let closestIndex = this.dotIndices[0];
                     let minDistance = Infinity;
 
-                    this.slides.forEach((slide, index) => {
-                        const slideStart = this.getSlideScrollLeft(index);
+                    this.dotIndices.forEach((slideIndex) => {
+                        const slideStart = Math.min(this.getSlideScrollLeft(slideIndex), maxScrollLeft);
                         const distance = Math.abs(scrollLeft - slideStart);
                         if (distance < minDistance) {
                             minDistance = distance;
-                            closestIndex = index;
+                            closestIndex = slideIndex;
                         }
                     });
 
@@ -490,8 +507,11 @@
                     if (!this.slides[index] || !this.$refs.track) return;
 
                     const track = this.$refs.track;
+                    const maxScrollLeft = track.scrollWidth - track.clientWidth;
+                    const targetScroll = Math.min(this.getSlideScrollLeft(index), maxScrollLeft);
+
                     track.scrollTo({
-                        left: this.getSlideScrollLeft(index),
+                        left: targetScroll,
                         behavior: 'smooth'
                     });
                     this.activeSlide = index;
