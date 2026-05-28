@@ -131,15 +131,29 @@
                         @endif
 
                         @if ($ownerPerso['instagram'] ?? false)
-                            <div class="flex items-center gap-3 px-3 py-2.5 rounded-xl">
-                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 bg-pink-100 text-pink-600">
-                                    <i class="bi bi-instagram"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">Instagram</p>
-                                    <p class="text-xs font-bold truncate text-gray-700 mt-0.5">@{{ $ownerPerso['instagram'] }}</p>
-                                </div>
-                            </div>
+                            @php
+                                $profileIgHandles = array_filter(array_map('trim', preg_split('/[,;\s]+/', $ownerPerso['instagram'])));
+                            @endphp
+                            @foreach($profileIgHandles as $handle)
+                                @php
+                                    $cleanHandle = ltrim($handle, '@');
+                                @endphp
+                                @if(!empty($cleanHandle))
+                                    <a href="https://instagram.com/{{ $cleanHandle }}"
+                                        target="_blank"
+                                        class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-pink-50 mb-1 last:mb-0">
+                                        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200
+                                                    bg-pink-100 text-pink-600 group-hover:bg-pink-500 group-hover:text-white">
+                                            <i class="bi bi-instagram"></i>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">Instagram</p>
+                                            <p class="text-xs font-bold truncate text-gray-700 mt-0.5">@{{ $cleanHandle }}</p>
+                                        </div>
+                                        <i class="bi bi-arrow-up-right text-[10px] text-gray-300 group-hover:text-pink-500"></i>
+                                    </a>
+                                @endif
+                            @endforeach
                         @endif
 
                         @if ($ownerGrad['official_email'] ?? false)

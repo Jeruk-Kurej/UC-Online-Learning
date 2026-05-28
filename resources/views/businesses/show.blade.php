@@ -327,10 +327,20 @@
                                         </a>
                                     @endif
                                     @if($business->instagram)
-                                        <a href="https://instagram.com/{{ ltrim($business->instagram, '@') }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 transition-colors border border-pink-200">
-                                            <i class="bi bi-instagram"></i>
-                                            <span class="text-xs font-bold">{{ $business->instagram }}</span>
-                                        </a>
+                                        @php
+                                            $igHandles = array_filter(array_map('trim', preg_split('/[,;\s]+/', $business->instagram)));
+                                        @endphp
+                                        @foreach($igHandles as $handle)
+                                            @php
+                                                $cleanHandle = ltrim($handle, '@');
+                                            @endphp
+                                            @if(!empty($cleanHandle))
+                                                <a href="https://instagram.com/{{ $cleanHandle }}" target="_blank" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-pink-50 hover:bg-pink-100 text-pink-700 transition-colors border border-pink-200">
+                                                    <i class="bi bi-instagram"></i>
+                                                    <span class="text-xs font-bold">@ {{ $cleanHandle }}</span>
+                                                </a>
+                                            @endif
+                                        @endforeach
                                     @endif
                                     @if($business->email)
                                         <a href="mailto:{{ $business->email }}" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 transition-colors border border-blue-200">
@@ -1161,18 +1171,28 @@
                         @endif
 
                         @if($ownerPerso['instagram'] ?? false)
-                        <a href="https://instagram.com/{{ ltrim($ownerPerso['instagram'], '@') }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
-                            <div class="flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
-                                    <i class="bi bi-instagram text-lg"></i>
-                                </div>
-                                <div>
-                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Instagram</p>
-                                    <p class="text-sm font-bold text-gray-800 group-hover:text-pink-600 transition-colors leading-tight mt-0.5">{{ $ownerPerso['instagram'] }}</p>
-                                </div>
-                            </div>
-                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-pink-500 transition-colors text-sm"></i>
-                        </a>
+                            @php
+                                $ownerIgHandles = array_filter(array_map('trim', preg_split('/[,;\s]+/', $ownerPerso['instagram'])));
+                            @endphp
+                            @foreach($ownerIgHandles as $handle)
+                                @php
+                                    $cleanHandle = ltrim($handle, '@');
+                                @endphp
+                                @if(!empty($cleanHandle))
+                                    <a href="https://instagram.com/{{ $cleanHandle }}" target="_blank" class="flex items-center justify-between group cursor-pointer mb-2 last:mb-0">
+                                        <div class="flex items-center gap-4">
+                                            <div class="w-10 h-10 rounded-full bg-pink-50 text-pink-500 flex items-center justify-center group-hover:bg-pink-100 transition-colors">
+                                                <i class="bi bi-instagram text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Instagram</p>
+                                                <p class="text-sm font-bold text-gray-800 group-hover:text-pink-600 transition-colors leading-tight mt-0.5">@ {{ $cleanHandle }}</p>
+                                            </div>
+                                        </div>
+                                        <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-pink-500 transition-colors text-sm"></i>
+                                    </a>
+                                @endif
+                            @endforeach
                         @endif
                     </div>
                     @endif
