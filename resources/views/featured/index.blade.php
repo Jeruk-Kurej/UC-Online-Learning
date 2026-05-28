@@ -22,7 +22,7 @@
                     <div class="space-y-8">
                         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[900] text-gray-950 tracking-[-0.04em] leading-[1.2] md:leading-[1.4] max-w-4xl"
                             x-data="{
-                                words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
+                                words: ['Innovative', 'Sustainable', 'Fresh', 'Pioneering'],
                                 currentWord: 0,
                                 isAnimating: false
                             }" x-init="setInterval(() => {
@@ -40,8 +40,7 @@
                             Businesses from <span class="whitespace-nowrap italic">UCO Community</span>
                         </h1>
                         <p class="max-w-lg text-lg font-medium leading-relaxed text-gray-600/80 tracking-tight">
-                            Explore a vibrant ecosystem of student-led ventures. We bridge the gap between academic
-                            theory and market-ready impact.
+                            Explore a vibrant ecosystem of student-led ventures. Turning potential into market-ready impact.
                         </p>
                     </div>
 
