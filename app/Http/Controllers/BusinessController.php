@@ -78,7 +78,9 @@ class BusinessController extends Controller
                 } else {
                     $q->orWhere('job_description', 'LIKE', "%{$search}%")
                         ->orWhere('position', 'LIKE', "%{$search}%")
-                        ->orWhere('achievement', 'LIKE', "%{$search}%");
+                        ->orWhere('achievement', 'LIKE', "%{$search}%")
+                        ->orWhere('city', 'LIKE', "%{$search}%")
+                        ->orWhere('province', 'LIKE', "%{$search}%");
                 }
             });
         }
@@ -88,24 +90,24 @@ class BusinessController extends Controller
             $query->where('category_id', $category);
         }
 
-        if ($viewType === 'entrepreneur') {
-            $city = $request->get('city');
-            $province = $request->get('province');
-            if ($city) {
-                $query->where('city', 'LIKE', "%{$city}%");
-            }
-            if ($province) {
-                $query->where('province', 'LIKE', "%{$province}%");
-            }
+        $city = $request->get('city');
+        $province = $request->get('province');
+        if ($city) {
+            $query->where('city', 'LIKE', "%{$city}%");
+        }
+        if ($province) {
+            $query->where('province', 'LIKE', "%{$province}%");
         }
 
         $businesses = $query->latest()->paginate(6)->withQueryString();
         $categories = Category::all();
 
-        $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();
+        $locationQuery = $viewType === 'intrapreneur' ? Company::visible() : Business::visible();
+
+        $availableProvinces = $locationQuery->whereNotNull('province')->distinct()->pluck('province')->sort();
 
         // Dynamic city list based on selected province
-        $cityQuery = Business::visible()->whereNotNull('city');
+        $cityQuery = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())->whereNotNull('city');
         $selectedProvince = $request->get('province');
         if ($selectedProvince) {
             $cityQuery->where('province', $selectedProvince);
@@ -113,7 +115,7 @@ class BusinessController extends Controller
         $availableCities = $cityQuery->distinct()->pluck('city')->sort();
 
         // Mapping for Alpine.js dependent dropdown
-        $provinceCityMap = Business::visible()
+        $provinceCityMap = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())
             ->whereNotNull('province')
             ->whereNotNull('city')
             ->select('province', 'city')
@@ -925,7 +927,8 @@ class BusinessController extends Controller
     public function createCompany(): View
     {
         $categories = Category::all();
-        return view('businesses.create_intrapreneur', compact('categories'));
+        $provinces = Province::orderBy('name')->get();
+        return view('businesses.create_intrapreneur', compact('categories', 'provinces'));
     }
 
     /**
@@ -939,6 +942,8 @@ class BusinessController extends Controller
             'position' => 'required|string|max:255',
             'level_position' => 'nullable|string|max:255',
             'company_scale' => 'nullable|string|max:255',
+            'province' => 'nullable',
+            'city' => 'nullable',
             'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
             'job_description' => 'required|string|min:10',
             'logo_url' => 'nullable|image|max:5120',
@@ -957,6 +962,16 @@ class BusinessController extends Controller
             }
         }
 
+        // Resolve Province and City names if IDs are sent
+        if (isset($data['province']) && is_numeric($data['province'])) {
+            $provObj = Province::find($data['province']);
+            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
+        }
+        if (isset($data['city']) && is_numeric($data['city'])) {
+            $regObj = Regency::find($data['city']);
+            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
+        }
+
         $company = Company::create($data);
 
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile registered successfully!');
@@ -972,7 +987,14 @@ class BusinessController extends Controller
         }
 
         $categories = Category::all();
-        return view('businesses.edit_intrapreneur', compact('company', 'categories'));
+        $provinces = Province::orderBy('name')->get();
+
+        $selectedProvinceId = Province::where('name', $company->province)->first()?->id;
+        $availableCities = $selectedProvinceId
+            ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
+            : collect();
+
+        return view('businesses.edit_intrapreneur', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
     }
 
     /**
@@ -990,6 +1012,8 @@ class BusinessController extends Controller
             'position' => 'required|string|max:255',
             'level_position' => 'nullable|string|max:255',
             'company_scale' => 'nullable|string|max:255',
+            'province' => 'nullable',
+            'city' => 'nullable',
             'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
             'job_description' => 'required|string|min:10',
             'logo_url' => 'nullable|image|max:5120',
@@ -1021,6 +1045,16 @@ class BusinessController extends Controller
                 $slug = $original . '-' . $i++;
             }
             $data['slug'] = $slug;
+        }
+
+        // Resolve Province and City names if IDs are sent
+        if (isset($data['province']) && is_numeric($data['province'])) {
+            $provObj = Province::find($data['province']);
+            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
+        }
+        if (isset($data['city']) && is_numeric($data['city'])) {
+            $regObj = Regency::find($data['city']);
+            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
         }
 
         $company->update($data);

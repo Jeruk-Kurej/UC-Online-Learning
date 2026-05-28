@@ -21,6 +21,8 @@ class Company extends Model
         'year_started_working',
         'achievement',
         'company_scale',
+        'province',
+        'city',
         'logo_url',
 
         // Platform management

@@ -1,5 +1,6 @@
 <x-app-layout>
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
         <style>
             .form-label-custom {
                 display: block; 
@@ -141,6 +142,32 @@
                         @error('year_started_working')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
                     </div>
 
+                    {{-- Province --}}
+                    <div>
+                        <label for="province" class="form-label-custom">Province</label>
+                        <select name="province" id="province" class="form-input-custom">
+                            <option value="">Select Province</option>
+                            @foreach($provinces as $prov)
+                                <option value="{{ $prov->id }}" {{ (old('province', $selectedProvinceId) == $prov->id) ? 'selected' : '' }}>
+                                    {{ ucwords(strtolower($prov->name)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- City --}}
+                    <div>
+                        <label for="city" class="form-label-custom">City / Regency</label>
+                        <select name="city" id="city" class="form-input-custom">
+                            <option value="">Select Province First</option>
+                            @foreach($availableCities as $city_item)
+                                <option value="{{ $city_item->id }}" {{ (old('city', $company->city) == $city_item->name) ? 'selected' : '' }}>
+                                    {{ ucwords(strtolower($city_item->name)) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
                     {{-- Logo Upload with Live Preview & Remove Option (Tactile Card Layout) --}}
                     <div class="md:col-span-2 relative pb-5" x-data="{
                         hasLogo: {{ $company->logo_url && !str_contains($company->logo_url, 'ui-avatars.com') ? 'true' : 'false' }},
@@ -247,4 +274,60 @@
             </form>
         </div>
     </div>
+
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                if (window.TomSelect) {
+                    new TomSelect('#category_id', { create: false, placeholder: "Select Category", searchField: ["text"] });
+                    new TomSelect('#level_position', { create: false, placeholder: "Select Level", searchField: ["text"] });
+                    new TomSelect('#company_scale', { create: false, placeholder: "Select Scale", searchField: ["text"] });
+                    
+                    const citySelect = new TomSelect('#city', { 
+                        create: false, 
+                        placeholder: "Select Province First", 
+                        searchField: ["name"],
+                        valueField: 'id',
+                        labelField: 'name'
+                    });
+                    
+                    // Enable/disable based on whether a province was preselected
+                    if (!document.getElementById('province').value) {
+                        citySelect.disable();
+                    }
+
+                    const provinceSelect = new TomSelect('#province', { 
+                        create: false, 
+                        placeholder: "Select Province", 
+                        searchField: ["text"],
+                        onChange: function(value) {
+                            citySelect.clear();
+                            citySelect.clearOptions();
+
+                            if (!value) {
+                                citySelect.disable();
+                                citySelect.settings.placeholder = "Select Province First";
+                                citySelect.inputState();
+                                return;
+                            }
+
+                            citySelect.disable();
+                            citySelect.settings.placeholder = "Loading cities...";
+                            citySelect.inputState();
+
+                            fetch(`/api/regencies?province_id=${value}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    citySelect.addOptions(data);
+                                    citySelect.enable();
+                                    citySelect.settings.placeholder = "Select City";
+                                    citySelect.inputState();
+                                });
+                        }
+                    });
+                }
+            });
+        </script>
+    @endpush
 </x-app-layout>
