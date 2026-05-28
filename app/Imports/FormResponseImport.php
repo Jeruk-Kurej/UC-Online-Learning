@@ -131,6 +131,20 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return null;
             }
 
+            // Dynamically detect import type if it is null (e.g., if the filename was generic)
+            if ($this->importType === null) {
+                $hasEntrepreneur = !empty($this->col($row, 'business_name'));
+                $hasIntrapreneur = !empty($this->col($row, 'company_name_', 'company_name'));
+                
+                if ($hasEntrepreneur && !$hasIntrapreneur) {
+                    $this->importType = 'entrepreneur';
+                    Log::info("[FormResponseImport] Dynamically detected Entrepreneur sheet from column content.");
+                } elseif ($hasIntrapreneur && !$hasEntrepreneur) {
+                    $this->importType = 'intrapreneur';
+                    Log::info("[FormResponseImport] Dynamically detected Intrapreneur sheet from column content.");
+                }
+            }
+
 
             $fullName = $this->col($row, 'full_name');
             if (!$fullName) {
