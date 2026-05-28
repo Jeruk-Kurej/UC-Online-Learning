@@ -244,7 +244,7 @@
                                 <div class="min-w-0 flex-1">
                                     <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
                                     @if($featuredBusiness->category)
-                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-uco-orange-600 bg-orange-50 px-2 py-0.5 rounded-md mt-1.5">
+                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mt-1.5">
                                             {{ $featuredBusiness->category->name }}
                                         </span>
                                     @endif
@@ -272,18 +272,8 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <h4 class="text-sm font-black text-gray-950 truncate leading-tight">{{ $student->name }}</h4>
-                                    <p class="text-[10px] font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
-                                </div>
-                            </div>
-                            
-                            <div class="mt-4 bg-orange-50/20 rounded-xl p-3 border border-orange-100/30 grid grid-cols-2 gap-2 text-xs">
-                                <div>
-                                    <p class="text-[9px] font-black uppercase tracking-[0.1em] text-gray-400">Major</p>
-                                    <p class="text-gray-700 font-bold truncate mt-0.5">{{ $student->major ?? 'General Studies' }}</p>
-                                </div>
-                                <div>
-                                    <p class="text-[9px] font-black uppercase tracking-[0.1em] text-gray-400">Batch</p>
-                                    <p class="text-gray-700 font-bold mt-0.5">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                    <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">{{ $student->major ?? 'General Studies' }}</p>
+                                    <p class="text-[10px] font-bold text-gray-400 mt-0.5">Batch {{ $student->year_of_enrollment ?? 'N/A' }}</p>
                                 </div>
                             </div>
                         </div>

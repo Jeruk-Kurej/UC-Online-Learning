@@ -23,21 +23,8 @@
 
             <div class="min-w-0 flex-1">
                 <h3 class="truncate text-lg font-[900] text-gray-950 group-hover:text-blue-600 transition-colors">{{ $student->name }}</h3>
-                <p class="text-xs font-semibold text-gray-400 mt-0.5">Cohort {{ $student->year_of_enrollment ?? 'N/A' }}</p>
-            </div>
-        </div>
-
-        <div class="mt-6 border-t border-gray-50 pt-5">
-            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-2.5">Academic Profile</p>
-            <div class="grid grid-cols-2 gap-2 text-xs">
-                <div>
-                    <p class="text-gray-400 font-medium">Major</p>
-                    <p class="text-gray-700 font-bold truncate">{{ $student->major ?? 'General Studies' }}</p>
-                </div>
-                <div>
-                    <p class="text-gray-400 font-medium">Batch</p>
-                    <p class="text-gray-700 font-bold">{{ $student->year_of_enrollment ?? 'N/A' }}</p>
-                </div>
+                <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">{{ $student->major ?? 'General Studies' }}</p>
+                <p class="text-[11px] font-bold text-gray-400 mt-0.5">Batch {{ $student->year_of_enrollment ?? 'N/A' }}</p>
             </div>
         </div>
     </div>
