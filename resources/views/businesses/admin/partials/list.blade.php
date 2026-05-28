@@ -117,10 +117,10 @@
                                      style="background-color: #6c757d;"
                                      onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
                                  <i class="bi bi-pencil-square text-xs"></i>
-                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                     <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Change Status</div>
-                                     <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                 </div>
+                                 <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
+                                      <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Change Status</div>
+                                      <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-3"></div>
+                                  </div>
                              </button>
                         </div>
                     </td>

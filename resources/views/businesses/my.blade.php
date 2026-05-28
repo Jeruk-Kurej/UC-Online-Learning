@@ -31,73 +31,68 @@
                     @foreach($myBusinesses as $b)
                         @php $delay = ($loop->index % 12) * 50; @endphp
                         <a href="{{ route('businesses.show', $b) }}" 
-                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
+                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll" 
                            style="transition-delay: {{ $delay }}ms;">
-                            {{-- Cover Image --}}
-                            <div class="h-48 bg-gray-50 relative overflow-hidden">
-                                @php
-                                    $photos = collect($b->photos ?? []);
-                                    $cover = optional($photos->where('is_primary', true)->first())->photo_path ?? optional($photos->first())->photo_path ?? null;
-                                    $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
-                                @endphp
-                                @if($coverUrl)
-                                    <img src="{{ $coverUrl }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                                @else
-                                    <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200">
-                                        <i class="bi bi-shop text-5xl text-gray-300"></i>
-                                    </div>
-                                @endif
-                                
-                                {{-- Logo Overlay --}}
-                                <div class="absolute bottom-4 left-4">
+                            
+                            {{-- Card Header --}}
+                            <div class="flex items-start gap-4">
+                                {{-- Logo Thumbnail --}}
+                                <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
                                     @php $logo = $b->logo_url ? storage_image_url($b->logo_url, 'logo_thumb') : null; @endphp
                                     @if($logo)
-                                        <img src="{{ $logo }}" class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-lg border border-white">
+                                        <img src="{{ $logo }}" class="w-full h-full object-contain">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-300">
+                                            <span class="text-2xl font-black opacity-30 select-none">{{ substr($b->name, 0, 1) }}</span>
+                                        </div>
                                     @endif
                                 </div>
-
-                                {{-- Status Badge --}}
-                                <div class="absolute top-4 left-4 flex gap-2">
-                                    <div class="px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5 text-[10px] font-black uppercase
-                                        {{ $b->status === 'approved' ? 'bg-green-500 text-white' : ($b->status === 'rejected' ? 'bg-red-500 text-white' : 'bg-uco-orange-500 text-white') }}">
-                                        <i class="bi {{ $b->status === 'approved' ? 'bi-check-circle-fill' : ($b->status === 'rejected' ? 'bi-x-circle-fill' : 'bi-hourglass-split') }}"></i>
-                                        {{ $b->status_label }}
-                                    </div>
+                                
+                                {{-- Titles --}}
+                                <div class="flex-1 min-w-0 text-left">
+                                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-2 leading-tight mb-1">{{ $b->name }}</h3>
+                                    <span class="inline-block px-2.5 py-0.5 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[9px] font-bold uppercase tracking-wider">
+                                        {{ optional($b->category)->name ?? 'Uncategorized' }}
+                                    </span>
                                 </div>
+                            </div>
+
+                            {{-- Badges Row --}}
+                            <div class="flex items-center gap-2 mt-4">
+                                {{-- Status Badge --}}
+                                <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm
+                                    {{ $b->status === 'approved' ? 'bg-green-500 text-white' : ($b->status === 'rejected' ? 'bg-red-500 text-white' : 'bg-uco-orange-500 text-white') }}">
+                                    <i class="bi {{ $b->status === 'approved' ? 'bi-check-circle-fill' : ($b->status === 'rejected' ? 'bi-x-circle-fill' : 'bi-hourglass-split') }} text-[9px]"></i>
+                                    {{ $b->status_label }}
+                                </span>
 
                                 {{-- Featured Badge --}}
                                 @if($b->is_featured && $b->status === 'approved')
-                                    <div class="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-[10px] font-black uppercase px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
-                                        <i class="bi bi-star-fill"></i> Featured
-                                    </div>
+                                    <span class="bg-yellow-400 text-yellow-900 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
+                                        <i class="bi bi-star-fill text-[9px]"></i> Featured
+                                    </span>
                                 @endif
                             </div>
 
-                            <div class="p-6 flex-1 flex flex-col">
-                                <div class="mb-4 text-left">
-                                    <span class="inline-block px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                        {{ optional($b->category)->name ?? 'Uncategorized' }}
-                                    </span>
-                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-1">{{ $b->name }}</h3>
+                            {{-- Description --}}
+                            <p class="text-sm text-gray-500 line-clamp-3 my-4 flex-1 italic text-left leading-relaxed">
+                                {{ $b->description ?: 'No description provided' }}
+                            </p>
+
+                            {{-- Rejection / Revision reason --}}
+                            @if(in_array($b->status, ['rejected', 'need_revision']) && $b->rejection_reason)
+                                <div class="mb-4 p-3 {{ $b->status === 'rejected' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100' }} border rounded-xl text-left">
+                                    <p class="text-[10px] font-bold {{ $b->status === 'rejected' ? 'text-red-600' : 'text-blue-600' }} uppercase tracking-wider mb-1">
+                                        {{ $b->status === 'rejected' ? 'Rejection Reason:' : 'Revision Feedback:' }}
+                                    </p>
+                                    <p class="text-xs {{ $b->status === 'rejected' ? 'text-red-700' : 'text-blue-700' }} italic">"{{ $b->rejection_reason }}"</p>
                                 </div>
-                                
-                                <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-1 italic text-left">
-                                    {{ $b->description ?: 'No description provided' }}
-                                </p>
+                            @endif
 
-                                @if(in_array($b->status, ['rejected', 'need_revision']) && $b->rejection_reason)
-                                    <div class="mb-4 p-3 {{ $b->status === 'rejected' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100' }} border rounded-xl">
-                                        <p class="text-[10px] font-bold {{ $b->status === 'rejected' ? 'text-red-600' : 'text-blue-600' }} uppercase tracking-wider mb-1">
-                                            {{ $b->status === 'rejected' ? 'Rejection Reason:' : 'Revision Feedback:' }}
-                                        </p>
-                                        <p class="text-xs {{ $b->status === 'rejected' ? 'text-red-700' : 'text-blue-700' }} italic">"{{ $b->rejection_reason }}"</p>
-                                    </div>
-                                @endif
-
-                                <div class="flex items-center justify-end pt-5 border-t border-gray-100 mt-auto">
-                                    <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
-                                        <i class="bi bi-arrow-right-circle-fill text-xl"></i>
-                                    </div>
+                            {{-- Arrow link footer --}}
+                            <div class="flex items-center justify-end pt-4 border-t border-gray-50 mt-auto">
+                                <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                                    <i class="bi bi-arrow-right-circle-fill text-xl"></i>
                                 </div>
                             </div>
                         </a>
@@ -139,59 +134,65 @@
                     @foreach($myCompanies as $c)
                         @php $delay = ($loop->index % 12) * 50; @endphp
                         <a href="{{ route('intrapreneurs.show', $c) }}" 
-                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" 
+                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll" 
                            style="transition-delay: {{ $delay }}ms;">
                             
-                            {{-- Cover Card --}}
-                            <div class="h-48 bg-gradient-to-br from-indigo-50/50 to-purple-50/50 relative overflow-hidden flex items-center justify-center">
-                                <i class="bi bi-building text-6xl text-slate-300/70 group-hover:scale-110 transition-transform duration-700"></i>
-                                
-                                {{-- Logo Overlay --}}
-                                <div class="absolute bottom-4 left-4">
+                            {{-- Card Header --}}
+                            <div class="flex items-start gap-4">
+                                {{-- Logo Thumbnail --}}
+                                <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
                                     @php $logo = $c->logo_url ? storage_image_url($c->logo_url, 'logo_thumb') : null; @endphp
                                     @if($logo)
-                                        <img src="{{ $logo }}" class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-lg border border-white object-cover">
+                                        <img src="{{ $logo }}" class="w-full h-full object-contain">
+                                    @else
+                                        <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-300">
+                                            <span class="text-2xl font-black opacity-30 select-none">{{ substr($c->name, 0, 1) }}</span>
+                                        </div>
                                     @endif
                                 </div>
-
-                                {{-- Status Badge --}}
-                                <div class="absolute top-4 left-4 flex gap-2">
-                                    <div class="px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5 text-[10px] font-black uppercase bg-emerald-500 text-white">
-                                        <i class="bi bi-check-circle-fill"></i>
-                                        Active
-                                    </div>
+                                
+                                {{-- Titles --}}
+                                <div class="flex-1 min-w-0 text-left">
+                                    <h3 class="text-lg font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-2 leading-tight mb-1">{{ $c->name }}</h3>
+                                    <span class="inline-block px-2.5 py-0.5 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[9px] font-bold uppercase tracking-wider">
+                                        {{ optional($c->category)->name ?? 'Corporate' }}
+                                    </span>
                                 </div>
                             </div>
 
-                            <div class="p-6 flex-1 flex flex-col">
-                                <div class="mb-4 text-left">
-                                    <span class="inline-block px-2.5 py-1 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[10px] font-bold uppercase tracking-wider mb-2">
-                                        {{ optional($c->category)->name ?? 'Corporate' }}
-                                    </span>
-                                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-1">{{ $c->name }}</h3>
-                                </div>
+                            {{-- Badges Row --}}
+                            <div class="flex items-center gap-2 mt-4">
+                                {{-- Status Badge --}}
+                                <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm bg-emerald-500 text-white">
+                                    <i class="bi bi-check-circle-fill text-[9px]"></i>
+                                    Active
+                                </span>
+                            </div>
 
-                                <div class="space-y-1.5 mb-4 text-left">
-                                    <p class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                                        <i class="bi bi-person-badge text-slate-400"></i>
-                                        <span>{{ $c->position }}</span>
-                                    </p>
-                                    @if($c->year_started_working)
-                                        <p class="text-[11px] text-slate-400 font-semibold flex items-center gap-1.5">
-                                            <i class="bi bi-calendar3"></i>
-                                            <span>Started working: {{ $c->year_started_working }}</span>
-                                        </p>
-                                    @endif
-                                </div>
-                                
-                                <p class="text-sm text-gray-500 line-clamp-2 mb-4 flex-1 italic text-left">
-                                    {{ $c->job_description ?: 'No work description provided' }}
+                            {{-- Metadata --}}
+                            <div class="space-y-1.5 my-4 text-left flex-1">
+                                <p class="text-sm font-extrabold text-slate-700 flex items-center gap-1.5">
+                                    <i class="bi bi-person-badge text-slate-400"></i>
+                                    <span>{{ $c->position }}</span>
                                 </p>
+                                @if($c->year_started_working)
+                                    <p class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
+                                        <i class="bi bi-calendar-check text-slate-400"></i>
+                                        <span>Started: {{ $c->year_started_working }}</span>
+                                    </p>
+                                @endif
+                                @if($c->company_scale)
+                                    <p class="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
+                                        <i class="bi bi-diagram-3 text-slate-400"></i>
+                                        <span>Scale: {{ $c->company_scale }}</span>
+                                    </p>
+                                @endif
+                            </div>
 
-                                <div class="flex items-center justify-end pt-5 border-t border-gray-100 mt-auto">
-                                    <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
-                                        <i class="bi bi-arrow-right-circle-fill text-xl"></i>
-                                    </div>
+                            {{-- Arrow link footer --}}
+                            <div class="flex items-center justify-end pt-4 border-t border-gray-50 mt-auto">
+                                <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
+                                    <i class="bi bi-arrow-right-circle-fill text-xl"></i>
                                 </div>
                             </div>
                         </a>

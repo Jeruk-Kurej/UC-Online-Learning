@@ -110,7 +110,7 @@
                             type="text"
                             name="search"
                             value="{{ $search }}"
-                            placeholder="Search business name..."
+                            placeholder="Search business or owner name..."
                             @input="submitDebounced()"
                             @keydown.enter.prevent="updateList()"
                             class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
