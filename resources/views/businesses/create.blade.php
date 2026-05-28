@@ -146,7 +146,7 @@
                     <select name="province" id="province" class="block w-full">
                         <option value="">Select Province</option>
                         @foreach($provinces as $prov)
-                            <option value="{{ $prov->id }}" {{ old('province') == $prov->id ? 'selected' : '' }}>{{ $prov->name }}</option>
+                            <option value="{{ $prov->id }}" {{ old('province') == $prov->id ? 'selected' : '' }}>{{ ucwords(strtolower($prov->name)) }}</option>
                         @endforeach
                     </select>
                 </div>
@@ -265,7 +265,7 @@
                     const citySelect = new TomSelect('#city', { 
                         create: false, 
                         placeholder: "Select Province First", 
-                        searchField: ["text"],
+                        searchField: ["name"],
                         valueField: 'id',
                         labelField: 'name'
                     });

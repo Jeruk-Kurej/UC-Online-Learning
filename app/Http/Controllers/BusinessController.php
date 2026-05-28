@@ -263,7 +263,13 @@ class BusinessController extends Controller
 
         $regencies = Regency::where('province_id', $provinceId)
             ->orderBy('name')
-            ->get(['id', 'name']);
+            ->get(['id', 'name'])
+            ->map(function ($regency) {
+                return [
+                    'id' => $regency->id,
+                    'name' => \Illuminate\Support\Str::title(strtolower($regency->name)),
+                ];
+            });
 
         return new JsonResponse($regencies);
     }

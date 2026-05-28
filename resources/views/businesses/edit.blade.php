@@ -181,7 +181,7 @@
                         <option value="">Select Province</option>
                         @foreach($provinces as $prov)
                             <option value="{{ $prov->id }}" {{ (old('province', $selectedProvinceId) == $prov->id) ? 'selected' : '' }}>
-                                {{ $prov->name }}
+                                {{ ucwords(strtolower($prov->name)) }}
                             </option>
                         @endforeach
                     </select>
@@ -194,7 +194,7 @@
                         <option value="">Select Province First</option>
                         @foreach($availableCities as $city)
                             <option value="{{ $city->id }}" {{ (old('city', $business->city) == $city->name) ? 'selected' : '' }}>
-                                {{ $city->name }}
+                                {{ ucwords(strtolower($city->name)) }}
                             </option>
                         @endforeach
                     </select>
@@ -306,7 +306,7 @@
                     const citySelect = new TomSelect('#city', { 
                         create: false, 
                         placeholder: "Select City", 
-                        searchField: ["text"],
+                        searchField: ["name"],
                         valueField: 'id',
                         labelField: 'name'
                     });
