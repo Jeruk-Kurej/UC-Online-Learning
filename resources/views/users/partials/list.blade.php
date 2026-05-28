@@ -1,5 +1,5 @@
 {{-- Users Table --}}
-<div class="bg-white border rounded-xl overflow-hidden shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+<div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
     <table class="w-full text-left">
         <thead class="bg-gray-50 border-b">
             <tr>
@@ -182,3 +182,29 @@
 <div class="mt-8 pagination-ajax">
     {{ $users->appends(request()->query())->links() }}
 </div>
+
+<style>
+    /* Force page numbers to show on mobile viewports for Laravel Tailwind Pagination */
+    .pagination-ajax nav > div:first-child {
+        display: none !important; /* Hide the simple 'Previous/Next' mobile fallback */
+    }
+    .pagination-ajax nav > div:last-child {
+        display: flex !important; /* Force the desktop version containing page numbers to show */
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+    @media (min-width: 640px) {
+        .pagination-ajax nav > div:last-child {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+        }
+    }
+    /* Force all page numbers inside the inline-flex block to show on mobile */
+    .pagination-ajax nav > div:last-child div:last-child > span {
+        display: inline-flex !important;
+    }
+    .pagination-ajax nav > div:last-child div:last-child > span > * {
+        display: inline-flex !important;
+    }
+</style>

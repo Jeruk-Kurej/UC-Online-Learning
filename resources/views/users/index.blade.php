@@ -57,7 +57,7 @@
         
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div class="space-y-1">
                     <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
                         Admin Portal
@@ -66,8 +66,8 @@
                     <p class="text-sm text-soft-gray-600 mt-1">Manage student and alumni profiles synced from the central database.</p>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center gap-2.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.02)] select-none">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                    <span class="inline-flex items-center justify-center gap-2.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.02)] select-none flex-grow sm:flex-initial">
                         <i class="bi bi-star-fill text-uco-yellow-500 text-sm flex-shrink-0"></i>
                         <span class="flex flex-col gap-0.5">
                             <span class="text-xs font-semibold text-uco-yellow-700 leading-none">
@@ -82,14 +82,14 @@
                     </span>
                     @php /** @var \App\Models\User|null $authUser */ $authUser = auth()->user(); @endphp
                     @if($authUser && $authUser->isAdmin())
-                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
+                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
                     @endif
 
                     @if($authUser && $authUser->isAdmin())
-                        <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm">
+                        <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
                             <i class="bi bi-person-plus-fill mr-2"></i>
                             Create User
                         </a>
@@ -99,7 +99,7 @@
         </section>
 
         {{-- Statistics --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8"
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8"
              @ajax-update-stats.window="
                 fetch('/users/stats', { headers: {'X-Requested-With':'XMLHttpRequest'} })
                     .then(r => r.json())
@@ -115,21 +115,21 @@
                         if (statFeaturedIntra) statFeaturedIntra.textContent = d.featured_intrapreneurs;
                         if (statFeaturedEntre) statFeaturedEntre.textContent = d.featured_entrepreneurs;
                     })">
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
                 <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">Entrepreneurs</p>
-                <p class="text-3xl font-bold text-blue-600">{{ $totalEntrepreneurs }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-blue-600">{{ $totalEntrepreneurs }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
                 <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Intrapreneurs</p>
-                <p class="text-3xl font-bold text-green-600">{{ $totalIntrapreneurs }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $totalIntrapreneurs }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
                 <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">Alumni</p>
-                <p class="text-3xl font-bold text-purple-600">{{ $totalAlumni }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ $totalAlumni }}</p>
             </div>
         </div>
 
@@ -139,8 +139,8 @@
                 @submit.prevent="updateList()">
                 
                 {{-- Search & Reset Row --}}
-                <div class="flex items-center gap-3">
-                    <div class="relative flex-1">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div class="relative flex-1 w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <i class="bi bi-search text-gray-400"></i>
                         </div>
@@ -155,8 +155,8 @@
                         >
                     </div>
 
-                    <div class="flex items-center gap-2">
-                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">

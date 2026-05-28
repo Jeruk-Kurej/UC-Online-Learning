@@ -108,7 +108,7 @@ class BusinessController extends Controller
             }
         }
 
-        $businesses = $query->latest()->paginate(5)->withQueryString();
+        $businesses = $query->latest()->paginate(6)->withQueryString();
         $categories = Category::all();
 
         $availableProvinces = Business::visible()->whereNotNull('province')->distinct()->pluck('province')->sort();

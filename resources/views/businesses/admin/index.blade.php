@@ -50,7 +50,7 @@
          }"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                 <div class="space-y-1">
                     <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
                         Admin Portal
@@ -59,17 +59,17 @@
                     <p class="text-sm text-soft-gray-600 mt-1">Review and manage business submissions from students.</p>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
+                    <span class="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md flex-grow sm:flex-initial">
                         <i class="bi bi-star-fill text-uco-yellow-500"></i>
                         <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
                     </span>
-                    <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm">
+                    <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
 
-                    <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm">
+                    <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
                         <i class="bi bi-plus-lg mr-2"></i>
                         Create Business
                     </a>
@@ -78,31 +78,31 @@
         </section>
 
         {{-- Statistics --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Businesses</p>
-                <p class="text-3xl font-bold text-gray-900">{{ $totalBusinesses }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalBusinesses }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
                 <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Approved</p>
-                <p class="text-3xl font-bold text-green-600">{{ $approvedBusinesses }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $approvedBusinesses }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
                 <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">Pending Approval</p>
-                <p class="text-3xl font-bold text-amber-600">{{ $pendingBusinesses }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-amber-600">{{ $pendingBusinesses }}</p>
             </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
+            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
                 <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">Rejected / Revision</p>
-                <p class="text-3xl font-bold text-red-600">{{ $rejectedBusinesses }}</p>
+                <p class="text-2xl sm:text-3xl font-bold text-red-600">{{ $rejectedBusinesses }}</p>
             </div>
         </div>
 
         {{-- Filters & Search --}}
         <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
             <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
-                <div class="flex flex-col md:flex-row md:items-center gap-3">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     {{-- Search Input --}}
-                    <div class="relative flex-1">
+                    <div class="relative flex-1 w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <i class="bi bi-search text-gray-400"></i>
                         </div>
@@ -118,9 +118,9 @@
                     </div>
 
                     {{-- Filters & Reset Button --}}
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
                         <select name="status" @change="updateList()" 
-                                class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                                class="flex-1 sm:flex-initial min-w-[120px] sm:min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Status: All</option>
                             <option value="pending" {{ $status === 'pending' ? 'selected' : '' }}>Pending Approval</option>
                             <option value="approved" {{ $status === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -129,13 +129,13 @@
                         </select>
 
                         <select name="featured" @change="updateList()" 
-                                class="min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                                class="flex-1 sm:flex-initial min-w-[120px] sm:min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                             <option value="">Featured: All</option>
                             <option value="yes" {{ $featured === 'yes' ? 'selected' : '' }}>Featured</option>
                             <option value="no" {{ $featured === 'no' ? 'selected' : '' }}>Not Featured</option>
                         </select>
                         
-                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
 

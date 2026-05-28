@@ -103,11 +103,11 @@
                         >
                     </div>
 
-                    <div class="w-52 flex-shrink-0">
-                        <select id="featured" name="featured" @change="updateList()" class="w-full border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
-                            <option value="">Featured Status: All</option>
-                            <option value="1" @selected(request('featured') === '1')>Featured Only</option>
-                            <option value="0" @selected(request('featured') === '0')>Non-Featured Only</option>
+                    <div class="w-[115px] sm:w-48 flex-shrink-0">
+                        <select id="featured" name="featured" @change="updateList()" class="w-full border-gray-300 bg-white rounded-md px-2 sm:px-3 py-2 text-xs sm:text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
+                            <option value="">Status: All</option>
+                            <option value="1" @selected(request('featured') === '1')>Featured</option>
+                            <option value="0" @selected(request('featured') === '0')>Regular</option>
                         </select>
                     </div>
 
