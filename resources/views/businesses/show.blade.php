@@ -1152,7 +1152,7 @@
                     </div>
 
                     {{-- Contacts / WhatsApp --}}
-                    @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                    @if($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false))
                     <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                     <div class="space-y-4 relative z-20">
                         @if($owner->whatsapp)
@@ -1167,6 +1167,21 @@
                                 </div>
                             </div>
                             <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
+                        </a>
+                        @endif
+
+                        @if($owner->email)
+                        <a href="mailto:{{ $owner->email }}" class="flex items-center justify-between group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                                    <i class="bi bi-envelope text-lg"></i>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Email</p>
+                                    <p class="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors leading-tight mt-0.5">{{ $owner->email }}</p>
+                                </div>
+                            </div>
+                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-blue-500 transition-colors text-sm"></i>
                         </a>
                         @endif
 

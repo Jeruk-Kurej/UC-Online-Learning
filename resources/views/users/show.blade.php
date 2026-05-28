@@ -105,7 +105,6 @@
 
                         <div class="flex-1 text-center sm:text-left pt-2">
                             <h1 class="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-1">{{ $user->name }}</h1>
-                            <p class="text-slate-500 font-medium text-xs break-all">{{ $user->email }}</p>
                             
                             {{-- Edit Button (Admin only) --}}
                             @if(Auth::check() && Auth::user()->isAdmin())
