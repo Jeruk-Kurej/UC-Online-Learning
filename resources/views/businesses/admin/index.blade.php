@@ -159,17 +159,15 @@
                             <option value="intrapreneur">Type: Intrapreneur</option>
                         </select>
 
-                        {{-- Status filter (entrepreneur only) --}}
-                        <template x-if="viewType === 'entrepreneur'">
-                            <select name="status" @change="updateList()"
-                                    class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
-                                <option value="">Status: All</option>
-                                <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
-                                <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
-                                <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
-                            </select>
-                        </template>
+                        {{-- Status filter --}}
+                        <select name="status" @change="updateList()"
+                                class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                            <option value="">Status: All</option>
+                            <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
+                            <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                            <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
+                        </select>
 
                         {{-- Featured filter (entrepreneur only) --}}
                         <template x-if="viewType === 'entrepreneur'">
@@ -280,7 +278,11 @@
             const statusSelect = document.getElementById('statusSelect');
             const reasonArea = document.getElementById('rejection_reason');
             
-            form.action = `/businesses/${data.id}/status`;
+            if (data.type === 'intrapreneur') {
+                form.action = `/admin/intrapreneurs/${data.id}/status`;
+            } else {
+                form.action = `/admin/showcase/${data.id}/status`;
+            }
             nameDisplay.innerText = `Updating: ${data.name}`;
             statusSelect.value = data.status;
             reasonArea.value = data.reason || '';

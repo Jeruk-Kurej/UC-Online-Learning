@@ -86,6 +86,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/showcase/{business}/toggle-featured', [BusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
     Route::get('/showcase', [BusinessController::class, 'adminIndex'])->name('businesses.admin');
     Route::post('/showcase/{business}/status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
+    Route::post('/intrapreneurs/{company}/status', [BusinessController::class, 'updateCompanyStatus'])->name('intrapreneurs.update-status');
     Route::post('/showcase/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
     
     Route::get('/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');

@@ -168,10 +168,14 @@ class BusinessController extends Controller
             $query = Company::with(['user', 'category']);
 
             $totalBusinesses = Company::count();
-            $approvedBusinesses = Company::where('is_visible', true)->count();
-            $pendingBusinesses = Company::where('is_visible', false)->count();
-            $rejectedBusinesses = 0;
+            $approvedBusinesses = Company::where('approval_status', 'approved')->count();
+            $pendingBusinesses = Company::where('approval_status', 'pending')->count();
+            $rejectedBusinesses = Company::whereIn('approval_status', ['rejected', 'need_revision'])->count();
             $featuredBusinessesCount = 0;
+
+            if ($status) {
+                $query->where('approval_status', $status);
+            }
 
             if ($search) {
                 $query->where(function ($q) use ($search) {
@@ -282,6 +286,33 @@ class BusinessController extends Controller
         $business->save();
 
         return back()->with('success', 'Business status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
+    }
+
+    /**
+     * Update company status (admin only).
+     */
+    public function updateCompanyStatus(Request $request, Company $company): RedirectResponse
+    {
+        if (! $this->isUserAdmin()) {
+            abort(403);
+        }
+
+        $this->validate($request, [
+            'status' => 'required|in:approved,rejected,need_revision,pending',
+            'rejection_reason' => 'required_if:status,rejected,need_revision',
+        ]);
+
+        $status = $request->input('status');
+        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
+
+        $company->fill([
+            'approval_status' => $status,
+            'rejection_reason' => $rejectionReason,
+            'is_visible' => $status === 'approved',
+        ]);
+        $company->save();
+
+        return back()->with('success', 'Company status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
     /**
@@ -868,6 +899,7 @@ class BusinessController extends Controller
         $data = $validated;
         $data['user_id'] = Auth::id();
         $data['is_visible'] = true;
+        $data['approval_status'] = Auth::user()->isAdmin() ? 'approved' : 'pending';
 
         if ($request->hasFile('logo_url')) {
             $file = $request->file('logo_url');
@@ -917,6 +949,13 @@ class BusinessController extends Controller
 
         $data = $validated;
 
+        // Handle logo deletion
+        if ($request->boolean('delete_logo')) {
+            $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
+            $data['logo_url'] = null;
+        }
+
+        // Handle file uploads (Logo)
         if ($request->hasFile('logo_url')) {
             $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
             $file = $request->file('logo_url');

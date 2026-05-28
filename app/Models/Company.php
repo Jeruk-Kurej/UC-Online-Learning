@@ -25,6 +25,8 @@ class Company extends Model
 
         // Platform management
         'is_visible',
+        'approval_status',
+        'rejection_reason',
     ];
 
     protected function casts(): array
@@ -40,6 +42,23 @@ class Company extends Model
     }
 
     // ─── Accessors ───
+
+    public function getStatusAttribute(): string
+    {
+        return $this->approval_status ?? ($this->is_visible ? 'approved' : 'pending');
+    }
+
+    public function getStatusLabelAttribute(): string
+    {
+        $status = $this->status;
+        return match($status) {
+            'approved' => 'Approved',
+            'pending' => 'Pending Approval',
+            'rejected' => 'Rejected',
+            'need_revision' => 'Need Revision',
+            default => 'Pending Approval',
+        };
+    }
 
     public function getLogoUrlAttribute($value)
     {
@@ -131,6 +150,7 @@ class Company extends Model
     public function scopeVisible($query)
     {
         return $query->where('is_visible', true)
+            ->where('approval_status', 'approved')
             ->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 }

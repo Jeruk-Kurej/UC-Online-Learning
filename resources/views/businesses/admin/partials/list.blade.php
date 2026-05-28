@@ -9,9 +9,7 @@
                 <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">
                     {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Position' : 'Location' }}
                 </th>
-                @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
-                    <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] whitespace-nowrap">Status</th>
-                @endif
+                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] whitespace-nowrap">Status</th>
                 <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Visible</th>
                 @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
                     <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Featured</th>
@@ -80,23 +78,21 @@
                         @endif
                     </td>
 
-                    {{-- Approval Status (entrepreneur only) --}}
-                    @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
-                        <td class="px-4 py-3">
-                            @php
-                                $statusClasses = match($b->status) {
-                                    'approved' => 'bg-green-100 text-green-700',
-                                    'pending' => 'bg-amber-100 text-amber-700',
-                                    'rejected' => 'bg-red-100 text-red-700',
-                                    'need_revision' => 'bg-blue-100 text-blue-700',
-                                    default => 'bg-gray-100 text-gray-700',
-                                };
-                            @endphp
-                            <span class="whitespace-nowrap px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $statusClasses }}">
-                                {{ $b->status_label }}
-                            </span>
-                        </td>
-                    @endif
+                    {{-- Approval Status --}}
+                    <td class="px-4 py-3">
+                        @php
+                            $statusClasses = match($b->status) {
+                                'approved' => 'bg-green-100 text-green-700',
+                                'pending' => 'bg-amber-100 text-amber-700',
+                                'rejected' => 'bg-red-100 text-red-700',
+                                'need_revision' => 'bg-blue-100 text-blue-700',
+                                default => 'bg-gray-100 text-gray-700',
+                            };
+                        @endphp
+                        <span class="whitespace-nowrap px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $statusClasses }}">
+                            {{ $b->status_label }}
+                        </span>
+                    </td>
 
                     {{-- Visible dot --}}
                     <td class="px-4 py-3 text-center">
@@ -149,17 +145,18 @@
                                         <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
                                     </div>
                                 </a>
-                                {{-- Edit intrapreneur profile --}}
-                                <a href="{{ route('intrapreneurs.edit', $b) }}"
-                                   class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                   style="background-color: #6c757d;"
-                                   onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
+                                {{-- Change status (modal) --}}
+                                <button type="button" 
+                                        onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }})"
+                                        class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
+                                        style="background-color: #6c757d;"
+                                        onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
                                     <i class="bi bi-pencil-square text-xs"></i>
                                     <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Edit Profile</div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-3"></div>
-                                    </div>
-                                </a>
+                                         <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Change Status</div>
+                                         <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-3"></div>
+                                     </div>
+                                </button>
                             @else
                                 {{-- View entrepreneur business --}}
                                 <a href="{{ route('businesses.show', $b) }}" 
@@ -174,7 +171,7 @@
                                 </a>
                                 {{-- Change status (modal) --}}
                                 <button type="button" 
-                                        onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason]) }})"
+                                        onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }})"
                                         class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
                                         style="background-color: #6c757d;"
                                         onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">

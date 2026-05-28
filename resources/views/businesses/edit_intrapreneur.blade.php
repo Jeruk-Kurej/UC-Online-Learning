@@ -141,25 +141,88 @@
                         @error('year_started_working')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
                     </div>
 
-                    {{-- Logo Upload --}}
-                    <div>
-                        <label for="logo_url" class="form-label-custom">Company Logo (Leave blank to keep current)</label>
-                        <input type="file" name="logo_url" id="logo_url" accept="image/*"
-                               class="form-input-custom py-1.5 @error('logo_url') border-red-500 @enderror">
-                        @error('logo_url')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
-                    </div>
+                    {{-- Logo Upload with Live Preview & Remove Option (Tactile Card Layout) --}}
+                    <div class="md:col-span-2 relative pb-5" x-data="{
+                        hasLogo: {{ $company->logo_url && !str_contains($company->logo_url, 'ui-avatars.com') ? 'true' : 'false' }},
+                        logoDeleted: false,
+                        newLogoSelected: false
+                    }">
+                        <label class="form-label-custom">Company Logo</label>
+                        <input type="hidden" name="delete_logo" :value="logoDeleted ? '1' : '0'">
 
-                    {{-- Current Logo Preview --}}
-                    @if($company->logo_url)
-                        <div class="md:col-span-2 flex items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <img src="{{ storage_image_url($company->logo_url, 'logo_thumb') }}" 
-                                 class="w-16 h-16 object-cover rounded-lg border border-white shadow-sm bg-white p-0.5">
-                            <div>
-                                <p class="text-xs font-bold text-slate-700">Current Logo Active</p>
-                                <p class="text-[10px] text-slate-400 font-medium mt-0.5">Will be overwritten only if you select a new image file above.</p>
+                        <div class="flex items-start gap-5">
+                            <!-- Clickable Logo Box -->
+                            <div id="logo-container" style="width: 120px; height: 120px; border-radius: 12px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; cursor: pointer; transition: 0.3s;"
+                                 class="group hover:border-[#f7931e] shadow-sm flex items-center justify-center p-2"
+                                 onmouseover="this.querySelector('.photo-overlay').style.opacity='1'"
+                                 onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
+                                
+                                <!-- Current / New Logo Preview -->
+                                <img id="preview-image-logo" src="{{ $company->logo_url }}" 
+                                     style="max-w-full max-h-full object-contain;"
+                                     x-show="hasLogo && !logoDeleted">
+                                
+                                <!-- Initials Placeholder -->
+                                <div id="logo-placeholder" style="width: 100%; height: 100%; background: linear-gradient(135deg, #f7931e, #fdb913); display: flex; align-items: center; justify-content: center; color: white;"
+                                     x-show="!hasLogo || logoDeleted">
+                                    <span class="text-3xl font-black text-white select-none">{{ strtoupper(substr($company->name, 0, 1)) }}</span>
+                                </div>
+
+                                <!-- Click to pick trigger -->
+                                <label for="logo_url" class="absolute inset-0 cursor-pointer z-20">
+                                    <input type="file" name="logo_url" id="logo_url" accept="image/*" class="hidden"
+                                           @change="const [file] = $event.target.files; if (file) { 
+                                               document.getElementById('preview-image-logo').src = URL.createObjectURL(file);
+                                               hasLogo = true;
+                                               logoDeleted = false;
+                                               newLogoSelected = true;
+                                           }">
+                                </label>
+
+                                <!-- Hover Overlay -->
+                                <div class="photo-overlay" style="position: absolute; inset: 0; background: rgba(15,23,42,0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: 0.3s ease; pointer-events: none; backdrop-filter: blur(2px);">
+                                    <i class="bi bi-camera-fill text-white text-lg"></i>
+                                    <span class="text-white text-[8px] font-black uppercase tracking-widest mt-1">Change</span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons and Help Text -->
+                            <div class="flex flex-col justify-center h-[120px]">
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">JPG, PNG, WEBP — Max 5MB</p>
+                                
+                                <template x-if="hasLogo && !logoDeleted && !newLogoSelected">
+                                    <button type="button" @click="logoDeleted = true" 
+                                            class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                        <i class="bi bi-trash3 text-sm"></i>
+                                        <span>Remove Logo</span>
+                                    </button>
+                                </template>
+                                
+                                <template x-if="logoDeleted">
+                                    <button type="button" @click="logoDeleted = false" 
+                                            class="inline-flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-bold transition-all">
+                                        <i class="bi bi-arrow-counterclockwise text-sm"></i>
+                                        <span>Undo Delete</span>
+                                    </button>
+                                </template>
+
+                                <template x-if="newLogoSelected">
+                                    <button type="button" @click="
+                                        document.getElementById('logo_url').value = '';
+                                        newLogoSelected = false;
+                                        hasLogo = {{ $company->logo_url ? 'true' : 'false' }};
+                                        logoDeleted = false;
+                                        document.getElementById('preview-image-logo').src = '{{ $company->logo_url }}';
+                                    " 
+                                            class="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-bold transition-all">
+                                        <i class="bi bi-x-circle text-sm"></i>
+                                        <span>Cancel New Logo</span>
+                                    </button>
+                                </template>
                             </div>
                         </div>
-                    @endif
+                        @error('logo_url')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
+                    </div>
 
                     {{-- Job Description --}}
                     <div class="md:col-span-2">
