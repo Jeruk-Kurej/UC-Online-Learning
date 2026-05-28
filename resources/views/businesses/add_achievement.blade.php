@@ -6,15 +6,14 @@
     @endpush
     <div class="max-w-5xl mx-auto">
         {{-- Page Header - Elegant Design --}}
-        <div class="mb-8 flex items-center gap-4">
-            <a href="{{ route('intrapreneurs.show', $company) }}" 
-               class="group inline-flex items-center justify-center sm:justify-start gap-2.5 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200 mb-4 sm:mb-0">
-                <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                <span>Back</span>
+        <div class="mb-8 flex flex-row items-center gap-3">
+            <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary flex-shrink-0">
+                <i class="bi bi-arrow-left"></i>
+                Back
             </a>
-            <div class="flex-1">
-                <h1 class="text-3xl font-bold text-soft-gray-900 tracking-tight">Add New Achievement</h1>
-                <p class="text-sm text-soft-gray-600 mt-1">{{ $company->name }}</p>
+            <div class="flex-grow min-w-0">
+                <h1 class="text-xl sm:text-3xl font-bold text-soft-gray-900 tracking-tight leading-snug">Add New Achievement</h1>
+                <p class="text-xs sm:text-sm text-soft-gray-600 mt-1">{{ $company->name }}</p>
             </div>
         </div>
 

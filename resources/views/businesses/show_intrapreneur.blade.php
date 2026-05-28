@@ -162,18 +162,18 @@
                         class="bg-white shadow-lg sm:rounded-lg border border-soft-gray-100 overflow-hidden"
                     >
                         {{-- Section Header — same structure as "Our Products" --}}
-                        <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5 border-b border-gray-100">
                             <div class="flex items-center gap-3">
-                                <div class="w-1 h-8 bg-uco-orange-500 rounded-full"></div>
+                                <div class="w-1 h-8 bg-uco-orange-500 rounded-full flex-shrink-0"></div>
                                 <div>
                                     <p class="text-[11px] font-bold uppercase tracking-widest text-uco-orange-500 mb-0.5">Career Highlights</p>
-                                    <h2 class="text-xl font-bold text-gray-900">Achievements & Contributions</h2>
+                                    <h2 class="text-xl font-bold text-gray-900 leading-tight">Achievements & Contributions</h2>
                                 </div>
                             </div>
                             @if ($canManage)
                                 <a
                                     href="{{ route('intrapreneurs.create_achievement', $company) }}"
-                                    class="btn-uco btn-uco-primary"
+                                    class="btn-uco btn-uco-primary w-full sm:w-auto text-center"
                                 >
                                     <i class="bi bi-plus-lg"></i>
                                     Add Achievement
