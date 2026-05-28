@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="space-y-16 pb-6">
         {{-- High-Fidelity "Better" Hero Section --}}
-        <section class="group relative overflow-hidden rounded-[3.5rem] bg-[#FFF9F2] px-8 py-12 md:px-16 md:py-16 lg:px-16 mx-4 mt-0 reveal-on-scroll">
+        <section class="group relative overflow-hidden rounded-[2rem] bg-[#FFF9F2] px-8 py-12 md:px-16 md:py-16 lg:px-16 mx-4 mt-0 reveal-on-scroll">
             {{-- Background Effects --}}
             <div class="uco-hero-mesh opacity-90"></div>
             <div class="uco-noise-overlay"></div>
@@ -13,7 +13,7 @@
             <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
                 {{-- Left Content --}}
                 <div class="space-y-10 md:col-span-7 lg:col-span-7">
-
+ 
                     <div class="space-y-8">
                         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[900] text-gray-950 tracking-[-0.04em] leading-[1.2] md:leading-[1.4] max-w-4xl"
                             x-data="{ 
@@ -28,7 +28,7 @@
                                     isAnimating = false;
                                 }, 300);
                             }, 2300)">
-                            Discover <span class="uco-text-gradient-orange inline-block min-w-[130px] sm:min-w-[180px] md:min-w-[280px]" 
+                            Discover <span class="uco-text-gradient-orange inline-block min-w-[130px] sm:min-w-[180px] md:min-w-[280px] pb-2" 
                                   :class="isAnimating ? 'word-rotate-exit' : 'word-rotate-enter'"
                                   x-text="words[currentWord]"></span>
                             <br class="hidden md:inline">
