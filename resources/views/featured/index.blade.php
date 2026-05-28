@@ -15,7 +15,7 @@
                 <div class="space-y-10 md:col-span-7 lg:col-span-7">
 
                     <div class="space-y-8">
-                        <h1 class="text-4xl font-[900] text-gray-950 md:text-5xl lg:text-6xl tracking-[-0.04em] leading-[1.35] md:leading-[1.4] max-w-4xl"
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[900] text-gray-950 tracking-[-0.04em] leading-[1.2] md:leading-[1.4] max-w-4xl"
                             x-data="{ 
                                 words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
                                 currentWord: 0,
@@ -28,7 +28,7 @@
                                     isAnimating = false;
                                 }, 300);
                             }, 2300)">
-                            Discover <span class="uco-text-gradient-orange inline-block min-w-[180px] md:min-w-[280px]" 
+                            Discover <span class="uco-text-gradient-orange inline-block min-w-[130px] sm:min-w-[180px] md:min-w-[280px]" 
                                   :class="isAnimating ? 'word-rotate-exit' : 'word-rotate-enter'"
                                   x-text="words[currentWord]"></span>
                             <br class="hidden md:inline">
@@ -39,7 +39,7 @@
                         </p>
                     </div>
 
-                    <div class="pt-6">
+                    <div class="pt-6 hidden md:block">
                         <a href="{{ route('businesses.index') }}"
                             class="group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
                             Explore Showcase
@@ -73,7 +73,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-
+ 
                                             {{-- Logo Overlay --}}
                                             <div class="absolute bottom-2 left-3 h-8 w-8 overflow-hidden rounded-lg bg-white p-1 shadow-lg">
                                                 @if($business->logo_url)
@@ -85,10 +85,10 @@
                                                 @endif
                                             </div>
                                         </div>
-
+ 
                                         {{-- Content --}}
                                         <div class="px-3 pb-2">
-                                            <h4 class="text-[15px] font-[900] text-gray-900 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
+                                            <h4 class="text-[15px] font-[900] text-gray-950 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
                                                 {{ $business->name }}
                                             </h4>
                                             <div class="flex items-center gap-2 mt-1">
@@ -106,6 +106,15 @@
                         @endforeach
                     </div>
                 </div>
+
+                {{-- Mobile-only bottom button --}}
+                <div class="col-span-full pt-4 block md:hidden text-center">
+                    <a href="{{ route('businesses.index') }}"
+                        class="group/btn inline-flex items-center justify-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95 w-full">
+                        Explore Showcase
+                        <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
+                    </a>
+                </div>
             </div>
         </section>
 
@@ -121,7 +130,6 @@
                     <div class="uco-outline-bg-text uco-outline-bg-text--blue uco-parallax-text">INTRA</div>
                     <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title uco-section-title--blue relative z-10">
                         Our <span class="uco-text-gradient-blue">Intrapreneur</span> Students
-                        <span class="text-2xl font-semibold text-blue-500/80 ml-2 inline-block translate-y-[-2px]">({{ $topIntrapreneurs->count() }})</span>
                     </h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Meet outstanding intrapreneurs driving innovation within corporate ecosystems.
@@ -133,22 +141,36 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full relative z-10">
-                @forelse($topIntrapreneurs as $student)
-                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'intra', 'delay' => $loop->index * 40])
-                @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
-                        <div class="relative z-10 space-y-4">
-                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-                                <i class="bi bi-people text-2xl text-blue-400"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-lg font-black text-gray-900">No Featured Intrapreneur Students</p>
-                                <p class="text-sm font-medium text-gray-500">Featured intrapreneur profiles will appear here once curated by admin.</p>
+            <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()" @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
+                <div x-ref="track" @scroll.passive="updateScroll" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    @forelse($topIntrapreneurs as $student)
+                        <div data-carousel-slide class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
+                            @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'intra', 'delay' => $loop->index * 40])
+                        </div>
+                    @empty
+                        <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
+                            <div class="relative z-10 space-y-4">
+                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <i class="bi bi-people text-2xl text-blue-400"></i>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-lg font-black text-gray-900">No Featured Intrapreneur Students</p>
+                                    <p class="text-sm font-medium text-gray-500">Featured intrapreneur profiles will appear here once curated by admin.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
+                
+                {{-- Carousel Dots (Mobile Only) --}}
+                <div class="md:hidden flex justify-center items-center gap-2 mt-4" x-show="totalSlides > 1" x-cloak>
+                    <template x-for="slideIndex in dotIndices" :key="slideIndex">
+                        <button @click="scrollTo(slideIndex)"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="activeSlide === slideIndex ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
+                        </button>
+                    </template>
+                </div>
             </div>
         </section>
 
@@ -163,7 +185,6 @@
                     <div class="uco-outline-bg-text uco-outline-bg-text--orange uco-parallax-text">ENTRE</div>
                     <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">
                         Our <span class="uco-text-gradient-orange">Entrepreneur</span> Students
-                        <span class="text-2xl font-semibold text-uco-orange-500/80 ml-2 inline-block translate-y-[-2px]">({{ $topEntrepreneurs->count() }})</span>
                     </h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Discover student founders building ventures and startups across the UCO network.
@@ -175,22 +196,36 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full relative z-10">
-                @forelse($topEntrepreneurs as $student)
-                    @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'entre', 'delay' => $loop->index * 40])
-                @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
-                        <div class="relative z-10 space-y-4">
-                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-                                <i class="bi bi-rocket-takeoff text-2xl text-uco-orange-400"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-lg font-black text-gray-900">No Featured Entrepreneur Students</p>
-                                <p class="text-sm font-medium text-gray-500">Featured entrepreneur profiles will appear here once curated by admin.</p>
+            <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()" @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
+                <div x-ref="track" @scroll.passive="updateScroll" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    @forelse($topEntrepreneurs as $student)
+                        <div data-carousel-slide class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
+                            @include('featured.partials.featured-student-card', ['student' => $student, 'type' => 'entre', 'delay' => $loop->index * 40])
+                        </div>
+                    @empty
+                        <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
+                            <div class="relative z-10 space-y-4">
+                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <i class="bi bi-rocket-takeoff text-2xl text-uco-orange-400"></i>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-lg font-black text-gray-900">No Featured Entrepreneur Students</p>
+                                    <p class="text-sm font-medium text-gray-500">Featured entrepreneur profiles will appear here once curated by admin.</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
+
+                {{-- Carousel Dots (Mobile Only) --}}
+                <div class="md:hidden flex justify-center items-center gap-2 mt-4" x-show="totalSlides > 1" x-cloak>
+                    <template x-for="slideIndex in dotIndices" :key="slideIndex">
+                        <button @click="scrollTo(slideIndex)"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="activeSlide === slideIndex ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
+                        </button>
+                    </template>
+                </div>
             </div>
         </section>
 
@@ -210,7 +245,6 @@
                     <div class="uco-outline-bg-text uco-outline-bg-text--orange uco-parallax-text">VENTURES</div>
                     <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">
                         Featured <span class="uco-text-gradient-orange">Ventures</span>
-                        <span class="text-2xl font-semibold text-uco-orange-500/80 ml-2 inline-block translate-y-[-2px]">({{ $spotlightBusinesses->count() }})</span>
                     </h2>
                     <p class="text-xl font-medium text-gray-500 max-w-2xl leading-relaxed mt-4 relative z-10">
                         Discover startup founders and student-led enterprises shaping the future of business.
@@ -222,82 +256,96 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full relative z-10">
-                @forelse($spotlightBusinesses as $featuredBusiness)
-                    @php
-                        $student = $featuredBusiness->user;
-                    @endphp
-                    <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer" style="transition-delay: {{ $loop->index * 40 }}ms">
-                        
-                        {{-- Top Part: Venture Info & Description --}}
-                        <div>
-                            <div class="flex items-start gap-4">
-                                <div class="h-16 w-16 overflow-hidden rounded-[1.2rem] bg-white p-2 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
-                                    @if($featuredBusiness->logo_url)
-                                        <img src="{{ $featuredBusiness->logo_url }}" class="h-full w-full object-contain">
-                                    @else
-                                        <div class="flex h-full w-full items-center justify-center text-2xl font-black text-uco-orange-500 bg-orange-50 rounded-[0.8rem]">
-                                            {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
+            <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()" @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
+                <div x-ref="track" @scroll.passive="updateScroll" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:overflow-visible md:snap-none md:gap-8 md:pb-0 md:pt-0 w-full relative z-10" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    @forelse($spotlightBusinesses as $featuredBusiness)
+                        @php
+                            $student = $featuredBusiness->user;
+                        @endphp
+                        <div data-carousel-slide class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
+                            <a href="{{ route('businesses.show', $featuredBusiness) }}" class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer" style="transition-delay: {{ $loop->index * 40 }}ms">
+                                
+                                {{-- Top Part: Venture Info & Description --}}
+                                <div>
+                                    <div class="flex items-start gap-4">
+                                        <div class="h-16 w-16 overflow-hidden rounded-[1.2rem] bg-white p-2 shadow-sm border border-gray-100 flex-shrink-0 flex items-center justify-center">
+                                            @if($featuredBusiness->logo_url)
+                                                <img src="{{ $featuredBusiness->logo_url }}" class="h-full w-full object-contain">
+                                            @else
+                                                <div class="flex h-full w-full items-center justify-center text-2xl font-black text-uco-orange-500 bg-orange-50 rounded-[0.8rem]">
+                                                    {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
+                                                </div>
+                                            @endif
                                         </div>
-                                    @endif
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
-                                    @if($featuredBusiness->category)
-                                        <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mt-1.5">
-                                            {{ $featuredBusiness->category->name }}
-                                        </span>
-                                    @endif
-                                </div>
-                            </div>
-                            
-                            <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
-                                {{ $featuredBusiness->description }}
-                            </p>
-                        </div>
-                        
-                        {{-- Middle Part: Founder Profile & Academic Specs --}}
-                        <div class="mt-6 border-t border-gray-50 pt-5">
-                            <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">Owned By</p>
-                            
-                            <div class="flex items-center gap-3">
-                                <div class="h-10 w-10 overflow-hidden rounded-full border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
-                                    @if($student->profile_photo_url)
-                                        <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
-                                    @else
-                                        <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-sm">
-                                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                                        <div class="min-w-0 flex-1">
+                                            <h3 class="text-xl font-[900] text-gray-950 leading-tight group-hover:text-uco-orange-600 transition-colors truncate">{{ $featuredBusiness->name }}</h3>
+                                            @if($featuredBusiness->category)
+                                                <span class="inline-block text-[9px] font-black uppercase tracking-[0.15em] text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md mt-1.5">
+                                                    {{ $featuredBusiness->category->name }}
+                                                </span>
+                                            @endif
                                         </div>
-                                    @endif
+                                    </div>
+                                    
+                                    <p class="mt-4 text-sm text-gray-500 leading-relaxed line-clamp-3">
+                                        {{ $featuredBusiness->description }}
+                                    </p>
                                 </div>
-                                <div class="min-w-0 flex-1">
-                                    <h4 class="text-sm font-black text-gray-950 truncate leading-tight">{{ $student->name }}</h4>
-                                    <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">{{ $student->major ?? 'General Studies' }}</p>
-                                    <p class="text-[10px] font-bold text-gray-400 mt-0.5">Batch {{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                
+                                {{-- Middle Part: Founder Profile & Academic Specs --}}
+                                <div class="mt-6 border-t border-gray-50 pt-5">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">Owned By</p>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-10 w-10 overflow-hidden rounded-full border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
+                                            @if($student->profile_photo_url)
+                                                <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
+                                            @else
+                                                <div class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-sm">
+                                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h4 class="text-sm font-black text-gray-950 truncate leading-tight">{{ $student->name }}</h4>
+                                            <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">{{ $student->major ?? 'General Studies' }}</p>
+                                            <p class="text-[10px] font-bold text-gray-400 mt-0.5">Batch {{ $student->year_of_enrollment ?? 'N/A' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {{-- Bottom Part: Visit CTA --}}
+                                <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
+                                    <span class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">
+                                        Visit Venture <i class="bi bi-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
+                                    </span>
+                                </div>
+                            </a>
+                        </div>
+                    @empty
+                        <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
+                            <div class="relative z-10 space-y-4">
+                                <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                                    <i class="bi bi-rocket text-2xl text-uco-orange-400"></i>
+                                </div>
+                                <div class="space-y-1">
+                                    <p class="text-lg font-black text-gray-900">No Featured Ventures</p>
+                                    <p class="text-sm font-medium text-gray-500">We're currently curating our top student ventures.</p>
                                 </div>
                             </div>
                         </div>
-                        
-                        {{-- Bottom Part: Visit CTA --}}
-                        <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
-                            <span class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">
-                                Visit Venture <i class="bi bi-arrow-right text-base transition-transform group-hover:translate-x-1"></i>
-                            </span>
-                        </div>
-                    </a>
-                @empty
-                    <div class="col-span-full uco-placeholder-mesh relative rounded-[3rem] border border-dashed border-gray-200 px-6 py-20 text-center w-full">
-                        <div class="relative z-10 space-y-4">
-                            <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
-                                <i class="bi bi-rocket text-2xl text-uco-orange-400"></i>
-                            </div>
-                            <div class="space-y-1">
-                                <p class="text-lg font-black text-gray-900">No Featured Ventures</p>
-                                <p class="text-sm font-medium text-gray-500">We're currently curating our top student ventures.</p>
-                            </div>
-                        </div>
-                    </div>
-                @endforelse
+                    @endforelse
+                </div>
+
+                {{-- Carousel Dots (Mobile Only) --}}
+                <div class="md:hidden flex justify-center items-center gap-2 mt-4" x-show="totalSlides > 1" x-cloak>
+                    <template x-for="slideIndex in dotIndices" :key="slideIndex">
+                        <button @click="scrollTo(slideIndex)"
+                                class="h-2 rounded-full transition-all duration-300"
+                                :class="activeSlide === slideIndex ? 'w-8 bg-uco-orange-500' : 'w-2 bg-gray-300 hover:bg-gray-400'">
+                        </button>
+                    </template>
+                </div>
             </div>
         </section>
 

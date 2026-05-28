@@ -103,11 +103,11 @@
         </section>
 
         {{-- Entrepreneur / Intrapreneur Tabs (Tactile Glass Cards) --}}
-        <div class="flex justify-center gap-4 mb-8 flex-wrap reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
+        <div class="grid grid-cols-2 sm:flex sm:justify-center gap-3 sm:gap-4 mb-8 reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
             <!-- Entrepreneurs Card -->
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
                @click.prevent="updateType('entrepreneur', $el.href)"
-               class="relative overflow-hidden flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
+               class="relative overflow-hidden flex items-center gap-2 sm:gap-4 px-3 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
                :class="(viewType === 'entrepreneur' && !isPending) 
                    ? 'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' 
                    : 'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
@@ -125,7 +125,7 @@
                      :class="(viewType === 'entrepreneur' && !isPending) && 'opacity-100 scale-125'"></div>
 
                 <!-- Icon Box with dynamic hover & active transitions -->
-                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300"
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300 flex-shrink-0"
                      :class="(viewType === 'entrepreneur' && !isPending) 
                          ? 'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' 
                          : 'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
@@ -133,9 +133,9 @@
                 </div>
 
                 <!-- Typography Label details -->
-                <div class="flex flex-col text-left">
+                <div class="flex flex-col text-left min-w-0">
                     <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
-                    <span class="text-sm font-bold transition-colors duration-300"
+                    <span class="text-xs sm:text-sm font-bold transition-colors duration-300 truncate"
                           :class="(viewType === 'entrepreneur' && !isPending) ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
                         Entrepreneurs
                     </span>
@@ -145,7 +145,7 @@
             <!-- Intrapreneurs Card -->
             <a href="{{ route('businesses.index', ['view' => 'intrapreneur']) }}" 
                @click.prevent="updateType('intrapreneur', $el.href)"
-               class="relative overflow-hidden flex items-center gap-4 px-6 py-4 rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
+               class="relative overflow-hidden flex items-center gap-2 sm:gap-4 px-3 py-3 sm:px-6 sm:py-4 rounded-xl sm:rounded-2xl border transition-all duration-300 select-none group w-full sm:w-auto sm:min-w-[240px] justify-start bg-white/90 backdrop-blur-md"
                :class="viewType === 'intrapreneur' 
                    ? 'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' 
                    : 'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
@@ -163,7 +163,7 @@
                      :class="viewType === 'intrapreneur' && 'opacity-100 scale-125'"></div>
 
                 <!-- Icon Box with dynamic hover & active transitions -->
-                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300"
+                <div class="flex items-center justify-center w-10 h-10 rounded-xl transition-all duration-300 flex-shrink-0"
                      :class="viewType === 'intrapreneur' 
                          ? 'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' 
                          : 'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
@@ -171,9 +171,9 @@
                 </div>
 
                 <!-- Typography Label details -->
-                <div class="flex flex-col text-left">
+                <div class="flex flex-col text-left min-w-0">
                     <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
-                    <span class="text-sm font-bold transition-colors duration-300"
+                    <span class="text-xs sm:text-sm font-bold transition-colors duration-300 truncate"
                           :class="viewType === 'intrapreneur' ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
                         Intrapreneurs
                     </span>
