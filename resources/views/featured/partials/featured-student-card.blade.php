@@ -34,7 +34,7 @@
             <div class="rounded-xl bg-slate-50 p-4 border border-slate-100/80">
                 <div class="flex items-center gap-3 mb-2">
                     @if($highlight->logo_url)
-                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain border border-slate-200" alt="Logo">
+                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain" alt="Logo">
                     @endif
                     <div>
                         <p class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Career Highlight</p>
@@ -54,7 +54,7 @@
             <div class="rounded-xl bg-orange-50/50 p-4 border border-orange-100/80">
                 <div class="flex items-center gap-3 mb-2">
                     @if($highlight->logo_url)
-                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain border border-orange-200/60" alt="Logo">
+                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain " alt="Logo">
                     @endif
                     <div>
                         <p class="text-[9px] font-black uppercase tracking-[0.25em] text-orange-400/90">Venture Highlight</p>
