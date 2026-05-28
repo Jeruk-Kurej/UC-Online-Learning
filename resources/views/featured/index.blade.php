@@ -446,7 +446,7 @@
                     @forelse($testimonies as $student)
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,17rem)] sm:w-[calc(50%-0.75rem)] md:w-[calc((100%-3rem)/3)] lg:w-[calc((100%-4.5rem)/4)] flex h-auto">
-                            <div class="w-full bg-white border border-gray-100 rounded-[20px] overflow-hidden shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)] hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange cursor-pointer group"
+                            <div class="w-full bg-white border border-gray-200/80 rounded-[20px] overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange cursor-pointer group"
                                 data-name="{{ $student->name }}"
                                 data-status="{{ $student->current_status ?? 'Member' }} at UCO Community"
                                 data-photo="{{ $student->profile_photo_url ?? '' }}"

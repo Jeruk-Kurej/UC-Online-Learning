@@ -13,7 +13,7 @@
         <div class="flex items-start gap-4">
             <div class="h-20 w-20 overflow-hidden rounded-[1.5rem] border {{ $isIntra ? 'border-blue-100' : 'border-orange-100' }} bg-gray-50 shadow-sm flex-shrink-0">
                 @if($student->profile_photo_url)
-                    <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="h-full w-full object-cover">
+                    <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}" class="size-full object-cover object-top">
                 @else
                     <div class="flex h-full w-full items-center justify-center bg-gradient-to-br {{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} font-black text-2xl">
                         {{ strtoupper(substr($student->name, 0, 1)) }}

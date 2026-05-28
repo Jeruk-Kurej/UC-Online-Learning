@@ -71,7 +71,7 @@
         $directoryUrl = route('businesses.index', ['view' => $directoryView]);
     @endphp
 
-    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ showLightbox: false, lightboxUrl: '' }">
         {{-- Breadcrumbs (matches business / intrapreneur detail pages) --}}
         <nav class="flex mb-8 text-sm font-medium" aria-label="Breadcrumb">
             <ol class="flex items-center space-x-2">
@@ -189,8 +189,9 @@
                                 <!-- Slides -->
                                 <div class="w-full h-full relative bg-slate-100 flex items-center justify-center">
                                     @foreach($certDetails as $index => $cert)
-                                        <div class="absolute inset-0 w-full h-full transition-opacity duration-[800ms] ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none' }}"
-                                             :class="activeIndex === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'">
+                                        <div x-show="activeIndex === {{ $index }}"
+                                             class="absolute inset-0 w-full h-full z-10"
+                                             style="{{ $index === 0 ? '' : 'display:none;' }}">
                                             
                                             @if($cert['isPdf'])
                                                 <div class="w-full h-full bg-slate-100 relative">
@@ -201,19 +202,12 @@
                                                             allowfullscreen></iframe>
                                                 </div>
                                             @else
-                                                <a href="{{ $cert['originalUrl'] }}" target="_blank" 
-                                                   class="w-full h-full bg-slate-900/5 flex items-center justify-center group/img relative cursor-pointer">
+                                                <div @click="lightboxUrl = '{{ $cert['previewUrl'] }}'; showLightbox = true" 
+                                                     class="w-full h-full bg-slate-900/5 flex items-center justify-center group/img relative cursor-zoom-in transition-all duration-300 hover:scale-[1.02]">
                                                     <img src="{{ $cert['previewUrl'] }}" 
                                                          class="w-full h-full object-contain" 
                                                          alt="Certification Preview">
-                                                    <!-- Hover Reveal Visual Overlay for Images -->
-                                                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center z-20">
-                                                        <span class="px-3 py-1.5 rounded-lg bg-white/95 text-slate-800 text-[10px] font-black uppercase tracking-wider border border-slate-200 shadow-md flex items-center gap-1.5 transform scale-95 group-hover/img:scale-100 transition-transform duration-200">
-                                                            <i class="bi bi-box-arrow-up-right"></i>
-                                                            <span>View Full Image</span>
-                                                        </span>
-                                                    </div>
-                                                </a>
+                                                </div>
                                             @endif
                                         </div>
                                     @endforeach
@@ -281,11 +275,15 @@
                                 <!-- Slides -->
                                 <div class="w-full h-full relative bg-slate-100 flex items-center justify-center">
                                     @foreach($activitiesUrls as $index => $url)
-                                        <div class="absolute inset-0 w-full h-full transition-opacity duration-[800ms] ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none' }}"
-                                             :class="activeIndex === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'">
-                                            <img src="{{ $url }}" 
-                                                 class="w-full h-full object-cover" 
-                                                 alt="Activity Image">
+                                        <div x-show="activeIndex === {{ $index }}"
+                                             class="absolute inset-0 w-full h-full z-10"
+                                             style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                            <div @click="lightboxUrl = '{{ $url }}'; showLightbox = true" 
+                                                 class="w-full h-full cursor-zoom-in relative block transition-all duration-300 hover:scale-[1.02]">
+                                                <img src="{{ $url }}" 
+                                                     class="w-full h-full object-cover" 
+                                                     alt="Activity Image">
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -345,6 +343,7 @@
                             </div>
                         @endif
                     </div>
+
                 </div>
             </div>
 
@@ -537,6 +536,18 @@
                 @endif
             </div>
 
+        </div>
+
+        <!-- Lightbox Modal (Global Stack Context) -->
+        <div x-show="showLightbox" x-cloak
+             class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/95 cursor-zoom-out" @click="showLightbox = false"></div>
+            <div class="relative max-w-5xl max-h-[90vh] flex items-center justify-center pointer-events-none">
+                <img :src="lightboxUrl" 
+                     class="max-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl pointer-events-auto cursor-zoom-out" 
+                     @click="showLightbox = false" 
+                     @keydown.escape.window="showLightbox = false">
+            </div>
         </div>
     </div>
 </x-app-layout>

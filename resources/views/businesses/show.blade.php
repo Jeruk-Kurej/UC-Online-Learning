@@ -155,8 +155,9 @@
                             x-transition:leave-end="opacity-0" class="absolute inset-0 w-full h-full">
                             <img src="{{ storage_image_url($photo->photo_url, 'hero') }}"
                                 alt="{{ $business->name }} - Hero Photo {{ $index + 1 }}"
-                                class="w-full h-full object-cover">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent">
+                                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105"
+                                @click="openFullscreen('{{ storage_image_url($photo->photo_url, 'hero') }}', '{{ addslashes($business->name) }} - Hero Photo {{ $index + 1 }}')">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none">
                             </div>
                         </div>
                     @endforeach
@@ -484,10 +485,6 @@
                                                     <img src="{{ $product->photo_url }}"
                                                         alt="{{ $product->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <i class="bi bi-zoom-in text-[10px]"></i>
-                                                        <span>Zoom</span>
-                                                    </div>
                                                 @else
                                                     <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
@@ -609,10 +606,6 @@
                                                     <img src="{{ $service->photo_url }}"
                                                         alt="{{ $service->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                                    <div class="absolute bottom-2 right-2 flex items-center gap-1 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                        <i class="bi bi-zoom-in text-[10px]"></i>
-                                                        <span>Zoom</span>
-                                                    </div>
                                                 @else
                                                     <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
@@ -818,16 +811,12 @@
         </div>
 
         {{-- Fullscreen Photo Modal --}}
-        <div x-show="fullscreenOpen" x-cloak class="fixed inset-0 z-[110]">
-            <div class="absolute inset-0 bg-black/90" @click="fullscreenOpen = false"></div>
-            <button type="button" @click="fullscreenOpen = false"
-                class="absolute top-4 right-4 text-white bg-white/10 hover:bg-white/20 rounded-lg px-3 py-2 z-10">
-                <i class="bi bi-x-lg"></i>
-            </button>
-            <div class="absolute inset-0 flex items-center justify-center p-4 cursor-zoom-out"
-                @click="fullscreenOpen = false">
-                <img :src="fullscreenSrc" :alt="fullscreenAlt" @click.stop
-                    class="max-h-[92vh] max-w-[95vw] object-contain rounded-lg shadow-2xl cursor-default">
+        <div x-show="fullscreenOpen" x-cloak class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/95 cursor-zoom-out" @click="fullscreenOpen = false"></div>
+            <div class="relative max-w-5xl max-h-[90vh] flex items-center justify-center pointer-events-none">
+                <img :src="fullscreenSrc" :alt="fullscreenAlt"
+                     class="max-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl pointer-events-auto cursor-zoom-out"
+                     @click="fullscreenOpen = false">
             </div>
         </div>
 
