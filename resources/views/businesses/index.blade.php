@@ -184,7 +184,7 @@
         {{-- Filters --}}
         <div class="mb-8 reveal-on-scroll" style="transition-delay: 150ms;">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="space-y-4" @submit.prevent="updateList()">
-                <input type="hidden" name="view" value="{{ $viewType }}">
+                <input type="hidden" name="view" :value="viewType">
                 
                 {{-- Search & Reset Row --}}
                 <div class="flex items-center gap-3">
