@@ -22,8 +22,8 @@
             </div>
 
             <div class="min-w-0 flex-1">
-                <h3 class="truncate text-lg font-[900] text-gray-950 group-hover:text-blue-600 transition-colors">{{ $student->name }}</h3>
-                <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">{{ $student->major ?? 'General Studies' }}</p>
+                <h3 class="line-clamp-1 text-lg font-[900] text-gray-950 group-hover:text-blue-600 transition-colors">{{ $student->name }}</h3>
+                <p class="text-xs font-semibold text-gray-500 mt-0.5 line-clamp-1">{{ $student->major ?? 'General Studies' }}</p>
                 <p class="text-[11px] font-bold text-gray-400 mt-0.5">Batch {{ $student->year_of_enrollment ?? 'N/A' }}</p>
             </div>
         </div>
@@ -34,11 +34,11 @@
             <div class="rounded-xl bg-slate-50 p-4 border border-slate-100/80">
                 <div class="flex items-center gap-3 mb-2">
                     @if($highlight->logo_url)
-                        <img src="{{ $highlight->logo_url }}" class="h-8 w-8 rounded-md object-cover border border-slate-200" alt="Logo">
+                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain border border-slate-200" alt="Logo">
                     @endif
                     <div>
                         <p class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Career Highlight</p>
-                        <p class="mt-0.5 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                        <p class="mt-0.5 text-sm font-bold text-slate-900 line-clamp-1">{{ $highlight->name }}</p>
                     </div>
                 </div>
                 @if($highlight->category)
@@ -54,11 +54,11 @@
             <div class="rounded-xl bg-orange-50/50 p-4 border border-orange-100/80">
                 <div class="flex items-center gap-3 mb-2">
                     @if($highlight->logo_url)
-                        <img src="{{ $highlight->logo_url }}" class="h-8 w-8 rounded-md object-cover border border-orange-200/60" alt="Logo">
+                        <img src="{{ $highlight->logo_url }}" class="rounded-md w-12 h-12 object-contain border border-orange-200/60" alt="Logo">
                     @endif
                     <div>
                         <p class="text-[9px] font-black uppercase tracking-[0.25em] text-orange-400/90">Venture Highlight</p>
-                        <p class="mt-0.5 text-sm font-bold text-slate-900 truncate">{{ $highlight->name }}</p>
+                        <p class="mt-0.5 text-sm font-bold text-slate-900 line-clamp-1">{{ $highlight->name }}</p>
                     </div>
                 </div>
                 @if($highlight->category)
