@@ -227,6 +227,7 @@
                     </select>
                     
                     <select name="province" 
+                            x-show="viewType === 'entrepreneur'"
                             x-model="selectedProvince"
                             @change="selectedCity = ''; submitDebounced()" 
                             class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
@@ -237,6 +238,7 @@
                     </select>
                     
                     <select name="city" 
+                            x-show="viewType === 'entrepreneur'"
                             x-model="selectedCity"
                             @change="submitDebounced()" 
                             class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">

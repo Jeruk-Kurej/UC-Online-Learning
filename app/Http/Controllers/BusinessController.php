@@ -87,7 +87,9 @@ class BusinessController extends Controller
                         ->orWhere('city', 'LIKE', "%{$search}%")
                         ->orWhere('province', 'LIKE', "%{$search}%");
                 } else {
-                    $q->orWhere('job_description', 'LIKE', "%{$search}%");
+                    $q->orWhere('job_description', 'LIKE', "%{$search}%")
+                        ->orWhere('position', 'LIKE', "%{$search}%")
+                        ->orWhere('achievement', 'LIKE', "%{$search}%");
                 }
             });
         }
