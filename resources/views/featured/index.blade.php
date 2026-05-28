@@ -22,7 +22,7 @@
                     <div class="space-y-8">
                         <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-[900] text-gray-950 tracking-[-0.04em] leading-[1.2] md:leading-[1.4] max-w-4xl"
                             x-data="{
-                                words: ['Innovative', 'Sustainable', 'Fresh', 'Pioneering'],
+                                words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
                                 currentWord: 0,
                                 isAnimating: false
                             }" x-init="setInterval(() => {
