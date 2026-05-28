@@ -18,6 +18,50 @@
             }
         }
 
+        $certDetails = [];
+        if ($user->expertise_certification_url) {
+            $certUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->expertise_certification_url)));
+            foreach ($certUrls as $certUrl) {
+                $isGoogleDrive = false;
+                $isPdf = false;
+                $isImage = false;
+                $previewUrl = $certUrl;
+                $driveId = null;
+
+                if (str_contains($certUrl, 'drive.google.com') || str_contains($certUrl, 'docs.google.com')) {
+                    $isGoogleDrive = true;
+                    if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $certUrl, $matches)) {
+                        $driveId = $matches[1];
+                        $previewUrl = "https://drive.google.com/file/d/{$driveId}/preview";
+                    }
+                    $isPdf = true; 
+                } else {
+                    $path = parse_url($certUrl, PHP_URL_PATH);
+                    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                    if ($ext === 'pdf') {
+                        $isPdf = true;
+                    } elseif (in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'])) {
+                        $isImage = true;
+                    } else {
+                        if (str_contains(strtolower($certUrl), '.pdf')) {
+                            $isPdf = true;
+                        } else {
+                            $isImage = true;
+                        }
+                    }
+                }
+
+                $certDetails[] = [
+                    'originalUrl' => $certUrl,
+                    'previewUrl' => $previewUrl,
+                    'isPdf' => $isPdf,
+                    'isImage' => $isImage,
+                    'isGoogleDrive' => $isGoogleDrive,
+                    'driveId' => $driveId,
+                ];
+            }
+        }
+
         $directoryView = match (true) {
             $user->isIntrapreneur() => 'intrapreneur',
             $user->isEntrepreneur() => 'entrepreneur',
@@ -121,22 +165,6 @@
                         </div>
                     @endif
 
-                    <!-- Documents Block -->
-                    @if($user->expertise_certification_url)
-                        <div class="flex flex-wrap items-center gap-2 pt-4 border-t border-slate-100">
-                            @php
-                                $certUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->expertise_certification_url)));
-                            @endphp
-                            @foreach($certUrls as $index => $certUrl)
-                                <a href="{{ $certUrl }}" target="_blank" 
-                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 text-[10px] font-bold rounded-lg border border-slate-200/60 transition">
-                                    <i class="bi bi-patch-check"></i>
-                                    <span>Cert {{ count($certUrls) > 1 ? '#' . ($index + 1) : '' }}</span>
-                                </a>
-                            @endforeach
-                        </div>
-                    @endif
-
                     <!-- Core Competencies Block -->
                     @if($user->skills->count() > 0)
                         <div class="space-y-2 pt-4 border-t border-slate-100">
@@ -147,6 +175,81 @@
                                         {{ $skill->name }}
                                     </span>
                                 @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    <!-- Certifications Carousel Block -->
+                    @if(count($certDetails) > 0)
+                        <div class="pt-6 border-t border-slate-100">
+                            <div x-data="{ 
+                                activeIndex: 0, 
+                                total: {{ count($certDetails) }}
+                            }" class="relative w-full h-[250px] md:h-[300px] bg-slate-50 rounded-2xl overflow-hidden group border border-slate-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                                
+                                <!-- Slides -->
+                                <div class="w-full h-full relative bg-slate-100 flex items-center justify-center">
+                                    @foreach($certDetails as $index => $cert)
+                                        <div class="absolute inset-0 w-full h-full transition-opacity duration-[800ms] ease-in-out {{ $index === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none' }}"
+                                             :class="activeIndex === {{ $index }} ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'">
+                                            
+                                            @if($cert['isPdf'])
+                                                <div class="w-full h-full bg-slate-100 relative">
+                                                    <iframe src="{{ $cert['previewUrl'] }}" 
+                                                            class="w-full h-full border-none rounded-2xl" 
+                                                            style="border: none; width: 100%; height: 100%;"
+                                                            loading="lazy"
+                                                            allowfullscreen></iframe>
+                                                </div>
+                                            @else
+                                                <a href="{{ $cert['originalUrl'] }}" target="_blank" 
+                                                   class="w-full h-full bg-slate-900/5 flex items-center justify-center group/img relative cursor-pointer">
+                                                    <img src="{{ $cert['previewUrl'] }}" 
+                                                         class="w-full h-full object-contain" 
+                                                         alt="Certification Preview">
+                                                    <!-- Hover Reveal Visual Overlay for Images -->
+                                                    <div class="absolute inset-0 bg-black/10 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center z-20">
+                                                        <span class="px-3 py-1.5 rounded-lg bg-white/95 text-slate-800 text-[10px] font-black uppercase tracking-wider border border-slate-200 shadow-md flex items-center gap-1.5 transform scale-95 group-hover/img:scale-100 transition-transform duration-200">
+                                                            <i class="bi bi-box-arrow-up-right"></i>
+                                                            <span>View Full Image</span>
+                                                        </span>
+                                                    </div>
+                                                </a>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                </div>
+
+                                <!-- Navigation Arrows -->
+                                <template x-if="total > 1">
+                                    <div>
+                                        <button @click="activeIndex = (activeIndex - 1 + total) % total" 
+                                                class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center transition backdrop-blur-sm z-20 border border-slate-200/60 shadow-sm opacity-0 group-hover:opacity-100 duration-200">
+                                            <i class="bi bi-chevron-left text-sm"></i>
+                                        </button>
+                                        <button @click="activeIndex = (activeIndex + 1) % total" 
+                                                class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/90 hover:bg-white text-slate-800 flex items-center justify-center transition backdrop-blur-sm z-20 border border-slate-200/60 shadow-sm opacity-0 group-hover:opacity-100 duration-200">
+                                            <i class="bi bi-chevron-right text-sm"></i>
+                                        </button>
+                                    </div>
+                                </template>
+
+                                <!-- Dots Indicators -->
+                                <template x-if="total > 1">
+                                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+                                        <template x-for="(item, index) in total" :key="index">
+                                            <button @click="activeIndex = index" 
+                                                    class="w-1.5 h-1.5 rounded-full transition-all duration-300"
+                                                    :class="activeIndex === index ? 'bg-[#f7931e] w-4' : 'bg-slate-300'"></button>
+                                        </template>
+                                    </div>
+                                </template>
+
+                                <!-- Label -->
+                                <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md bg-white/90 backdrop-blur-md text-[9px] font-black uppercase tracking-widest text-slate-700 border border-slate-200/60 shadow-sm z-20 flex items-center gap-1.5">
+                                    <i class="bi bi-patch-check-fill text-[#f7931e]"></i>
+                                    <span>Certifications</span>
+                                </div>
                             </div>
                         </div>
                     @endif
