@@ -597,6 +597,10 @@ class UserController extends Controller
         $user->fill($updateData);
         $user->save();
 
+        // Sync visibility of all primary owned businesses and companies
+        $user->businesses()->update(['is_visible' => $newVisibility]);
+        $user->companies()->update(['is_visible' => $newVisibility]);
+
         $status = $user->is_visible ? 'activated' : 'deactivated';
 
         if ($request->ajax() || $request->wantsJson()) {

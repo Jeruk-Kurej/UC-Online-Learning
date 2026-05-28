@@ -65,18 +65,7 @@ class BusinessController extends Controller
         if ($viewType === 'intrapreneur') {
             $query = Company::visible()->with(['user', 'category']);
         } else {
-            // If admin and explicitly asking for pending, show only invisible
-            if ($this->isUserAdmin() && $request->get('status') === 'pending') {
-                $query = Business::where('is_visible', false)->with(['user', 'category', 'products'])->entrepreneur();
-            }
-            // If admin but not filtering for pending, show all
-            elseif ($this->isUserAdmin()) {
-                $query = Business::with(['user', 'category', 'products'])->entrepreneur();
-            }
-            // Default for students/public: only visible
-            else {
-                $query = Business::visible()->with(['user', 'category', 'products'])->entrepreneur();
-            }
+            $query = Business::visible()->with(['user', 'category', 'products'])->entrepreneur();
         }
 
         if ($search) {
@@ -281,6 +270,18 @@ class BusinessController extends Controller
     {
         $business->load(['user', 'category', 'products', 'legalDocuments', 'certifications', 'members']);
 
+        // Security check: Check if visible or authorized
+        $isOwner = auth()->id() === $business->user_id;
+        $isCoOwner = auth()->check() && $business->members->contains(auth()->id());
+        $isAdmin = auth()->user()?->isAdmin();
+
+        $isUserVisible = $business->user?->is_visible ?? true;
+        $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $isUserVisible;
+
+        if (!$isBusinessVisible && !$isOwner && !$isCoOwner && !$isAdmin) {
+            abort(404);
+        }
+
         return view('businesses.show', compact('business'));
     }
 
@@ -310,6 +311,17 @@ class BusinessController extends Controller
     public function showIntrapreneur(Company $company): View
     {
         $company->load(['user', 'category']);
+
+        // Security check: Check if visible or authorized
+        $isOwner = auth()->id() === $company->user_id;
+        $isAdmin = auth()->user()?->isAdmin();
+
+        $isUserVisible = $company->user?->is_visible ?? true;
+        $isCompanyVisible = $company->is_visible && $isUserVisible;
+
+        if (!$isCompanyVisible && !$isOwner && !$isAdmin) {
+            abort(404);
+        }
 
         return view('businesses.show_intrapreneur', compact('company'));
     }

@@ -1084,7 +1084,7 @@
                 $ownerPhotoUrl = $ownerPhoto
                     ? storage_image_url($ownerPhoto, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'])
                     : null;
-                $additionalOwners = $business->members()->where('users.id', '!=', $business->user_id)->get();
+                $additionalOwners = $business->members()->where('users.is_visible', true)->where('users.id', '!=', $business->user_id)->get();
             @endphp
 
             {{-- Owner Section (Title & Card) --}}
