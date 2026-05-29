@@ -17,8 +17,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
         
-        // Redirect unauthenticated users to businesses page (public)
-        $middleware->redirectGuestsTo('/businesses');
+        // Redirect unauthenticated users to the featured page (home)
+        $middleware->redirectGuestsTo('/featured');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
