@@ -2,67 +2,25 @@
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
         <style>
-            .form-label-custom {
-                display: block; 
-                font-size: 11px; 
-                font-weight: 800; 
-                color: #475569; 
-                text-transform: uppercase; 
-                margin-bottom: 8px;
-                letter-spacing: 0.5px;
-            }
-
-            .form-input-custom {
-                width: 100%; 
-                height: 44px; 
-                padding: 0 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 8px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                background: white;
-            }
-
-            .form-input-custom:focus {
-                border-color: #f7931e !important;
-                box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
-            }
-
-            .form-textarea-custom {
-                width: 100%; 
-                padding: 12px 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 8px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                min-height: 120px;
-            }
-
-            .form-textarea-custom:focus {
-                border-color: #f7931e !important;
-                box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
+            .ts-control > .item, .ts-dropdown .option {
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
         </style>
     @endpush
 
-    <div class="max-w-4xl mx-auto px-4 py-8">
-        {{-- Header Section --}}
-        <div class="mb-8 flex items-center gap-4 reveal-on-scroll">
-            <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary">
-                <i class="bi bi-arrow-left"></i>
-                Back
-            </a>
-            <div class="flex-1">
-                <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Edit Work Profile</h1>
-                <p class="text-sm text-gray-500 mt-1">Update your professional employment listings in the UCO directory.</p>
-            </div>
+    {{-- Header Section --}}
+    <div class="mb-6 flex items-center gap-4 reveal-on-scroll">
+        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold text-gray-900">Edit Work Profile</h1>
+            <p class="text-sm text-gray-600 mt-1">Update your professional employment listings in the UCO directory.</p>
         </div>
+    </div>
 
         <div class="bg-white shadow-sm border border-gray-100 rounded-2xl p-6 sm:p-8 reveal-on-scroll">
             <form method="POST" action="{{ route('intrapreneurs.update', $company) }}" enctype="multipart/form-data" class="space-y-6">
@@ -254,8 +212,8 @@
                     {{-- Job Description --}}
                     <div class="md:col-span-2">
                         <label for="job_description" class="form-label-custom">Job Description & Responsibilities <span class="text-red-500">*</span></label>
-                        <textarea name="job_description" id="job_description" required
-                                  class="form-textarea-custom @error('job_description') border-red-500 @enderror"
+                        <textarea name="job_description" id="job_description" rows="4" required
+                                  class="form-input-custom @error('job_description') border-red-500 @enderror"
                                   placeholder="Describe your job roles, day-to-day operations, and career contributions...">{{ old('job_description', $company->job_description) }}</textarea>
                         @error('job_description')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
                     </div>
@@ -273,7 +231,6 @@
                 </div>
             </form>
         </div>
-    </div>
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>

@@ -204,23 +204,31 @@
     }
 
     .ts-wrapper .ts-control {
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 0.75rem !important;
-        padding: 10px 16px !important; 
-        min-height: 42px !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 7px !important;
+        padding: 0 15px !important; 
+        min-height: 44px !important;
         width: 100% !important;
         box-sizing: border-box !important;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+        box-shadow: none !important;
         background: white !important;
         display: flex !important;
         align-items: center !important;
     }
 
     .ts-wrapper.focus .ts-control {
-        border-color: #111827 !important;
-        box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
         ring: none !important;
+    }
+
+    /* Prevent double-border if form-input-custom is applied to the original select */
+    .ts-wrapper.form-input-custom {
+        border: none !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
     }
 
     .ts-dropdown {
