@@ -231,38 +231,36 @@
             <div class="space-y-6 min-w-0">
                 {{-- Employee Profile Section --}}
                 @if($student)
-                    <div class="flex flex-col gap-3">
-                        <div class="relative">
-                            <div class="flex items-center gap-2">
-                                <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
-                                <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">Employed <span class="uco-text-gradient-orange">Student</span></h4>
-                            </div>
+                    {{-- ✨ Elegant Employee Card --}}
+                    <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group/card hover:border-orange-200 cursor-pointer">
+                        {{-- Invisible link that stretches over the whole card --}}
+                        <a href="{{ route('users.show', $student) }}" class="absolute inset-0 z-10" aria-label="View {{ $student->name }} Profile"></a>
+
+                        {{-- Arrow Icon --}}
+                        <div class="absolute top-4 right-4 text-gray-300 group-hover/card:text-orange-500 transition-colors z-10">
+                            <i class="bi bi-box-arrow-up-right text-xs"></i>
                         </div>
 
-                        {{-- ✨ Elegant Employee Card --}}
-                        <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group/card hover:border-orange-200 cursor-pointer">
-                            {{-- Invisible link that stretches over the whole card --}}
-                            <a href="{{ route('users.show', $student) }}" class="absolute inset-0 z-10" aria-label="View {{ $student->name }} Profile"></a>
+                        {{-- Section Title --}}
+                        <div class="flex items-center gap-2 mb-6 relative z-10 pointer-events-none">
+                            <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
+                            <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">Employed <span class="uco-text-gradient-orange">Student</span></h4>
+                        </div>
 
-                            {{-- Arrow Icon --}}
-                            <div class="absolute top-4 right-4 text-gray-300 group-hover/card:text-orange-500 transition-colors z-10">
-                                <i class="bi bi-box-arrow-up-right text-xs"></i>
+                        {{-- Header: Avatar & Name --}}
+                        <div class="flex items-center gap-5 relative z-10 pointer-events-none">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                                @if ($studentPhotoUrl)
+                                    <img src="{{ $studentPhotoUrl }}" alt="{{ $student->name }}" class="aspect-square size-full object-cover">
+                                @else
+                                    <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
+                                @endif
                             </div>
-
-                            {{-- Header: Avatar & Name --}}
-                            <div class="flex items-center gap-5 relative z-10 pointer-events-none">
-                                <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
-                                    @if ($studentPhotoUrl)
-                                        <img src="{{ $studentPhotoUrl }}" alt="{{ $student->name }}" class="aspect-square size-full object-cover">
-                                    @else
-                                        <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
-                                    @endif
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $student->name }}</h2>
-                                    <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $student->display_status ?: 'Active' }}</p>
-                                </div>
+                            <div class="flex-1 min-w-0">
+                                <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $student->name }}</h2>
+                                <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $student->display_status ?: 'Active' }}</p>
                             </div>
+                        </div>
 
                             <div class="w-full h-px bg-gray-100 my-5"></div>
 
@@ -349,10 +347,9 @@
                                 </div>
                             @endif
                         </div>
-                    </div>
-                @endif
+                    @endif
+                </div>
             </div>
-        </div>
     </div>
 
     {{-- Grid Layout Helper Styles --}}
