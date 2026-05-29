@@ -457,7 +457,7 @@
                                 <div class="relative h-[280px] w-full flex-shrink-0">
                                     @if ($student->profile_photo_url)
                                         <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}"
-                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                            style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
                                             style="background: linear-gradient(135deg, #f7931e, #fdb913);">
@@ -551,7 +551,7 @@
                             <!-- Image -->
                             <template x-if="modalPhoto">
                                 <img :src="modalPhoto" :alt="modalName"
-                                    class="w-full h-full object-cover absolute inset-0">
+                                    class="w-full h-full object-cover object-top absolute inset-0">
                             </template>
                             <!-- Image Fallback Gradient -->
                             <template x-if="!modalPhoto">
