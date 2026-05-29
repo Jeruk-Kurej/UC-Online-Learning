@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <form method="POST" action="/users" enctype="multipart/form-data" class="space-y-6">
+    <form method="POST" action="{{ route('users.store') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
