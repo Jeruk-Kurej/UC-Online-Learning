@@ -63,7 +63,9 @@ class ProfileController extends Controller
         $user = $this->getUser($request);
         $validated = $request->validated();
 
-        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'password'])->toArray());
+        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'password', 'show_contact_details'])->toArray());
+
+        $user->show_contact_details = $request->boolean('show_contact_details');
 
         // Handle profile photo deletion
         if ($request->boolean('delete_profile_photo')) {

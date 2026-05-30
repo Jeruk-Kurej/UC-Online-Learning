@@ -105,11 +105,13 @@ class User extends Authenticatable
         'is_featured',
         'is_featured_testimony',
         'student_status',
+        'show_contact_details',
 
         // AI Analysis
         'ai_sentiment',
         'ai_score',
         'ai_rejection_reason',
+        'activities_caption',
     ];
 
     protected $hidden = [
@@ -126,6 +128,7 @@ class User extends Authenticatable
             'is_visible' => 'boolean',
             'is_featured' => 'boolean',
             'is_featured_testimony' => 'boolean',
+            'show_contact_details' => 'boolean',
         ];
     }
 

@@ -454,6 +454,8 @@ class UserController extends Controller
             'major' => $validated['major'],
             'current_status' => $validated['current_status'],
             'testimony' => $validated['testimony'],
+            'activities_caption' => $validated['activities_caption'],
+            'show_contact_details' => $request->boolean('show_contact_details'),
             'is_visible' => $request->has('is_visible'),
         ];
 

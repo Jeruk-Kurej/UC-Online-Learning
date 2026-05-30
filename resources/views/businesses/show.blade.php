@@ -259,7 +259,7 @@
                             <div class="min-w-0 flex-1">
                                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1.5">Academic Heritage</p>
                                 <h5 class="text-sm sm:text-xs md:text-sm lg:text-base font-extrabold text-gray-800">{{ $business->academic_heritage ?? 'UCO Legacy' }}</h5>
-                                <p class="text-[9px] text-gray-400 font-medium mt-0.5">Founding academic batch</p>
+                                <p class="text-[9px] text-gray-400 font-medium mt-0.5">Founding academic Join UC Online</p>
                             </div>
                         </div>
                     </div>
@@ -485,6 +485,11 @@
                                                     <img src="{{ $product->photo_url }}"
                                                         alt="{{ $product->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    @if($product->photo_caption)
+                                                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                                            <p class="text-[10px] text-white font-medium text-center line-clamp-1">{{ $product->photo_caption }}</p>
+                                                        </div>
+                                                    @endif
                                                 @else
                                                     <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
@@ -606,6 +611,11 @@
                                                     <img src="{{ $service->photo_url }}"
                                                         alt="{{ $service->name }}"
                                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    @if($service->photo_caption)
+                                                        <div class="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                                                            <p class="text-[10px] text-white font-medium text-center line-clamp-1">{{ $service->photo_caption }}</p>
+                                                        </div>
+                                                    @endif
                                                 @else
                                                     <i class="bi bi-image text-5xl text-gray-300"></i>
                                                 @endif
@@ -1128,7 +1138,7 @@
                         <span class="text-[13px] font-bold text-gray-900">{{ $owner->major ?: '-' }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <span class="text-[13px] font-medium text-gray-500">Batch</span>
+                        <span class="text-[13px] font-medium text-gray-500">Join UC Online</span>
                         <span class="text-[13px] font-bold text-gray-900">{{ $owner->year_of_enrollment ?: '-' }}</span>
                     </div>
                     <div class="flex items-center justify-between">
@@ -1138,7 +1148,7 @@
                 </div>
 
                 {{-- Contacts / WhatsApp --}}
-                @if($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false))
+                @if(($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false)) && ($owner->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $owner->id))))
                 <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                 <div class="space-y-4 relative z-20">
                     @if($owner->whatsapp)
@@ -1195,6 +1205,13 @@
                             @endif
                         @endforeach
                     @endif
+                </div>
+                @elseif($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false))
+                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
+                <div class="px-5 py-2 relative z-20 text-center">
+                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+                        <i class="bi bi-lock-fill mr-1"></i> Owner contacts hidden
+                    </p>
                 </div>
                 @endif
                 </div>

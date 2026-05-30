@@ -272,7 +272,7 @@
                                     <span class="text-[13px] font-bold text-gray-900">{{ $student->major ?: '-' }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <span class="text-[13px] font-medium text-gray-500">Batch</span>
+                                    <span class="text-[13px] font-medium text-gray-500">Join UC Online</span>
                                     <span class="text-[13px] font-bold text-gray-900">{{ $student->year_of_enrollment ?: '-' }}</span>
                                 </div>
                                 <div class="flex items-center justify-between">
@@ -340,6 +340,28 @@
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($student->skills as $skill)
                                             <span class="px-3 py-1.5 bg-gray-50 border border-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
+                                                {{ $skill->name }}
+                                            </span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            </div>
+    </div>
+
+    {{-- Grid Layout Helper Styles --}}
+    <style>
+        @media (min-width: 768px) {
+            #biz-layout-grid {
+                grid-template-columns: 65fr 35fr;
+            }
+        }
+    </style>
+</x-app-layout>
+er-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
                                                 {{ $skill->name }}
                                             </span>
                                         @endforeach
