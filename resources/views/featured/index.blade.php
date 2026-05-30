@@ -47,7 +47,7 @@
                     <div class="pt-6 hidden md:block">
                         <a href="{{ route('businesses.index') }}"
                             class="group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
-                            Explore Showcase
+                            Explore Business
                             <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
                         </a>
                     </div>
@@ -128,7 +128,7 @@
                 <div class="col-span-full pt-4 block md:hidden text-center">
                     <a href="{{ route('businesses.index') }}"
                         class="group/btn inline-flex items-center justify-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95 w-full">
-                        Explore Showcase
+                        Explore Business
                         <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
                     </a>
                 </div>
@@ -366,7 +366,7 @@
                                                 {{ $student->name }}</h4>
                                             <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">
                                                 {{ $student->major ?? 'General Studies' }}</p>
-                                            <p class="text-[10px] font-bold text-gray-400 mt-0.5">Batch
+                                            <p class="text-[10px] font-bold text-gray-400 mt-0.5">Join UC Online
                                                 {{ $student->year_of_enrollment ?? 'N/A' }}</p>
                                         </div>
                                     </div>
