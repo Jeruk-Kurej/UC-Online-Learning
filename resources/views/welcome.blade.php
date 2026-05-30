@@ -48,7 +48,7 @@
                         </div>
                         
                         <h1 class="text-5xl font-bold text-soft-gray-900 leading-tight tracking-tight">
-                            Business showcase<br>
+                            Business Portfolio<br>
                             for <span class="text-soft-gray-900">UC Online Learning Students</span>
                         </h1>
                         
@@ -78,7 +78,7 @@
                         
                         <div class="mb-8 relative z-10">
                             <h2 class="text-3xl font-black text-gray-900 mb-1.5 tracking-tight">Sign in</h2>
-                            <p class="text-sm font-medium text-gray-500">Access your showcase hub</p>
+                            <p class="text-sm font-medium text-gray-500">Access your business hub</p>
                         </div>
                         
 
@@ -190,7 +190,48 @@
                 <div class="absolute top-[25%] right-[30%] w-2 h-2 bg-uco-orange-300 rounded-full opacity-40 animate-pulse-slow"></div>
                 <div class="absolute top-[70%] left-[35%] w-2 h-2 bg-uco-yellow-300 rounded-full opacity-40 animate-pulse-slower"></div>
                 <div class="absolute bottom-[40%] right-[12%] w-2 h-2 bg-uco-orange-200 rounded-full opacity-30 animate-pulse-slow"></div>
-            </div>
+            </main>
+
+            <!-- {{-- Portfolio Overview Section --}}
+            <section class="relative z-20 py-16 bg-white border-t border-soft-gray-100">
+                <div class="max-w-6xl mx-auto px-8">
+                    <div class="bg-gradient-to-br from-soft-gray-50 to-white rounded-[2.5rem] p-8 md:p-12 border border-soft-gray-100 shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                            <i class="bi bi-grid-3x3-gap-fill text-[120px]"></i>
+                        </div>
+
+                        <div class="max-w-3xl">
+                            <h2 class="text-xs font-black uppercase tracking-[0.2em] text-uco-orange-500 mb-4">Project Overview</h2>
+                            <h3 class="text-3xl font-bold text-soft-gray-900 mb-6 leading-tight">
+                                Empowering the next generation of <span class="text-uco-orange-600">Entrepreneurial Leaders</span>
+                            </h3>
+                            <p class="text-base text-soft-gray-600 leading-relaxed mb-8">
+                                This web portfolio serves as a central hub for Universitas Ciputra Online students and alumni to showcase their professional growth. Whether you are an <strong>Entrepreneur</strong> building a new venture or an <strong>Intrapreneur</strong> driving innovation within an organization, this platform highlights your unique journey, products, and achievements to the global community.
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                        <i class="bi bi-check2-circle text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-soft-gray-800">Verified Profiles</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                        <i class="bi bi-display text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-soft-gray-800">Business Catalog</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                        <i class="bi bi-award text-lg"></i>
+                                    </div>
+                                    <span class="text-sm font-bold text-soft-gray-800">AI-Verified Merit</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section> -->
 
             {{-- Global Toast Notifications --}}
             <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
