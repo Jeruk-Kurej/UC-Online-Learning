@@ -70,7 +70,11 @@ class BusinessController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search, $viewType) {
-                $q->where('name', 'LIKE', "%{$search}%");
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'LIKE', "%{$search}%");
+                    });
+
                 if ($viewType === 'entrepreneur') {
                     $q->orWhere('description', 'LIKE', "%{$search}%")
                         ->orWhere('city', 'LIKE', "%{$search}%")

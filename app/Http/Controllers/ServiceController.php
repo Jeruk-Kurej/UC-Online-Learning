@@ -77,7 +77,8 @@ class ServiceController extends Controller
             'description' => 'required|string',
             'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
             'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
-            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo' => $request->isMethod('POST') ? 'required|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240' : 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo_caption' => 'nullable|string|max:255',
         ]);
 
         $validated['business_id'] = $business->id;
@@ -129,6 +130,7 @@ class ServiceController extends Controller
             'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
             'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo_caption' => 'nullable|string|max:255',
         ]);
 
         // Handle Photo Upload (delete old one if it exists)

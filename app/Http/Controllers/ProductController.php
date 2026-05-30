@@ -78,6 +78,7 @@ class ProductController extends Controller
             'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
             'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo_caption' => 'nullable|string|max:255',
         ]);
 
         $validated['business_id'] = $business->id;
@@ -129,6 +130,7 @@ class ProductController extends Controller
             'price_type' => 'required|in:fixed,negotiable,customize,unspecified',
             'price' => 'required_unless:price_type,unspecified,customize|nullable|numeric|min:0',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:10240',
+            'photo_caption' => 'nullable|string|max:255',
         ]);
 
         // Handle Photo Upload
