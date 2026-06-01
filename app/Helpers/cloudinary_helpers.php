@@ -87,11 +87,11 @@ if (! function_exists('storage_image_url')) {
 
         // Preset map: named transform sets used across views
         $presets = [
-            'hero' => ['width' => 1400, 'height' => 420, 'crop' => 'fill', 'quality' => 'auto', 'fetch_format' => 'auto'],
+            'hero' => ['width' => 1400, 'height' => 420, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto'],
             'gallery_full' => ['width' => 1200, 'height' => 720, 'quality' => 'auto', 'fetch_format' => 'auto'],
             'gallery_thumb' => ['width' => 800, 'height' => 480, 'quality' => 'auto', 'fetch_format' => 'auto'],
-            'logo_thumb' => ['width' => 128, 'height' => 128, 'crop' => 'fill', 'quality' => 'auto', 'fetch_format' => 'auto'],
-            'profile_thumb' => ['width' => 128, 'height' => 128, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'],
+            'logo_thumb' => ['width' => 128, 'height' => 128, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto'],
+            'profile_thumb' => ['width' => 128, 'height' => 128, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto'],
             'lqip' => ['width' => 20, 'quality' => 1, 'fetch_format' => 'auto'],
         ];
 

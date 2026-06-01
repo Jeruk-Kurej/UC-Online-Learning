@@ -29,7 +29,7 @@
                     @if ($company->logo_url)
                         <img src="{{ storage_image_url($company->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                             alt="{{ $company->name }} Logo" loading="lazy"
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-cover border border-soft-gray-100 shadow-sm bg-white p-0.5">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-contain border border-soft-gray-100 shadow-sm bg-white p-0.5">
                     @else
                         <div
                             class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 border border-soft-gray-100 flex items-center justify-center shadow-sm">
@@ -251,7 +251,7 @@
                         <div class="flex items-center gap-5 relative z-10 pointer-events-none">
                             <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
                                 @if ($studentPhotoUrl)
-                                    <img src="{{ $studentPhotoUrl }}" alt="{{ $student->name }}" class="aspect-square size-full object-cover">
+                                    <x-premium-image :src="$studentPhotoUrl" :alt="$student->name" class="w-full h-full" />
                                 @else
                                     <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
                                 @endif
@@ -340,28 +340,6 @@
                                     <div class="flex flex-wrap gap-2">
                                         @foreach($student->skills as $skill)
                                             <span class="px-3 py-1.5 bg-gray-50 border border-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
-                                                {{ $skill->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-                </div>
-            </div>
-    </div>
-
-    {{-- Grid Layout Helper Styles --}}
-    <style>
-        @media (min-width: 768px) {
-            #biz-layout-grid {
-                grid-template-columns: 65fr 35fr;
-            }
-        }
-    </style>
-</x-app-layout>
-er-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
                                                 {{ $skill->name }}
                                             </span>
                                         @endforeach

@@ -15,9 +15,9 @@
 
 @php
     $thumbClass = match($shape) {
-        'circle' => 'w-24 h-24 rounded-full object-cover',
-        'square' => 'w-24 h-24 rounded-xl object-cover',
-        default  => 'w-full h-full object-cover rounded-xl',
+        'circle' => 'w-24 h-24 rounded-full object-contain bg-slate-50',
+        'square' => 'w-24 h-24 rounded-xl object-contain bg-slate-50',
+        default  => 'w-full h-full object-contain bg-slate-950/5 rounded-xl',
     };
     $thumbPlaceholderClass = match($shape) {
         'circle' => 'w-24 h-24 rounded-full',
@@ -113,7 +113,7 @@
                 <img id="{{ $previewId }}-img"
                      src=""
                      alt="Preview"
-                     class="w-full h-full object-cover">
+                     class="w-full h-full object-contain bg-slate-950/5">
             </div>
 
             {{-- Multiple Gallery Grid --}}

@@ -16,8 +16,7 @@
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.05), 0 10px 10px -5px rgba(0,0,0,0.01);">
                     {{-- Top Section: Image & Info --}}
                     <div style="position: relative; height: 420px;">
-                        <img src="{{ $user->profile_photo_url }}" 
-                             style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+                        <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="w-full h-full" />
                         
                         {{-- Overlay Gradient --}}
                         <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>

@@ -20,7 +20,7 @@
                             $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
                         @endphp
                         @if($coverUrl)
-                            <img src="{{ $coverUrl }}" class="w-full h-full object-cover">
+                            <x-premium-image :src="$coverUrl" class="w-full h-full" />
                         @else
                             <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200">
                                 <i class="bi bi-shop text-7xl text-gray-300"></i>
@@ -31,7 +31,7 @@
                         <div class="absolute -bottom-10 left-8">
                             @php $logo = $business->logo_url ? storage_image_url($business->logo_url, 'logo_thumb') : null; @endphp
                             @if($logo)
-                                <img src="{{ $logo }}" class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white">
+                                <img src="{{ $logo }}" class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white object-contain">
                             @else
                                 <div class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white flex items-center justify-center text-gray-300">
                                     <i class="bi bi-building text-4xl"></i>

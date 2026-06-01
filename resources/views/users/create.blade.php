@@ -244,7 +244,7 @@
                     <!-- Selection Preview -->
                     <div x-show="newPhotoSelected" class="flex items-center gap-4 mb-3">
                         <div class="w-16 h-20 rounded-lg overflow-hidden border border-gray-200 shadow-sm bg-gray-50 flex-shrink-0">
-                            <img :src="newPhotoUrl" class="w-full h-full object-cover">
+                            <img :src="newPhotoUrl" class="w-full h-full object-contain bg-slate-50">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <span class="text-xs font-bold text-gray-500 uppercase tracking-wider" x-text="newPhotoName">Selected Photo</span>

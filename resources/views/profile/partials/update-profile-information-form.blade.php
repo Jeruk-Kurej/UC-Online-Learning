@@ -43,9 +43,9 @@
                         <div>
                             @if($profilePhoto)
                                 <img 
-                                    src="{{ storage_image_url($profilePhoto, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}?t={{ $user->updated_at?->timestamp ?? time() }}" 
+                                    src="{{ storage_image_url($profilePhoto, ['width' => 256, 'height' => 256, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto']) }}?t={{ $user->updated_at?->timestamp ?? time() }}" 
                                     alt="Profile Photo" 
-                                    class="w-24 h-24 rounded-full object-cover border-4 border-white shadow-sm"
+                                    class="w-24 h-24 rounded-full object-contain bg-slate-50 border-4 border-white shadow-sm"
                                 />
                             @else
                                 <div class="w-24 h-24 rounded-full bg-gradient-to-br from-uco-orange to-uco-yellow flex items-center justify-center border-4 border-white shadow-sm">
@@ -69,7 +69,7 @@
                         <div class="flex flex-col items-center gap-2">
                             <span class="text-[10px] font-bold tracking-wider text-uco-orange uppercase">New Photo</span>
                             <div class="relative group">
-                                <img :src="photoPreview" class="w-24 h-24 rounded-full object-cover border-4 border-uco-orange/30 shadow-md transition-all duration-300">
+                                <img :src="photoPreview" class="w-24 h-24 rounded-full object-contain bg-slate-50 border-4 border-uco-orange/30 shadow-md transition-all duration-300">
                                 
                                 <!-- Cancel/Remove Button -->
                                 <button type="button" @click="clearPhoto" 

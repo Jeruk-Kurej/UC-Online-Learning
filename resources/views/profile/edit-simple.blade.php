@@ -78,7 +78,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const preview = document.getElementById('profile-photo-preview');
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Photo" class="w-24 h-24 rounded-full object-cover border-4 border-gray-200 shadow-md">`;
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Photo" class="w-24 h-24 rounded-full object-contain bg-slate-50 border-4 border-gray-200 shadow-md">`;
                 }
                 reader.readAsDataURL(file);
             }

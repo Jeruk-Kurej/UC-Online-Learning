@@ -25,7 +25,7 @@
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
                                 @if($hasRealPhoto)
-                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
+                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-contain bg-slate-50">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
                                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">

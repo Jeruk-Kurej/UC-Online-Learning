@@ -33,9 +33,7 @@
             {{-- Top Section: Image & Info --}}
             <div class="relative h-[300px] w-full flex-shrink-0">
                 @if($user->profile_photo_url)
-                    <img src="{{ $user->profile_photo_url }}" 
-                         alt="{{ $user->name }}"
-                         class="w-full h-full object-cover object-top">
+                    <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="w-full h-full" />
                 @else
                     <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">

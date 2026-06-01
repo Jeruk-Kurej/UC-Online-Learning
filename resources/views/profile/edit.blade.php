@@ -29,7 +29,7 @@
                                  onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
                                 
                                 <img id="preview-image" src="{{ $user->profile_photo_url }}" 
-                                     style="width: 100%; height: 100%; object-fit: cover;"
+                                     style="width: 100%; height: 100%; object-fit: contain;"
                                      x-show="hasPhoto && !photoDeleted">
                                 
                                 <div id="initials-placeholder" style="width: 100%; height: 100%; background: linear-gradient(135deg, #f97316, #ea580c); display: flex; align-items: center; justify-content: center; color: white;"
@@ -262,7 +262,10 @@
                                                     
                                                     {{-- Image or PDF Thumbnail Preview --}}
                                                     <template x-if="item.previewUrl">
-                                                        <img :src="item.previewUrl" class="w-full h-full object-cover">
+                                                        <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
+                                                            <img :src="item.previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
+                                                            <img :src="item.previewUrl" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                                        </div>
                                                     </template>
 
                                                     {{-- Local PDF generic Card --}}
@@ -315,7 +318,10 @@
                                                     
                                                     {{-- Image Preview --}}
                                                     <template x-if="file.preview">
-                                                        <img :src="file.preview" class="w-full h-full object-cover">
+                                                        <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
+                                                            <img :src="file.preview" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
+                                                            <img :src="file.preview" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                                        </div>
                                                     </template>
 
                                                     {{-- PDF Preview --}}

@@ -70,7 +70,7 @@
                                             @endphp
 
                                             @if ($coverImage)
-                                                <img src="{{ $coverImage }}" class="h-full w-full object-cover">
+                                                <x-premium-image :src="$coverImage" class="h-full w-full" />
                                             @else
                                                 <div
                                                     class="uco-placeholder-mesh flex h-full w-full items-center justify-center">
@@ -109,7 +109,7 @@
                                                 <div
                                                     class="h-4 w-4 overflow-hidden rounded-full border border-uco-orange-100">
                                                     <img src="{{ $business->user->profile_photo_url }}"
-                                                        class="h-full w-full object-cover">
+                                                        class="h-full w-full object-contain bg-slate-50">
                                                 </div>
                                                 <span
                                                     class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[80px]">
@@ -352,8 +352,7 @@
                                         <div
                                             class="h-10 w-10 overflow-hidden rounded-full border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
                                             @if ($student->profile_photo_url)
-                                                <img src="{{ $student->profile_photo_url }}"
-                                                    alt="{{ $student->name }}" class="h-full w-full object-cover">
+                                                <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="h-full w-full" />
                                             @else
                                                 <div
                                                     class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-sm">
@@ -456,8 +455,7 @@
                                 {{-- Top Section: Image & Info --}}
                                 <div class="relative h-[280px] w-full flex-shrink-0">
                                     @if ($student->profile_photo_url)
-                                        <img src="{{ $student->profile_photo_url }}" alt="{{ $student->name }}"
-                                            style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
+                                        <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="w-full h-full" />
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
                                             style="background: linear-gradient(135deg, #f7931e, #fdb913);">
@@ -550,8 +548,10 @@
                         <div class="md:w-5/12 bg-slate-900 relative flex-shrink-0 min-h-[220px] md:min-h-full">
                             <!-- Image -->
                             <template x-if="modalPhoto">
-                                <img :src="modalPhoto" :alt="modalName"
-                                    class="w-full h-full object-cover object-top absolute inset-0">
+                                <div class="w-full h-full absolute inset-0 overflow-hidden bg-slate-950/5 flex items-center justify-center">
+                                    <img :src="modalPhoto" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
+                                    <img :src="modalPhoto" :alt="modalName" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                </div>
                             </template>
                             <!-- Image Fallback Gradient -->
                             <template x-if="!modalPhoto">

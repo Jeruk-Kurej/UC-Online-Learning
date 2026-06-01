@@ -45,7 +45,7 @@
                                 $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
                             @endphp
                             @if($coverUrl)
-                                <img src="{{ $coverUrl }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                                <x-premium-image :src="$coverUrl" class="w-full h-full group-hover:scale-110 transition-transform duration-700" />
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-200">
                                     <i class="bi bi-shop text-5xl text-gray-300"></i>
@@ -56,7 +56,7 @@
                             <div class="absolute bottom-4 left-4">
                                 @php $logo = $b->logo_url ? storage_image_url($b->logo_url, 'logo_thumb') : null; @endphp
                                 @if($logo)
-                                    <img src="{{ $logo }}" class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-lg border border-white">
+                                    <img src="{{ $logo }}" class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-lg border border-white object-contain">
                                 @endif
                             </div>
 

@@ -22,7 +22,7 @@
                             @if(auth()->user()->isAdmin())
                                 <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-7 h-7 object-contain rounded-md">
                             @elseif(auth()->user()->profile_photo_url && !str_contains(auth()->user()->profile_photo_url, 'ui-avatars.com'))
-                                <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" class="w-7 h-7 object-cover rounded-md">
+                                <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" class="w-7 h-7 object-contain bg-slate-50 rounded-md">
                             @else
                                 <div class="w-7 h-7 bg-uco-orange-500 rounded-md flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>
                             @endif

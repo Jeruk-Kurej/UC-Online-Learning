@@ -103,12 +103,20 @@
                                 {{-- Photo Display --}}
                                 <div class="relative group">
                                     @if($photoUrl)
-                                        <img 
-                                            src="{{ storage_image_url($photoUrl, 'lqip') }}"
-                                            data-src="{{ storage_image_url($photoUrl, 'gallery_full') }}"
-                                            alt="{{ $business->name }} photo"
-                                            loading="lazy"
-                                            class="w-full h-52 object-cover blur-lg transition duration-300 ease-out">
+                                        <div class="relative w-full h-52 overflow-hidden bg-slate-950/5 flex items-center justify-center">
+                                            <!-- Blurred Background -->
+                                            <img src="{{ storage_image_url($photoUrl, 'lqip') }}"
+                                                 data-src="{{ storage_image_url($photoUrl, 'gallery_full') }}"
+                                                 class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none transition duration-300 ease-out"
+                                                 aria-hidden="true" referrerpolicy="no-referrer">
+                                            <!-- Foreground Image -->
+                                            <img src="{{ storage_image_url($photoUrl, 'lqip') }}"
+                                                 data-src="{{ storage_image_url($photoUrl, 'gallery_full') }}"
+                                                 alt="{{ $business->name }} photo"
+                                                 loading="lazy"
+                                                 class="relative z-10 max-w-full max-h-full object-contain blur-lg transition duration-300 ease-out"
+                                                 referrerpolicy="no-referrer">
+                                        </div>
                                     @else
                                         <div class="w-full h-52 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
                                             <i class="bi bi-image text-5xl text-gray-300"></i>
@@ -186,7 +194,7 @@
                                                         <div class="flex flex-col items-center gap-1">
                                                             <span class="text-[9px] font-bold tracking-widest text-gray-400 uppercase">Current</span>
                                                             <div class="w-16 h-16 rounded-lg bg-white border border-gray-200 flex items-center justify-center overflow-hidden shadow-sm">
-                                                                <img :src="currentImage" alt="{{ $business->name . ' photo' }}" class="w-full h-full object-cover">
+                                                                <img :src="currentImage" alt="{{ $business->name . ' photo' }}" class="w-full h-full object-contain bg-slate-50">
                                                             </div>
                                                         </div>
 
@@ -205,7 +213,7 @@
                                                                 <span class="text-[9px] font-bold tracking-widest text-blue-500 uppercase">Baru</span>
                                                                 <div class="relative">
                                                                     <div class="w-16 h-16 rounded-lg bg-blue-50 border-2 border-blue-400 flex items-center justify-center overflow-hidden shadow-md">
-                                                                        <img :src="newImagePreview" class="w-full h-full object-cover">
+                                                                        <img :src="newImagePreview" class="w-full h-full object-contain bg-slate-50">
                                                                     </div>
                                                                     <button type="button" @click="removeNewFile()"
                                                                             class="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white p-0.5 rounded-full shadow-md transition-all hover:scale-110 focus:outline-none"

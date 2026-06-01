@@ -53,8 +53,7 @@
                     {{-- Left: Avatar --}}
                     <div class="flex-shrink-0">
                         @if ($isRealPhoto)
-                            <img src="{{ $resolvedPhotoUrl }}" alt="{{ $owner->name }}"
-                                class="w-20 h-20 rounded-2xl object-cover shadow-md border-2 border-gray-100">
+                            <x-premium-image :src="$resolvedPhotoUrl" :alt="$owner->name" class="w-20 h-20 rounded-2xl shadow-md border-2 border-gray-100" />
                         @else
                             <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border-2 border-orange-100"
                                 style="background: linear-gradient(135deg, #f7931e, #fdb913);">
@@ -213,7 +212,7 @@
                                         <div class="flex items-start gap-5">
                                             <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-orange-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
                                                 @if($biz->logo_url)
-                                                    <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
+                                                    <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fit']) }}" class="w-full h-full object-contain p-1">
                                                 @else
                                                     <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
                                                 @endif
@@ -279,7 +278,7 @@
                                     <div class="flex items-start gap-5">
                                         <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-blue-100 transition-colors flex-shrink-0 shadow-sm overflow-hidden">
                                             @if($biz->logo_url)
-                                                <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fill']) }}" class="w-full h-full object-cover">
+                                                <img src="{{ storage_image_url($biz->logo_url, ['width' => 128, 'height' => 128, 'crop' => 'fit']) }}" class="w-full h-full object-contain p-1">
                                             @else
                                                 <span class="text-xl font-black text-gray-300">{{ substr($biz->name, 0, 1) }}</span>
                                             @endif

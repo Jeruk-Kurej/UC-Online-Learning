@@ -68,7 +68,7 @@
                     @if ($business->logo_url)
                         <img src="{{ storage_image_url($business->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                             alt="{{ $business->name }} Logo" loading="lazy"
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-cover border border-soft-gray-100 shadow-sm bg-white p-0.5">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-contain border border-soft-gray-100 shadow-sm bg-white p-0.5">
                     @else
                         <div
                             class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 border border-soft-gray-100 flex items-center justify-center shadow-sm">
@@ -153,10 +153,7 @@
                             x-transition:enter-end="opacity-100 scale-100"
                             x-transition:leave="transition ease-in duration-1000" x-transition:leave-start="opacity-100"
                             x-transition:leave-end="opacity-0" class="absolute inset-0 w-full h-full">
-                            <img src="{{ storage_image_url($photo->photo_url, 'hero') }}"
-                                alt="{{ $business->name }} - Hero Photo {{ $index + 1 }}"
-                                class="w-full h-full object-cover cursor-zoom-in transition-transform duration-500 hover:scale-105"
-                                @click="openFullscreen('{{ storage_image_url($photo->photo_url, 'hero') }}', '{{ addslashes($business->name) }} - Hero Photo {{ $index + 1 }}')">
+                            <x-premium-image :src="storage_image_url($photo->photo_url, 'hero')" :alt="$business->name . ' - Hero Photo ' . ($index + 1)" class="w-full h-full cursor-zoom-in transition-transform duration-500 hover:scale-105" @click="openFullscreen('{{ storage_image_url($photo->photo_url, 'hero') }}', '{{ addslashes($business->name) }} - Hero Photo {{ $index + 1 }}')" />
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none">
                             </div>
                         </div>
@@ -482,9 +479,7 @@
                                             {{-- Product Image --}}
                                             <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 @if ($product->getRawOriginal('photo_url'))
-                                                    <img src="{{ $product->photo_url }}"
-                                                        alt="{{ $product->name }}"
-                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <x-premium-image :src="$product->photo_url" :alt="$product->name" class="w-full h-full group-hover:scale-105 transition-transform duration-500" />
                                                     @if($product->photo_caption)
                                                         <div class="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                                             <p class="text-[10px] text-white font-medium text-center line-clamp-1">{{ $product->photo_caption }}</p>
@@ -608,9 +603,7 @@
                                             {{-- Service Image --}}
                                             <div class="relative aspect-square w-full bg-gray-50 flex items-center justify-center overflow-hidden flex-shrink-0">
                                                 @if ($service->getRawOriginal('photo_url'))
-                                                    <img src="{{ $service->photo_url }}"
-                                                        alt="{{ $service->name }}"
-                                                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                                    <x-premium-image :src="$service->photo_url" :alt="$service->name" class="w-full h-full group-hover:scale-105 transition-transform duration-500" />
                                                     @if($service->photo_caption)
                                                         <div class="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
                                                             <p class="text-[10px] text-white font-medium text-center line-clamp-1">{{ $service->photo_caption }}</p>
@@ -712,10 +705,7 @@
                                 @foreach ($businessPhotos as $photo)
                                     <div class="bg-white rounded-lg overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-all group flex flex-col">
                                         <div class="relative aspect-video overflow-hidden bg-gray-100 flex-shrink-0">
-                                            <img src="{{ storage_image_url($photo->photo_url, 'gallery') }}"
-                                                alt="{{ $business->name }} gallery photo" loading="lazy"
-                                                class="w-full h-full object-cover transition duration-500 group-hover:scale-105 cursor-zoom-in"
-                                                @click="openFullscreen('{{ storage_image_url($photo->photo_url, 'gallery') }}', '{{ addslashes($business->name) }} photo')">
+                                            <x-premium-image :src="storage_image_url($photo->photo_url, 'gallery')" :alt="$business->name . ' gallery photo'" class="w-full h-full transition duration-500 group-hover:scale-105 cursor-zoom-in" @click="openFullscreen('{{ storage_image_url($photo->photo_url, 'gallery') }}', '{{ addslashes($business->name) }} photo')" />
                                         </div>
                                         <div class="p-4 flex-grow flex flex-col justify-center border-t border-gray-50 bg-white">
                                             @if ($photo->caption)
@@ -865,9 +855,7 @@
 
                         <div class="flex flex-col items-center">
                             @if ($business->user->profile_photo_url)
-                                <img src="{{ storage_image_url($business->user->profile_photo_url, 'profile_thumb') }}"
-                                    alt="{{ $business->user->name }}"
-                                    class="w-24 h-24 rounded-lg object-cover shadow-lg mb-4 border-2 border-white">
+                                <x-premium-image :src="storage_image_url($business->user->profile_photo_url, 'profile_thumb')" :alt="$business->user->name" class="w-24 h-24 rounded-lg shadow-lg mb-4 border-2 border-white" />
                             @else
                                 <div
                                     class="w-24 h-24 rounded-lg bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-3xl font-bold shadow-lg mb-4 border-2 border-white">
@@ -1117,7 +1105,7 @@
                 <div class="flex items-center gap-5 relative z-10 pointer-events-none">
                     <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
                         @if ($ownerPhotoUrl)
-                            <img src="{{ $ownerPhotoUrl }}" alt="{{ $owner->name }}" class="w-full h-full object-cover">
+                                                            <x-premium-image :src="$ownerPhotoUrl" :alt="$owner->name" class="w-full h-full" />
                         @else
                             <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($owner->name, 0, 1)) }}</span>
                         @endif
@@ -1235,7 +1223,7 @@
                             <a href="{{ route('users.show', $addOwner) }}" class="flex flex-col items-center justify-center gap-2.5 p-4 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(247,147,30,0.08)] hover:border-orange-200 transition-all text-center group">
                                 @if ($addPhotoUrl)
                                     <img src="{{ $addPhotoUrl }}" alt="{{ $addOwner->name }}"
-                                        class="w-12 h-12 rounded-full object-cover shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
+                                         class="w-12 h-12 rounded-full object-contain bg-slate-50 shadow-sm ring-1 ring-black/5 group-hover:scale-105 transition-transform">
                                 @else
                                     <div class="w-12 h-12 rounded-full flex items-center justify-center text-base font-black bg-gradient-to-br from-gray-50 to-gray-100 text-gray-400 ring-1 ring-black/5 group-hover:scale-105 transition-transform shadow-sm group-hover:from-orange-50 group-hover:to-orange-100 group-hover:text-orange-600">
                                         {{ strtoupper(substr($addOwner->name, 0, 1)) }}

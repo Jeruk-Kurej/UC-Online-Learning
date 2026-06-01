@@ -103,11 +103,11 @@
                     <!-- Profile Photo & Meta Side-by-Side -->
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
                         <div class="relative w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center shadow-sm flex-shrink-0">
-                            @if($user->profile_photo_url)
-                                <img src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="text-4xl font-black text-slate-400 select-none">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
-                            @endif
+                            <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="size-full">
+                                <x-slot name="fallback">
+                                    <span class="text-4xl font-black text-slate-400 select-none">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                                </x-slot>
+                            </x-premium-image>
                         </div>
 
                         <div class="flex-1 text-center sm:text-left pt-2">
@@ -295,9 +295,7 @@
                                              style="{{ $index === 0 ? '' : 'display:none;' }}">
                                             <div @click="lightboxUrl = '{{ $url }}'; showLightbox = true" 
                                                  class="w-full h-full cursor-zoom-in relative block transition-all duration-300 hover:scale-[1.02]">
-                                                <img src="{{ $url }}" 
-                                                     class="w-full h-full object-cover" 
-                                                     alt="Activity Image">
+                                                <x-premium-image :src="$url" alt="Activity Image" class="w-full h-full" />
                                             </div>
                                         </div>
                                     @endforeach

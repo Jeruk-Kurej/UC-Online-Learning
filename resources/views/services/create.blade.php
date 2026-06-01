@@ -178,9 +178,10 @@
                             
                             {{-- Display preview if uploaded --}}
                             <template x-if="hasPhoto">
-                                <img :src="previewUrl" 
-                                     class="w-full h-full object-cover"
-                                     alt="Preview Service Photo">
+                                <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
+                                    <img :src="previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
+                                    <img :src="previewUrl" alt="Preview Service Photo" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                </div>
                             </template>
 
                             {{-- Display placeholder if no photo --}}
