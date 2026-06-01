@@ -572,10 +572,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>ax-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl pointer-events-auto cursor-zoom-out" 
-                     @click="showLightbox = false" 
-                     @keydown.escape.window="showLightbox = false">
-            </div>
-        </div>
-    </div>
 </x-app-layout>

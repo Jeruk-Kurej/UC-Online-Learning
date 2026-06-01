@@ -35,9 +35,9 @@
     </style>
 </head>
 <body class="antialiased bg-soft-white">
-    <div class="h-screen flex flex-col overflow-hidden relative">
-        {{-- Main Content --}}
-        <main class="flex-1 flex items-center relative overflow-hidden z-10">
+    <div class="min-h-screen flex flex-col relative overflow-x-hidden">
+        {{-- Hero Content --}}
+        <main class="flex-shrink-0 flex items-center relative overflow-hidden z-10 py-20">
             <div class="max-w-6xl mx-auto px-8 w-full relative z-10">
                 <div class="grid lg:grid-cols-2 gap-16 items-center">
                     {{-- Left: Content --}}
@@ -80,8 +80,6 @@
                             <h2 class="text-3xl font-black text-gray-900 mb-1.5 tracking-tight">Sign in</h2>
                             <p class="text-sm font-medium text-gray-500">Access your business hub</p>
                         </div>
-                        
-
                         
                         <form method="POST" action="/login" class="space-y-5 relative z-10">
                             @csrf
@@ -162,137 +160,119 @@
             
             <!-- Floating Decorative Elements -->
             <div class="absolute inset-0 pointer-events-none overflow-hidden">
-                <!-- Floating Circle 1 -->
                 <div class="absolute top-20 left-[10%] w-16 h-16 border-2 border-uco-orange-300 rounded-full opacity-40 animate-float-slow"></div>
-                
-                <!-- Floating Square 2 -->
                 <div class="absolute top-40 right-[15%] w-12 h-12 border-2 border-uco-yellow-300 rotate-45 opacity-30 animate-float-slower"></div>
-                
-                <!-- Floating Circle 3 -->
                 <div class="absolute bottom-32 left-[20%] w-20 h-20 border-2 border-uco-orange-200 rounded-full opacity-30 animate-float-medium"></div>
-                
-                <!-- Floating Triangle 4 -->
                 <svg class="absolute top-[60%] right-[8%] w-14 h-14 opacity-25 animate-float-slow" viewBox="0 0 100 100">
                     <polygon points="50,10 90,90 10,90" fill="none" stroke="currentColor" stroke-width="3" class="text-uco-yellow-400"/>
                 </svg>
-                
-                <!-- Floating Squiggle 5 -->
                 <svg class="absolute bottom-20 right-[25%] w-24 h-16 opacity-20 animate-float-slower" viewBox="0 0 120 80">
                     <path d="M10,40 Q30,20 50,40 T90,40" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" class="text-uco-orange-300"/>
                 </svg>
-                
-                <!-- Floating Star 6 -->
                 <svg class="absolute top-[30%] left-[5%] w-10 h-10 opacity-25 animate-float-medium" viewBox="0 0 51 48">
                     <path d="M25.5,0 L31,18 L50,18 L35,29 L40,48 L25.5,37 L11,48 L16,29 L1,18 L20,18 Z" fill="none" stroke="currentColor" stroke-width="2" class="text-uco-yellow-300"/>
                 </svg>
-                
-                <!-- Small dots scattered -->
                 <div class="absolute top-[25%] right-[30%] w-2 h-2 bg-uco-orange-300 rounded-full opacity-40 animate-pulse-slow"></div>
                 <div class="absolute top-[70%] left-[35%] w-2 h-2 bg-uco-yellow-300 rounded-full opacity-40 animate-pulse-slower"></div>
                 <div class="absolute bottom-[40%] right-[12%] w-2 h-2 bg-uco-orange-200 rounded-full opacity-30 animate-pulse-slow"></div>
-            </main>
+            </div>
+        </main>
 
-            <!-- {{-- Portfolio Overview Section --}}
-            <section class="relative z-20 py-16 bg-white border-t border-soft-gray-100">
-                <div class="max-w-6xl mx-auto px-8">
-                    <div class="bg-gradient-to-br from-soft-gray-50 to-white rounded-[2.5rem] p-8 md:p-12 border border-soft-gray-100 shadow-sm relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
-                            <i class="bi bi-grid-3x3-gap-fill text-[120px]"></i>
-                        </div>
-
-                        <div class="max-w-3xl">
-                            <h2 class="text-xs font-black uppercase tracking-[0.2em] text-uco-orange-500 mb-4">Project Overview</h2>
-                            <h3 class="text-3xl font-bold text-soft-gray-900 mb-6 leading-tight">
-                                Empowering the next generation of <span class="text-uco-orange-600">Entrepreneurial Leaders</span>
-                            </h3>
-                            <p class="text-base text-soft-gray-600 leading-relaxed mb-8">
-                                This web portfolio serves as a central hub for Universitas Ciputra Online students and alumni to showcase their professional growth. Whether you are an <strong>Entrepreneur</strong> building a new venture or an <strong>Intrapreneur</strong> driving innovation within an organization, this platform highlights your unique journey, products, and achievements to the global community.
-                            </p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
-                                        <i class="bi bi-check2-circle text-lg"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-soft-gray-800">Verified Profiles</span>
+        {{-- Portfolio Overview Section --}}
+        <section class="relative z-20 py-24 bg-white border-t border-soft-gray-100">
+            <div class="max-w-6xl mx-auto px-8">
+                <div class="bg-gradient-to-br from-soft-gray-50 to-white rounded-[2.5rem] p-8 md:p-12 border border-soft-gray-100 shadow-sm relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                        <i class="bi bi-grid-3x3-gap-fill text-[120px]"></i>
+                    </div>
+                    
+                    <div class="max-w-3xl">
+                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-uco-orange-500 mb-4">Project Overview</h2>
+                        <h3 class="text-3xl font-bold text-soft-gray-900 mb-6 leading-tight">
+                            Empowering the next generation of <span class="text-uco-orange-600">Entrepreneurial Leaders</span>
+                        </h3>
+                        <p class="text-base text-soft-gray-600 leading-relaxed mb-8">
+                            This web portfolio serves as a central hub for Universitas Ciputra Online students and alumni to showcase their professional growth. Whether you are an <strong>Entrepreneur</strong> building a new venture or an <strong>Intrapreneur</strong> driving innovation within an organization, this platform highlights your unique journey, products, and achievements to the global community.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                    <i class="bi bi-check2-circle text-lg"></i>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
-                                        <i class="bi bi-display text-lg"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-soft-gray-800">Business Catalog</span>
+                                <span class="text-sm font-bold text-soft-gray-800">Verified Profiles</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                    <i class="bi bi-display text-lg"></i>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
-                                        <i class="bi bi-award text-lg"></i>
-                                    </div>
-                                    <span class="text-sm font-bold text-soft-gray-800">AI-Verified Merit</span>
+                                <span class="text-sm font-bold text-soft-gray-800">Business Catalog</span>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-uco-orange-600">
+                                    <i class="bi bi-award text-lg"></i>
                                 </div>
+                                <span class="text-sm font-bold text-soft-gray-800">AI-Verified Merit</span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section> -->
-
-            {{-- Global Toast Notifications --}}
-            <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
-                {{-- Handled by dynamic script below --}}
             </div>
+        </section>
 
-            {{-- Dynamic JS Toast Trigger --}}
-            <div x-data="{ 
-                    toasts: [], 
-                    init() {
-                        @if(session('success')) this.add({ detail: { message: '{{ session('success') }}', type: 'success' } }); @endif
-                        @if(session('error')) this.add({ detail: { message: '{{ session('error') }}', type: 'error' } }); @endif
-                        @if(session('status')) this.add({ detail: { message: '{{ session('status') }}', type: 'status' } }); @endif
-                        @if($errors->any()) 
-                            @foreach($errors->all() as $error)
-                                this.add({ detail: { message: '{{ $error }}', type: 'error' } });
-                            @endforeach
-                        @endif
-                    },
-                    add(e) { 
-                        const id = Date.now() + Math.random();
-                        const { message, type } = e.detail;
-                        this.toasts.push({ id, message, type: type || 'success' });
-                        setTimeout(() => this.remove(id), 5000);
-                    },
-                    remove(id) {
-                        this.toasts = this.toasts.filter(t => t.id !== id);
-                    }
-                 }"
-                 @notify.window="add($event)"
-                 class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
-                
-                <template x-for="toast in toasts" :key="toast.id">
-                    <div x-show="true"
-                         x-transition:enter="transition ease-out duration-300"
-                         x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-300"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                         class="pointer-events-auto max-w-sm w-full p-4 rounded-xl shadow-lg flex items-start justify-between gap-3 text-white transition-all duration-300"
-                         :class="{
-                            'bg-emerald-600': toast.type === 'success',
-                            'bg-red-600': toast.type === 'error',
-                            'bg-blue-600': toast.type === 'info' || toast.type === 'status',
-                            'bg-yellow-600': toast.type === 'warning'
-                         }">
-                        <div class="flex items-center gap-3">
-                            <template x-if="toast.type === 'success'"><i class="bi bi-check-circle-fill text-lg"></i></template>
-                            <template x-if="toast.type === 'error'"><i class="bi bi-exclamation-triangle-fill text-lg"></i></template>
-                            <template x-if="toast.type === 'info' || toast.type === 'status'"><i class="bi bi-info-circle-fill text-lg"></i></template>
-                            <template x-if="toast.type === 'warning'"><i class="bi bi-exclamation-circle-fill text-lg"></i></template>
-                            <span class="text-sm font-semibold" x-text="toast.message"></span>
-                        </div>
-                        <button @click="remove(toast.id)" class="text-white/80 hover:text-white transition-colors">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
+        {{-- Dynamic JS Toast Trigger --}}
+        <div x-data="{ 
+                toasts: [], 
+                init() {
+                    @if(session('success')) this.add({ detail: { message: '{{ session('success') }}', type: 'success' } }); @endif
+                    @if(session('error')) this.add({ detail: { message: '{{ session('error') }}', type: 'error' } }); @endif
+                    @if(session('status')) this.add({ detail: { message: '{{ session('status') }}', type: 'status' } }); @endif
+                    @if($errors->any()) 
+                        @foreach($errors->all() as $error)
+                            this.add({ detail: { message: '{{ $error }}', type: 'error' } });
+                        @endforeach
+                    @endif
+                },
+                add(e) { 
+                    const id = Date.now() + Math.random();
+                    const { message, type } = e.detail;
+                    this.toasts.push({ id, message, type: type || 'success' });
+                    setTimeout(() => this.remove(id), 5000);
+                },
+                remove(id) {
+                    this.toasts = this.toasts.filter(t => t.id !== id);
+                }
+             }"
+             @notify.window="add($event)"
+             class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
+            
+            <template x-for="toast in toasts" :key="toast.id">
+                <div x-show="true"
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-[-8px]"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-300"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 translate-y-[-8px]"
+                     class="pointer-events-auto max-w-sm w-full p-4 rounded-xl shadow-lg flex items-start justify-between gap-3 text-white transition-all duration-300"
+                     :class="{
+                        'bg-emerald-600': toast.type === 'success',
+                        'bg-red-600': toast.type === 'error',
+                        'bg-blue-600': toast.type === 'info' || toast.type === 'status',
+                        'bg-yellow-600': toast.type === 'warning'
+                     }">
+                    <div class="flex items-center gap-3">
+                        <template x-if="toast.type === 'success'"><i class="bi bi-check-circle-fill text-lg"></i></template>
+                        <template x-if="toast.type === 'error'"><i class="bi bi-exclamation-triangle-fill text-lg"></i></template>
+                        <template x-if="toast.type === 'info' || toast.type === 'status'"><i class="bi bi-info-circle-fill text-lg"></i></template>
+                        <template x-if="toast.type === 'warning'"><i class="bi bi-exclamation-circle-fill text-lg"></i></template>
+                        <span class="text-sm font-semibold" x-text="toast.message"></span>
                     </div>
-                </template>
-            </div>
-        </main>
+                    <button @click="remove(toast.id)" class="text-white/80 hover:text-white transition-colors">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </template>
+        </div>
     </div>
     
     <style>
