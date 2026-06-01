@@ -17,6 +17,7 @@ class Product extends Model
         'price',
         'price_type',
         'photo_url',
+        'photo_caption',
         'sort_order',
     ];
 

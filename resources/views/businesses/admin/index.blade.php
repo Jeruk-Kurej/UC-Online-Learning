@@ -281,7 +281,7 @@
             if (data.type === 'intrapreneur') {
                 form.action = `/admin/intrapreneurs/${data.id}/status`;
             } else {
-                form.action = `/admin/showcase/${data.id}/status`;
+                form.action = `/admin/business/${data.id}/status`;
             }
             nameDisplay.innerText = `Updating: ${data.name}`;
             statusSelect.value = data.status;

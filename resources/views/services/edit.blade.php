@@ -216,6 +216,22 @@
                         @enderror
                     </div>
 
+                    {{-- Photo Caption --}}
+                    <div>
+                        <label for="photo_caption" class="block text-sm font-medium text-gray-700 mb-2">
+                            Photo Caption <span class="text-gray-400 font-normal">(Optional)</span>
+                        </label>
+                        <input type="text" 
+                               name="photo_caption" 
+                               id="photo_caption" 
+                               value="{{ old('photo_caption', $service->photo_caption) }}"
+                               class="block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm @error('photo_caption') border-red-500 @enderror"
+                               placeholder="Short description of the photo...">
+                        @error('photo_caption')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Submit Buttons --}}
                     <div class="flex items-center justify-between pt-6 border-t border-gray-200">
                         <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">

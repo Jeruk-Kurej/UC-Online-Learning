@@ -27,8 +27,7 @@
                     </li>
                     <li>
                         <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
-                            Showcase Directory
-                        </a>
+                            Business Directory</a>
                     </li>
                     {{-- <li>
                         <a href="{{ route('uc-testimonies.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">

@@ -17,10 +17,12 @@ class ProfileUpdateRequest extends FormRequest
             'mobile_number'      => ['nullable', 'string', 'max:50'],
             'whatsapp'           => ['nullable', 'string', 'max:50'],
             'linkedin'           => ['nullable', 'string', 'max:255'],
+            'show_contact_details' => ['nullable', 'boolean'],
             'current_status'     => ['nullable', 'string', 'max:255'],
             'year_of_enrollment' => ['nullable', 'string', 'max:50'],
             'graduate_year'      => ['nullable', 'string', 'max:50'],
             'testimony'          => ['nullable', 'string'],
+            'activities_caption' => ['nullable', 'string'],
             'profile_photo'      => ['nullable', 'image', 'max:10240'],
             'delete_profile_photo' => ['nullable', 'boolean'],
 

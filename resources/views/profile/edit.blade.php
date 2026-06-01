@@ -127,7 +127,14 @@
 
                     {{-- Section 2: Contact --}}
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-                        <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0 0 25px 0; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9; letter-spacing: -0.5px;">Contact Details</h2>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #f1f5f9;">
+                            <h2 style="font-size: 18px; font-weight: 800; color: #0f172a; margin: 0; letter-spacing: -0.5px;">Contact Details</h2>
+                            <label class="relative inline-flex items-center cursor-pointer group">
+                                <input type="checkbox" name="show_contact_details" value="1" class="sr-only peer" {{ old('show_contact_details', $user->show_contact_details) ? 'checked' : '' }}>
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                <span class="ml-3 text-xs font-bold text-slate-600 uppercase tracking-wider group-hover:text-slate-900 transition-colors">Show contacts publicly</span>
+                            </label>
+                        </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
                             <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Phone Number</label><input type="text" name="phone_number" value="{{ old('phone_number', $user->phone_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>
                             <div><label style="display: block; font-size: 10px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;">Mobile Number</label><input type="text" name="mobile_number" value="{{ old('mobile_number', $user->mobile_number) }}" style="width: 100%; height: 44px; padding: 0 15px; border: 1.5px solid #e2e8f0; border-radius: 7px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box;"></div>

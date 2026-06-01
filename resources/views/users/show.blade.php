@@ -73,7 +73,7 @@
 
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ showLightbox: false, lightboxUrl: '' }">
         {{-- Breadcrumbs (matches business / intrapreneur detail pages) --}}
-        <nav class="flex mb-8 text-sm font-medium" aria-label="Breadcrumb">
+        <nav class="flex mb-3 text-sm font-medium" aria-label="Breadcrumb">
             <ol class="flex items-center space-x-2">
                 <li>
                     <a href="{{ $directoryUrl }}" class="text-gray-400 hover:text-uco-orange-500 transition">Directory</a>
@@ -82,10 +82,17 @@
                     <svg class="h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"/>
                     </svg>
-                    <span class="text-gray-900">{{ $user->name }}</span>
+                    <span class="text-gray-900 font-semibold">{{ $user->name }}</span>
                 </li>
             </ol>
         </nav>
+
+        {{-- Dynamic Profile Title below Breadcrumb --}}
+        <div class="mb-8">
+            <h2 class="text-sm font-black uppercase tracking-[0.2em] text-uco-orange-500">
+                {{ $user->isIntrapreneur() ? 'Intrapreneur Student' : 'Entrepreneur Student' }}
+            </h2>
+        </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
@@ -125,7 +132,7 @@
                             <span class="text-slate-700 font-extrabold text-right ml-2">{{ $user->major ?: '-' }}</span>
                         </div>
                         <div class="flex justify-between items-center text-xs p-2 -mx-2 rounded-xl border border-transparent">
-                            <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Batch</span>
+                            <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Join UC Online</span>
                             <span class="text-slate-700 font-extrabold text-right ml-2">{{ $user->year_of_enrollment ?: '-' }}</span>
                         </div>
                         <div class="flex justify-between items-center text-xs p-2 -mx-2 rounded-xl border border-transparent">
@@ -135,7 +142,7 @@
                     </div>
 
                     <!-- Contact Details Block -->
-                    @if($user->whatsapp || $user->email)
+                    @if(($user->whatsapp || $user->email) && ($user->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $user->id))))
                         <div class="space-y-1.5 pt-4 border-t border-slate-100">
                             @if($user->whatsapp)
                                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->whatsapp) }}" target="_blank" 
@@ -161,6 +168,14 @@
                                     </span>
                                 </a>
                             @endif
+                        </div>
+                    @elseif($user->whatsapp || $user->email)
+                        <div class="pt-4 border-t border-slate-100">
+                            <div class="px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 text-center">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-relaxed">
+                                    <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
+                                </p>
+                            </div>
                         </div>
                     @endif
 
@@ -319,6 +334,13 @@
                                     Activities
                                 </div>
                             </div>
+                            @if($user->activities_caption)
+                                <div class="mt-3 px-1">
+                                    <p class="text-xs text-slate-500 font-medium leading-relaxed italic">
+                                        "{{ $user->activities_caption }}"
+                                    </p>
+                                </div>
+                            @endif
                         @else
                             {{-- Fallback Card: Premium testimonial styling --}}
                             <div class="w-full h-[200px] md:h-[240px] flex flex-col justify-between p-6 bg-slate-50/50 rounded-2xl relative overflow-hidden">
@@ -545,6 +567,12 @@
             <div class="relative max-w-5xl max-h-[90vh] flex items-center justify-center pointer-events-none">
                 <img :src="lightboxUrl" 
                      class="max-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl pointer-events-auto cursor-zoom-out" 
+                     @click="showLightbox = false" 
+                     @keydown.escape.window="showLightbox = false">
+            </div>
+        </div>
+    </div>
+</x-app-layout>ax-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl pointer-events-auto cursor-zoom-out" 
                      @click="showLightbox = false" 
                      @keydown.escape.window="showLightbox = false">
             </div>

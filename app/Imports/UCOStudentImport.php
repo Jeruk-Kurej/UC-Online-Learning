@@ -291,7 +291,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             'revenue_range'     => $cell(32),
             'business_legality' => $cell(35),
             'product_legality'  => $cell(36),
-            'academic_heritage' => $cell(10) ? 'Batch ' . $cell(10) : null,
+            'academic_heritage' => $cell(10) ? 'Join UC Online ' . $cell(10) : null,
             'logo_url'          => $logoUrl,
             'type'              => 'entrepreneur',
             'approval_status'   => 'approved',

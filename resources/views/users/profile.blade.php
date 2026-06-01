@@ -97,7 +97,7 @@
                         @endif
                         @if($owner->year_of_enrollment)
                             <div class="flex justify-between items-center">
-                                <span class="text-gray-500 font-medium">Batch</span>
+                                <span class="text-gray-500 font-medium">Join UC Online</span>
                                 <span class="text-gray-900 font-bold">{{ $owner->year_of_enrollment }}</span>
                             </div>
                         @endif
@@ -111,7 +111,7 @@
                 </div>
 
                 {{-- Contact section --}}
-                @if($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                @if(($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false)) && ($owner->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $owner->id))))
                     <div class="border-t border-gray-100 mx-5"></div>
                     <div class="px-5 py-4 space-y-1">
                         @if ($owner->whatsapp)
@@ -167,6 +167,15 @@
                                 </div>
                             </div>
                         @endif
+                    </div>
+                @elseif($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                    <div class="border-t border-gray-100 mx-5"></div>
+                    <div class="px-5 py-4">
+                        <div class="px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 text-center">
+                            <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider leading-relaxed">
+                                <i class="bi bi-lock-fill mr-1"></i> Contact details hidden
+                            </p>
+                        </div>
                     </div>
                 @endif
             </div>

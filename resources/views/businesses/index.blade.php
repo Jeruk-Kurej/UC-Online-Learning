@@ -1,6 +1,6 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
-    @section('title', 'Showcase Directory')
+    @section('title', 'Business Directory')
     <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
           data-view-type="{{ $viewType }}"
           x-data="{ 
@@ -87,7 +87,7 @@
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory
                     </span>
-                    <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Showcase Directory</h1>
+                    <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Business Directory</h1>
                     <p class="text-base text-gray-500 mt-1">Explore businesses and innovations from our student and alumni network.</p>
                 </div>
 
