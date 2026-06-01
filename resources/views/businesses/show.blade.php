@@ -45,9 +45,24 @@
             this.fullscreenSrc = src;
             this.fullscreenAlt = alt;
             this.fullscreenOpen = true;
+        },
+        productModalOpen: false,
+        productModalName: '',
+        productModalDesc: '',
+        productModalPhoto: '',
+        productModalPrice: '',
+        productModalLabel: '',
+        openProductModal(name, desc, photo, price, label) {
+            this.productModalName = name;
+            this.productModalDesc = desc;
+            this.productModalPhoto = photo;
+            this.productModalPrice = price;
+            this.productModalLabel = label;
+            this.productModalOpen = true;
         }
     }" x-init="$watch('showUserModal', val => document.body.style.overflow = val ? 'hidden' : '');
-    $watch('fullscreenOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal) { document.body.style.overflow = ''; } })">
+    $watch('fullscreenOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal && !productModalOpen) { document.body.style.overflow = ''; } });
+    $watch('productModalOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal && !fullscreenOpen) { document.body.style.overflow = ''; } })">
         {{-- Hero Section with Elegant Back Button --}}
         <div class="mb-8 px-4 sm:px-0">
             {{-- Breadcrumbs --}}
@@ -449,10 +464,25 @@
                             @if ($businessProducts->count() > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessProducts as $product)
+                                        @php
+                                            $formattedPrice = '';
+                                            $formattedLabel = '';
+                                            if (is_numeric($product->price) && $product->price_type !== 'unspecified' && $product->price_type !== 'customize') {
+                                                $formattedPrice = 'Rp ' . number_format((float) $product->price, 0, ',', '.');
+                                            } elseif ($product->price_type === 'customize') {
+                                                $formattedPrice = 'Customize by Order';
+                                            } else {
+                                                $formattedPrice = 'Price Unspecified';
+                                            }
+
+                                            if (is_numeric($product->price) && in_array($product->price_type, ['fixed', 'negotiable'])) {
+                                                $formattedLabel = $product->price_type === 'fixed' ? 'Fixed Price' : 'Negotiable';
+                                            }
+                                        @endphp
                                         <div @if($product->getRawOriginal('photo_url')) 
-                                                @click="openFullscreen('{{ $product->photo_url }}', '{{ addslashes($product->name) }}')"
+                                                @click='openProductModal(@json($product->name), @json($product->description), @json($product->photo_url), @json($formattedPrice), @json($formattedLabel))'
                                              @endif
-                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $product->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $product->getRawOriginal('photo_url') ? 'cursor-pointer' : '' }} bg-white">
                                             
                                             {{-- Manager Actions Overlay --}}
                                             @auth
@@ -570,10 +600,25 @@
                             @if ($businessServices->count() > 0)
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessServices as $service)
+                                        @php
+                                            $formattedPrice = '';
+                                            $formattedLabel = '';
+                                            if (is_numeric($service->price) && $service->price_type !== 'unspecified' && $service->price_type !== 'customize') {
+                                                $formattedPrice = 'Rp ' . number_format((float) $service->price, 0, ',', '.');
+                                            } elseif ($service->price_type === 'customize') {
+                                                $formattedPrice = 'Customize by Order';
+                                            } else {
+                                                $formattedPrice = 'Price Unspecified';
+                                            }
+
+                                            if (is_numeric($service->price) && in_array($service->price_type, ['fixed', 'negotiable'])) {
+                                                $formattedLabel = $service->price_type === 'fixed' ? 'Fixed Price' : 'Negotiable';
+                                            }
+                                        @endphp
                                         <div @if($service->getRawOriginal('photo_url')) 
-                                                @click="openFullscreen('{{ $service->photo_url }}', '{{ addslashes($service->name) }}')"
+                                                @click='openProductModal(@json($service->name), @json($service->description), @json($service->photo_url), @json($formattedPrice), @json($formattedLabel))'
                                              @endif
-                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $service->getRawOriginal('photo_url') ? 'cursor-zoom-in' : '' }} bg-white">
+                                            class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 {{ $service->getRawOriginal('photo_url') ? 'cursor-pointer' : '' }} bg-white">
                                             
                                             {{-- Manager Actions Overlay --}}
                                             @auth
@@ -807,6 +852,68 @@
                         </div>
                     </div>
                 @endif
+            </div>
+        </div>
+
+        {{-- Product Details Modal --}}
+        <div x-show="productModalOpen" x-cloak class="fixed inset-0 z-[9998] flex items-center justify-center p-4 sm:p-6"
+             @click.self="closeProductModal()"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+             
+            <!-- Backdrop -->
+            <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="closeProductModal()"></div>
+
+            <!-- Modal Content -->
+            <div x-show="productModalOpen"
+                 x-transition:enter="transition ease-out duration-300"
+                 x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-200"
+                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                 class="relative w-full max-w-4xl bg-white rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-[0_30px_70px_rgba(0,0,0,0.25)] border border-slate-100 z-50 flex flex-col md:flex-row h-auto max-h-[90vh] md:min-h-[400px]">
+                 
+                <!-- Left Column: Product Image -->
+                <div class="md:w-5/12 bg-slate-100 relative flex-shrink-0 min-h-[250px] md:min-h-full group">
+                    <template x-if="productModalPhoto">
+                        <img :src="productModalPhoto" :alt="productModalName" class="w-full h-full object-cover absolute inset-0 transition-transform duration-700">
+                    </template>
+                    <template x-if="!productModalPhoto">
+                        <div class="w-full h-full absolute inset-0 flex items-center justify-center text-slate-300 bg-slate-100">
+                            <i class="bi bi-image text-5xl"></i>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Right Column: Product Info -->
+                <div class="md:w-7/12 p-6 sm:p-8 md:p-10 flex flex-col h-full bg-white relative overflow-y-auto">
+                    <!-- Close button -->
+                    <button @click="closeProductModal()" type="button" class="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors z-10">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                    
+                    <div class="pr-8 mb-6">
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 leading-tight mb-4" x-text="productModalName"></h2>
+                        <div class="prose prose-sm sm:prose-base text-slate-600 max-w-none" style="white-space: pre-wrap;" x-text="productModalDesc"></div>
+                    </div>
+                    
+                    <div class="mt-auto pt-6 border-t border-slate-100">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Price Details</p>
+                            <div class="flex items-center flex-wrap gap-3">
+                                <span class="text-2xl sm:text-3xl font-black text-uco-orange-600" x-text="productModalPrice"></span>
+                                <template x-if="productModalLabel">
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600 uppercase tracking-wider" x-text="productModalLabel"></span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
