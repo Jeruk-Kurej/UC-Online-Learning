@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ImageOptimizerService;
+
 use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
@@ -88,6 +90,7 @@ class ServiceController extends Controller
         if ($request->hasFile('photo')) {
             /** @var \Illuminate\Http\UploadedFile $photoFile */
             $photoFile = $request->file('photo');
+            app(ImageOptimizerService::class)->optimizeUploadedFile($photoFile);
             $path = $photoFile->store('services', 'public');
             $validated['photo_url'] = $path;
         }
@@ -140,6 +143,7 @@ class ServiceController extends Controller
             }
             /** @var \Illuminate\Http\UploadedFile $photoFile */
             $photoFile = $request->file('photo');
+            app(ImageOptimizerService::class)->optimizeUploadedFile($photoFile);
             $path = $photoFile->store('services', 'public');
             $validated['photo_url'] = $path;
         }

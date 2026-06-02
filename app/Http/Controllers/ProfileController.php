@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use App\Services\ImageOptimizerService;
 
 /**
  * Class ProfileController
@@ -79,6 +80,7 @@ class ProfileController extends Controller
 
             $file = $request->file('profile_photo');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
+                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
                 /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
                 $publicDisk = Storage::disk('public');
                 $slug = Str::slug($user->name, '_');

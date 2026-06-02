@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\ImageOptimizerService;
 
 /**
  * Class UserController
@@ -277,6 +278,7 @@ class UserController extends Controller
         if ($request->hasFile('profile_photo_url')) {
             $file = $request->file('profile_photo_url');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
+                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
                 $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
                 $userData['profile_photo_url'] = '/storage/'.$path;
             }
@@ -476,6 +478,7 @@ class UserController extends Controller
 
             $file = $request->file('profile_photo_url');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
+                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
                 $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
                 $userData['profile_photo_url'] = '/storage/'.$path;
             }

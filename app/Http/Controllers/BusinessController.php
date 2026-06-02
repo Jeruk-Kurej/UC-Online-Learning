@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Services\ImageOptimizerService;
 
 /**
  * Class BusinessController
@@ -502,6 +503,7 @@ class BusinessController extends Controller
 
             /** @var \Illuminate\Http\UploadedFile $logoFile */
             $logoFile = $request->file('logo');
+            app(ImageOptimizerService::class)->optimizeUploadedFile($logoFile);
             $path = $logoFile->store('logos', 'public');
             $data['logo_url'] = $path;
         }
@@ -577,6 +579,7 @@ class BusinessController extends Controller
         if ($request->hasFile('logo')) {
             /** @var \Illuminate\Http\UploadedFile $logoFile */
             $logoFile = $request->file('logo');
+            app(ImageOptimizerService::class)->optimizeUploadedFile($logoFile);
             $path = $logoFile->store('logos', 'public');
             $data['logo_url'] = $path;
         }
@@ -961,6 +964,7 @@ class BusinessController extends Controller
         if ($request->hasFile('logo_url')) {
             $file = $request->file('logo_url');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
+                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
                 $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
                 $data['logo_url'] = '/storage/'.$path;
             }
@@ -1036,6 +1040,7 @@ class BusinessController extends Controller
             $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
             $file = $request->file('logo_url');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
+                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
                 $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
                 $data['logo_url'] = '/storage/'.$path;
             }
