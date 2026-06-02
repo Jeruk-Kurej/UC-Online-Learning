@@ -14,7 +14,7 @@
             <div class="lg:col-span-2 space-y-8">
                 {{-- Business Main Info --}}
                 <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
-                    <div class="h-64 bg-gray-100 relative">
+                    <div class="h-64 relative">
                         @php 
                             $cover = $business->photos->where('is_primary', true)->first()?->photo_path ?? ($business->photos->first()?->photo_path ?? null);
                             $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
@@ -31,9 +31,9 @@
                         <div class="absolute -bottom-10 left-8">
                             @php $logo = $business->logo_url ? storage_image_url($business->logo_url, 'logo_thumb') : null; @endphp
                             @if($logo)
-                                <img src="{{ $logo }}" class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white object-contain">
+                                <img src="{{ $logo }}" class="w-24 h-24 rounded-sm object-contain">
                             @else
-                                <div class="w-24 h-24 rounded-lg bg-white p-2 shadow-xl border border-white flex items-center justify-center text-gray-300">
+                                <div class="w-24 h-24 rounded-sm flex items-center justify-center text-gray-300">
                                     <i class="bi bi-building text-4xl"></i>
                                 </div>
                             @endif

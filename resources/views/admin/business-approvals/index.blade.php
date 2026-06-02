@@ -39,7 +39,7 @@
                 @foreach($businesses as $b)
                     <div class="group bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-2xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
                         {{-- Cover Image / Logo --}}
-                        <div class="h-48 bg-gray-50 relative overflow-hidden">
+                        <div class="h-48 relative overflow-hidden">
                             @php 
                                 $cover = $b->photos->where('is_primary', true)->first()?->photo_path ?? ($b->photos->first()?->photo_path ?? null);
                                 $coverUrl = $cover ? storage_image_url($cover, 'preview') : null;
@@ -56,7 +56,7 @@
                             <div class="absolute bottom-4 left-4">
                                 @php $logo = $b->logo_url ? storage_image_url($b->logo_url, 'logo_thumb') : null; @endphp
                                 @if($logo)
-                                    <img src="{{ $logo }}" class="w-16 h-16 rounded-xl bg-white p-1.5 shadow-lg border border-white object-contain">
+                                    <img src="{{ $logo }}" class="w-16 h-16 rounded-sm object-contain">
                                 @endif
                             </div>
 

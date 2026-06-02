@@ -35,7 +35,7 @@
             </label>
             <div class="flex flex-col sm:flex-row sm:items-center gap-6">
                 <!-- Photo Previews Area -->
-                <div class="flex items-center gap-4 p-4 bg-gray-50 border border-gray-100 rounded-lg">
+                <div class="flex items-center gap-4 p-4 rounded-sm">
                     <!-- Current Photo -->
                     <div class="flex flex-col items-center gap-2">
                         <span class="text-[10px] font-bold tracking-wider text-gray-400 uppercase">Current Photo</span>
@@ -45,10 +45,10 @@
                                 <img 
                                     src="{{ storage_image_url($profilePhoto, ['width' => 256, 'height' => 256, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto']) }}?t={{ $user->updated_at?->timestamp ?? time() }}" 
                                     alt="Profile Photo" 
-                                    class="w-24 h-24 rounded-full object-contain bg-slate-50 border-4 border-white shadow-sm"
+                                    class="w-24 h-24 rounded-sm object-contain"
                                 />
                             @else
-                                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-uco-orange to-uco-yellow flex items-center justify-center border-4 border-white shadow-sm">
+                                <div class="w-24 h-24 rounded-sm bg-gradient-to-br from-uco-orange to-uco-yellow flex items-center justify-center">
                                     <span class="text-white text-3xl font-bold">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                                 </div>
                             @endif
@@ -69,7 +69,7 @@
                         <div class="flex flex-col items-center gap-2">
                             <span class="text-[10px] font-bold tracking-wider text-uco-orange uppercase">New Photo</span>
                             <div class="relative group">
-                                <img :src="photoPreview" class="w-24 h-24 rounded-full object-contain bg-slate-50 border-4 border-uco-orange/30 shadow-md transition-all duration-300">
+                                <img :src="photoPreview" class="w-24 h-24 rounded-sm object-contain transition-all duration-300">
                                 
                                 <!-- Cancel/Remove Button -->
                                 <button type="button" @click="clearPhoto" 

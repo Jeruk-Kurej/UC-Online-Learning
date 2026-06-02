@@ -3,7 +3,7 @@
         <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
             <a href="{{ $viewType === 'entrepreneur' ? route('businesses.show', $business) : route('intrapreneurs.show', $business) }}" class="block p-6 flex flex-col justify-between h-full">
                 <div class="flex items-start gap-5">
-                    <div class="w-20 h-20 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 group-hover:border-gray-200 transition-colors overflow-hidden flex-shrink-0 shadow-sm">
+                    <div class="w-20 h-20 rounded-sm flex items-center justify-center overflow-hidden flex-shrink-0">
                         @if($business->logo_url)
                             <img src="{{ $business->logo_url }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500">
                         @else
@@ -52,9 +52,9 @@
 
                         @if($business->user)
                             <div class="flex items-center gap-3 min-w-0">
-                                <div class="w-9 h-9 rounded-xl overflow-hidden border border-gray-100 bg-gray-50 flex items-center justify-center flex-shrink-0 shadow-sm">
+                                <div class="w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center flex-shrink-0">
                                     @if($business->user->profile_photo_url)
-                                        <img src="{{ $business->user->profile_photo_url }}" alt="{{ $business->user->name }}" class="w-full h-full object-contain bg-slate-50">
+                                        <img src="{{ $business->user->profile_photo_url }}" alt="{{ $business->user->name }}" class="w-full h-full object-contain">
                                     @else
                                         <span class="text-xs font-black text-gray-300">{{ strtoupper(substr($business->user->name, 0, 1)) }}</span>
                                     @endif

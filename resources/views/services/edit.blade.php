@@ -176,14 +176,13 @@
                         </label>
 
                         {{-- Interactive Hover-to-Change Photo Container --}}
-                        <div class="relative w-48 h-48 rounded-2xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 group cursor-pointer"
+                        <div class="relative w-48 h-48 rounded-sm overflow-hidden border border-gray-200 group cursor-pointer"
                              @click="triggerUpload()">
                             
                             {{-- Display current photo or preview --}}
                             <template x-if="hasPhoto">
-                                <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                    <img :src="previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none transition-transform duration-500 group-hover:scale-105" aria-hidden="true" referrerpolicy="no-referrer">
-                                    <img :src="previewUrl" alt="Service Photo" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                <div class="w-full h-full relative overflow-hidden flex items-center justify-center">
+                                    <img :src="previewUrl" alt="Service Photo" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
                                 </div>
                             </template>
 

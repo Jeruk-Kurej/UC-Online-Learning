@@ -23,9 +23,9 @@
                     {{-- Business / Company name + logo --}}
                     <td class="px-4 py-3 max-w-[220px]">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
                                 @if($b->logo_url)
-                                    <img src="{{ $b->logo_url }}" class="w-full h-full object-contain bg-slate-50">
+                                    <img src="{{ $b->logo_url }}" class="w-full h-full object-contain">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
                                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">
@@ -50,9 +50,9 @@
                                 $ownerPhoto = optional($b->user)->profile_photo_url;
                                 $hasRealPhoto = $ownerPhoto && !str_contains($ownerPhoto, 'ui-avatars.com');
                             @endphp
-                            <div class="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
+                            <div class="w-6 h-6 rounded-sm overflow-hidden flex-shrink-0">
                                 @if($hasRealPhoto)
-                                    <img src="{{ $ownerPhoto }}" class="w-full h-full object-contain bg-slate-50">
+                                    <img src="{{ $ownerPhoto }}" class="w-full h-full object-contain">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black"
                                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">

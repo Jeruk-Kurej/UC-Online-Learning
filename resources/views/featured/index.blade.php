@@ -64,7 +64,7 @@
                                     <div class="space-y-3">
                                         {{-- Compact Showcase Image --}}
                                         <div
-                                            class="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-gray-100 shadow-[0_15px_30px_rgba(0,0,0,0.06)]">
+                                            class="relative aspect-video w-full overflow-hidden rounded-sm">
                                             @php
                                                 $coverImage = $business->products->first()?->photo_url ?? null;
                                             @endphp
@@ -350,7 +350,7 @@
 
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="h-10 w-10 overflow-hidden rounded-full border border-orange-100 bg-gray-50 shadow-sm flex-shrink-0">
+                                            class="h-10 w-10 overflow-hidden rounded-sm flex-shrink-0">
                                             @if ($student->profile_photo_url)
                                                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="h-full w-full" />
                                             @else
@@ -548,9 +548,8 @@
                         <div class="md:w-5/12 bg-slate-900 relative flex-shrink-0 min-h-[220px] md:min-h-full">
                             <!-- Image -->
                             <template x-if="modalPhoto">
-                                <div class="w-full h-full absolute inset-0 overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                    <img :src="modalPhoto" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                    <img :src="modalPhoto" :alt="modalName" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                <div class="w-full h-full absolute inset-0 flex items-center justify-center">
+                                    <img :src="modalPhoto" :alt="modalName" class="max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
                                 </div>
                             </template>
                             <!-- Image Fallback Gradient -->

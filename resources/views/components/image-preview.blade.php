@@ -15,14 +15,14 @@
 
 @php
     $thumbClass = match($shape) {
-        'circle' => 'w-24 h-24 rounded-full object-contain bg-slate-50',
-        'square' => 'w-24 h-24 rounded-xl object-contain bg-slate-50',
-        default  => 'w-full h-full object-contain bg-slate-950/5 rounded-xl',
+        'circle' => 'w-24 h-24 rounded-sm object-contain',
+        'square' => 'w-24 h-24 rounded-sm object-contain',
+        default  => 'w-full h-full object-contain rounded-sm',
     };
     $thumbPlaceholderClass = match($shape) {
-        'circle' => 'w-24 h-24 rounded-full',
-        'square' => 'w-24 h-24 rounded-xl',
-        default  => 'w-full h-full rounded-xl',
+        'circle' => 'w-24 h-24 rounded-sm',
+        'square' => 'w-24 h-24 rounded-sm',
+        default  => 'w-full h-full rounded-sm',
     };
 @endphp
 
@@ -38,9 +38,9 @@
             @if($currentImage)
                 <img src="{{ $currentImage }}"
                      alt="{{ $currentLabel }}"
-                     class="{{ $thumbClass }} border-4 border-gray-200 shadow-md">
+                     class="{{ $thumbClass }}">
             @else
-                <div class="{{ $thumbPlaceholderClass }} border-4 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center shadow-inner">
+                <div class="{{ $thumbPlaceholderClass }} border-2 border-dashed border-gray-300 flex items-center justify-center">
                     <i class="bi bi-image text-gray-400 text-2xl"></i>
                 </div>
             @endif
@@ -58,7 +58,7 @@
                 <img id="{{ $previewId }}-img"
                      src=""
                      alt="{{ $newLabel }}"
-                     class="{{ $thumbClass }} border-4 border-uco-orange-300 shadow-md ring-2 ring-uco-orange-400 ring-offset-2">
+                     class="{{ $thumbClass }}">
                 <span class="absolute -top-2 -right-2 bg-uco-orange-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-lg leading-none">NEW</span>
             </div>
         </div>
@@ -113,7 +113,7 @@
                 <img id="{{ $previewId }}-img"
                      src=""
                      alt="Preview"
-                     class="w-full h-full object-contain bg-slate-950/5">
+                     class="w-full h-full object-contain rounded-sm">
             </div>
 
             {{-- Multiple Gallery Grid --}}

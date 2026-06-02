@@ -102,7 +102,7 @@
                 <div class="bg-white rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.02)] border border-slate-100 p-6 md:p-8 flex flex-col space-y-6">
                     <!-- Profile Photo & Meta Side-by-Side -->
                     <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-                        <div class="relative w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 flex items-center justify-center shadow-sm flex-shrink-0">
+                        <div class="relative w-28 h-28 md:w-32 md:h-32 overflow-hidden flex items-center justify-center flex-shrink-0">
                             <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="size-full">
                                 <x-slot name="fallback">
                                     <span class="text-4xl font-black text-slate-400 select-none">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
@@ -288,7 +288,7 @@
                                 }
                             }" class="relative w-full h-[200px] md:h-[240px] bg-slate-50 rounded-2xl overflow-hidden group">
                                 <!-- Slides -->
-                                <div class="w-full h-full relative bg-slate-100 flex items-center justify-center">
+                                <div class="w-full h-full relative flex items-center justify-center">
                                     @foreach($activitiesUrls as $index => $url)
                                         <div x-show="activeIndex === {{ $index }}"
                                              class="absolute inset-0 w-full h-full z-10"

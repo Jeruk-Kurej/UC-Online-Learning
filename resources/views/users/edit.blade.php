@@ -245,8 +245,8 @@
 
                     <div class="flex items-start gap-5">
                         <!-- Clickable Photo Box -->
-                        <div id="pp-container" style="width: 110px; height: 140px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; cursor: pointer; transition: 0.3s;"
-                             class="group hover:border-blue-500 shadow-sm"
+                        <div id="pp-container" style="width: 110px; height: 140px; border-radius: 4px; overflow: hidden; position: relative; cursor: pointer; transition: 0.3s;"
+                             class="group hover:border-blue-500"
                              onmouseover="this.querySelector('.photo-overlay').style.opacity='1'"
                              onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
                             
@@ -445,19 +445,17 @@
                         <input type="hidden" name="delete_activities_files[]" :value="url">
                     </template>
 
-                    <div class="flex flex-col gap-4">
-                        {{-- Existing Files Grid --}}
+                            <!-- Existing Files Grid -->
                         <div x-show="existingFiles.length > 0" class="w-full">
                             <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Existing Uploaded Documents</p>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 <template x-for="item in existingFiles" :key="item.url">
-                                    <div class="relative group rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-slate-50 transition-all duration-200 hover:shadow-md hover:border-slate-300">
+                                    <div class="relative group rounded-sm overflow-hidden aspect-video flex items-center justify-center transition-all duration-200">
                                         
                                         {{-- Image or PDF Thumbnail Preview --}}
                                         <template x-if="item.previewUrl">
-                                            <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                                <img :src="item.previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                                <img :src="item.previewUrl" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                            <div class="w-full h-full relative overflow-hidden flex items-center justify-center">
+                                                <img :src="item.previewUrl" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
                                             </div>
                                         </template>
 
@@ -473,7 +471,7 @@
                                         </template>
 
                                         {{-- Hover Delete Overlay --}}
-                                        <div x-show="!isDeleted(item.url)" class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center backdrop-blur-[1px]">
+                                        <div x-show="!isDeleted(item.url)" class="absolute inset-0 bg-slate-900/60 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
                                             <button type="button" @click="deleteFile(item.url)" class="w-8 h-8 rounded-lg bg-red-500 text-white hover:bg-red-600 flex items-center justify-center shadow-md transition-colors" title="Delete file">
                                                 <i class="bi bi-trash-fill text-sm"></i>
                                             </button>
@@ -494,7 +492,7 @@
                         </div>
 
                         {{-- New Files Selection Previews --}}
-                        <div x-show="newFiles.length > 0" class="w-full bg-slate-50 rounded-xl border border-slate-200 p-4">
+                        <div x-show="newFiles.length > 0" class="w-full rounded-sm p-4">
                             <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                                 <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1.5">
                                     <i class="bi bi-check2-circle text-green-500 text-sm"></i>
@@ -507,12 +505,11 @@
                             </div>
                             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                 <template x-for="(file, idx) in newFiles" :key="idx">
-                                    <div class="relative rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-white">
+                                    <div class="relative rounded-sm overflow-hidden aspect-video flex items-center justify-center">
                                         
                                         <template x-if="file.preview">
-                                            <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                                <img :src="file.preview" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                                <img :src="file.preview" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                            <div class="w-full h-full relative overflow-hidden flex items-center justify-center">
+                                                <img :src="file.preview" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
                                             </div>
                                         </template>
 

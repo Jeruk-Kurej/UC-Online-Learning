@@ -23,9 +23,9 @@
                     {{-- Name + Avatar --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0 shadow-sm border border-gray-100">
+                            <div class="w-8 h-8 rounded-sm overflow-hidden flex-shrink-0">
                                 @if($hasRealPhoto)
-                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-contain bg-slate-50">
+                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-contain">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
                                          style="background: linear-gradient(135deg, #f7931e, #fdb913);">

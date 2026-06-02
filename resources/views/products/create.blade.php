@@ -173,14 +173,13 @@
                         </label>
                         
                         {{-- Interactive Upload Box --}}
-                        <div class="relative w-48 h-48 rounded-2xl overflow-hidden border-2 border-dashed border-gray-200 hover:border-orange-300 shadow-sm bg-gray-50 group cursor-pointer transition-colors"
+                        <div class="relative w-48 h-48 rounded-sm overflow-hidden border border-gray-200 hover:border-orange-300 group cursor-pointer transition-colors"
                              @click="triggerUpload()">
                             
                             {{-- Display preview if uploaded --}}
                             <template x-if="hasPhoto">
-                                <div class="absolute inset-0 w-full h-full bg-slate-950/5 flex items-center justify-center">
-                                    <img :src="previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                    <img :src="previewUrl" class="relative z-10 max-w-full max-h-full object-contain" alt="Preview Product Photo" referrerpolicy="no-referrer">
+                                <div class="absolute inset-0 w-full h-full flex items-center justify-center">
+                                    <img :src="previewUrl" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" alt="Preview Product Photo" referrerpolicy="no-referrer">
                                 </div>
                             </template>
 

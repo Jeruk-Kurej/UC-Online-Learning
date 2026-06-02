@@ -29,10 +29,10 @@
                     @if ($company->logo_url)
                         <img src="{{ storage_image_url($company->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                             alt="{{ $company->name }} Logo" loading="lazy"
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg object-contain border border-soft-gray-100 shadow-sm bg-white p-0.5">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-sm object-contain">
                     @else
                         <div
-                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-lg bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 border border-soft-gray-100 flex items-center justify-center shadow-sm">
+                            class="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0 rounded-sm bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 flex items-center justify-center">
                             <i class="bi bi-building text-2xl sm:text-3xl text-soft-gray-300"></i>
                         </div>
                     @endif
@@ -249,7 +249,7 @@
 
                         {{-- Header: Avatar & Name --}}
                         <div class="flex items-center gap-5 relative z-10 pointer-events-none">
-                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 bg-gray-50 flex items-center justify-center">
+                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-sm overflow-hidden flex-shrink-0 flex items-center justify-center">
                                 @if ($studentPhotoUrl)
                                     <x-premium-image :src="$studentPhotoUrl" :alt="$student->name" class="w-full h-full" />
                                 @else

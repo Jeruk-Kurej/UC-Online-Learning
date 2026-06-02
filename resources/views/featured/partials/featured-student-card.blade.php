@@ -11,7 +11,7 @@
 >
     <div>
         <div class="flex items-start gap-5">
-            <div class="h-24 w-24 overflow-hidden rounded-[1.5rem] border {{ $isIntra ? 'border-blue-100' : 'border-orange-100' }} bg-gray-50 shadow-sm flex-shrink-0 transition-transform duration-500 group-hover:scale-105">
+            <div class="h-24 w-24 overflow-hidden rounded-sm flex-shrink-0 transition-transform duration-500 group-hover:scale-105">
                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="size-full">
                     <x-slot name="fallback">
                         <div class="flex h-full w-full items-center justify-center bg-gradient-to-br {{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} font-black text-3xl">

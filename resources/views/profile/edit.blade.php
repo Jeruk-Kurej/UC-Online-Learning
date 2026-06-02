@@ -24,7 +24,7 @@
                             photoDeleted: false,
                             newPhotoSelected: false
                         }" class="flex flex-col items-center">
-                            <div id="photo-container" style="width: 140px; height: 180px; border-radius: 10px; overflow: hidden; position: relative; background: #f8fafc; border: 1.5px solid #e2e8f0; margin-bottom: 12px; cursor: pointer; transition: 0.3s;" 
+                            <div id="photo-container" style="width: 140px; height: 180px; border-radius: 4px; overflow: hidden; position: relative; margin-bottom: 12px; cursor: pointer; transition: 0.3s;" 
                                  onmouseover="this.querySelector('.photo-overlay').style.opacity='1'" 
                                  onmouseout="this.querySelector('.photo-overlay').style.opacity='0'">
                                 
@@ -258,13 +258,12 @@
                                         <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">Existing Uploaded Documents</p>
                                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                             <template x-for="item in existingFiles" :key="item.url">
-                                                <div class="relative group rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-slate-50 transition-all duration-200 hover:shadow-md hover:border-slate-300">
+                                                <div class="relative group rounded-sm overflow-hidden aspect-video flex items-center justify-center transition-all duration-200">
                                                     
                                                     {{-- Image or PDF Thumbnail Preview --}}
                                                     <template x-if="item.previewUrl">
-                                                        <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                                            <img :src="item.previewUrl" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                                            <img :src="item.previewUrl" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
+                                                        <div class="w-full h-full relative overflow-hidden flex items-center justify-center">
+                                                            <img :src="item.previewUrl" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
                                                         </div>
                                                     </template>
 
@@ -301,7 +300,7 @@
                                     </div>
 
                                     {{-- New Files Selection Previews --}}
-                                    <div x-show="newFiles.length > 0" class="w-full bg-slate-50/50 rounded-xl border border-slate-200 p-4">
+                                    <div x-show="newFiles.length > 0" class="w-full rounded-sm p-4">
                                         <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-200">
                                             <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1.5">
                                                 <i class="bi bi-check2-circle text-green-500 text-sm"></i>
@@ -314,15 +313,14 @@
                                         </div>
                                         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                                             <template x-for="(file, idx) in newFiles" :key="idx">
-                                                <div class="relative rounded-xl border border-slate-200 overflow-hidden shadow-sm aspect-video flex items-center justify-center bg-white">
-                                                    
-                                                    {{-- Image Preview --}}
-                                                    <template x-if="file.preview">
-                                                        <div class="w-full h-full relative overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                                            <img :src="file.preview" class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none" aria-hidden="true" referrerpolicy="no-referrer">
-                                                            <img :src="file.preview" class="relative z-10 max-w-full max-h-full object-contain" referrerpolicy="no-referrer">
-                                                        </div>
-                                                    </template>
+                                                <div class="relative rounded-sm overflow-hidden aspect-video flex items-center justify-center">
+                                                     
+                                                     {{-- Image Preview --}}
+                                                     <template x-if="file.preview">
+                                                         <div class="w-full h-full relative overflow-hidden flex items-center justify-center">
+                                                             <img :src="file.preview" class="relative z-10 max-w-full max-h-full object-contain rounded-sm" referrerpolicy="no-referrer">
+                                                         </div>
+                                                     </template>
 
                                                     {{-- PDF Preview --}}
                                                     <template x-if="!file.preview">

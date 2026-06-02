@@ -53,9 +53,9 @@
                     {{-- Left: Avatar --}}
                     <div class="flex-shrink-0">
                         @if ($isRealPhoto)
-                            <x-premium-image :src="$resolvedPhotoUrl" :alt="$owner->name" class="w-20 h-20 rounded-2xl shadow-md border-2 border-gray-100" />
+                            <x-premium-image :src="$resolvedPhotoUrl" :alt="$owner->name" class="w-20 h-20 rounded-sm" />
                         @else
-                            <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-md border-2 border-orange-100"
+                            <div class="w-20 h-20 rounded-sm flex items-center justify-center"
                                 style="background: linear-gradient(135deg, #f7931e, #fdb913);">
                                 <span class="text-white text-3xl font-black select-none" style="text-shadow: 0 2px 8px rgba(0,0,0,0.15);">
                                     {{ strtoupper(substr($owner->name, 0, 1)) }}

@@ -35,9 +35,9 @@
                     @csrf
 
                     <div class="flex items-center gap-3 rounded-xl border border-soft-gray-200 bg-soft-gray-50 p-3.5">
-                        <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-uco-orange-100 text-sm font-bold text-uco-orange-700">
+                        <div class="flex h-9 w-9 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm bg-uco-orange-100 text-sm font-bold text-uco-orange-700">
                             @if(auth()->user()->profile_photo_url)
-                                <img src="{{ storage_image_url(auth()->user()->profile_photo_url, 'profile_thumb') }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-contain bg-slate-50">
+                                <img src="{{ storage_image_url(auth()->user()->profile_photo_url, 'profile_thumb') }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-contain">
                             @else
                                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                             @endif
@@ -130,9 +130,9 @@
                     <article class="rounded-lg border border-soft-gray-200 bg-white p-5 shadow-sm transition duration-300 hover:-translate-y-0.5 hover:border-uco-orange-200 hover:shadow-md reveal-on-scroll">
                         <div class="flex flex-wrap items-start justify-between gap-3">
                             <div class="flex items-center gap-3">
-                                <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-uco-orange-100 text-sm font-bold text-uco-orange-700">
+                                <div class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-sm bg-uco-orange-100 text-sm font-bold text-uco-orange-700">
                                     @if($testimony->profile_photo_url)
-                                        <img src="{{ storage_image_url($testimony->profile_photo_url, 'profile_thumb') }}" alt="{{ $testimony->name }}" class="h-full w-full object-contain bg-slate-50">
+                                        <img src="{{ storage_image_url($testimony->profile_photo_url, 'profile_thumb') }}" alt="{{ $testimony->name }}" class="h-full w-full object-contain">
                                     @else
                                         {{ strtoupper(substr($testimony->name, 0, 1)) }}
                                     @endif

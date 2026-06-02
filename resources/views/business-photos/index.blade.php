@@ -103,18 +103,13 @@
                                 {{-- Photo Display --}}
                                 <div class="relative group">
                                     @if($photoUrl)
-                                        <div class="relative w-full h-52 overflow-hidden bg-slate-950/5 flex items-center justify-center">
-                                            <!-- Blurred Background -->
-                                            <img src="{{ storage_image_url($photoUrl, 'lqip') }}"
-                                                 data-src="{{ storage_image_url($photoUrl, 'gallery_full') }}"
-                                                 class="absolute inset-0 w-full h-full object-cover blur-xl opacity-40 scale-110 pointer-events-none transition duration-300 ease-out"
-                                                 aria-hidden="true" referrerpolicy="no-referrer">
+                                        <div class="relative w-full h-52 overflow-hidden flex items-center justify-center">
                                             <!-- Foreground Image -->
                                             <img src="{{ storage_image_url($photoUrl, 'lqip') }}"
                                                  data-src="{{ storage_image_url($photoUrl, 'gallery_full') }}"
                                                  alt="{{ $business->name }} photo"
                                                  loading="lazy"
-                                                 class="relative z-10 max-w-full max-h-full object-contain blur-lg transition duration-300 ease-out"
+                                                 class="relative z-10 max-w-full max-h-full object-contain blur-lg rounded-sm transition duration-300 ease-out"
                                                  referrerpolicy="no-referrer">
                                         </div>
                                     @else
