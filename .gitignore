@@ -67,3 +67,4 @@ scratch_test_cloudinary_uri.php
 .agent/skills/ui-ux-pro-max/data/icons.csv
 .agent/skills/ui-ux-pro-max/data/colors.csv
 .agent/skills/ui-ux-pro-max/data/charts.csv
+*.pyc

@@ -64,7 +64,7 @@
                                     <div class="space-y-3">
                                         {{-- Compact Showcase Image --}}
                                         <div
-                                            class="relative aspect-video w-full overflow-hidden rounded-sm">
+                                            class="relative aspect-video w-full overflow-hidden rounded-sm bg-white border border-gray-100 shadow-sm">
                                             @php
                                                 $coverImage = $business->products->first()?->photo_url ?? null;
                                             @endphp
