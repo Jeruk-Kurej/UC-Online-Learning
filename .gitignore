@@ -37,6 +37,7 @@ scratch_test_guzzle.php
 scratch_test_cookie.php
 scratch_test_cloudinary_uri.php
 *.md
+!README.md
 .agent/skills/ui-ux-pro-max/scripts/search.py
 .agent/skills/ui-ux-pro-max/scripts/design_system.py
 .agent/skills/ui-ux-pro-max/scripts/core.py
