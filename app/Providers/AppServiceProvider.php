@@ -38,5 +38,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('showcase', function (Request $request) {
             return Limit::perMinute(60)->by($request->ip() ?: '127.0.0.1');
         });
+
+        // ✅ Register background image uploads rate limiter
+        RateLimiter::for('image-uploads', function (object $job) {
+            return Limit::perMinute(30);
+        });
     }
 }

@@ -34,6 +34,16 @@ class UploadImageToCloudinaryJob implements ShouldQueue
     }
 
     /**
+     * Get the middleware the job should pass through.
+     *
+     * @return array<int, object>
+     */
+    public function middleware(): array
+    {
+        return [new \Illuminate\Queue\Middleware\RateLimited('image-uploads')];
+    }
+
+    /**
      * Execute the job.
      */
     public function handle(): void
@@ -50,13 +60,17 @@ class UploadImageToCloudinaryJob implements ShouldQueue
         try {
             Log::info("[UploadImageToCloudinaryJob] Starting async download: {$url} for model " . get_class($this->model) . " (ID: {$this->model->id})");
 
+            // Rate-limit safeguard to avoid hammering external servers during concurrent imports
+            usleep(random_int(100000, 300000));
+
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, (string)$url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
             
             $curlHeaders = [
                 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -87,7 +101,8 @@ class UploadImageToCloudinaryJob implements ShouldQueue
                 curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                 curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
                 $contents = curl_exec($ch);
                 $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);

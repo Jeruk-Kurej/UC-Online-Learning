@@ -493,13 +493,13 @@ class BusinessController extends Controller
 
         // Handle logo deletion
         if ($request->boolean('delete_logo')) {
-            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+            $business->deleteFileFromStorage($business->getRawOriginal('logo_url'));
             $data['logo_url'] = null;
         }
 
         // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
-            $this->deleteFileFromStorage($business->getRawOriginal('logo_url'));
+            $business->deleteFileFromStorage($business->getRawOriginal('logo_url'));
 
             /** @var \Illuminate\Http\UploadedFile $logoFile */
             $logoFile = $request->file('logo');
@@ -810,44 +810,7 @@ class BusinessController extends Controller
 
 
 
-    /**
-     * Safely delete a file from local public storage or Cloudinary.
-     */
-    private function deleteFileFromStorage(?string $pathOrUrl): void
-    {
-        if (! $pathOrUrl) {
-            return;
-        }
 
-        // Handle Cloudinary URL
-        if (str_contains($pathOrUrl, 'cloudinary.com')) {
-            try {
-                Business::deleteCloudinaryImage($pathOrUrl);
-            } catch (\Throwable $e) {
-                // silently swallow
-            }
-
-            return;
-        }
-
-        // Normalize local storage path
-        $relativePath = $pathOrUrl;
-        if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
-            $relativePath = parse_url($relativePath, PHP_URL_PATH);
-        }
-
-        if (str_starts_with($relativePath, '/storage/')) {
-            $relativePath = substr($relativePath, strlen('/storage/'));
-        } elseif (str_starts_with($relativePath, 'storage/')) {
-            $relativePath = substr($relativePath, strlen('storage/'));
-        }
-
-        $relativePath = ltrim($relativePath, '/');
-
-        if (Storage::disk('public')->exists($relativePath)) {
-            Storage::disk('public')->delete($relativePath);
-        }
-    }
 
     /**
      * Show form to create a company work profile (Intrapreneur).
@@ -952,13 +915,13 @@ class BusinessController extends Controller
 
         // Handle logo deletion
         if ($request->boolean('delete_logo')) {
-            $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
+            $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
             $data['logo_url'] = null;
         }
 
         // Handle file uploads (Logo)
         if ($request->hasFile('logo_url')) {
-            $this->deleteFileFromStorage($company->getRawOriginal('logo_url'));
+            $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
             $file = $request->file('logo_url');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
                 app(ImageOptimizerService::class)->optimizeUploadedFile($file);

@@ -70,13 +70,13 @@ class ProfileController extends Controller
 
         // Handle profile photo deletion
         if ($request->boolean('delete_profile_photo')) {
-            $this->deleteFileFromStorage($user->profile_photo_url);
+            $user->deleteFileFromStorage($user->profile_photo_url);
             $user->profile_photo_url = null;
         }
 
         if ($request->hasFile('profile_photo')) {
             // Delete old file if exists
-            $this->deleteFileFromStorage($user->profile_photo_url);
+            $user->deleteFileFromStorage($user->profile_photo_url);
 
             $file = $request->file('profile_photo');
             if ($file instanceof \Illuminate\Http\UploadedFile) {
@@ -102,7 +102,7 @@ class ProfileController extends Controller
             $toDelete = (array) $request->input('delete_activities_files');
             foreach ($toDelete as $urlToDelete) {
                 if (($key = array_search($urlToDelete, $existingUrls)) !== false) {
-                    $this->deleteFileFromStorage($urlToDelete);
+                    $user->deleteFileFromStorage($urlToDelete);
                     unset($existingUrls[$key]);
                 }
             }
@@ -138,46 +138,7 @@ class ProfileController extends Controller
         return Redirect::route('profile.edit')->with('success', 'Profile updated!');
     }
 
-    /**
-     * Safely delete a file from local public storage or Cloudinary.
-     *
-     * @param  string|null  $pathOrUrl  Relative storage path or external URL
-     */
-    private function deleteFileFromStorage(?string $pathOrUrl): void
-    {
-        if (! $pathOrUrl) {
-            return;
-        }
 
-        // Handle Cloudinary URL
-        if (str_contains($pathOrUrl, 'cloudinary.com')) {
-            try {
-                User::deleteCloudinaryImage($pathOrUrl);
-            } catch (\Throwable $e) {
-                // silently swallow
-            }
-
-            return;
-        }
-
-        // Normalize local storage path
-        $relativePath = $pathOrUrl;
-        if (str_starts_with($relativePath, 'http://') || str_starts_with($relativePath, 'https://')) {
-            $relativePath = (string) (parse_url($relativePath, PHP_URL_PATH) ?? $relativePath);
-        }
-
-        if (str_starts_with($relativePath, '/storage/')) {
-            $relativePath = substr($relativePath, strlen('/storage/'));
-        } elseif (str_starts_with($relativePath, 'storage/')) {
-            $relativePath = substr($relativePath, strlen('storage/'));
-        }
-
-        $relativePath = ltrim($relativePath, '/');
-
-        if (Storage::disk('public')->exists($relativePath)) {
-            Storage::disk('public')->delete($relativePath);
-        }
-    }
 
     /**
      * Delete the user's account.
