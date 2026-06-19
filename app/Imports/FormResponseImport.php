@@ -222,7 +222,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'graduate_year'     => $graduateYear,
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
-                'profile_photo_url' => $this->uploadToCloudinary($this->col($row, 'professional_profile_photo'), 'users', $fullName),
+                'profile_photo_url' => $this->col($row, 'professional_profile_photo'),
                 'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
                 'expertise_certification_url' => $this->col($row, 'expertise_certification'),
                 'student_status'    => $studentStatus,
@@ -243,6 +243,12 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'email'    => $email,
                     'password' => Hash::make('password123'),
                 ]));
+            }
+
+            // Dispatch background job for profile photo
+            $rawProfilePhoto = $this->col($row, 'professional_profile_photo');
+            if ($rawProfilePhoto && !str_contains($rawProfilePhoto, 'cloudinary.com')) {
+                \App\Jobs\UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhoto, 'users', $fullName);
             }
 
             // Auto-approve imported testimonies (Bypass Gemini to avoid hitting rate limits on bulk imports)
@@ -287,6 +293,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     }
                 }
 
+                $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
+
                 $businessData = [
                     'category_id'             => $categoryId,
                     'position'                => $this->col($row, 'entrepreneur_position'),
@@ -309,7 +317,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'revenue_range'           => $this->col($row, 'revenue_range_per_year'),
                     'academic_heritage'       => $this->col($row, 'academic_heritage'),
                     'company_profile_url'     => $this->col($row, 'company_profile'),
-                    'logo_url'                => $this->uploadToCloudinary($this->col($row, 'businesscompany_logo', 'business_company_logo'), 'businesses', $businessName),
+                    'logo_url'                => $rawLogoUrl,
                     'business_scale'          => $this->col($row, 'business_scale'),
                     'business_legality'       => $this->col($row, 'business_legality'),
                     'product_legality'        => $this->col($row, 'product_legality'),
@@ -333,6 +341,11 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                         'user_id' => $user->id,
                         'name'    => $businessName,
                     ]));
+                }
+
+                // Dispatch background job for logo upload
+                if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
+                    \App\Jobs\UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
                 }
 
                 // Sync pivot: this user is a member of this business
@@ -392,6 +405,8 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     }
                 }
 
+                $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
+
                 $companyData = [
                     'category_id'          => $industryCatId,
                     'position'             => $this->col($row, 'intrapreneur_position'),
@@ -400,7 +415,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'year_started_working' => $this->col($row, 'year_started_working'),
                     'achievement'          => $this->col($row, 'achievement'),
                     'company_scale'        => $this->col($row, 'company_scale'),
-                    'logo_url'             => $this->uploadToCloudinary($this->col($row, 'businesscompany_logo', 'business_company_logo'), 'companies', $companyName),
+                    'logo_url'             => $rawLogoUrl,
                     'is_visible'           => true,
                 ];
 
@@ -411,10 +426,15 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 if ($company) {
                     $company->update(array_merge($companyData, ['name' => $companyName]));
                 } else {
-                    Company::create(array_merge($companyData, [
+                    $company = Company::create(array_merge($companyData, [
                         'user_id' => $user->id,
                         'name'    => $companyName,
                     ]));
+                }
+
+                // Dispatch background job for company logo
+                if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
+                    \App\Jobs\UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
                 }
             }
 
@@ -463,15 +483,21 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         foreach ($productSlots as $order => $slot) {
             if (empty($slot['name'])) continue;
 
-            Product::create([
+            $rawPhotoUrl = $slot['photo'];
+
+            $product = Product::create([
                 'business_id' => $business->id,
                 'type'        => $productType,
                 'name'        => $slot['name'],
                 'description' => $slot['desc'],
                 'price'       => $slot['price'],
-                'photo_url'   => $this->uploadToCloudinary($slot['photo'], 'products', $slot['name']),
+                'photo_url'   => $rawPhotoUrl,
                 'sort_order'  => $order,
             ]);
+
+            if ($rawPhotoUrl && !str_contains($rawPhotoUrl, 'cloudinary.com')) {
+                \App\Jobs\UploadImageToCloudinaryJob::dispatch($product, 'photo_url', $rawPhotoUrl, 'products', $slot['name']);
+            }
         }
     }
 

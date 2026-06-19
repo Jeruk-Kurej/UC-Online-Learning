@@ -172,8 +172,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             };
 
             // ── Upsert User ──
-            // Upload profile photo to Cloudinary if it's an employee URL
-            $profilePhotoUrl = $this->uploadToCloudinary($cell(49), 'users', $nis ?? $loginEmail);
+            $rawProfilePhotoUrl = $cell(49);
 
             $userData = array_filter([
                 'name'               => $studentName,
@@ -185,7 +184,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
                 'major'              => $major,
                 'student_status'     => $studentStatus,
                 'year_of_enrollment' => $studentYear,
-                'profile_photo_url'  => $profilePhotoUrl,
+                'profile_photo_url'  => $rawProfilePhotoUrl,
                 'email_verified_at'  => now(),
                 'is_visible'         => true,
             ], fn($v) => $v !== null);
@@ -198,6 +197,11 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
                     'email'    => $loginEmail,
                     'password' => Hash::make('password123'),
                 ]));
+            }
+
+            // Dispatch background job to download and upload to Cloudinary asynchronously
+            if ($rawProfilePhotoUrl && !str_contains($rawProfilePhotoUrl, 'cloudinary.com')) {
+                \App\Jobs\UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhotoUrl, 'users', $nis ?? $loginEmail);
             }
 
             // ── RIGHT SIDE: business/company data ──
@@ -243,14 +247,14 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             }
         }
 
-        $logoUrl = $this->uploadToCloudinary($cell(43), 'companies', $companyName);
+        $rawLogoUrl = $cell(43);
 
         $data = array_filter([
             'category_id'          => $categoryId,
             'position'             => $cell(23),
             'job_description'      => $cell(25),
             'year_started_working' => $cell(24),
-            'logo_url'             => $logoUrl,
+            'logo_url'             => $rawLogoUrl,
             'is_visible'           => true,
         ], fn($v) => $v !== null);
 
@@ -260,7 +264,11 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         if ($company) {
             $company->update(array_merge($data, ['name' => $companyName]));
         } else {
-            Company::create(array_merge($data, ['user_id' => $user->id, 'name' => $companyName]));
+            $company = Company::create(array_merge($data, ['user_id' => $user->id, 'name' => $companyName]));
+        }
+
+        if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
+            \App\Jobs\UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
         }
     }
 
@@ -278,7 +286,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             }
         }
 
-        $logoUrl = $this->uploadToCloudinary($cell(43), 'businesses', $bizName);
+        $rawLogoUrl = $cell(43);
 
         $data = array_filter([
             'category_id'       => $categoryId,
@@ -292,7 +300,7 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             'business_legality' => $cell(35),
             'product_legality'  => $cell(36),
             'academic_heritage' => $cell(10) ? 'Join UC Online ' . $cell(10) : null,
-            'logo_url'          => $logoUrl,
+            'logo_url'          => $rawLogoUrl,
             'type'              => 'entrepreneur',
             'approval_status'   => 'approved',
             'is_visible'        => true,
@@ -308,6 +316,10 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
                 'user_id' => $user->id,
                 'name'    => $bizName,
             ]));
+        }
+
+        if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
+            \App\Jobs\UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $bizName);
         }
 
         // Pivot: link this user as member

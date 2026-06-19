@@ -170,6 +170,23 @@ class User extends Authenticatable
         return trim(strip_tags($cleaned));
     }
 
+    public function getActivitiesDocUrlAttribute($value)
+    {
+        if (empty($value)) {
+            return [];
+        }
+        $decoded = json_decode($value, true);
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            return $decoded;
+        }
+        return array_filter(array_map('trim', preg_split('/[;,]+/', $value)));
+    }
+
+    public function setActivitiesDocUrlAttribute($value)
+    {
+        $this->attributes['activities_doc_url'] = is_array($value) ? json_encode(array_values($value)) : $value;
+    }
+
     // ─── Relationships ───
 
     public function businesses()

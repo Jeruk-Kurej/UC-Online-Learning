@@ -473,10 +473,7 @@ class UserController extends Controller
         }
 
         // Handle activities files deletion and uploading
-        $existingUrls = [];
-        if ($user->activities_doc_url) {
-            $existingUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
-        }
+        $existingUrls = $user->activities_doc_url ?? [];
 
         // Delete flagged URLs
         if ($request->has('delete_activities_files')) {
@@ -503,8 +500,7 @@ class UserController extends Controller
             }
         }
 
-        $finalUrls = array_merge($existingUrls, $newUrls);
-        $userData['activities_doc_url'] = count($finalUrls) > 0 ? implode(';', $finalUrls) : null;
+        $userData['activities_doc_url'] = array_merge($existingUrls, $newUrls);
 
         // Update the user
         $user->fill($userData);
