@@ -338,30 +338,18 @@ class UserController extends Controller
      */
     public function proxyGoogleDriveImage($id)
     {
-        $url = 'https://drive.google.com/uc?export=view&id='.$id;
+        $url = 'https://drive.google.com/uc?export=view&id=' . $id;
 
-        $ch = curl_init();
-        if ($ch === false) {
+        $response = \Illuminate\Support\Facades\Http::withHeaders([
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+        ])->get($url);
+
+        if ($response->failed() || !$response->body()) {
             return redirect($url);
         }
 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36');
-
-        $data = curl_exec($ch);
-        $contentType = (string) curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-        $httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        if ($httpCode !== 200 || ! $data) {
-            return redirect($url);
-        }
-
-        return response($data)
-            ->header('Content-Type', $contentType)
+        return response($response->body())
+            ->header('Content-Type', $response->header('Content-Type'))
             ->header('Cache-Control', 'public, max-age=86400');
     }
 
@@ -658,7 +646,7 @@ class UserController extends Controller
             $path = $file->store('imports', 'local');
 
             // Peek at the file to auto-detect format
-            $importer = $this->detectImporter((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
+            $importer = \App\Factories\ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
 
             // Queue it — runs in background via artisan queue:work
             Excel::queueImport($importer, (string) $path, 'local');
@@ -693,83 +681,7 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Peek at the raw file to determine which importer to use.
-     * Replicated from BusinessController for consistency.
-     */
-    private function detectImporter(string $path, string $importId, string $originalName = '')
-    {
-        $ext = strtolower(pathinfo($originalName ?: $path, PATHINFO_EXTENSION));
 
-        // Auto-detect importType based on CSV content first (most robust)
-        $detectedType = null;
-        if ($ext === 'csv' && file_exists($path)) {
-            $handle = fopen($path, 'r');
-            if ($handle) {
-                $headers = fgetcsv($handle);
-                if ($headers) {
-                    // Normalize headers: lowercase and remove spaces, underscores, and question marks
-                    $normHeaders = array_map(function($h) {
-                        return strtolower(trim(str_replace([' ', '_', '?'], '', $h)));
-                    }, $headers);
-
-                    $selectedIdx = array_search('selected', $normHeaders);
-                    $categoryIdx = array_search('category', $normHeaders);
-
-                    if ($selectedIdx !== false && $categoryIdx !== false) {
-                        while (($row = fgetcsv($handle)) !== false) {
-                            $selectedVal = strtolower(trim($row[$selectedIdx] ?? ''));
-                            $categoryVal = strtolower(trim($row[$categoryIdx] ?? ''));
-
-                            // If we find any row where Category is Intrapreneur and Selected is truthy
-                            if (str_contains($categoryVal, 'intrapreneur') && in_array($selectedVal, ['true', '1', 'yes', 'selected', 'y'])) {
-                                $detectedType = 'intrapreneur';
-                                break;
-                            }
-                        }
-                    }
-                }
-                fclose($handle);
-            }
-        }
-
-        // Fall back to filename check if content detection didn't resolve it
-        if (!$detectedType) {
-            $lowerName = strtolower($originalName ?: basename($path));
-            if (str_contains($lowerName, 'intrapreneur')) {
-                $detectedType = 'intrapreneur';
-            } elseif (str_contains($lowerName, 'entrepreneur')) {
-                $detectedType = 'entrepreneur';
-            } else {
-                $detectedType = 'entrepreneur'; // default fallback
-            }
-        }
-
-        if (in_array($ext, ['xlsx', 'xls'])) {
-            if (stripos($originalName, 'UCO') !== false || stripos($originalName, 'Student') !== false) {
-                return new UCOStudentImport($importId);
-            }
-            $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.xlsx' : 'entrepreneur.xlsx';
-            return new FormResponseImport($importId, $constructedName);
-        }
-
-        // For CSV/Raw: read first 2KB and search for markers
-        $handle = fopen($path, 'r');
-        if (! $handle) {
-            $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.csv' : 'entrepreneur.csv';
-            return new FormResponseImport($importId, $constructedName);
-        }
-        $peek = fread($handle, 2048);
-        fclose($handle);
-
-        // UCO Student format markers: "NIS" AND "Sub Prodi"
-        if (stripos($peek, 'NIS') !== false && stripos($peek, 'Sub Prodi') !== false) {
-            return new UCOStudentImport($importId);
-        }
-
-        $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.csv' : 'entrepreneur.csv';
-        return new FormResponseImport($importId, $constructedName);
-    }
 
     /**
      * Download Excel template for user import.

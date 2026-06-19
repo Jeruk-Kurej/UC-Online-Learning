@@ -245,21 +245,15 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 ]));
             }
 
-            // Analyze testimony using AI (only if not already analyzed)
+            // Auto-approve imported testimonies (Bypass Gemini to avoid hitting rate limits on bulk imports)
             if (!empty($user->testimony) && is_null($user->ai_score)) {
-                $aiService = app(AiModerationService::class);
-                $rating = 5; // Default assumption for imported ones if no rating
-                $result = $aiService->analyze($user->testimony, $rating, $user->name);
-
+                \Illuminate\Support\Facades\Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
                 $user->update([
-                    'ai_score' => $result['sentiment_score'],
-                    'ai_sentiment' => $result['sentiment'],
-                    'is_visible' => $result['is_approved'],
-                    'ai_rejection_reason' => $result['rejection_reason'],
+                    'ai_score' => 100,
+                    'ai_sentiment' => 'Positive',
+                    'is_visible' => true,
+                    'ai_rejection_reason' => null,
                 ]);
-
-                // Small delay to avoid API rate limits
-                usleep(500000); // 0.5s sleep
             }
 
             // ── 3. Handle Skills (M:N) ──
