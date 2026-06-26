@@ -7,13 +7,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
 class MigrateUserDocsToStorage extends Command
 {
     protected $signature = 'migrate:user-docs {--limit=0} {--user=} {--dry-run}';
-    protected $description = 'Migrate Google Drive links in user activities and certifications to self-hosted WEBP/PDFs on local storage.';
+    protected $description = 'Migrate Google Drive/local links in user activities and certifications to self-hosted WEBP/PDFs on Cloudinary.';
 
     public function handle()
     {
@@ -82,15 +83,40 @@ class MigrateUserDocsToStorage extends Command
         $processedUrls = [];
 
         foreach ($urls as $url) {
-            // Already self-hosted? Keep it.
-            if (str_starts_with($url, '/storage/') || str_contains($url, env('APP_URL'))) {
-                $this->line("  [Skip] Already self-hosted: {$url}");
+            // Already on Cloudinary? Keep it.
+            if (str_contains($url, 'cloudinary.com')) {
+                $this->line("  [Skip] Already on Cloudinary: {$url}");
                 $processedUrls[] = $url;
                 continue;
             }
 
             $downloadUrl = $url;
             $isGoogleDrive = false;
+            $isLocalHost = false;
+
+            // Handle localhost URLs that were already processed
+            if (str_contains($url, '127.0.0.1') || str_contains($url, env('APP_URL'))) {
+                $isLocalHost = true;
+                // e.g. http://127.0.0.1:8000/storage/users/670113/activities/mGlogV9pSIYoK8Knmw1B.webp
+                $path = parse_url($url, PHP_URL_PATH); // /storage/users/...
+                $localPath = str_replace('/storage/', '', $path);
+                $fullLocalPath = storage_path('app/public/' . $localPath);
+                
+                if (file_exists($fullLocalPath)) {
+                    $this->line("  [Local] Reading local file: {$fullLocalPath}");
+                    $contents = file_get_contents($fullLocalPath);
+                    $extension = pathinfo($fullLocalPath, PATHINFO_EXTENSION);
+                    $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'webp', 'gif']);
+                    $isPdf = strtolower($extension) === 'pdf';
+                    
+                    // We already converted these, so we just upload them
+                    $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
+                    file_put_contents($tempFile, $contents);
+                    $resourceType = $isImage || $isPdf ? 'image' : 'raw';
+                    
+                    goto upload_step;
+                }
+            }
 
             if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
                 if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
@@ -146,25 +172,41 @@ class MigrateUserDocsToStorage extends Command
                 $this->line("  [Process] Saved as {$extension}");
             }
 
-            $filename = Str::random(20) . '.' . $extension;
-            $storagePath = "{$folder}/{$filename}";
+            $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
+            file_put_contents($tempFile, $finalContents);
+            $resourceType = $isImage || $isPdf ? 'image' : 'raw';
+
+            upload_step:
 
             if ($dryRun) {
-                $this->info("  [Dry-Run] Would upload {$storagePath}");
+                $this->info("  [Dry-Run] Would upload to Cloudinary {$folder}");
                 $processedUrls[] = $url;
+                if (isset($tempFile) && file_exists($tempFile)) unlink($tempFile);
                 continue;
             }
 
             try {
-                // Save to public disk
-                Storage::disk('public')->put($storagePath, $finalContents);
-                $newUrl = Storage::disk('public')->url($storagePath);
+                $uniqueId = Str::random(10);
+                $uploadResult = Cloudinary::uploadApi()->upload($tempFile, [
+                    'folder' => $folder,
+                    'public_id' => "doc_{$uniqueId}",
+                    'overwrite' => true,
+                    'resource_type' => $resourceType
+                ]);
                 
+                $newUrl = $uploadResult['secure_url'];
                 $processedUrls[] = $newUrl;
                 $this->info("  [Uploaded] {$newUrl}");
+                
+                // Do not delete local file yet to prevent data loss if DB update fails
+                // if (isset($isLocalHost) && $isLocalHost && isset($fullLocalPath) && file_exists($fullLocalPath)) {
+                //     unlink($fullLocalPath);
+                // }
             } catch (\Exception $e) {
-                $this->error("  [Error] Storage upload failed: {$e->getMessage()}");
+                $this->error("  [Error] Cloudinary upload failed: {$e->getMessage()}");
                 $processedUrls[] = $url; // keep original if failed
+            } finally {
+                if (isset($tempFile) && file_exists($tempFile)) unlink($tempFile);
             }
         }
 

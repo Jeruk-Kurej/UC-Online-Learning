@@ -49,6 +49,13 @@
                             $isImage = true;
                         }
                     }
+
+                    // Cloudinary PDF magic: Convert to JPG preview
+                    if ($isPdf && str_contains($certUrl, 'cloudinary.com')) {
+                        $isPdf = false;
+                        $isImage = true;
+                        $previewUrl = preg_replace('/\.pdf$/i', '.jpg', $certUrl);
+                    }
                 }
 
                 $certDetails[] = [
