@@ -256,12 +256,15 @@
                                              style="{{ $index === 0 ? '' : 'display:none;' }}">
                                             
                                             @if($cert['isPdf'])
-                                                <div class="w-full h-full bg-slate-100 relative">
-                                                    <iframe src="{{ $cert['previewUrl'] }}" 
-                                                            class="w-full h-full border-none rounded-2xl" 
-                                                            style="border: none; width: 100%; height: 100%;"
-                                                            loading="lazy"
-                                                            allowfullscreen></iframe>
+                                                <div class="w-full h-full bg-slate-100 flex flex-col items-center justify-center p-6 text-center">
+                                                    <div class="w-20 h-20 bg-white rounded-2xl shadow-sm border border-slate-200/60 flex items-center justify-center mb-4 transition-transform group-hover:-translate-y-1">
+                                                        <i class="bi bi-file-earmark-pdf-fill text-red-500 text-4xl"></i>
+                                                    </div>
+                                                    <h4 class="text-slate-700 font-semibold mb-1">PDF Document</h4>
+                                                    <p class="text-slate-500 text-sm mb-4">Click below to view or download this certification.</p>
+                                                    <a href="{{ $cert['originalUrl'] }}" target="_blank" class="px-5 py-2.5 bg-uco-orange-500 hover:bg-uco-orange-600 text-white text-sm font-medium rounded-xl transition-all shadow-sm">
+                                                        Open PDF
+                                                    </a>
                                                 </div>
                                             @else
                                                 <div @click="lightboxUrl = '{{ $cert['previewUrl'] }}'; showLightbox = true" 
