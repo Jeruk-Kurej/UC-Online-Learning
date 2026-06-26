@@ -99,7 +99,7 @@
                 });
             } catch (e) {
                 console.error("EditorJS initialization failed:", e);
-                alert("Failed to load editor. Check console for details.");
+                alert("Failed to load editor. Error: " + e.message + " | Stack: " + e.stack);
             }
         });
     </script>
