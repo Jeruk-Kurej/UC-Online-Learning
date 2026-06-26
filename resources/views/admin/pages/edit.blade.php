@@ -27,73 +27,80 @@
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
     <script>
-        const editor = new EditorJS({
-            holder: 'editorjs',
-            placeholder: 'Start writing your content here...',
-            tools: {
-                header: {
-                    class: Header,
-                    inlineToolbar: true,
-                    config: {
-                        levels: [2, 3, 4],
-                        defaultLevel: 2
-                    }
-                },
-                list: {
-                    class: List,
-                    inlineToolbar: true,
-                },
-                image: {
-                    class: ImageTool,
-                    config: {
-                        endpoints: {
-                            byFile: '{{ route('pages.upload-image') }}',
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const editor = new EditorJS({
+                    holder: 'editorjs',
+                    placeholder: 'Start writing your content here...',
+                    tools: {
+                        header: {
+                            class: Header,
+                            inlineToolbar: true,
+                            config: {
+                                levels: [2, 3, 4],
+                                defaultLevel: 2
+                            }
                         },
-                        additionalRequestHeaders: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        list: {
+                            class: List,
+                            inlineToolbar: true,
+                        },
+                        image: {
+                            class: ImageTool,
+                            config: {
+                                endpoints: {
+                                    byFile: '{{ route('pages.upload-image') }}',
+                                },
+                                additionalRequestHeaders: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            }
                         }
-                    }
-                }
-            },
-            data: @json(is_string($page->content_json) ? json_decode($page->content_json) : ($page->content_json ?? new stdClass()))
-        });
-
-        document.getElementById('save-btn').addEventListener('click', () => {
-            const btn = document.getElementById('save-btn');
-            const originalText = btn.innerText;
-            btn.innerText = 'Saving...';
-            btn.disabled = true;
-
-            editor.save().then((outputData) => {
-                fetch('{{ route('pages.update', $page->slug) }}', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        'Accept': 'application/json'
                     },
-                    body: JSON.stringify({
-                        title: '{{ $page->title }}',
-                        content_json: outputData
-                    })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    btn.innerText = 'Saved!';
-                    btn.classList.replace('bg-green-500', 'bg-slate-800');
-                    setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.classList.replace('bg-slate-800', 'bg-green-500');
-                        btn.disabled = false;
-                    }, 2000);
-                })
-                .catch(err => {
-                    console.error('Saving failed: ', err);
-                    alert('Error saving data.');
-                    btn.innerText = originalText;
-                    btn.disabled = false;
+                    data: @json(is_string($page->content_json) ? json_decode($page->content_json) : ($page->content_json ?? new stdClass()))
                 });
-            });
+
+                document.getElementById('save-btn').addEventListener('click', () => {
+                    const btn = document.getElementById('save-btn');
+                    const originalText = btn.innerText;
+                    btn.innerText = 'Saving...';
+                    btn.disabled = true;
+
+                    editor.save().then((outputData) => {
+                        fetch('{{ route('pages.update', $page->slug) }}', {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                title: '{{ $page->title }}',
+                                content_json: outputData
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            btn.innerText = 'Saved!';
+                            btn.classList.replace('bg-green-500', 'bg-slate-800');
+                            setTimeout(() => {
+                                btn.innerText = originalText;
+                                btn.classList.replace('bg-slate-800', 'bg-green-500');
+                                btn.disabled = false;
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('Saving failed: ', err);
+                            alert('Error saving data.');
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                        });
+                    });
+                });
+            } catch (e) {
+                console.error("EditorJS initialization failed:", e);
+                alert("Failed to load editor. Check console for details.");
+            }
         });
     </script>
     @endpush
