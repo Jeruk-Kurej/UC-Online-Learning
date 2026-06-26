@@ -55,7 +55,7 @@
                     }
                 }
             },
-            data: {!! $page->content_json ?? '{}' !!}
+            data: @json(is_string($page->content_json) ? json_decode($page->content_json) : ($page->content_json ?? new stdClass()))
         });
 
         document.getElementById('save-btn').addEventListener('click', () => {
