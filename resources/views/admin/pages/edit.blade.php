@@ -34,7 +34,7 @@
                     placeholder: 'Start writing your content here...',
                     tools: {
                         header: {
-                            class: Header,
+                            class: window.Header,
                             inlineToolbar: true,
                             config: {
                                 levels: [2, 3, 4],
@@ -42,11 +42,11 @@
                             }
                         },
                         list: {
-                            class: List,
+                            class: window.NestedList || window.EditorjsList || window.List,
                             inlineToolbar: true,
                         },
                         image: {
-                            class: ImageTool,
+                            class: window.ImageTool || window.SimpleImage,
                             config: {
                                 endpoints: {
                                     byFile: '{{ route('pages.upload-image') }}',
