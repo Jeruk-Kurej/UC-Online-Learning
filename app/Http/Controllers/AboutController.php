@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Models\Page;
 
 /**
  * Class AboutController
@@ -17,6 +18,7 @@ class AboutController extends Controller
      */
     public function __invoke(Request $request): View
     {
-        return view('about');
+        $page = Page::where('slug', 'about')->first();
+        return view('about', compact('page'));
     }
 }

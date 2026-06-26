@@ -21,6 +21,41 @@
                 </p>
             </div>
         </section>
+        {{-- Dynamic CMS Content --}}
+        @if($page && $page->content_json && isset($page->content_json['blocks']))
+        <section class="py-24 bg-white px-6 relative overflow-hidden">
+            <div class="max-w-4xl mx-auto prose prose-lg prose-slate prose-headings:font-black">
+                @foreach($page->content_json['blocks'] as $block)
+                    @if($block['type'] === 'paragraph')
+                        <p>{!! $block['data']['text'] !!}</p>
+                    @elseif($block['type'] === 'header')
+                        <h{{ $block['data']['level'] }}>{!! $block['data']['text'] !!}</h{{ $block['data']['level'] }}>
+                    @elseif($block['type'] === 'list')
+                        @if($block['data']['style'] === 'ordered')
+                            <ol>
+                                @foreach($block['data']['items'] as $item)
+                                    <li>{!! $item !!}</li>
+                                @endforeach
+                            </ol>
+                        @else
+                            <ul>
+                                @foreach($block['data']['items'] as $item)
+                                    <li>{!! $item !!}</li>
+                                @endforeach
+                            </ul>
+                        @endif
+                    @elseif($block['type'] === 'image')
+                        <figure>
+                            <img src="{{ $block['data']['file']['url'] }}" alt="{{ $block['data']['caption'] ?? '' }}" class="rounded-2xl shadow-sm border border-slate-100">
+                            @if(!empty($block['data']['caption']))
+                                <figcaption class="text-center text-sm text-slate-500 mt-2">{!! $block['data']['caption'] !!}</figcaption>
+                            @endif
+                        </figure>
+                    @endif
+                @endforeach
+            </div>
+        </section>
+        @endif
 
         {{-- Core Values --}}
         <section class="py-24 bg-white px-6 relative overflow-hidden">

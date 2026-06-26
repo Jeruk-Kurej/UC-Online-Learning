@@ -11,6 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\CollabController;
+use App\Http\Controllers\Admin\PageController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -101,6 +102,10 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     
     Route::get('/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
     Route::post('/testimonies/{user:id}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');
+
+    Route::get('/pages/{page:slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
+    Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');
+    Route::post('/pages/upload-image', [PageController::class, 'uploadImage'])->name('pages.upload-image');
 });
 
 Route::middleware(['throttle:showcase'])->group(function () {
