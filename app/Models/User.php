@@ -209,6 +209,41 @@ class User extends Authenticatable
         return $this->belongsToMany(Business::class, 'business_user')->withPivot('position')->withTimestamps();
     }
 
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'recipient_id');
+    }
+
+    public function sentCollabs()
+    {
+        return $this->hasMany(Collab::class, 'sender_id');
+    }
+
+    public function receivedCollabs()
+    {
+        return $this->hasMany(Collab::class, 'recipient_id');
+    }
+
+    public function collabStatusWith(?User $user)
+    {
+        if (!$user) {
+            return null;
+        }
+
+        $collab = Collab::where(function ($query) use ($user) {
+            $query->where('sender_id', $this->id)->where('recipient_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)->where('recipient_id', $this->id);
+        })->first();
+
+        return $collab ? $collab->status : null;
+    }
+
     // ─── Helpers ───
 
     public function isAdmin(): bool

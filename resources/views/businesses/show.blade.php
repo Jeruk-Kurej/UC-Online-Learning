@@ -114,14 +114,44 @@
                     </div>
                 </div>
                 @auth
-                    @if ($canManageBusiness)
-                        <a href="{{ route('businesses.edit', $business) }}"
-                            class="btn-uco btn-uco-secondary">
-                            <i class="bi bi-pencil-square"></i>
-                            <span class="hidden sm:inline">Edit Business</span>
-                            <span class="sm:hidden">Edit</span>
-                        </a>
-                    @endif
+                    <div class="flex items-center gap-3">
+                        @if ($canManageBusiness)
+                            <a href="{{ route('businesses.edit', $business) }}"
+                                class="btn-uco btn-uco-secondary">
+                                <i class="bi bi-pencil-square"></i>
+                                <span class="hidden sm:inline">Edit Business</span>
+                                <span class="sm:hidden">Edit</span>
+                            </a>
+                        @endif
+
+                        @if ($business->user_id && Auth::id() !== $business->user_id)
+                            @php
+                                $collabStatus = Auth::user()->collabStatusWith($business->user);
+                            @endphp
+                            @if($collabStatus === 'accepted')
+                                <button disabled class="btn-uco bg-green-50 text-green-700 border border-green-200 cursor-default flex items-center gap-2">
+                                    <i class="bi bi-person-check-fill"></i>
+                                    <span class="hidden sm:inline">Connected with Owner</span>
+                                    <span class="sm:hidden">Connected</span>
+                                </button>
+                            @elseif($collabStatus === 'pending')
+                                <button disabled class="btn-uco bg-orange-50 text-orange-700 border border-orange-200 cursor-default flex items-center gap-2">
+                                    <i class="bi bi-clock-history"></i>
+                                    <span class="hidden sm:inline">Pending Collab</span>
+                                    <span class="sm:hidden">Pending</span>
+                                </button>
+                            @else
+                                <form action="{{ route('collabs.store', $business->user) }}" method="POST" class="inline">
+                                    @csrf
+                                    <button type="submit" class="btn-uco btn-uco-primary flex items-center gap-2 transition hover:scale-105">
+                                        <i class="bi bi-person-plus-fill"></i>
+                                        <span class="hidden sm:inline">Collab with Owner</span>
+                                        <span class="sm:hidden">Collab</span>
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
+                    </div>
                 @endauth
             </div>
         </div>
@@ -1277,7 +1307,7 @@
                 </div>
 
                 {{-- Contacts / WhatsApp --}}
-                @if(($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false)) && ($owner->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $owner->id))))
+                @if(($owner->whatsapp || $owner->email || ($ownerPerso['instagram'] ?? false)) && ($owner->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
                 <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                 <div class="space-y-4 relative z-20">
                     @if($owner->whatsapp)
@@ -1339,7 +1369,7 @@
                 <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                 <div class="px-5 py-2 relative z-20 text-center">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
-                        <i class="bi bi-lock-fill mr-1"></i> Owner contacts hidden
+                        <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
                     </p>
                 </div>
                 @endif

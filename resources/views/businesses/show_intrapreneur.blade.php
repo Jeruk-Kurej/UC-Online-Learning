@@ -282,7 +282,7 @@
                             </div>
 
                             {{-- Contacts --}}
-                            @if($student->whatsapp || $student->email || $student->linkedin)
+                            @if(($student->whatsapp || $student->email || $student->linkedin) && ($student->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
                                 <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                                 <div class="space-y-4 relative z-20">
                                     @if($student->whatsapp)
@@ -329,6 +329,13 @@
                                             <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-indigo-500 transition-colors text-sm"></i>
                                         </a>
                                     @endif
+                                </div>
+                            @elseif($student->whatsapp || $student->email || $student->linkedin)
+                                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
+                                <div class="px-5 py-2 relative z-20 text-center">
+                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
+                                        <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
+                                    </p>
                                 </div>
                             @endif
 

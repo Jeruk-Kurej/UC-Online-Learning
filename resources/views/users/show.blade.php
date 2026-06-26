@@ -8,7 +8,7 @@
             foreach ($rawUrls as $rawUrl) {
                 if (str_contains($rawUrl, 'drive.google.com') || str_contains($rawUrl, 'docs.google.com')) {
                     if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $rawUrl, $matches)) {
-                        $activitiesUrls[] = route('google-drive-image', ['id' => $matches[1]]);
+                        $activitiesUrls[] = "https://drive.google.com/uc?export=view&id=" . $matches[1];
                     } else {
                         $activitiesUrls[] = $rawUrl;
                     }
@@ -122,6 +122,34 @@
                                     </a>
                                 </div>
                             @endif
+
+                            {{-- Collab Button --}}
+                            @if(Auth::check() && Auth::id() !== $user->id)
+                                @php
+                                    $collabStatus = Auth::user()->collabStatusWith($user);
+                                @endphp
+                                <div class="mt-3">
+                                    @if($collabStatus === 'accepted')
+                                        <button disabled class="btn-uco bg-green-50 text-green-700 border border-green-200 cursor-default px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2">
+                                            <i class="bi bi-person-check-fill"></i>
+                                            <span>Connected</span>
+                                        </button>
+                                    @elseif($collabStatus === 'pending')
+                                        <button disabled class="btn-uco bg-orange-50 text-orange-700 border border-orange-200 cursor-default px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2">
+                                            <i class="bi bi-clock-history"></i>
+                                            <span>Pending Collab</span>
+                                        </button>
+                                    @else
+                                        <form action="{{ route('collabs.store', $user) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="btn-uco btn-uco-primary px-4 py-2 rounded-xl font-bold text-sm flex items-center gap-2 transition hover:scale-105">
+                                                <i class="bi bi-person-plus-fill"></i>
+                                                <span>Collab</span>
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
+                            @endif
                         </div>
                     </div>
 
@@ -142,7 +170,7 @@
                     </div>
 
                     <!-- Contact Details Block -->
-                    @if(($user->whatsapp || $user->email) && ($user->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $user->id))))
+                    @if(($user->whatsapp || $user->email || $user->linkedin) && ($user->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
                         <div class="space-y-1.5 pt-4 border-t border-slate-100">
                             @if($user->whatsapp)
                                 <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->whatsapp) }}" target="_blank" 
@@ -168,8 +196,20 @@
                                     </span>
                                 </a>
                             @endif
+                            @if($user->linkedin)
+                                <a href="{{ str_starts_with($user->linkedin, 'http') ? $user->linkedin : 'https://linkedin.com/in/' . $user->linkedin }}" target="_blank" 
+                                   class="flex justify-between items-center text-xs p-2 -mx-2 rounded-xl hover:bg-indigo-50/50 border border-transparent hover:border-indigo-100/50 transition duration-200 group">
+                                    <span class="text-slate-400 font-bold uppercase tracking-wider text-[10px] flex items-center gap-1.5 group-hover:text-indigo-600 transition-colors">
+                                        <i class="bi bi-linkedin text-indigo-600 text-sm"></i>
+                                        LinkedIn
+                                    </span>
+                                    <span class="text-slate-700 font-extrabold break-all ml-2 text-right group-hover:text-indigo-700 transition-colors">
+                                        {{ $user->linkedin }}
+                                    </span>
+                                </a>
+                            @endif
                         </div>
-                    @elseif($user->whatsapp || $user->email)
+                    @elseif($user->whatsapp || $user->email || $user->linkedin)
                         <div class="pt-4 border-t border-slate-100">
                             <div class="px-3 py-2 bg-slate-50 rounded-xl border border-slate-100 text-center">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-relaxed">

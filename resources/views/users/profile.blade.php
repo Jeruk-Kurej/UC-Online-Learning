@@ -110,7 +110,7 @@
                 </div>
 
                 {{-- Contact section --}}
-                @if(($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false)) && ($owner->show_contact_details || (Auth::check() && (Auth::user()->isAdmin() || Auth::id() === $owner->id))))
+                @if(($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false) || $owner->linkedin) && ($owner->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
                     <div class="border-t border-gray-100 mx-5"></div>
                     <div class="px-5 py-4 space-y-1">
                         @if ($owner->whatsapp)
@@ -166,13 +166,29 @@
                                 </div>
                             </div>
                         @endif
+
+                        @if ($owner->linkedin)
+                            <a href="{{ str_starts_with($owner->linkedin, 'http') ? $owner->linkedin : 'https://linkedin.com/in/' . $owner->linkedin }}"
+                                target="_blank"
+                                class="group flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 hover:bg-indigo-50">
+                                <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm flex-shrink-0 transition-all duration-200
+                                            bg-indigo-100 text-indigo-600 group-hover:bg-indigo-500 group-hover:text-white">
+                                    <i class="bi bi-linkedin"></i>
+                                </div>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-[9px] font-black uppercase tracking-[0.12em] leading-none text-gray-400">LinkedIn</p>
+                                    <p class="text-xs font-bold truncate text-gray-700 mt-0.5">{{ $owner->linkedin }}</p>
+                                </div>
+                                <i class="bi bi-arrow-up-right text-[10px] text-gray-300 group-hover:text-indigo-500"></i>
+                            </a>
+                        @endif
                     </div>
-                @elseif($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false))
+                @elseif($owner->whatsapp || ($ownerPerso['instagram'] ?? false) || ($ownerGrad['official_email'] ?? false) || $owner->linkedin)
                     <div class="border-t border-gray-100 mx-5"></div>
                     <div class="px-5 py-4">
                         <div class="px-3 py-2 bg-gray-50 rounded-xl border border-gray-100 text-center">
                             <p class="text-[9px] font-bold text-gray-400 uppercase tracking-wider leading-relaxed">
-                                <i class="bi bi-lock-fill mr-1"></i> Contact details hidden
+                                <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
                             </p>
                         </div>
                     </div>

@@ -339,18 +339,7 @@ class UserController extends Controller
     public function proxyGoogleDriveImage($id)
     {
         $url = 'https://drive.google.com/uc?export=view&id=' . $id;
-
-        $response = \Illuminate\Support\Facades\Http::withHeaders([
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-        ])->get($url);
-
-        if ($response->failed() || !$response->body()) {
-            return redirect($url);
-        }
-
-        return response($response->body())
-            ->header('Content-Type', $response->header('Content-Type'))
-            ->header('Cache-Control', 'public, max-age=86400');
+        return redirect($url);
     }
 
     /**

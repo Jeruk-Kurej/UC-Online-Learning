@@ -113,7 +113,7 @@
                                                 </div>
                                                 <span
                                                     class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[80px]">
-                                                    {{ $business->user->name ?? 'Founder' }}
+                                                    {{ $business->user->full_titled_name ?? 'Founder' }}
                                                 </span>
                                             </div>
                                         </div>
@@ -352,7 +352,7 @@
                                         <div
                                             class="h-10 w-10 overflow-hidden rounded-sm flex-shrink-0">
                                             @if ($student->profile_photo_url)
-                                                <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="h-full w-full" />
+                                                <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="h-full w-full" />
                                             @else
                                                 <div
                                                     class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-uco-orange-500 font-black text-sm">
@@ -362,7 +362,7 @@
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <h4 class="text-sm font-black text-gray-950 truncate leading-tight">
-                                                {{ $student->name }}</h4>
+                                                {{ $student->full_titled_name }}</h4>
                                             <p class="text-xs font-semibold text-gray-500 mt-0.5 truncate">
                                                 {{ $student->major ?? 'General Studies' }}</p>
                                             <p class="text-[10px] font-bold text-gray-400 mt-0.5">Join UC Online
@@ -445,7 +445,7 @@
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,17rem)] sm:w-[calc(50%-0.75rem)] md:w-[calc((100%-3rem)/3)] lg:w-[calc((100%-4.5rem)/4)] flex h-auto">
                             <div class="w-full bg-white border border-gray-200/80 rounded-[20px] overflow-hidden transition-all duration-300 hover:-translate-y-2 flex flex-col relative reveal-on-scroll uco-premium-card uco-premium-card--orange cursor-pointer group"
-                                data-name="{{ $student->name }}"
+                                data-name="{{ $student->full_titled_name }}"
                                 data-status="{{ $student->current_status ?? 'Member' }} at UCO Community"
                                 data-photo="{{ $student->profile_photo_url ?? '' }}"
                                 data-testimony="{{ $student->testimony }}"
@@ -455,7 +455,7 @@
                                 {{-- Top Section: Image & Info --}}
                                 <div class="relative h-[280px] w-full flex-shrink-0">
                                     @if ($student->profile_photo_url)
-                                        <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="w-full h-full" />
+                                        <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="w-full h-full" />
                                     @else
                                         <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
                                             style="background: linear-gradient(135deg, #f7931e, #fdb913);">
@@ -473,7 +473,7 @@
                                         style="position: absolute; bottom: 35px; left: 20px; right: 20px; color: white;">
                                         <h3
                                             style="font-size: 16px; font-weight: 900; margin-bottom: 2px; letter-spacing: -0.5px; line-height: 1.2;">
-                                            {{ $student->name }}</h3>
+                                            {{ $student->full_titled_name }}</h3>
                                         <p
                                             style="color: #cbd5e1; font-size: 10px; font-weight: 600; margin-bottom: 0;">
                                             {{ $student->current_status ?? 'Member' }} at UCO Community

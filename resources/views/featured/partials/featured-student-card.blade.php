@@ -12,7 +12,7 @@
     <div>
         <div class="flex items-start gap-5">
             <div class="h-24 w-24 overflow-hidden rounded-sm flex-shrink-0 transition-transform duration-500 group-hover:scale-105">
-                <x-premium-image :src="$student->profile_photo_url" :alt="$student->name" class="size-full">
+                <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="size-full">
                     <x-slot name="fallback">
                         <div class="flex h-full w-full items-center justify-center bg-gradient-to-br {{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} font-black text-3xl">
                             {{ strtoupper(substr($student->name, 0, 1)) }}
@@ -22,7 +22,7 @@
             </div>
 
             <div class="min-w-0 flex-1 pt-1">
-                <h3 class="line-clamp-1 text-xl font-[900] text-gray-950 group-hover:text-blue-600 transition-colors tracking-tight">{{ $student->name }}</h3>
+                <h3 class="line-clamp-1 text-xl font-[900] text-gray-950 group-hover:text-blue-600 transition-colors tracking-tight">{{ $student->full_titled_name }}</h3>
                 <p class="text-xs font-semibold text-gray-500 mt-1 line-clamp-1">{{ $student->major ?? 'General Studies' }}</p>
                 <p class="text-[11px] font-bold text-gray-400 mt-1.5 flex items-center gap-1.5">
                     <span class="w-1.5 h-1.5 rounded-full {{ $isIntra ? 'bg-blue-400' : 'bg-orange-400' }}"></span>

@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\InboxController;
+use App\Http\Controllers\CollabController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +44,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
+    Route::get('/inbox/{message}', [InboxController::class, 'show'])->name('inbox.show');
+
+    // Collabs
+    Route::post('/collabs/{user}', [CollabController::class, 'store'])->name('collabs.store');
+    Route::post('/collabs/{collab}/accept', [CollabController::class, 'accept'])->name('collabs.accept');
+    Route::post('/collabs/{collab}/reject', [CollabController::class, 'reject'])->name('collabs.reject');
 
     Route::get('/my-business', [BusinessController::class, 'my'])->name('businesses.my');
     Route::get('/business/create', [BusinessController::class, 'create'])->name('businesses.create');
