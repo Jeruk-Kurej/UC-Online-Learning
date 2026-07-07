@@ -1,7 +1,7 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
     @section('title', 'Business Directory')
-    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
+    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-8" 
           data-view-type="{{ $viewType }}"
           x-data="{ 
              showImportModal: false, 
@@ -80,9 +80,12 @@
           x-init="viewType = $el.dataset.viewType || 'entrepreneur'; init()"
           @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
-            <div class="uco-hero-mesh"></div>
-            <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
+        <section class="relative overflow-hidden uco-hero-section-bleed py-8 md:py-10 mb-8 reveal-on-scroll">
+            {{-- Background Effects with Gradient Mask --}}
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+                <div class="uco-hero-mesh"></div>
+            </div>
+            <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory

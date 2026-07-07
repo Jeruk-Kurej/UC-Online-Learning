@@ -1,12 +1,15 @@
 <x-app-layout>
     @section('title', 'About Us')
-    <div class="relative overflow-hidden">
+    <div class="relative">
         {{-- Hero Section --}}
-        <section class="relative pt-24 pb-32 px-6 overflow-hidden">
-            <div class="uco-hero-mesh"></div>
-            {{-- Floating Ambient Glow Blobs --}}
-            <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -top-20 -left-20"></div>
-            <div class="uco-ambient-glow uco-ambient-glow--blue uco-floating-blob-slow bottom-0 right-0"></div>
+        <section class="relative uco-hero-section-bleed pt-24 pb-32 px-6 overflow-hidden">
+            {{-- Background Effects with Gradient Mask --}}
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+                <div class="uco-hero-mesh"></div>
+                {{-- Floating Ambient Glow Blobs --}}
+                <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -top-20 -left-20"></div>
+                <div class="uco-ambient-glow uco-ambient-glow--blue uco-floating-blob-slow bottom-0 right-0"></div>
+            </div>
 
             <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-uco-orange-600 mb-8 animate-fade-in">
@@ -23,7 +26,7 @@
         </section>
         {{-- Dynamic CMS Content --}}
         @if($page && $page->content_json && isset($page->content_json['blocks']))
-        <section class="py-24 bg-white px-6 relative overflow-hidden">
+        <section class="py-24 px-6 relative overflow-hidden">
             <div class="max-w-4xl mx-auto prose prose-lg prose-slate prose-headings:font-black">
                 @foreach($page->content_json['blocks'] as $block)
                     @if($block['type'] === 'paragraph')
@@ -58,7 +61,7 @@
         @endif
 
         {{-- Core Values --}}
-        <section class="py-24 bg-white px-6 relative overflow-hidden">
+        <section class="py-24 px-6 relative overflow-hidden">
             <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow top-1/2 left-1/2"></div>
 
             {{-- Floating micro-shapes (Ada Kehidupan) --}}

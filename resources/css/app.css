@@ -27,6 +27,16 @@
 		pointer-events: none;
 	}
 
+	.uco-hero-section-bleed {
+		width: 100vw;
+		position: relative;
+		left: 50%;
+		right: 50%;
+		margin-left: -50vw;
+		margin-right: -50vw;
+		margin-top: -1.5rem;
+	}
+
 	.uco-hero-mesh-deep {
 		position: absolute;
 		inset: -35% -20% auto -20%;
