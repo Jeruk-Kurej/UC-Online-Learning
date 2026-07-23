@@ -537,6 +537,13 @@
                     <textarea name="testimony" id="testimony" rows="3"
                                class="form-textarea-custom">{{ old('testimony', $userToEdit->testimony) }}</textarea>
                 </div>
+
+                {{-- Activities Caption --}}
+                <div class="md:col-span-2">
+                    <label for="activities_caption" class="form-label-custom">Activities Caption</label>
+                    <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit->activities_caption) }}"
+                           class="form-input-custom" placeholder="e.g. Brief caption describing student activities">
+                </div>
             </div>
         </div>
 
