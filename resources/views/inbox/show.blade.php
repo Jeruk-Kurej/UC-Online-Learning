@@ -121,19 +121,21 @@
                     @elseif($collab->status === 'accepted')
                         <div style="margin-top: 14px; border-top: 1px solid #e0f2fe; padding-top: 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                             <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 800; color: #15803d;">
-                                <i class="bi bi-check-circle-fill" style="font-size: 16px;"></i> You are connected with {{ $message->sender->name }}.
+                                <i class="bi bi-check-circle-fill" style="font-size: 16px;"></i> Connected with {{ $message->sender->name }}
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                @if($message->sender->whatsapp)
+                                @if($message->sender->show_contact_details && $message->sender->whatsapp)
                                     <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $message->sender->whatsapp) }}" target="_blank" 
                                        style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: #22c55e; color: white; font-size: 12px; font-weight: 800; text-decoration: none;">
                                         <i class="bi bi-whatsapp"></i> Chat WhatsApp
                                     </a>
                                 @endif
-                                <a href="{{ route('users.show', $message->sender) }}" 
-                                   style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: white; border: 1px solid #bae6fd; color: #0284c7; font-size: 12px; font-weight: 800; text-decoration: none;">
-                                    <i class="bi bi-person-fill"></i> View Partner Profile
-                                </a>
+                                @if($message->sender->businesses->first())
+                                    <a href="{{ route('businesses.show', $message->sender->businesses->first()->slug) }}" 
+                                       style="display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; background: white; border: 1px solid #bae6fd; color: #0284c7; font-size: 12px; font-weight: 800; text-decoration: none;">
+                                        <i class="bi bi-building"></i> View Venture
+                                    </a>
+                                @endif
                             </div>
                         </div>
                     @elseif($collab->status === 'rejected')
