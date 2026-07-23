@@ -4,308 +4,393 @@
     @php
         $content = is_string($page->content_json) ? json_decode($page->content_json, true) : ($page->content_json ?? []);
         
-        // Hero defaults
-        $heroBadge = $content['hero']['badge'] ?? 'About UC Online Learning';
-        $heroTitle = $content['hero']['title'] ?? 'Building the Future of Student & Alumni Entrepreneurship';
-        $heroSubtitle = $content['hero']['subtitle'] ?? 'Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.';
-
-        // Pillars defaults
-        $pillarsBadge = $content['pillars']['badge'] ?? 'Pillars of Excellence';
-        $pillarsTitle = $content['pillars']['title'] ?? 'Built for Sustainable Impact';
-        $pillarsSubtitle = $content['pillars']['subtitle'] ?? 'Designed to support founders and intrapreneurs at every phase of their growth journey.';
-        $pillarCards = $content['pillars']['cards'] ?? [
-            ['title' => 'Rapid Launch', 'description' => 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', 'icon' => 'bi-rocket-takeoff'],
-            ['title' => 'Global Network', 'description' => 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', 'icon' => 'bi-people'],
-            ['title' => 'Scalable Growth', 'description' => 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', 'icon' => 'bi-graph-up-arrow'],
-        ];
-
-        // Stats defaults
-        $statsTitle = $content['stats']['title'] ?? 'Driving Community Impact';
-        $statsItems = $content['stats']['items'] ?? [
-            ['number' => '500+', 'label' => 'Active Ventures'],
-            ['number' => '1200+', 'label' => 'Graduated Founders'],
-            ['number' => '24', 'label' => 'Industry Categories'],
-            ['number' => '15+', 'label' => 'Years of Heritage'],
-        ];
-
-        // CTA defaults
-        $ctaHeading = $content['cta']['heading'] ?? 'Ready to build your legacy?';
-        $ctaSubtitle = $content['cta']['subtitle'] ?? 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.';
-        $primaryBtnText = $content['cta']['primary_btn_text'] ?? 'Get Started Now';
-        $secondaryBtnText = $content['cta']['secondary_btn_text'] ?? 'Explore Directory';
+        // Migrate old flat format to dynamic sections if needed
+        $initialSections = $content['sections'] ?? [];
+        if (empty($initialSections) && $page->slug === 'about') {
+            $initialSections = [
+                [
+                    'type' => 'hero',
+                    'badge' => $content['hero']['badge'] ?? 'About UC Online Learning',
+                    'title' => $content['hero']['title'] ?? 'Building the Future of Student & Alumni Entrepreneurship',
+                    'subtitle' => $content['hero']['subtitle'] ?? 'Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.',
+                ],
+                [
+                    'type' => 'feature_cards',
+                    'badge' => $content['pillars']['badge'] ?? 'Pillars of Excellence',
+                    'title' => $content['pillars']['title'] ?? 'Built for Sustainable Impact',
+                    'subtitle' => $content['pillars']['subtitle'] ?? 'Designed to support founders and intrapreneurs at every phase of their growth journey.',
+                    'cards' => $content['pillars']['cards'] ?? [
+                        ['title' => 'Rapid Launch', 'description' => 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', 'icon' => 'bi-rocket-takeoff'],
+                        ['title' => 'Global Network', 'description' => 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', 'icon' => 'bi-people'],
+                        ['title' => 'Scalable Growth', 'description' => 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', 'icon' => 'bi-graph-up-arrow'],
+                    ]
+                ],
+                [
+                    'type' => 'stats_grid',
+                    'title' => $content['stats']['title'] ?? 'Driving Community Impact',
+                    'items' => $content['stats']['items'] ?? [
+                        ['number' => '500+', 'label' => 'Active Ventures'],
+                        ['number' => '1200+', 'label' => 'Graduated Founders'],
+                        ['number' => '24', 'label' => 'Industry Categories'],
+                        ['number' => '15+', 'label' => 'Years of Heritage'],
+                    ]
+                ],
+                [
+                    'type' => 'cta_banner',
+                    'heading' => $content['cta']['heading'] ?? 'Ready to build your legacy?',
+                    'subtitle' => $content['cta']['subtitle'] ?? 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.',
+                    'primary_btn_text' => $content['cta']['primary_btn_text'] ?? 'Get Started Now',
+                    'secondary_btn_text' => $content['cta']['secondary_btn_text'] ?? 'Explore Directory',
+                ]
+            ];
+        }
     @endphp
 
-    <div class="py-12 px-6 max-w-[1200px] mx-auto font-sans">
+    <div class="py-12 px-6 max-w-[1200px] mx-auto font-sans" x-data="sectionBuilder(@json($initialSections))">
         <div class="flex items-center justify-between mb-8">
             <div>
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-uco-orange-600 mb-2">
-                    Non-Tech Visual CMS
+                    Dynamic Section Builder (Non-Tech)
                 </span>
                 <h1 class="text-3xl font-black text-slate-900">Edit {{ $page->title }}</h1>
-                <p class="text-xs text-slate-500 font-medium mt-1">Fill out clean form fields below to update page headers, cards, stats, and text. No coding required!</p>
+                <p class="text-xs text-slate-500 font-medium mt-1">Add, remove, reorder, or edit any section visually. No code required!</p>
             </div>
             <a href="{{ route($page->slug) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 font-bold text-sm transition-all">
                 View Public Page <i class="bi bi-box-arrow-up-right"></i>
             </a>
         </div>
-        
+
+        {{-- Sections Builder List --}}
         <div class="space-y-8">
-            @if($page->slug === 'about')
-                {{-- 1. Hero Section Form --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                    <div class="border-b border-slate-100 pb-4 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg bg-orange-100 text-uco-orange-600 font-black flex items-center justify-center text-sm">1</span>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900">Hero Header Banner</h2>
-                            <p class="text-xs text-slate-400 font-medium">Main title and subtitle displayed at the top of the About page.</p>
+            <template x-for="(sec, sIdx) in sections" :key="sIdx">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6 relative transition-all duration-300 hover:border-slate-300">
+                    {{-- Section Header Controls --}}
+                    <div class="border-b border-slate-100 pb-4 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 h-8 rounded-xl bg-slate-900 text-white font-black flex items-center justify-center text-xs" x-text="sIdx + 1"></span>
+                            <div>
+                                <h2 class="text-base font-black text-slate-900 uppercase tracking-wide" x-text="getSectionTypeName(sec.type)"></h2>
+                                <p class="text-xs text-slate-400 font-medium">Reorder, edit fields, or delete this section anytime.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="moveUp(sIdx)" :disabled="sIdx === 0" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i class="bi bi-arrow-up"></i> Move Up
+                            </button>
+                            <button type="button" @click="moveDown(sIdx)" :disabled="sIdx === sections.length - 1" class="px-3 py-1.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs disabled:opacity-30 disabled:cursor-not-allowed">
+                                <i class="bi bi-arrow-down"></i> Move Down
+                            </button>
+                            <button type="button" @click="removeSection(sIdx)" class="px-3 py-1.5 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition-colors">
+                                <i class="bi bi-trash3"></i> Remove
+                            </button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Top Tagline Badge</label>
-                            <input type="text" id="hero_badge" value="{{ $heroBadge }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm focus:border-uco-orange-500">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Main Headline Title</label>
-                            <input type="text" id="hero_title" value="{{ $heroTitle }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm focus:border-uco-orange-500">
-                        </div>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Hero Subtitle Description</label>
-                        <textarea id="hero_subtitle" rows="2" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm focus:border-uco-orange-500">{{ $heroSubtitle }}</textarea>
-                    </div>
-                </div>
-
-                {{-- 2. Pillars of Excellence Section Form --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                    <div class="border-b border-slate-100 pb-4 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 font-black flex items-center justify-center text-sm">2</span>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900">Pillars of Excellence (3 Feature Cards)</h2>
-                            <p class="text-xs text-slate-400 font-medium">Edit section title and content for each of the 3 value cards.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Badge</label>
-                            <input type="text" id="pillars_badge" value="{{ $pillarsBadge }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Title</label>
-                            <input type="text" id="pillars_title" value="{{ $pillarsTitle }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Subtitle</label>
-                            <input type="text" id="pillars_subtitle" value="{{ $pillarsSubtitle }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm">
-                        </div>
-                    </div>
-
-                    {{-- Cards Grid --}}
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100">
-                        @foreach([0, 1, 2] as $idx)
-                            @php $card = $pillarCards[$idx] ?? ['title' => '', 'description' => '', 'icon' => 'bi-rocket-takeoff']; @endphp
-                            <div class="p-6 rounded-2xl bg-slate-50 border border-slate-200 space-y-4">
-                                <span class="inline-block px-3 py-1 bg-white rounded-lg text-xs font-bold text-slate-600 border border-slate-200">Card #{{ $idx + 1 }}</span>
-                                
-                                <div class="space-y-1">
-                                    <label class="block text-[11px] font-bold uppercase text-slate-500">Icon</label>
-                                    <select id="card_icon_{{ $idx }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-800">
-                                        <option value="bi-rocket-takeoff" {{ ($card['icon'] ?? '') === 'bi-rocket-takeoff' ? 'selected' : '' }}>🚀 Rocket (Rapid Launch)</option>
-                                        <option value="bi-people" {{ ($card['icon'] ?? '') === 'bi-people' ? 'selected' : '' }}>👥 People (Global Network)</option>
-                                        <option value="bi-graph-up-arrow" {{ ($card['icon'] ?? '') === 'bi-graph-up-arrow' ? 'selected' : '' }}>📈 Graph (Scalable Growth)</option>
-                                        <option value="bi-lightning-charge" {{ ($card['icon'] ?? '') === 'bi-lightning-charge' ? 'selected' : '' }}>⚡ Lightning</option>
-                                        <option value="bi-shield-check" {{ ($card['icon'] ?? '') === 'bi-shield-check' ? 'selected' : '' }}>🛡️ Shield</option>
-                                        <option value="bi-trophy" {{ ($card['icon'] ?? '') === 'bi-trophy' ? 'selected' : '' }}>🏆 Trophy</option>
-                                    </select>
+                    {{-- TYPE 1: HERO SECTION --}}
+                    <template x-if="sec.type === 'hero'">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Top Tagline Badge</label>
+                                    <input type="text" x-model="sec.badge" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
                                 </div>
-
-                                <div class="space-y-1">
-                                    <label class="block text-[11px] font-bold uppercase text-slate-500">Card Title</label>
-                                    <input type="text" id="card_title_{{ $idx }}" value="{{ $card['title'] ?? '' }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-bold text-xs text-slate-900">
-                                </div>
-
-                                <div class="space-y-1">
-                                    <label class="block text-[11px] font-bold uppercase text-slate-500">Description</label>
-                                    <textarea id="card_desc_{{ $idx }}" rows="3" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-medium text-xs text-slate-700">{{ $card['description'] ?? '' }}</textarea>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Main Headline Title</label>
+                                    <input type="text" x-model="sec.title" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
-                </div>
-
-                {{-- 3. Impact Stats Section Form --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                    <div class="border-b border-slate-100 pb-4 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg bg-purple-100 text-purple-600 font-black flex items-center justify-center text-sm">3</span>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900">Community Impact Statistics (4 Stats)</h2>
-                            <p class="text-xs text-slate-400 font-medium">Update key achievement numbers and metric labels.</p>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Subtitle Description</label>
+                                <textarea x-model="sec.subtitle" rows="2" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm"></textarea>
+                            </div>
                         </div>
-                    </div>
+                    </template>
 
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Stats Section Title</label>
-                        <input type="text" id="stats_title" value="{{ $statsTitle }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 pt-4 border-t border-slate-100">
-                        @foreach([0, 1, 2, 3] as $idx)
-                            @php $stat = $statsItems[$idx] ?? ['number' => '', 'label' => '']; @endphp
-                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
-                                <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Stat #{{ $idx + 1 }}</span>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-bold uppercase text-slate-500">Number / Value</label>
-                                    <input type="text" id="stat_num_{{ $idx }}" value="{{ $stat['number'] ?? '' }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-black text-sm text-uco-orange-600">
+                    {{-- TYPE 2: FEATURE CARDS GRID --}}
+                    <template x-if="sec.type === 'feature_cards'">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Badge</label>
+                                    <input type="text" x-model="sec.badge" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
                                 </div>
-                                <div class="space-y-1">
-                                    <label class="block text-[10px] font-bold uppercase text-slate-500">Label Description</label>
-                                    <input type="text" id="stat_label_{{ $idx }}" value="{{ $stat['label'] ?? '' }}" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-bold text-xs text-slate-800">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Title</label>
+                                    <input type="text" x-model="sec.title" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Section Subtitle</label>
+                                    <input type="text" x-model="sec.subtitle" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm">
                                 </div>
                             </div>
-                        @endforeach
-                    </div>
+
+                            {{-- Cards Container --}}
+                            <div class="space-y-4 pt-4 border-t border-slate-100">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Feature Cards (<span x-text="sec.cards.length"></span>)</span>
+                                    <button type="button" @click="addCard(sIdx)" class="px-4 py-2 rounded-xl bg-uco-orange-50 text-uco-orange-600 border border-uco-orange-200 font-bold text-xs hover:bg-uco-orange-100 transition-colors">
+                                        <i class="bi bi-plus-circle-fill"></i> Add Card
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <template x-for="(card, cIdx) in sec.cards" :key="cIdx">
+                                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 relative">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[11px] font-bold text-slate-500" x-text="'Card #' + (cIdx + 1)"></span>
+                                                <button type="button" @click="removeCard(sIdx, cIdx)" class="text-red-500 hover:text-red-700 text-xs font-bold">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="space-y-1">
+                                                <label class="block text-[10px] font-bold uppercase text-slate-500">Icon</label>
+                                                <select x-model="card.icon" class="w-full px-3 py-2 rounded-lg border border-slate-200 text-xs font-bold text-slate-800">
+                                                    <option value="bi-rocket-takeoff">🚀 Rocket (Rapid Launch)</option>
+                                                    <option value="bi-people">👥 People (Global Network)</option>
+                                                    <option value="bi-graph-up-arrow">📈 Graph (Scalable Growth)</option>
+                                                    <option value="bi-lightning-charge">⚡ Lightning</option>
+                                                    <option value="bi-shield-check">🛡️ Shield</option>
+                                                    <option value="bi-trophy">🏆 Trophy</option>
+                                                    <option value="bi-star">⭐ Star</option>
+                                                    <option value="bi-lightbulb">💡 Lightbulb</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="space-y-1">
+                                                <label class="block text-[10px] font-bold uppercase text-slate-500">Title</label>
+                                                <input type="text" x-model="card.title" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-bold text-xs text-slate-900">
+                                            </div>
+
+                                            <div class="space-y-1">
+                                                <label class="block text-[10px] font-bold uppercase text-slate-500">Description</label>
+                                                <textarea x-model="card.description" rows="3" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-medium text-xs text-slate-700"></textarea>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- TYPE 3: STATS GRID --}}
+                    <template x-if="sec.type === 'stats_grid'">
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Stats Section Title</label>
+                                <input type="text" x-model="sec.title" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                            </div>
+
+                            <div class="space-y-4 pt-4 border-t border-slate-100">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Stat Metric Cards (<span x-text="sec.items.length"></span>)</span>
+                                    <button type="button" @click="addStat(sIdx)" class="px-4 py-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-200 font-bold text-xs hover:bg-purple-100 transition-colors">
+                                        <i class="bi bi-plus-circle-fill"></i> Add Stat
+                                    </button>
+                                </div>
+
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                                    <template x-for="(st, stIdx) in sec.items" :key="stIdx">
+                                        <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 relative">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-[10px] font-bold text-slate-400" x-text="'Stat #' + (stIdx + 1)"></span>
+                                                <button type="button" @click="removeStat(sIdx, stIdx)" class="text-red-500 hover:text-red-700 text-xs font-bold">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="block text-[10px] font-bold uppercase text-slate-500">Value / Number</label>
+                                                <input type="text" x-model="st.number" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-black text-sm text-uco-orange-600">
+                                            </div>
+                                            <div class="space-y-1">
+                                                <label class="block text-[10px] font-bold uppercase text-slate-500">Label</label>
+                                                <input type="text" x-model="st.label" class="w-full px-3 py-2 rounded-lg border border-slate-200 font-bold text-xs text-slate-800">
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- TYPE 4: TEXT / FAQ BLOCK --}}
+                    <template x-if="sec.type === 'text_block'">
+                        <div class="space-y-4">
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Block Heading</label>
+                                <input type="text" x-model="sec.heading" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Paragraph Content</label>
+                                <textarea x-model="sec.content" rows="4" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm"></textarea>
+                            </div>
+                        </div>
+                    </template>
+
+                    {{-- TYPE 5: CTA BANNER --}}
+                    <template x-if="sec.type === 'cta_banner'">
+                        <div class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">CTA Heading</label>
+                                    <input type="text" x-model="sec.heading" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">CTA Subtitle</label>
+                                    <input type="text" x-model="sec.subtitle" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Primary Button Label</label>
+                                    <input type="text" x-model="sec.primary_btn_text" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Secondary Button Label</label>
+                                    <input type="text" x-model="sec.secondary_btn_text" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </div>
+            </template>
+        </div>
 
-                {{-- 4. CTA Section Form --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-6">
-                    <div class="border-b border-slate-100 pb-4 flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-lg bg-green-100 text-green-600 font-black flex items-center justify-center text-sm">4</span>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900">Call-To-Action Banner</h2>
-                            <p class="text-xs text-slate-400 font-medium">Bottom call-to-action banner heading and button text.</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">CTA Heading</label>
-                            <input type="text" id="cta_heading" value="{{ $ctaHeading }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">CTA Subtitle</label>
-                            <input type="text" id="cta_subtitle" value="{{ $ctaSubtitle }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-medium text-slate-700 text-sm">
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Primary Button Label</label>
-                            <input type="text" id="primary_btn_text" value="{{ $primaryBtnText }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                        </div>
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold uppercase tracking-wider text-slate-700">Secondary Button Label</label>
-                            <input type="text" id="secondary_btn_text" value="{{ $secondaryBtnText }}" class="w-full px-4 py-3 rounded-xl border border-slate-200 font-bold text-slate-900 text-sm">
-                        </div>
-                    </div>
+        {{-- Add Section Options Bar --}}
+        <div class="mt-8 bg-slate-900 rounded-2xl p-6 text-white flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <i class="bi bi-plus-circle text-uco-orange-400 text-2xl"></i>
+                <div>
+                    <h3 class="text-sm font-bold text-white">Add New Section</h3>
+                    <p class="text-xs text-slate-400">Choose a section type to insert into your page layout.</p>
                 </div>
-            @else
-                {{-- Standard EditorJS for other pages --}}
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-                    <p class="text-sm font-bold text-slate-500 mb-6 uppercase tracking-wider">Page Content Editor</p>
-                    <div id="editorjs" class="prose max-w-none min-h-[400px] p-6 border border-slate-100 rounded-xl bg-slate-50"></div>
-                </div>
-            @endif
+            </div>
 
-            {{-- Save Action --}}
-            <div class="flex justify-end pt-4">
-                <button id="save-btn" class="px-10 py-4 bg-uco-orange-500 text-white font-black text-sm rounded-xl hover:bg-uco-orange-600 transition-all duration-200 shadow-lg shadow-uco-orange-500/25 hover:scale-[1.02]">
-                    Save All Changes
+            <div class="flex flex-wrap gap-2">
+                <button type="button" @click="addSection('hero')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all">
+                    + Hero Header
+                </button>
+                <button type="button" @click="addSection('feature_cards')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all">
+                    + Feature Cards Grid
+                </button>
+                <button type="button" @click="addSection('stats_grid')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all">
+                    + Impact Stats Grid
+                </button>
+                <button type="button" @click="addSection('text_block')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all">
+                    + Text / FAQ Block
+                </button>
+                <button type="button" @click="addSection('cta_banner')" class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all">
+                    + CTA Banner
                 </button>
             </div>
+        </div>
+
+        {{-- Save Bar --}}
+        <div class="mt-8 flex justify-end">
+            <button type="button" @click="saveSections" class="px-10 py-4 bg-uco-orange-500 text-white font-black text-sm rounded-xl hover:bg-uco-orange-600 transition-all shadow-lg shadow-uco-orange-500/25 hover:scale-[1.02]">
+                Save All Changes Live
+            </button>
         </div>
     </div>
 
     @push('scripts')
-    @if($page->slug !== 'about')
-        <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest"></script>
-    @endif
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pageSlug = @json($page->slug);
-            let editor = null;
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('sectionBuilder', (initialSections) => ({
+                sections: Array.isArray(initialSections) && initialSections.length ? initialSections : [],
 
-            if (pageSlug !== 'about') {
-                try {
-                    editor = new EditorJS({
-                        holder: 'editorjs',
-                        placeholder: 'Start writing your content here...',
-                        tools: {
-                            header: { class: window.Header, inlineToolbar: true, config: { levels: [2, 3, 4], defaultLevel: 2 } },
-                            list: { class: window.NestedList || window.EditorjsList || window.List, inlineToolbar: true },
-                            image: { class: window.ImageTool || window.SimpleImage, config: { endpoints: { byFile: '{{ route('pages.upload-image') }}' }, additionalRequestHeaders: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' } } }
-                        },
-                        data: @json($content)
-                    });
-                } catch (e) {
-                    console.error("EditorJS initialization failed:", e);
-                }
-            }
-
-            document.getElementById('save-btn').addEventListener('click', () => {
-                const btn = document.getElementById('save-btn');
-                const originalText = btn.innerText;
-                btn.innerText = 'Saving...';
-                btn.disabled = true;
-
-                let payloadPromise;
-
-                if (pageSlug === 'about') {
-                    const payload = {
-                        hero: {
-                            badge: document.getElementById('hero_badge').value,
-                            title: document.getElementById('hero_title').value,
-                            subtitle: document.getElementById('hero_subtitle').value,
-                        },
-                        pillars: {
-                            badge: document.getElementById('pillars_badge').value,
-                            title: document.getElementById('pillars_title').value,
-                            subtitle: document.getElementById('pillars_subtitle').value,
-                            cards: [
-                                {
-                                    title: document.getElementById('card_title_0').value,
-                                    description: document.getElementById('card_desc_0').value,
-                                    icon: document.getElementById('card_icon_0').value,
-                                },
-                                {
-                                    title: document.getElementById('card_title_1').value,
-                                    description: document.getElementById('card_desc_1').value,
-                                    icon: document.getElementById('card_icon_1').value,
-                                },
-                                {
-                                    title: document.getElementById('card_title_2').value,
-                                    description: document.getElementById('card_desc_2').value,
-                                    icon: document.getElementById('card_icon_2').value,
-                                },
-                            ]
-                        },
-                        stats: {
-                            title: document.getElementById('stats_title').value,
-                            items: [
-                                { number: document.getElementById('stat_num_0').value, label: document.getElementById('stat_label_0').value },
-                                { number: document.getElementById('stat_num_1').value, label: document.getElementById('stat_label_1').value },
-                                { number: document.getElementById('stat_num_2').value, label: document.getElementById('stat_label_2').value },
-                                { number: document.getElementById('stat_num_3').value, label: document.getElementById('stat_label_3').value },
-                            ]
-                        },
-                        cta: {
-                            heading: document.getElementById('cta_heading').value,
-                            subtitle: document.getElementById('cta_subtitle').value,
-                            primary_btn_text: document.getElementById('primary_btn_text').value,
-                            secondary_btn_text: document.getElementById('secondary_btn_text').value,
-                        }
+                getSectionTypeName(type) {
+                    const names = {
+                        'hero': '🎯 Hero Header Banner',
+                        'feature_cards': '🚀 Feature Cards Grid',
+                        'stats_grid': '📊 Impact Stats Grid',
+                        'text_block': '📝 Text / FAQ Content Block',
+                        'cta_banner': '📣 Call-To-Action Banner',
                     };
-                    payloadPromise = Promise.resolve(payload);
-                } else {
-                    payloadPromise = editor.save();
-                }
+                    return names[type] || 'Section Block';
+                },
 
-                payloadPromise.then((outputData) => {
+                addSection(type) {
+                    let newSec = { type: type };
+                    if (type === 'hero') {
+                        newSec.badge = 'New Vision Tagline';
+                        newSec.title = 'New Section Headline';
+                        newSec.subtitle = 'Description paragraph text goes here.';
+                    } else if (type === 'feature_cards') {
+                        newSec.badge = 'Category Tag';
+                        newSec.title = 'Key Benefits & Pillars';
+                        newSec.subtitle = 'Supporting explanation text for cards.';
+                        newSec.cards = [
+                            { title: 'Feature 1', description: 'Description for feature card 1.', icon: 'bi-rocket-takeoff' },
+                            { title: 'Feature 2', description: 'Description for feature card 2.', icon: 'bi-people' }
+                        ];
+                    } else if (type === 'stats_grid') {
+                        newSec.title = 'Our Key Achievements';
+                        newSec.items = [
+                            { number: '100+', label: 'Metric 1' },
+                            { number: '50+', label: 'Metric 2' }
+                        ];
+                    } else if (type === 'text_block') {
+                        newSec.heading = 'New Article Section';
+                        newSec.content = 'Write your paragraph text here...';
+                    } else if (type === 'cta_banner') {
+                        newSec.heading = 'Ready to get started?';
+                        newSec.subtitle = 'Join our community today.';
+                        newSec.primary_btn_text = 'Get Started';
+                        newSec.secondary_btn_text = 'Learn More';
+                    }
+                    this.sections.push(newSec);
+                },
+
+                removeSection(idx) {
+                    if (confirm('Are you sure you want to remove this section?')) {
+                        this.sections.splice(idx, 1);
+                    }
+                },
+
+                moveUp(idx) {
+                    if (idx > 0) {
+                        const temp = this.sections[idx];
+                        this.sections[idx] = this.sections[idx - 1];
+                        this.sections[idx - 1] = temp;
+                    }
+                },
+
+                moveDown(idx) {
+                    if (idx < this.sections.length - 1) {
+                        const temp = this.sections[idx];
+                        this.sections[idx] = this.sections[idx + 1];
+                        this.sections[idx + 1] = temp;
+                    }
+                },
+
+                addCard(secIdx) {
+                    if (!this.sections[secIdx].cards) this.sections[secIdx].cards = [];
+                    this.sections[secIdx].cards.push({
+                        title: 'New Card Title',
+                        description: 'Card description content...',
+                        icon: 'bi-rocket-takeoff'
+                    });
+                },
+
+                removeCard(secIdx, cardIdx) {
+                    this.sections[secIdx].cards.splice(cardIdx, 1);
+                },
+
+                addStat(secIdx) {
+                    if (!this.sections[secIdx].items) this.sections[secIdx].items = [];
+                    this.sections[secIdx].items.push({
+                        number: '10+',
+                        label: 'New Metric Label'
+                    });
+                },
+
+                removeStat(secIdx, statIdx) {
+                    this.sections[secIdx].items.splice(statIdx, 1);
+                },
+
+                saveSections() {
                     fetch('{{ route('pages.update', $page->slug) }}', {
                         method: 'PUT',
                         headers: {
@@ -315,27 +400,19 @@
                         },
                         body: JSON.stringify({
                             title: '{{ $page->title }}',
-                            content_json: outputData
+                            content_json: { sections: this.sections }
                         })
                     })
                     .then(res => res.json())
                     .then(data => {
-                        btn.innerText = 'Saved Successfully!';
-                        btn.classList.replace('bg-uco-orange-500', 'bg-slate-900');
-                        setTimeout(() => {
-                            btn.innerText = originalText;
-                            btn.classList.replace('bg-slate-900', 'bg-uco-orange-500');
-                            btn.disabled = false;
-                        }, 2000);
+                        alert('All section changes saved successfully!');
                     })
                     .catch(err => {
-                        console.error('Saving failed: ', err);
-                        alert('Error saving data.');
-                        btn.innerText = originalText;
-                        btn.disabled = false;
+                        console.error(err);
+                        alert('Error saving section data.');
                     });
-                });
-            });
+                }
+            }));
         });
     </script>
     @endpush
