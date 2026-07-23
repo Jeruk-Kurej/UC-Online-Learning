@@ -109,7 +109,7 @@
                         @foreach($sentCollabs as $collab)
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
                                 <div style="display: flex; align-items: center; gap: 16px;">
-                                    <a href="{{ route('users.show', $collab->recipient->id) }}" style="text-decoration: none;">
+                                    <a href="{{ route('users.show', $collab->recipient) }}" style="text-decoration: none;">
                                         @if($collab->recipient->profile_photo_url)
                                             <img src="{{ $collab->recipient->profile_photo_url }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
                                         @else
@@ -118,7 +118,7 @@
                                     </a>
                                     <div>
                                         <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">
-                                            <a href="{{ route('users.show', $collab->recipient->id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
+                                            <a href="{{ route('users.show', $collab->recipient) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
                                                 {{ $collab->recipient->name }}
                                             </a>
                                         </h3>
@@ -133,7 +133,7 @@
                                     </div>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 12px;">
-                                    <a href="{{ route('users.show', $collab->recipient->id) }}" 
+                                    <a href="{{ route('users.show', $collab->recipient) }}" 
                                        style="padding: 6px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 12px; font-weight: 700; color: #475569; text-decoration: none; transition: 0.2s;"
                                        onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0';">
                                         View Profile
@@ -184,7 +184,7 @@
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
                                 <div>
                                     <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px;">
-                                        <a href="{{ route('users.show', $partner->id) }}" style="text-decoration: none;">
+                                        <a href="{{ route('users.show', $partner) }}" style="text-decoration: none;">
                                             @if($partner->profile_photo_url)
                                                 <img src="{{ $partner->profile_photo_url }}" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
                                             @else
@@ -193,7 +193,7 @@
                                         </a>
                                         <div>
                                             <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">
-                                                <a href="{{ route('users.show', $partner->id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
+                                                <a href="{{ route('users.show', $partner) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
                                                     {{ $partner->name }}
                                                 </a>
                                             </h3>
