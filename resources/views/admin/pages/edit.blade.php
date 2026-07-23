@@ -4,9 +4,8 @@
     @php
         $content = is_string($page->content_json) ? json_decode($page->content_json, true) : ($page->content_json ?? []);
         
-        // Migrate old flat format to dynamic sections if needed
         $initialSections = $content['sections'] ?? [];
-        if (empty($initialSections) && $page->slug === 'about') {
+        if (empty($initialSections)) {
             $initialSections = [
                 [
                     'type' => 'hero',
@@ -49,7 +48,42 @@
     <script>
         function initSectionBuilder(initialSections) {
             return {
-                sections: Array.isArray(initialSections) && initialSections.length ? initialSections : [],
+                sections: Array.isArray(initialSections) && initialSections.length ? initialSections : [
+                    {
+                        type: 'hero',
+                        badge: 'About UC Online Learning',
+                        title: 'Building the Future of Student & Alumni Entrepreneurship',
+                        subtitle: 'Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.'
+                    },
+                    {
+                        type: 'feature_cards',
+                        badge: 'Pillars of Excellence',
+                        title: 'Built for Sustainable Impact',
+                        subtitle: 'Designed to support founders and intrapreneurs at every phase of their growth journey.',
+                        cards: [
+                            { title: 'Rapid Launch', description: 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', icon: 'bi-rocket-takeoff' },
+                            { title: 'Global Network', description: 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', icon: 'bi-people' },
+                            { title: 'Scalable Growth', description: 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', icon: 'bi-graph-up-arrow' }
+                        ]
+                    },
+                    {
+                        type: 'stats_grid',
+                        title: 'Driving Community Impact',
+                        items: [
+                            { number: '500+', label: 'Active Ventures' },
+                            { number: '1200+', label: 'Graduated Founders' },
+                            { number: '24', label: 'Industry Categories' },
+                            { number: '15+', label: 'Years of Heritage' }
+                        ]
+                    },
+                    {
+                        type: 'cta_banner',
+                        heading: 'Ready to build your legacy?',
+                        subtitle: 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.',
+                        primary_btn_text: 'Get Started Now',
+                        secondary_btn_text: 'Explore Directory'
+                    }
+                ],
 
                 getSectionTypeName(type) {
                     const names = {
@@ -249,7 +283,7 @@
                             {{-- Cards Container --}}
                             <div class="space-y-4 pt-4 border-t border-slate-100">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Feature Cards (<span x-text="sec.cards.length"></span>)</span>
+                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Feature Cards (<span x-text="sec.cards ? sec.cards.length : 0"></span>)</span>
                                     <button type="button" @click="addCard(sIdx)" class="px-4 py-2 rounded-xl bg-uco-orange-50 text-uco-orange-600 border border-uco-orange-200 font-bold text-xs hover:bg-uco-orange-100 transition-colors">
                                         <i class="bi bi-plus-circle-fill"></i> Add Card
                                     </button>
@@ -305,7 +339,7 @@
 
                             <div class="space-y-4 pt-4 border-t border-slate-100">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Stat Metric Cards (<span x-text="sec.items.length"></span>)</span>
+                                    <span class="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Stat Metric Cards (<span x-text="sec.items ? sec.items.length : 0"></span>)</span>
                                     <button type="button" @click="addStat(sIdx)" class="px-4 py-2 rounded-xl bg-purple-50 text-purple-600 border border-purple-200 font-bold text-xs hover:bg-purple-100 transition-colors">
                                         <i class="bi bi-plus-circle-fill"></i> Add Stat
                                     </button>
