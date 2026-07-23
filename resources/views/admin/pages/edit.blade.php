@@ -45,7 +45,9 @@
         }
     @endphp
 
-    <div class="py-12 px-6 max-w-[1200px] mx-auto font-sans" x-data="initSectionBuilder(@json($initialSections))">
+    <script id="initial-sections-data" type="application/json">@json($initialSections)</script>
+
+    <div class="py-12 px-6 max-w-[1200px] mx-auto font-sans" x-data="initSectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
         <div class="flex items-center justify-between mb-8">
             <div>
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-uco-orange-600 mb-2">
