@@ -155,7 +155,11 @@ window.initSectionBuilder = function(initialSections) {
     };
 };
 
-Alpine.start();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => Alpine.start());
+} else {
+    Alpine.start();
+}
 
 function initRevealOnScroll() {
 	const targets = document.querySelectorAll('.reveal-on-scroll:not([data-reveal-bound="1"])');
