@@ -28,17 +28,18 @@
             </button>
         </div>
 
-        {{-- Tabs Content Wrapper with fixed minimum height to prevent viewport jumping --}}
-        <div style="min-height: 550px; position: relative;">
+        {{-- Tabs Content Wrapper with CSS Grid stacking to prevent double content / vertical stacking during transition --}}
+        <div style="display: grid; grid-template-columns: 1fr; min-height: 550px; position: relative;">
             
             {{-- Tab 1: Messages / Inbox --}}
             <div x-show="activeTab === 'messages'"
+                 style="grid-column: 1; grid-row: 1; width: 100%;"
                  x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-4"
-                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
                  x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 translate-y-4">
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform translate-y-2">
                 @if($messages->isEmpty())
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 60px 30px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         <div style="width: 60px; height: 60px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #94a3b8;">
@@ -81,12 +82,13 @@
 
             {{-- Tab 2: Sent Requests --}}
             <div x-show="activeTab === 'sent'" x-cloak
+                 style="grid-column: 1; grid-row: 1; width: 100%;"
                  x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-4"
-                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
                  x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 translate-y-4">
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform translate-y-2">
                 @if($sentCollabs->isEmpty())
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 60px 30px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         <div style="width: 60px; height: 60px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #94a3b8;">
@@ -140,12 +142,13 @@
 
             {{-- Tab 3: Connections --}}
             <div x-show="activeTab === 'connections'" x-cloak
+                 style="grid-column: 1; grid-row: 1; width: 100%;"
                  x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0 translate-y-4"
-                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:enter-start="opacity-0 transform translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
                  x-transition:leave="transition ease-in duration-150"
-                 x-transition:leave-start="opacity-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 translate-y-4">
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform translate-y-2">
                 @if($connections->isEmpty())
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 60px 30px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
                         <div style="width: 60px; height: 60px; background: #f8fafc; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto; color: #94a3b8;">
