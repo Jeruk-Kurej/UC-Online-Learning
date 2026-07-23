@@ -55,6 +55,7 @@
                                 <a href="{{ route('users.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Users</a>
                                 <a href="{{ route('businesses.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Businesses</a>
                                 <a href="{{ route('uc-testimonies.admin') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage Testimonies</a>
+                                <a href="{{ route('pages.edit', 'about') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Manage About Page (CMS)</a>
                             @endif
 
                             @if(!auth()->user()->isAdmin())
@@ -108,6 +109,7 @@
                         <a href="{{ route('users.index') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
                         <a href="{{ route('businesses.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('businesses.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Businesses</a>
                         <a href="{{ route('uc-testimonies.admin') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('uc-testimonies.admin') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Testimonies</a>
+                        <a href="{{ route('pages.edit', 'about') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('pages.edit') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage About Page (CMS)</a>
                     @endif
 
                     @if(!auth()->user()->isAdmin())

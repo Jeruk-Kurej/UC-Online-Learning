@@ -10,8 +10,17 @@
     @endphp
 
     <div class="relative overflow-hidden font-sans">
+        @if(auth()->check() && auth()->user()->isAdmin())
+            <div class="flex justify-end max-w-[1600px] mx-auto px-6 pt-4 relative z-20">
+                <a href="{{ route('pages.edit', 'about') }}" 
+                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs font-extrabold shadow-md transition-all">
+                    <i class="bi bi-pencil-square"></i> Edit About Page (CMS)
+                </a>
+            </div>
+        @endif
+
         {{-- Header Banner Section --}}
-        <section class="relative pt-20 pb-16 px-6 overflow-hidden bg-gradient-to-b from-orange-50/60 to-white">
+        <section class="relative pt-12 pb-16 px-6 overflow-hidden bg-gradient-to-b from-orange-50/60 to-white">
             <div class="uco-hero-mesh"></div>
             <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
                 <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-uco-orange-600 mb-6">
