@@ -1,6 +1,10 @@
 import './bootstrap';
 import './image-preview';
 
+import Alpine from 'alpinejs';
+
+window.Alpine = Alpine;
+
 window.initSectionBuilder = function(initialSections) {
     return {
         sections: Array.isArray(initialSections) && initialSections.length ? initialSections : [
