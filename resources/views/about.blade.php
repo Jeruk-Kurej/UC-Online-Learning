@@ -3,7 +3,36 @@
 
     @php
         $content = is_array($page?->content_json) ? $page->content_json : (json_decode($page?->content_json ?? '[]', true) ?: []);
-        $blocks = $content['blocks'] ?? [];
+
+        // Hero defaults
+        $heroBadge = $content['hero']['badge'] ?? 'About UC Online Learning';
+        $heroTitle = $content['hero']['title'] ?? 'Building the Future of Student & Alumni Entrepreneurship';
+        $heroSubtitle = $content['hero']['subtitle'] ?? 'Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.';
+
+        // Pillars defaults
+        $pillarsBadge = $content['pillars']['badge'] ?? 'Pillars of Excellence';
+        $pillarsTitle = $content['pillars']['title'] ?? 'Built for Sustainable Impact';
+        $pillarsSubtitle = $content['pillars']['subtitle'] ?? 'Designed to support founders and intrapreneurs at every phase of their growth journey.';
+        $pillarCards = $content['pillars']['cards'] ?? [
+            ['title' => 'Rapid Launch', 'description' => 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', 'icon' => 'bi-rocket-takeoff'],
+            ['title' => 'Global Network', 'description' => 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', 'icon' => 'bi-people'],
+            ['title' => 'Scalable Growth', 'description' => 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', 'icon' => 'bi-graph-up-arrow'],
+        ];
+
+        // Stats defaults
+        $statsTitle = $content['stats']['title'] ?? 'Driving Community Impact';
+        $statsItems = $content['stats']['items'] ?? [
+            ['number' => '500+', 'label' => 'Active Ventures'],
+            ['number' => '1200+', 'label' => 'Graduated Founders'],
+            ['number' => '24', 'label' => 'Industry Categories'],
+            ['number' => '15+', 'label' => 'Years of Heritage'],
+        ];
+
+        // CTA defaults
+        $ctaHeading = $content['cta']['heading'] ?? 'Ready to build your legacy?';
+        $ctaSubtitle = $content['cta']['subtitle'] ?? 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.';
+        $primaryBtnText = $content['cta']['primary_btn_text'] ?? 'Get Started Now';
+        $secondaryBtnText = $content['cta']['secondary_btn_text'] ?? 'Explore Directory';
     @endphp
 
     <div class="relative overflow-hidden font-sans bg-white">
@@ -16,161 +45,98 @@
             </div>
         @endif
 
-        @if(!empty($blocks))
-            {{-- Dynamic CMS Block Engine --}}
-            <section class="py-16 px-6 max-w-[1200px] mx-auto">
-                <div class="space-y-8">
-                    @foreach($blocks as $block)
-                        @php
-                            $type = $block['type'] ?? 'paragraph';
-                            $data = $block['data'] ?? [];
-                        @endphp
-
-                        @if($type === 'header')
-                            @php $level = $data['level'] ?? 2; @endphp
-                            @if($level === 1)
-                                <h1 class="text-4xl md:text-6xl font-black text-gray-950 tracking-tight mt-10 mb-6 leading-tight">{!! $data['text'] ?? '' !!}</h1>
-                            @elseif($level === 2)
-                                <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight mt-12 mb-6 leading-tight">{!! $data['text'] ?? '' !!}</h2>
-                            @elseif($level === 3)
-                                <h3 class="text-2xl md:text-3xl font-black text-gray-900 tracking-tight mt-8 mb-4 leading-tight">{!! $data['text'] ?? '' !!}</h3>
-                            @else
-                                <h4 class="text-xl font-bold text-gray-900 mt-6 mb-3">{!! $data['text'] ?? '' !!}</h4>
-                            @endif
-
-                        @elseif($type === 'paragraph')
-                            <p class="text-base md:text-lg text-gray-600 font-medium leading-relaxed mb-6">{!! $data['text'] ?? '' !!}</p>
-
-                        @elseif($type === 'list')
-                            @php $style = $data['style'] ?? 'unordered'; @endphp
-                            @if($style === 'ordered')
-                                <ol class="list-decimal list-inside space-y-2 mb-6 font-medium text-gray-700 text-base md:text-lg">
-                                    @foreach(($data['items'] ?? []) as $item)
-                                        <li>{!! is_array($item) ? ($item['content'] ?? '') : $item !!}</li>
-                                    @endforeach
-                                </ol>
-                            @else
-                                <ul class="list-disc list-inside space-y-2 mb-6 font-medium text-gray-700 text-base md:text-lg">
-                                    @foreach(($data['items'] ?? []) as $item)
-                                        <li>{!! is_array($item) ? ($item['content'] ?? '') : $item !!}</li>
-                                    @endforeach
-                                </ul>
-                            @endif
-
-                        @elseif($type === 'image')
-                            @php 
-                                $imgUrl = $data['file']['url'] ?? ($data['url'] ?? '');
-                                $caption = $data['caption'] ?? '';
-                            @endphp
-                            @if($imgUrl)
-                                <figure class="my-8">
-                                    <img src="{{ $imgUrl }}" alt="{{ strip_tags($caption) }}" class="rounded-3xl shadow-lg border border-slate-100 max-h-[600px] w-full object-cover">
-                                    @if($caption)
-                                        <figcaption class="text-center text-xs font-semibold text-slate-400 mt-3">{!! $caption !!}</figcaption>
-                                    @endif
-                                </figure>
-                            @endif
-
-                        @elseif($type === 'embed')
-                            @php $embedUrl = $data['embed'] ?? ($data['source'] ?? ''); @endphp
-                            @if($embedUrl)
-                                <div class="my-8 aspect-video rounded-3xl overflow-hidden shadow-lg border border-slate-100">
-                                    <iframe src="{{ $embedUrl }}" class="w-full h-full" allowfullscreen></iframe>
-                                </div>
-                            @endif
-
-                        @elseif($type === 'raw')
-                            <div class="my-8">
-                                {!! $data['html'] ?? '' !!}
-                            </div>
-
-                        @elseif($type === 'quote')
-                            <blockquote class="my-8 border-l-4 border-uco-orange-500 pl-6 py-4 bg-orange-50/50 rounded-r-2xl text-lg italic text-slate-800 font-semibold">
-                                {!! $data['text'] ?? '' !!}
-                                @if(!empty($data['caption']))
-                                    <cite class="block text-xs not-italic font-bold text-slate-400 uppercase tracking-widest mt-2">{!! $data['caption'] !!}</cite>
-                                @endif
-                            </blockquote>
-
-                        @elseif($type === 'delimiter')
-                            <hr class="my-12 border-slate-200">
-
-                        @elseif($type === 'table')
-                            <div class="my-8 overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
-                                <table class="w-full text-left text-sm text-slate-700">
-                                    <tbody>
-                                        @foreach(($data['content'] ?? []) as $row)
-                                            <tr class="border-b border-slate-100 last:border-b-0">
-                                                @foreach($row as $cell)
-                                                    <td class="px-6 py-4 font-medium">{!! $cell !!}</td>
-                                                @endforeach
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        @endif
-                    @endforeach
-                </div>
-            </section>
-        @else
-            {{-- Default Visual Layout Fallback --}}
-            <section class="relative pt-12 pb-16 px-6 overflow-hidden bg-gradient-to-b from-orange-50/60 to-white">
-                <div class="uco-hero-mesh"></div>
-                <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
+        {{-- 1. Hero Header Banner --}}
+        <section class="relative pt-12 pb-16 px-6 overflow-hidden bg-gradient-to-b from-orange-50/60 to-white">
+            <div class="uco-hero-mesh"></div>
+            <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
+                @if($heroBadge)
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-uco-orange-600 mb-6">
-                        About UC Online Learning
+                        {{ $heroBadge }}
                     </span>
-                    <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-gray-950 tracking-tight mb-6">
-                        Building the Future of <br class="hidden sm:inline">
-                        <span class="text-uco-orange-500">Student & Alumni Entrepreneurship</span>
-                    </h1>
-                    <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600 leading-relaxed font-medium">
-                        Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.
+                @endif
+                <h1 class="text-4xl md:text-6xl lg:text-7xl font-black text-gray-950 tracking-tight mb-6">
+                    {!! e($heroTitle) !!}
+                </h1>
+                <p class="max-w-3xl mx-auto text-base md:text-lg text-gray-600 leading-relaxed font-medium">
+                    {{ $heroSubtitle }}
+                </p>
+            </div>
+        </section>
+
+        {{-- 2. Pillars of Excellence --}}
+        <section class="py-20 bg-white px-6 relative overflow-hidden">
+            <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow top-1/2 left-1/2 opacity-40"></div>
+
+            <div class="max-w-[1600px] mx-auto relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal-on-scroll">
+                    @if($pillarsBadge)
+                        <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-uco-orange-600">
+                            {{ $pillarsBadge }}
+                        </span>
+                    @endif
+                    <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">
+                        {{ $pillarsTitle }}
+                    </h2>
+                    <p class="text-base md:text-lg text-gray-500 font-medium">
+                        {{ $pillarsSubtitle }}
                     </p>
                 </div>
-            </section>
 
-            {{-- Pillars of Excellence --}}
-            <section class="py-20 bg-white px-6 relative overflow-hidden">
-                <div class="max-w-[1600px] mx-auto relative z-10">
-                    <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal-on-scroll">
-                        <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-uco-orange-600">
-                            Pillars of Excellence
-                        </span>
-                        <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">
-                            Built for Sustainable Impact
-                        </h2>
-                        <p class="text-base md:text-lg text-gray-500 font-medium">
-                            Designed to support founders and intrapreneurs at every phase of their growth journey.
-                        </p>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="space-y-6 reveal-on-scroll p-8 rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    @foreach($pillarCards as $card)
+                        <div class="space-y-6 reveal-on-scroll uco-premium-card p-8 rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-xl transition-all duration-300">
                             <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">
-                                <i class="bi bi-rocket-takeoff"></i>
+                                <i class="bi {{ $card['icon'] ?? 'bi-rocket-takeoff' }}"></i>
                             </div>
-                            <h3 class="text-2xl font-black text-gray-900">Rapid Launch</h3>
-                            <p class="text-gray-500 leading-relaxed font-medium">We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.</p>
+                            <h3 class="text-2xl font-black text-gray-900">{{ $card['title'] ?? '' }}</h3>
+                            <p class="text-gray-500 leading-relaxed font-medium">{{ $card['description'] ?? '' }}</p>
                         </div>
-                        <div class="space-y-6 reveal-on-scroll p-8 rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-xl transition-all duration-300">
-                            <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-blue-100">
-                                <i class="bi bi-people"></i>
-                            </div>
-                            <h3 class="text-2xl font-black text-gray-900">Global Network</h3>
-                            <p class="text-gray-500 leading-relaxed font-medium">Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.</p>
-                        </div>
-                        <div class="space-y-6 reveal-on-scroll p-8 rounded-3xl border border-gray-100 bg-white shadow-sm hover:shadow-xl transition-all duration-300">
-                            <div class="w-16 h-16 bg-purple-50 text-purple-500 rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-purple-100">
-                                <i class="bi bi-graph-up-arrow"></i>
-                            </div>
-                            <h3 class="text-2xl font-black text-gray-900">Scalable Growth</h3>
-                            <p class="text-gray-500 leading-relaxed font-medium">From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.</p>
-                        </div>
-                    </div>
+                    @endforeach
                 </div>
-            </section>
-        @endif
+            </div>
+        </section>
+
+        {{-- 3. Statistics / Community Impact --}}
+        <section class="py-24 bg-slate-950 px-6 relative overflow-hidden text-white">
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <div class="w-full h-full bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:40px_40px]"></div>
+            </div>
+            <div class="max-w-[1600px] mx-auto relative z-10 text-center reveal-on-scroll">
+                <div class="relative inline-block mb-16">
+                    <h2 class="text-3xl md:text-5xl font-black text-white relative z-10 tracking-tight">{{ $statsTitle }}</h2>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-12">
+                    @foreach($statsItems as $stat)
+                        <div class="space-y-2">
+                            <p class="text-4xl md:text-6xl font-black text-uco-orange-500 tracking-tighter">{{ $stat['number'] ?? '' }}</p>
+                            <p class="text-xs md:text-sm font-extrabold text-gray-400 uppercase tracking-widest">{{ $stat['label'] ?? '' }}</p>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        {{-- 4. Call-To-Action Banner --}}
+        <section class="py-24 px-6">
+            <div class="max-w-5xl mx-auto bg-slate-950 rounded-[3rem] p-12 md:p-20 text-center text-white relative overflow-hidden border border-slate-800/80 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.5)] reveal-on-scroll">
+                <div class="absolute inset-0 bg-[radial-gradient(#ffffff05_1px,transparent_1px)] [background-size:20px_20px] pointer-events-none opacity-60"></div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70%] h-[70%] bg-gradient-to-tr from-uco-orange-500/20 to-yellow-500/10 rounded-full filter blur-[100px] pointer-events-none opacity-80 z-0"></div>
+                
+                <h2 class="text-3xl md:text-5xl font-black mb-6 relative z-10 leading-tight">
+                    {!! e($ctaHeading) !!}
+                </h2>
+                <p class="text-base md:text-lg text-slate-400 mb-10 max-w-2xl mx-auto relative z-10 font-medium leading-relaxed">
+                    {{ $ctaSubtitle }}
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 relative z-10">
+                    <a href="{{ route('login') }}" class="px-8 py-4 bg-gradient-to-r from-uco-orange-500 to-amber-500 text-white font-extrabold rounded-2xl shadow-[0_8px_30px_rgba(247,147,30,0.35)] transition-all duration-300 hover:scale-[1.05] hover:shadow-[0_12px_40px_rgba(247,147,30,0.5)]">
+                        {{ $primaryBtnText }}
+                    </a>
+                    <a href="{{ route('businesses.index') }}" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white font-bold rounded-2xl border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-[1.05] backdrop-blur-md shadow-lg">
+                        {{ $secondaryBtnText }}
+                    </a>
+                </div>
+            </div>
+        </section>
     </div>
 </x-app-layout>
