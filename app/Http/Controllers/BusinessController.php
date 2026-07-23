@@ -368,12 +368,13 @@ class BusinessController extends Controller
         // Security check: Check if visible or authorized
         $isOwner = auth()->id() === $business->user_id;
         $isCoOwner = auth()->check() && $business->members->contains(auth()->id());
+        $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($business->user) === 'accepted';
         $isAdmin = auth()->user()?->isAdmin();
 
         $isUserVisible = $business->user?->is_visible ?? true;
         $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $isUserVisible;
 
-        if (!$isBusinessVisible && !$isOwner && !$isCoOwner && !$isAdmin) {
+        if (!$isBusinessVisible && !$isOwner && !$isCoOwner && !$isCollabPartner && !$isAdmin) {
             abort(404);
         }
 
@@ -409,12 +410,13 @@ class BusinessController extends Controller
 
         // Security check: Check if visible or authorized
         $isOwner = auth()->id() === $company->user_id;
+        $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($company->user) === 'accepted';
         $isAdmin = auth()->user()?->isAdmin();
 
         $isUserVisible = $company->user?->is_visible ?? true;
         $isCompanyVisible = $company->is_visible && $isUserVisible;
 
-        if (!$isCompanyVisible && !$isOwner && !$isAdmin) {
+        if (!$isCompanyVisible && !$isOwner && !$isCollabPartner && !$isAdmin) {
             abort(404);
         }
 

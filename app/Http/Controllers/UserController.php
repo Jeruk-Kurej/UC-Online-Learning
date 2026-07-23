@@ -310,8 +310,11 @@ class UserController extends Controller
     /**
      * Display the specified user profile catalog.
      */
-    public function show(User $user)
+    public function show($user)
     {
+        if (! $user instanceof User) {
+            $user = User::where('slug', $user)->orWhere('id', $user)->firstOrFail();
+        }
         // Publicly accessible catalog - removed admin guard
 
         // Load relationships

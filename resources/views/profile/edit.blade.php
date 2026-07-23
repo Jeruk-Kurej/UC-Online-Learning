@@ -169,7 +169,7 @@
                         @php
                             $activitiesList = [];
                             if ($user->activities_doc_url) {
-                                $rawUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
+                                $rawUrls = is_array($user->activities_doc_url) ? $user->activities_doc_url : array_filter(array_map('trim', preg_split('/[;,]+/', (string) $user->activities_doc_url)));
                                 foreach ($rawUrls as $rawUrl) {
                                     $isGoogleDrive = str_contains($rawUrl, 'drive.google.com') || str_contains($rawUrl, 'docs.google.com');
                                     $previewUrl = null;
