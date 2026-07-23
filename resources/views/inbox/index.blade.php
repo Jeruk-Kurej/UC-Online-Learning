@@ -4,9 +4,16 @@
          x-data="{ activeTab: 'messages' }">
         
         {{-- Header --}}
-        <div style="margin-bottom: 30px;">
-            <h1 style="font-size: 30px; font-weight: 800; letter-spacing: -1.2px; margin: 0; color: #0f172a;">Inbox & Connections</h1>
-            <p style="color: #64748b; font-size: 13px; margin-top: 4px; font-weight: 500;">Manage your collaboration invitations and connect with partners.</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h1 style="font-size: 30px; font-weight: 800; letter-spacing: -1.2px; margin: 0; color: #0f172a;">Inbox & Connections</h1>
+                <p style="color: #64748b; font-size: 13px; margin-top: 4px; font-weight: 500;">Manage your collaboration invitations and connect with partners.</p>
+            </div>
+            <a href="{{ route('featured') }}" 
+               style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; color: #475569; font-size: 13px; font-weight: 700; text-decoration: none; transition: 0.2s;"
+               onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0';">
+                <i class="bi bi-arrow-left"></i> Back to Featured
+            </a>
         </div>
 
         {{-- Tabs Selector with increased spacing and alignment --}}
@@ -102,24 +109,35 @@
                         @foreach($sentCollabs as $collab)
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);">
                                 <div style="display: flex; align-items: center; gap: 16px;">
-                                    @if($collab->recipient->profile_photo_url)
-                                        <img src="{{ $collab->recipient->profile_photo_url }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
-                                    @else
-                                        <div style="width: 48px; height: 48px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: #94a3b8;">{{ substr($collab->recipient->name, 0, 1) }}</div>
-                                    @endif
+                                    <a href="{{ route('users.show', $collab->recipient->id) }}" style="text-decoration: none;">
+                                        @if($collab->recipient->profile_photo_url)
+                                            <img src="{{ $collab->recipient->profile_photo_url }}" style="width: 48px; height: 48px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                        @else
+                                            <div style="width: 48px; height: 48px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 800; color: #94a3b8;">{{ substr($collab->recipient->name, 0, 1) }}</div>
+                                        @endif
+                                    </a>
                                     <div>
-                                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">{{ $collab->recipient->name }}</h3>
+                                        <h3 style="font-size: 15px; font-weight: 800; color: #0f172a; margin: 0;">
+                                            <a href="{{ route('users.show', $collab->recipient->id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
+                                                {{ $collab->recipient->name }}
+                                            </a>
+                                        </h3>
                                         <p style="color: #64748b; font-size: 12px; margin: 2px 0 4px 0; font-weight: 500;">
                                             {{ $collab->recipient->major ?? 'UC Student' }} • Sent {{ $collab->created_at->format('M d, Y') }}
                                         </p>
                                         @if($collab->recipient->businesses->first())
-                                            <span style="font-size: 11px; font-weight: 700; color: #ea580c; display: flex; align-items: center; gap: 4px;">
+                                            <a href="{{ route('businesses.show', $collab->recipient->businesses->first()->slug) }}" style="font-size: 11px; font-weight: 700; color: #ea580c; display: flex; align-items: center; gap: 4px; text-decoration: none;">
                                                 <i class="bi bi-building"></i>{{ $collab->recipient->businesses->first()->name }}
-                                            </span>
+                                            </a>
                                         @endif
                                     </div>
                                 </div>
-                                <div>
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <a href="{{ route('users.show', $collab->recipient->id) }}" 
+                                       style="padding: 6px 12px; border-radius: 8px; border: 1px solid #e2e8f0; background: #f8fafc; font-size: 12px; font-weight: 700; color: #475569; text-decoration: none; transition: 0.2s;"
+                                       onmouseover="this.style.background='#f1f5f9'; this.style.borderColor='#cbd5e1';" onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0';">
+                                        View Profile
+                                    </a>
                                     @if($collab->status === 'pending')
                                         <span style="padding: 6px 12px; background: #fff7ed; border: 1px solid #ffedd5; border-radius: 20px; font-size: 12px; font-weight: 800; color: #d97706; text-transform: uppercase;">
                                             <i class="bi bi-hourglass-split mr-1.5 animate-spin"></i>Pending
@@ -166,13 +184,19 @@
                             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: space-between;">
                                 <div>
                                     <div style="display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px;">
-                                        @if($partner->profile_photo_url)
-                                            <img src="{{ $partner->profile_photo_url }}" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
-                                        @else
-                                            <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #94a3b8;">{{ substr($partner->name, 0, 1) }}</div>
-                                        @endif
+                                        <a href="{{ route('users.show', $partner->id) }}" style="text-decoration: none;">
+                                            @if($partner->profile_photo_url)
+                                                <img src="{{ $partner->profile_photo_url }}" style="width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid #e2e8f0;">
+                                            @else
+                                                <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; color: #94a3b8;">{{ substr($partner->name, 0, 1) }}</div>
+                                            @endif
+                                        </a>
                                         <div>
-                                            <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">{{ $partner->name }}</h3>
+                                            <h3 style="font-size: 16px; font-weight: 800; color: #0f172a; margin: 0;">
+                                                <a href="{{ route('users.show', $partner->id) }}" style="color: inherit; text-decoration: none;" onmouseover="this.style.color='#f97316'" onmouseout="this.style.color='#0f172a'">
+                                                    {{ $partner->name }}
+                                                </a>
+                                            </h3>
                                             <p style="color: #64748b; font-size: 12px; margin: 2px 0 0 0; font-weight: 500;">{{ $partner->major }}</p>
                                             <span style="display: inline-block; margin-top: 6px; padding: 2px 6px; background: #fff7ed; border-radius: 4px; font-size: 9px; font-weight: 800; color: #c2410c; text-transform: uppercase;">{{ $partner->current_status }}</span>
                                         </div>
