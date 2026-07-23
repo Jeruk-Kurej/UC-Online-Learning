@@ -44,11 +44,11 @@
                         </p>
                     </div>
 
-                    <div class="pt-6 hidden md:block">
+                    <div class="pt-6">
                         <a href="{{ route('businesses.index') }}"
-                            class="group/btn inline-flex items-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
+                            class="group/btn inline-flex items-center justify-center gap-4 w-full sm:w-auto rounded-[1.8rem] bg-uco-orange-600 px-8 sm:px-12 py-4 sm:py-5 text-base sm:text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95">
                             Explore Business
-                            <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
+                            <i class="bi bi-arrow-right text-lg sm:text-xl transition-transform group-hover/btn:translate-x-2"></i>
                         </a>
                     </div>
                 </div>

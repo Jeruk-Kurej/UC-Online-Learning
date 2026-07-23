@@ -67,6 +67,18 @@
             <div class="uco-floating-shape uco-floating-shape--dot top-[50%] left-[25%]"></div>
 
             <div class="max-w-[1600px] mx-auto relative z-10">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 reveal-on-scroll">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-uco-orange-600">
+                        Pillars of Excellence
+                    </span>
+                    <h2 class="text-3xl md:text-5xl font-black text-gray-900 tracking-tight">
+                        Built for Sustainable Impact
+                    </h2>
+                    <p class="text-base md:text-lg text-gray-500 font-medium">
+                        Designed to support founders and intrapreneurs at every phase of their growth journey.
+                    </p>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                     <div class="space-y-6 reveal-on-scroll uco-premium-card uco-premium-card--orange p-6 rounded-2xl border border-gray-100" style="transition-delay: 100ms;">
                         <div class="w-16 h-16 bg-uco-orange-50 text-uco-orange-500 rounded-lg flex items-center justify-center text-3xl shadow-sm border border-uco-orange-100">

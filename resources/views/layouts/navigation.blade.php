@@ -87,13 +87,22 @@
     </div>
  
     {{-- Mobile Menu --}}
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t bg-white">
+    <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t border-gray-100 bg-white shadow-lg">
         <div class="px-4 py-3 space-y-1">
-            <a href="{{ route('featured') }}" class="block py-3 text-base font-bold text-gray-900">Home</a>
-            <a href="{{ route('businesses.index') }}" class="block py-3 text-base font-bold text-gray-900">Directory</a>
+            <a href="{{ route('featured') }}" class="block py-2.5 text-base font-bold {{ request()->routeIs('featured') ? 'text-uco-orange-500' : 'text-gray-800' }}">Featured</a>
+            <a href="{{ route('businesses.index') }}" class="block py-2.5 text-base font-bold {{ request()->routeIs('businesses.*') ? 'text-uco-orange-500' : 'text-gray-800' }}">Business</a>
+            <a href="{{ route('about') }}" class="block py-2.5 text-base font-bold {{ request()->routeIs('about') ? 'text-uco-orange-500' : 'text-gray-800' }}">About UCO</a>
             @auth
-                <div class="pt-4 border-t mt-4">
-                    <p class="text-xs font-bold text-gray-400 uppercase mb-2">{{ auth()->user()->name }}</p>
+                <div class="pt-4 border-t border-gray-100 mt-4">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-8 h-8 bg-uco-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                            {{ substr(auth()->user()->name, 0, 1) }}
+                        </div>
+                        <div>
+                            <p class="text-xs font-extrabold text-gray-400 uppercase tracking-widest">{{ auth()->user()->role }}</p>
+                            <p class="text-sm font-bold text-gray-900 truncate">{{ auth()->user()->name }}</p>
+                        </div>
+                    </div>
                     
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('users.index') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('users.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">Manage Users</a>
@@ -102,18 +111,20 @@
                     @endif
 
                     @if(!auth()->user()->isAdmin())
-                        <a href="{{ route('profile.edit') }}" class="block py-2 text-sm text-gray-600">My Profile</a>
-                        <a href="{{ route('inbox.index') }}" class="block py-2 text-sm text-gray-600">My Inbox</a>
-                        <a href="{{ route('businesses.my') }}" class="block py-2 text-sm text-gray-600">My Business</a>
-                        <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm text-gray-600">My Testimony</a>
+                        <a href="{{ route('inbox.index') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('inbox.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">My Inbox & Network</a>
+                        <a href="{{ route('profile.edit') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('profile.*') ? 'text-uco-orange-500' : 'text-gray-700' }}">My Profile</a>
+                        <a href="{{ route('businesses.my') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('businesses.my') ? 'text-uco-orange-500' : 'text-gray-700' }}">My Business</a>
+                        <a href="{{ route('uc-testimonies.my') }}" class="block py-2 text-sm font-bold {{ request()->routeIs('uc-testimonies.my') ? 'text-uco-orange-500' : 'text-gray-700' }}">My Testimony</a>
                     @endif
-                    <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}" class="mt-2 border-t border-gray-50 pt-2">
                         @csrf
-                        <button type="submit" class="block py-2 text-sm text-red-600">Log Out</button>
+                        <button type="submit" class="block w-full text-left py-2 text-sm font-bold text-red-600">Log Out</button>
                     </form>
                 </div>
             @else
-                <a href="{{ route('login') }}" class="block py-3 text-base font-bold text-uco-orange-500">Log in</a>
+                <div class="pt-4 border-t border-gray-100 mt-4">
+                    <a href="{{ route('login') }}" class="block w-full text-center py-3 bg-uco-orange-500 text-white font-bold rounded-xl shadow-md">Log in</a>
+                </div>
             @endauth
         </div>
     </div>
