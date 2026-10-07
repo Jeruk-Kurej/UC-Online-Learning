@@ -1,21 +1,22 @@
 <x-app-layout>
     <div class="space-y-16 pb-6">
         {{-- High-Fidelity "Better" Hero Section --}}
-        <section
-            class="group relative overflow-hidden rounded-[2rem] bg-[#FFF9F2] px-8 py-12 md:px-16 md:py-16 lg:px-16 mx-4 mt-0 reveal-on-scroll">
-            {{-- Background Effects --}}
-            <div class="uco-hero-mesh opacity-90"></div>
-            <div class="uco-noise-overlay"></div>
+        <section class="group relative overflow-hidden uco-hero-section-bleed py-12 md:py-16 reveal-on-scroll">
+            {{-- Background Effects with Gradient Mask --}}
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+                <div class="uco-hero-mesh opacity-90"></div>
+                <div class="uco-noise-overlay"></div>
 
-            {{-- Dynamic Floating Orbs with Subtle Motion --}}
-            <div
-                class="uco-float-orb uco-float-orb--one opacity-40  transition-transform duration-[10s] group-hover:translate-x-12 group-hover:-translate-y-8">
-            </div>
-            <div
-                class="uco-float-orb uco-float-orb--two opacity-30  transition-transform duration-[12s] group-hover:-translate-x-16 group-hover:translate-y-12">
+                {{-- Dynamic Floating Orbs with Subtle Motion --}}
+                <div
+                    class="uco-float-orb uco-float-orb--one opacity-40  transition-transform duration-[10s] group-hover:translate-x-12 group-hover:-translate-y-8">
+                </div>
+                <div
+                    class="uco-float-orb uco-float-orb--two opacity-30  transition-transform duration-[12s] group-hover:-translate-x-16 group-hover:translate-y-12">
+                </div>
             </div>
 
-            <div class="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
+            <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
                 {{-- Left Content --}}
                 <div class="space-y-10 md:col-span-7 lg:col-span-7">
 

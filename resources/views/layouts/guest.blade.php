@@ -35,7 +35,7 @@
 @endif -->
 </head>
 
-<body class="font-sans antialiased bg-soft-white">
+<body class="font-sans antialiased bg-soft-white overflow-x-hidden">
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
         <div class="relative z-10">
             <a href="/" class="flex flex-col items-center gap-3">

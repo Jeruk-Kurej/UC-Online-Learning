@@ -1,7 +1,7 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
     @section('title', 'Business Directory')
-    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
+    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-8" 
           data-view-type="{{ $viewType }}"
           x-data="{ 
              showImportModal: false, 
@@ -80,9 +80,12 @@
           x-init="viewType = $el.dataset.viewType || 'entrepreneur'; init()"
           @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-xl border border-uco-orange-100 bg-white px-6 py-8 shadow-sm md:px-8 md:py-10 mb-8 reveal-on-scroll">
-            <div class="uco-hero-mesh"></div>
-            <div class="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
+        <section class="relative overflow-hidden uco-hero-section-bleed py-8 md:py-10 mb-8 reveal-on-scroll">
+            {{-- Background Effects with Gradient Mask --}}
+            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+                <div class="uco-hero-mesh"></div>
+            </div>
+            <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
                 <div class="space-y-2">
                     <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
                         UCO Directory
@@ -206,7 +209,7 @@
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button type="button" @click="resetFilters()" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
+                        <button type="button" @click="resetFilters()" x-show="!isLoading" title="Reset Filters" class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
                         <div x-show="isLoading" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
@@ -272,23 +275,7 @@
             </div>
         @endif
         <div id="businesses-list-container-wrapper" class="relative min-h-[400px]">
-            {{-- Loading Overlay --}}
-            <div x-show="isLoading" 
-                 x-transition:enter="transition ease-out duration-300"
-                 x-transition:enter-start="opacity-0"
-                 x-transition:enter-end="opacity-100"
-                 x-transition:leave="transition ease-in duration-200"
-                 x-transition:leave-start="opacity-100"
-                 x-transition:leave-end="opacity-0"
-                 class="absolute inset-0 z-20 flex items-center justify-center bg-white/40 backdrop-blur-[2px] rounded-xl"
-                 x-cloak>
-                <div class="flex flex-col items-center gap-3 p-6 bg-white rounded-2xl shadow-xl border border-gray-100">
-                    <div class="w-10 h-10 border-4 border-uco-orange-100 border-t-uco-orange-500 rounded-full animate-spin"></div>
-                    <span class="text-xs font-black uppercase tracking-widest text-gray-400">Updating Directory</span>
-                </div>
-            </div>
-
-            <div id="businesses-list-container" :class="isLoading ? 'filter blur-[1px] transition-all duration-300' : 'transition-all duration-300'">
+            <div id="businesses-list-container" :class="isLoading ? 'opacity-60 pointer-events-none filter blur-[1px] transition-all duration-300' : 'transition-all duration-300'">
                 @include('businesses.partials.list')
             </div>
         </div>

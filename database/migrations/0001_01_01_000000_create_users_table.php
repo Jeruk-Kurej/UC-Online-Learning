@@ -46,7 +46,7 @@ return new class extends Migration
 
             // Platform management
             $table->boolean('is_visible')->default(true)->comment('Hide/show student on public pages');
-            $table->enum('student_status', ['active', 'inactive', 'cuti', 'alumni'])->default('active')->comment('Admin-only detailed status');
+            $table->enum('student_status', ['active', 'inactive', 'cuti', 'alumni', 'student aktif', 'student non aktif', 'student cuti', 'alumni aktif', 'alumni non aktif', 'alumni cuti'])->default('active')->comment('Admin-only detailed status');
 
             $table->timestamps();
         });

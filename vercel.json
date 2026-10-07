@@ -1,7 +1,7 @@
 {
     "version": 2,
-    "regions": ["hnd1"],
-    "buildCommand": "npm run build",
+    "regions": ["sin1"],
+    "buildCommand": "php artisan config:cache && php artisan route:cache && npm run build",
     "outputDirectory": "public",
     "functions": {
   "api/**/*.php": {

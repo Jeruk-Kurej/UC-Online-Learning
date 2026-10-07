@@ -56,7 +56,7 @@
 </head>
 {{-- Layout body: keep background subtle and readable --}}
 
-<body class="font-sans antialiased bg-gray-50">
+<body class="font-sans antialiased bg-gray-50 overflow-x-hidden">
     <div class="min-h-screen flex flex-col">
         {{-- Navigation --}}
         @include('layouts.navigation')

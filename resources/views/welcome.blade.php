@@ -34,7 +34,7 @@
         body { font-family: 'Inter', system-ui, sans-serif; }
     </style>
 </head>
-<body class="antialiased bg-soft-white">
+<body class="antialiased bg-soft-white overflow-x-hidden">
     <div class="min-h-screen flex flex-col relative overflow-x-hidden">
         {{-- Hero Content --}}
         <main class="flex-shrink-0 flex items-center relative overflow-hidden z-10 py-20">
