@@ -6,6 +6,8 @@
 .phpactor.json
 .phpunit.result.cache
 /csv
+/Data_to_import/*.csv
+/uco_website
 /.fleet
 /.idea
 /.nova

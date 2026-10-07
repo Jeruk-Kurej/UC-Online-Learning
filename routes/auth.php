@@ -11,8 +11,6 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 Route::middleware('guest')->group(function () {
     // Public registration can be toggled via the REGISTRATION_OPEN env var.
@@ -72,15 +70,4 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
-
-    // Convenience GET logout route for browsers that navigate to /logout
-    // Performs the same logout steps as POST and redirects to home.
-    Route::get('logout', function (Request $request) {
-        Auth::guard('web')->logout();
-
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('/');
-    })->name('logout.get');
 });
