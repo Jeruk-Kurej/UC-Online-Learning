@@ -87,6 +87,7 @@ class UcTestimonyController extends Controller
     {
         $testimonies = User::query()
             ->where('is_visible', true)
+            ->where('is_featured_testimony', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->orderByDesc('submitted_at')

@@ -38,8 +38,8 @@ Route::middleware(['throttle:showcase'])->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     
-    Route::get('/import-progress/{sessionId}', [ImportController::class, 'progress'])->name('import.progress');
     Route::get('/import-progress/check', [ImportController::class, 'checkActive'])->name('import.check');
+    Route::get('/import-progress/{sessionId}', [ImportController::class, 'progress'])->name('import.progress');
     Route::post('/clear-active-import', [ImportController::class, 'clearActive'])->name('import.clear');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
