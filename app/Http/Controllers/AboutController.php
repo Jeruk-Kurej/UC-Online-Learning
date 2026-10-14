@@ -19,6 +19,8 @@ class AboutController extends Controller
     public function __invoke(Request $request): View
     {
         $page = Page::where('slug', 'about')->first();
-        return view('about', compact('page'));
+        $sections = Page::sectionsFor($page);
+
+        return view('about', compact('page', 'sections'));
     }
 }

@@ -1,54 +1,11 @@
 <x-app-layout>
     @section('title', 'Edit Page: ' . $page->title)
 
-    @php
-        $content = is_string($page->content_json) ? json_decode($page->content_json, true) : ($page->content_json ?? []);
-        
-        $initialSections = $content['sections'] ?? [];
-        if (empty($initialSections)) {
-            $initialSections = [
-                [
-                    'type' => 'hero',
-                    'badge' => $content['hero']['badge'] ?? 'About UC Online Learning',
-                    'title' => $content['hero']['title'] ?? 'Building the Future of Student & Alumni Entrepreneurship',
-                    'subtitle' => $content['hero']['subtitle'] ?? 'Connecting founders, intrapreneurs, and corporate innovators across Universitas Ciputra.',
-                ],
-                [
-                    'type' => 'feature_cards',
-                    'badge' => $content['pillars']['badge'] ?? 'Pillars of Excellence',
-                    'title' => $content['pillars']['title'] ?? 'Built for Sustainable Impact',
-                    'subtitle' => $content['pillars']['subtitle'] ?? 'Designed to support founders and intrapreneurs at every phase of their growth journey.',
-                    'cards' => $content['pillars']['cards'] ?? [
-                        ['title' => 'Rapid Launch', 'description' => 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', 'icon' => 'bi-rocket-takeoff'],
-                        ['title' => 'Global Network', 'description' => 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', 'icon' => 'bi-people'],
-                        ['title' => 'Scalable Growth', 'description' => 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', 'icon' => 'bi-graph-up-arrow'],
-                    ]
-                ],
-                [
-                    'type' => 'stats_grid',
-                    'title' => $content['stats']['title'] ?? 'Driving Community Impact',
-                    'items' => $content['stats']['items'] ?? [
-                        ['number' => '500+', 'label' => 'Active Ventures'],
-                        ['number' => '1200+', 'label' => 'Graduated Founders'],
-                        ['number' => '24', 'label' => 'Industry Categories'],
-                        ['number' => '15+', 'label' => 'Years of Heritage'],
-                    ]
-                ],
-                [
-                    'type' => 'cta_banner',
-                    'heading' => $content['cta']['heading'] ?? 'Ready to build your legacy?',
-                    'subtitle' => $content['cta']['subtitle'] ?? 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.',
-                    'primary_btn_text' => $content['cta']['primary_btn_text'] ?? 'Get Started Now',
-                    'secondary_btn_text' => $content['cta']['secondary_btn_text'] ?? 'Explore Directory',
-                ]
-            ];
-        }
-    @endphp
 
     <script id="initial-sections-data" type="application/json">@json($initialSections)</script>
 
     <div class="cms-builder-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        x-data="initSectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
+        x-data="sectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
 
         {{-- Page Header --}}
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
