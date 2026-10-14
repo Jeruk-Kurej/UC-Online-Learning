@@ -212,18 +212,6 @@
                     </select>
                 </div>
             </form>
-            <script>
-                // Intercept pagination clicks
-                document.addEventListener('click', function(e) {
-                    const link = e.target.closest('.pagination-ajax a');
-                    if (link) {
-                        e.preventDefault();
-                        window.dispatchEvent(new CustomEvent('ajax-pagination', {
-                            detail: { url: link.href }
-                        }));
-                    }
-                });
-            </script>
         </div>
 
         {{-- Flash messages removed - handled by global toasts --}}

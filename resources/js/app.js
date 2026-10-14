@@ -2,6 +2,7 @@ import './bootstrap';
 import './image-preview';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
+import registerAjaxPagination from './lib/ajax-pagination';
 
 import Alpine from 'alpinejs';
 import toastStack from './components/toast-stack';
@@ -255,6 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Page modules (loaded only where their markup exists) ---
 
 registerConfirmSubmit();
+registerAjaxPagination();
 
 if (document.querySelector('[data-offering-form]')) {
     import('./pages/offering-form').then(({ default: initOfferingForm }) => initOfferingForm());
@@ -270,4 +272,8 @@ if (document.querySelector('[data-enter-blurs]')) {
 
 if (document.querySelector('[data-user-form]')) {
     import('./pages/user-form').then(({ default: initUserForm }) => initUserForm());
+}
+
+if (document.querySelector('[data-testimony-admin]')) {
+    import('./pages/testimony-admin').then(({ default: initTestimonyAdmin }) => initTestimonyAdmin());
 }

@@ -197,18 +197,6 @@
                 </div>
             </form>
         </div>
-        <script>
-            // Intercept pagination clicks
-            document.addEventListener('click', function(e) {
-                const link = e.target.closest('.pagination-ajax a');
-                if (link) {
-                    e.preventDefault();
-                    window.dispatchEvent(new CustomEvent('ajax-pagination', {
-                        detail: { url: link.href }
-                    }));
-                }
-            });
-        </script>
 
         <div id="businesses-admin-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
             @include('businesses.admin.partials.list')

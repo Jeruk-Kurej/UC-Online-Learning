@@ -7,6 +7,8 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        // Scripts moved out of Blade; image-preview.js is left out on purpose (its classes were never generated).
+        './resources/js/{pages,components,lib}/**/*.js',
     ],
 
     // Tom Select builds its markup in JavaScript, so its class names never appear in the views.
