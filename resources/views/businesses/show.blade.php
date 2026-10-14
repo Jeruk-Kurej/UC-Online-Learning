@@ -126,7 +126,7 @@
 
                         @if ($business->user_id && Auth::id() !== $business->user_id)
                             @php
-                                $collabStatus = Auth::user()->collabStatusWith($business->user);
+                                $collabStatus = Auth::user()->collabStatusWith($business->public_owner);
                             @endphp
                             @if($collabStatus === 'accepted')
                                 <button disabled class="btn-uco bg-green-50 text-green-700 border border-green-200 cursor-default flex items-center gap-2">
@@ -141,7 +141,7 @@
                                     <span class="sm:hidden">Pending</span>
                                 </button>
                             @else
-                                <form action="{{ route('collabs.store', $business->user) }}" method="POST" class="inline">
+                                <form action="{{ route('collabs.store', $business->public_owner) }}" method="POST" class="inline">
                                     @csrf
                                     <button type="submit" class="btn-uco btn-uco-primary flex items-center gap-2 transition hover:scale-105">
                                         <i class="bi bi-person-plus-fill"></i>
@@ -484,7 +484,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessProducts as $product)
                                         @php
-                                            $phone = $business->whatsapp ?: ($business->user->whatsapp ?? null);
+                                            $phone = $business->whatsapp ?: ($business->public_owner->whatsapp ?? null);
                                             $cleanPhone = $phone ? preg_replace('/[^0-9]/', '', $phone) : null;
                                             $waLink = $cleanPhone ? 'https://wa.me/' . $cleanPhone . '?text=' . urlencode('Hi, I am interested in your product: "' . $product->name . '" listed on UC Online Learning.') : null;
                                         @endphp
@@ -623,7 +623,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                     @foreach ($businessServices as $service)
                                         @php
-                                            $phone = $business->whatsapp ?: ($business->user->whatsapp ?? null);
+                                            $phone = $business->whatsapp ?: ($business->public_owner->whatsapp ?? null);
                                             $cleanPhone = $phone ? preg_replace('/[^0-9]/', '', $phone) : null;
                                             $waLink = $cleanPhone ? 'https://wa.me/' . $cleanPhone . '?text=' . urlencode('Hi, I am interested in your service: "' . $service->name . '" listed on UC Online Learning.') : null;
                                         @endphp
@@ -1025,21 +1025,21 @@
                         </button>
 
                         <div class="flex flex-col items-center">
-                            @if ($business->user->profile_photo_url)
-                                <x-premium-image :src="storage_image_url($business->user->profile_photo_url, 'profile_thumb')" :alt="$business->user->name" class="w-24 h-24 rounded-sm mb-4" />
+                            @if ($business->public_owner->profile_photo_url)
+                                <x-premium-image :src="storage_image_url($business->public_owner->profile_photo_url, 'profile_thumb')" :alt="$business->public_owner->name" class="w-24 h-24 rounded-sm mb-4" />
                             @else
                                 <div
                                     class="w-24 h-24 rounded-sm bg-gradient-to-br from-uco-orange-500 to-uco-yellow-500 flex items-center justify-center text-white text-3xl font-bold mb-4">
-                                    {{ strtoupper(substr($business->user->name, 0, 1)) }}
+                                    {{ strtoupper(substr($business->public_owner->name, 0, 1)) }}
                                 </div>
                             @endif
-                            <h3 class="text-xl font-bold text-gray-900">{{ $business->user->name }}</h3>
+                            <h3 class="text-xl font-bold text-gray-900">{{ $business->public_owner->name }}</h3>
                             <p class="text-sm font-medium text-gray-500 mt-1">
-                                @if ($business->user->role === 'student')
+                                @if ($business->public_owner->role === 'student')
                                     Student
-                                @elseif($business->user->role === 'alumni')
+                                @elseif($business->public_owner->role === 'alumni')
                                     Alumni
-                                @elseif($business->user->role === 'admin')
+                                @elseif($business->public_owner->role === 'admin')
                                     Administrator
                                 @else
                                     User
@@ -1082,19 +1082,19 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Username</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ '@' . $business->user->username }}</p>
+                                            {{ '@' . $business->public_owner->username }}</p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Full Name</p>
-                                        <p class="text-sm font-medium text-gray-900">{{ $business->user->name }}</p>
+                                        <p class="text-sm font-medium text-gray-900">{{ $business->public_owner->name }}</p>
                                     </div>
                                 </div>
 
                                 <div>
                                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Email
                                         Address</p>
-                                    <a href="mailto:{{ $business->user->email }}"
+                                    <a href="mailto:{{ $business->public_owner->email }}"
                                         class="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg hover:bg-blue-100">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -1102,7 +1102,7 @@
                                                 d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
                                             </path>
                                         </svg>
-                                        {{ $business->user->email }}
+                                        {{ $business->public_owner->email }}
                                     </a>
                                 </div>
 
@@ -1111,17 +1111,17 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Phone/Mobile</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ $business->user->mobile_number ?? ($business->user->phone_number ?? '-') }}
+                                            {{ $business->public_owner->mobile_number ?? ($business->public_owner->phone_number ?? '-') }}
                                         </p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             WhatsApp</p>
-                                        @if ($business->user->whatsapp)
-                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->user->whatsapp) }}"
+                                        @if ($business->public_owner->whatsapp)
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->public_owner->whatsapp) }}"
                                                 target="_blank"
                                                 class="inline-flex items-center gap-1.5 text-sm font-medium text-green-600 hover:text-green-800 transition-colors">
-                                                <i class="bi bi-whatsapp"></i> {{ $business->user->whatsapp }}
+                                                <i class="bi bi-whatsapp"></i> {{ $business->public_owner->whatsapp }}
                                             </a>
                                         @else
                                             <p class="text-sm font-medium text-gray-900">-</p>
@@ -1131,7 +1131,7 @@
 
                                 <div class="pt-2 border-t border-gray-200">
                                     <p class="text-xs text-gray-400 mt-2">Joined
-                                        {{ $business->user->created_at->format('M Y') }}</p>
+                                        {{ $business->public_owner->created_at->format('M Y') }}</p>
                                 </div>
                             </div>
 
@@ -1146,13 +1146,13 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Birth City</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ $business->user->birth_city ?? '-' }}</p>
+                                            {{ $business->public_owner->birth_city ?? '-' }}</p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Birth Date</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ $business->user->birth_date ? $business->user->birth_date->format('d M Y') : '-' }}
+                                            {{ $business->public_owner->birth_date ? $business->public_owner->birth_date->format('d M Y') : '-' }}
                                         </p>
                                     </div>
                                 </div>
@@ -1161,14 +1161,14 @@
                                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                         Religion</p>
                                     <p class="text-sm font-medium text-gray-900">
-                                        {{ $business->user->religion ?? '-' }}</p>
+                                        {{ $business->public_owner->religion ?? '-' }}</p>
                                 </div>
 
-                                @if ($business->user->bio ?? false)
+                                @if ($business->public_owner->bio ?? false)
                                     <div class="pt-2">
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Bio</p>
-                                        <p class="text-sm text-gray-700 leading-relaxed">{{ $business->user->bio }}
+                                        <p class="text-sm text-gray-700 leading-relaxed">{{ $business->public_owner->bio }}
                                         </p>
                                     </div>
                                 @endif
@@ -1185,20 +1185,20 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             NIS (Student ID)</p>
                                         <p class="text-sm font-mono font-medium text-gray-900">
-                                            {{ $business->user->NIS ?? '-' }}</p>
+                                            {{ $business->public_owner->NIS ?? '-' }}</p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Class/Year</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ $business->user->Student_Year ?? '-' }}</p>
+                                            {{ $business->public_owner->Student_Year ?? '-' }}</p>
                                     </div>
                                 </div>
 
                                 <div>
                                     <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                         Major/Study Program</p>
-                                    <p class="text-sm font-medium text-gray-900">{{ $business->user->Major ?? '-' }}
+                                    <p class="text-sm font-medium text-gray-900">{{ $business->public_owner->Major ?? '-' }}
                                     </p>
                                 </div>
 
@@ -1207,13 +1207,13 @@
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             CGPA</p>
                                         <p class="text-sm font-medium text-gray-900">
-                                            {{ $business->user->CGPA ? number_format($business->user->CGPA, 2) : '-' }}
+                                            {{ $business->public_owner->CGPA ? number_format($business->public_owner->CGPA, 2) : '-' }}
                                         </p>
                                     </div>
                                     <div>
                                         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">
                                             Status</p>
-                                        @if ($business->user->Is_Graduate)
+                                        @if ($business->public_owner->Is_Graduate)
                                             <span
                                                 class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md bg-green-100 text-green-800">
                                                 <i class="bi bi-mortarboard-fill"></i> Graduated
@@ -1238,7 +1238,7 @@
         <div class="md:sticky md:top-6 min-w-0 flex flex-col gap-6">
 
             @php
-                $owner      = $business->user;
+                $owner      = $business->public_owner;
                 $ownerPhoto = $owner->profile_photo_url;
                 $ownerAcad  = $owner->academic_data ?? [];
                 $ownerGrad  = $owner->graduation_data ?? [];
@@ -1252,7 +1252,7 @@
                 $ownerPhotoUrl = $ownerPhoto
                     ? storage_image_url($ownerPhoto, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'])
                     : null;
-                $additionalOwners = $business->members()->where('users.is_visible', true)->where('users.id', '!=', $business->user_id)->get();
+                $additionalOwners = $business->public_co_owners;
             @endphp
 
             {{-- Owner Section (Title & Card) --}}

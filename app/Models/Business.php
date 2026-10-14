@@ -145,6 +145,47 @@ class Business extends Model
         return $query->where('type', 'intrapreneur');
     }
 
+    // ─── Public people ───
+    // A business stays public while at least one of its people (owner or co-owner) is visible.
+    // Hidden people are left out of what the public sees.
+
+    protected function whereSomeoneVisible($query): void
+    {
+        $query->whereHas('user', fn ($q) => $q->where('is_visible', true))
+            ->orWhereHas('members', fn ($q) => $q->where('is_visible', true));
+    }
+
+    public function hasVisiblePeople(): bool
+    {
+        return (bool) $this->user?->is_visible || $this->members->contains('is_visible', true);
+    }
+
+    public function getPublicOwnerAttribute(): ?User
+    {
+        if ($this->user?->is_visible) {
+            return $this->user;
+        }
+
+        return $this->visibleMembers()->first() ?? $this->user;
+    }
+
+    public function getPublicCoOwnersAttribute(): \Illuminate\Support\Collection
+    {
+        $shownOwnerId = $this->public_owner?->id;
+
+        return $this->visibleMembers()
+            ->reject(fn (User $member) => in_array($member->id, [$shownOwnerId, $this->user_id], true))
+            ->values();
+    }
+
+    private function visibleMembers(): \Illuminate\Support\Collection
+    {
+        return $this->members
+            ->where('is_visible', true)
+            ->sortBy(fn (User $member) => [$member->pivot->created_at, $member->id])
+            ->values();
+    }
+
     public function canBeManagedBy(User $user): bool
     {
         if ($user->isAdmin()) {

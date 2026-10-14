@@ -34,7 +34,7 @@ class BusinessController extends Controller
         if ($viewType === 'intrapreneur') {
             $query = Company::visible()->with(['user', 'category']);
         } else {
-            $query = Business::visible()->with(['user', 'category', 'products'])->entrepreneur();
+            $query = Business::visible()->with(['user', 'members', 'category', 'products'])->entrepreneur();
         }
 
         if ($search) {
@@ -173,8 +173,7 @@ class BusinessController extends Controller
         $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($business->user) === 'accepted';
         $isAdmin = auth()->user()?->isAdmin();
 
-        $isUserVisible = $business->user?->is_visible ?? true;
-        $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $isUserVisible;
+        $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $business->hasVisiblePeople();
 
         if (!$isBusinessVisible && !$isOwner && !$isCoOwner && !$isCollabPartner && !$isAdmin) {
             abort(404);

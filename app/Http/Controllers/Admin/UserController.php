@@ -521,9 +521,13 @@ class UserController extends \App\Http\Controllers\Controller
         $user->fill($updateData);
         $user->save();
 
-        // Sync visibility of all primary owned businesses and companies
-        $user->businesses()->update(['is_visible' => $newVisibility]);
+        // Work profiles follow their person. Businesses are left alone when hiding: the visible
+        // scope already hides a business once none of its people is visible. Re-activating still
+        // restores businesses hidden by earlier deactivations.
         $user->companies()->update(['is_visible' => $newVisibility]);
+        if ($newVisibility) {
+            $user->businesses()->update(['is_visible' => true]);
+        }
 
         $status = $user->is_visible ? 'activated' : 'deactivated';
 

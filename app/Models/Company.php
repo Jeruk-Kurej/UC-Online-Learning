@@ -70,6 +70,14 @@ class Company extends Model
         return $items;
     }
 
+    // ─── Public people ───
+    // A work profile belongs to one person and is shown or hidden with them.
+
+    public function getPublicOwnerAttribute(): ?User
+    {
+        return $this->user;
+    }
+
     // ─── Relationships ───
 
     public function user()

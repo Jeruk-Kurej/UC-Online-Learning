@@ -46,7 +46,7 @@ class FeaturedController extends Controller
             ->entrepreneur()
             ->where('is_featured', true)
             ->latest()
-            ->with(['category', 'user'])
+            ->with(['category', 'user', 'members'])
             ->get();
 
         // Categories

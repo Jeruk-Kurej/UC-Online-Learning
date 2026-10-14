@@ -50,18 +50,18 @@
                     <div class="space-y-3 min-w-0 flex-1">
 
 
-                        @if($business->user)
+                        @if($business->public_owner)
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-9 h-9 rounded-sm overflow-hidden flex items-center justify-center flex-shrink-0">
-                                    @if($business->user->profile_photo_url)
-                                        <img src="{{ $business->user->profile_photo_url }}" alt="{{ $business->user->name }}" class="w-full h-full object-contain">
+                                    @if($business->public_owner->profile_photo_url)
+                                        <img src="{{ $business->public_owner->profile_photo_url }}" alt="{{ $business->public_owner->name }}" class="w-full h-full object-contain">
                                     @else
-                                        <span class="text-xs font-black text-gray-300">{{ strtoupper(substr($business->user->name, 0, 1)) }}</span>
+                                        <span class="text-xs font-black text-gray-300">{{ strtoupper(substr($business->public_owner->name, 0, 1)) }}</span>
                                     @endif
                                 </div>
                                 <div class="min-w-0">
                                     <p class="truncate text-sm font-bold text-gray-800">
-                                        {{ $business->user->name }}
+                                        {{ $business->public_owner->name }}
                                     </p>
                                 </div>
                             </div>

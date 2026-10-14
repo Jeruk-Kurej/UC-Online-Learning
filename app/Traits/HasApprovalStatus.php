@@ -28,6 +28,13 @@ trait HasApprovalStatus
     {
         return $query->where('is_visible', true)
             ->where('approval_status', 'approved')
-            ->whereHas('user', fn ($q) => $q->where('is_visible', true));
+            ->where(fn ($q) => $this->whereSomeoneVisible($q));
+    }
+
+    // --- People ---
+
+    protected function whereSomeoneVisible($query): void
+    {
+        $query->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 }

@@ -109,12 +109,12 @@
                                             <div class="flex items-center gap-2 mt-1">
                                                 <div
                                                     class="h-4 w-4 overflow-hidden rounded-full border border-uco-orange-100">
-                                                    <img src="{{ $business->user->profile_photo_url }}"
+                                                    <img src="{{ $business->public_owner->profile_photo_url }}"
                                                         class="h-full w-full object-contain bg-slate-50">
                                                 </div>
                                                 <span
                                                     class="text-[9px] font-bold text-gray-400 uppercase tracking-widest truncate max-w-[80px]">
-                                                    {{ $business->user->full_titled_name ?? 'Founder' }}
+                                                    {{ $business->public_owner->full_titled_name ?? 'Founder' }}
                                                 </span>
                                             </div>
                                         </div>

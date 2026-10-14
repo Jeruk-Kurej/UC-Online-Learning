@@ -214,18 +214,31 @@ test('featured toggle refuses hidden users and answers json', function () {
     $this->actingAs($w['student'])->postJson(route('users.toggle-featured', $w['student']))->assertForbidden();
 });
 
-test('deactivating a user unfeatures them and hides their businesses and work profiles', function () {
+test('deactivating a user unfeatures them and hides their own businesses and work profiles', function () {
     $w = userWorld();
     $w['student']->update(['is_featured' => true]);
     $business = Business::create(['user_id' => $w['student']->id, 'name' => 'Theirs', 'is_visible' => true]);
+    $business->approval_status = 'approved';
+    $business->save();
     $company = Company::create(['user_id' => $w['student']->id, 'name' => 'Their Employer', 'is_visible' => true]);
 
     $this->actingAs($w['admin'])->postJson(route('users.toggle-status', $w['student']))
         ->assertJson(['success' => true, 'is_visible' => false, 'is_featured' => false]);
-    expect($business->fresh()->is_visible)->toBeFalse()->and($company->fresh()->is_visible)->toBeFalse();
+    expect(Business::visible()->whereKey($business->id)->exists())->toBeFalse()
+        ->and($company->fresh()->is_visible)->toBeFalse();
 
     $this->actingAs($w['admin'])->post(route('users.toggle-status', $w['student']))
         ->assertSessionHas('success', "User 'Student Person' has been activated successfully.");
+    expect(Business::visible()->whereKey($business->id)->exists())->toBeTrue()
+        ->and($company->fresh()->is_visible)->toBeTrue();
+});
+
+test('re-activating a user restores businesses hidden by an earlier deactivation', function () {
+    $w = userWorld();
+    $w['student']->update(['is_visible' => false]);
+    $business = Business::create(['user_id' => $w['student']->id, 'name' => 'Hidden Earlier', 'is_visible' => false]);
+
+    $this->actingAs($w['admin'])->post(route('users.toggle-status', $w['student']));
     expect($business->fresh()->is_visible)->toBeTrue();
 });
 
