@@ -3,4 +3,8 @@
 		overflow-x: hidden;
 		max-width: 100%;
 	}
+
+	[x-cloak] {
+		display: none !important;
+	}
 }

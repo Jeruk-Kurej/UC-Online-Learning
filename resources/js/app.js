@@ -4,8 +4,11 @@ import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 
 import Alpine from 'alpinejs';
+import toastStack from './components/toast-stack';
 
 window.Alpine = Alpine;
+
+Alpine.data('toastStack', toastStack);
 
 window.initSectionBuilder = function(initialSections) {
     return {
