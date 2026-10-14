@@ -25,20 +25,4 @@ class PageController extends Controller
 
         return response()->json(['message' => 'Page updated successfully.']);
     }
-
-    public function uploadImage(Request $request)
-    {
-        $request->validate([
-            'image' => 'required|image|max:5120',
-        ]);
-
-        $path = $request->file('image')->store('pages', 'public');
-
-        return response()->json([
-            'success' => 1,
-            'file' => [
-                'url' => asset('storage/' . $path),
-            ]
-        ]);
-    }
 }

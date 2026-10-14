@@ -2,8 +2,6 @@
 
 use App\Models\User;
 use App\Models\Page;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -68,42 +66,6 @@ test('non-admin cannot update page content', function () {
         ->put(route('pages.update', $page), [
             'title' => 'Hack title',
             'content_json' => ['body' => 'Hack body'],
-        ]);
-
-    $response->assertStatus(403);
-});
-
-test('admin can upload image to page storage', function () {
-    Storage::fake('public');
-    $admin = User::factory()->create(['role' => 'admin']);
-    $imageFile = UploadedFile::fake()->image('page-image.jpg');
-
-    $response = $this->actingAs($admin)
-        ->post(route('pages.upload-image'), [
-            'image' => $imageFile,
-        ]);
-
-    $response->assertStatus(200);
-    $response->assertJsonStructure([
-        'success',
-        'file' => ['url'],
-    ]);
-
-    $json = $response->json();
-    $url = $json['file']['url'];
-    // Parse path relative to storage from asset URL
-    $path = 'pages/' . $imageFile->hashName();
-    Storage::disk('public')->assertExists($path);
-});
-
-test('non-admin cannot upload image to page storage', function () {
-    Storage::fake('public');
-    $user = User::factory()->create(['role' => 'user']);
-    $imageFile = UploadedFile::fake()->image('page-image.jpg');
-
-    $response = $this->actingAs($user)
-        ->post(route('pages.upload-image'), [
-            'image' => $imageFile,
         ]);
 
     $response->assertStatus(403);

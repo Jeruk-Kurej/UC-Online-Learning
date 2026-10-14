@@ -16,23 +16,6 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- {{-- Manual fallback: Read manifest and inject assets --}}
-        @php
-            $manifestPath = public_path('build/manifest.json');
-            if (file_exists($manifestPath)) {
-                $manifest = json_decode(file_get_contents($manifestPath), true);
-                $cssFile = $manifest['resources/css/app.css']['file'] ?? null;
-                $jsFile = $manifest['resources/js/app.js']['file'] ?? null;
-            }
-        @endphp
-        
-        @if (isset($cssFile))
-<link rel="stylesheet" href="/build/{{ $cssFile }}">
-@endif
-        
-        @if (isset($jsFile))
-<script type="module" src="/build/{{ $jsFile }}"></script>
-@endif -->
 </head>
 
 <body class="font-sans antialiased bg-soft-white overflow-x-hidden">

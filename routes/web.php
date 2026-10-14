@@ -105,7 +105,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 
     Route::get('/pages/{page:slug}/edit', [PageController::class, 'edit'])->name('pages.edit');
     Route::put('/pages/{page:slug}', [PageController::class, 'update'])->name('pages.update');
-    Route::post('/pages/upload-image', [PageController::class, 'uploadImage'])->name('pages.upload-image');
 });
 
 Route::middleware(['throttle:showcase'])->group(function () {

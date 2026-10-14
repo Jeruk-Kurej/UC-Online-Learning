@@ -10,10 +10,10 @@ Use this repo as a Laravel 12 + Vite application for UC alumni/student businesse
 
 ## What matters in this codebase
 
-- Roles live in `users.role` and the app uses `guest`, `student`, `alumni`, and `admin` behavior.
+- Roles live in `users.role` (`user` or `admin`); student versus alumni comes from `users.student_status`.
 - Use `app/Http/Middleware/IsAdmin.php` for admin-only access and `app/Policies/BusinessPolicy.php` for business authorization.
 - Public business viewing is intentional; editing and deletion are owner/admin-only.
-- Business routes are order-sensitive: `Route::get('/businesses/{business}', ...)` stays last so it does not shadow static routes like `/businesses/create`.
+- Routes are order-sensitive: static paths go before parameter paths, `/business/{slug}` is a resolver for both businesses and work profiles, and the catch-all `/{user}` stays last.
 - Use `getAuthUser()` / `getAuthUserOrNull()` patterns in controllers when authentication may or may not exist.
 - Prefer `$user->isAdmin()` and `Business::canBeManagedBy($user)` over ad hoc role checks.
 
@@ -26,9 +26,9 @@ Use this repo as a Laravel 12 + Vite application for UC alumni/student businesse
 
 ## AI, queues, and moderation
 
-- All AI moderation goes through `app/Services/AiModerationService.php` and Google Gemini.
+- AI scoring lives in `app/Services/AiModerationService.php` (Google Gemini) and only runs through `php artisan ai:analyze-testimonies`; testimony submission does not call it.
 - Do not introduce embeddings or vector databases for this project.
-- Testimony moderation expects the queue worker to be running locally.
+- Imports are queued and expect the queue worker to be running locally.
 - Use `GEMINI_MODEL`, `GEMINI_API_KEY`, and `GEMINI_DEBUG` when adjusting AI behavior.
 
 ## Import and bulk data rules
