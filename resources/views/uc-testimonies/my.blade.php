@@ -20,7 +20,7 @@
                     <div class="testimony-preview-photo">
                         <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="w-full h-full" />
 
-                        <div class="testimony-preview-shade"></div>
+                        <div class="testimony-shade"></div>
 
                         <div class="testimony-preview-info">
                             <h3 class="testimony-preview-name">{{ $user->name }}</h3>

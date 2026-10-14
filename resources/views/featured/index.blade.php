@@ -3,7 +3,7 @@
         {{-- High-Fidelity "Better" Hero Section --}}
         <section class="group relative overflow-hidden uco-hero-section-bleed py-12 md:py-16 reveal-on-scroll">
             {{-- Background Effects with Gradient Mask --}}
-            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none uco-hero-mask">
                 <div class="uco-hero-mesh opacity-90"></div>
                 <div class="uco-noise-overlay"></div>
 
@@ -163,15 +163,13 @@
             <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()"
                 @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
                 <div x-ref="track" @scroll.passive="updateScroll"
-                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10"
-                    style="scrollbar-width: none; -ms-overflow-style: none;">
+                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10 scrollbar-none">
                     @forelse($topIntrapreneurs as $student)
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
                             @include('featured.partials.featured-student-card', [
                                 'student' => $student,
                                 'type' => 'intra',
-                                'delay' => $loop->index * 40,
                             ])
                         </div>
                     @empty
@@ -229,15 +227,13 @@
             <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()"
                 @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
                 <div x-ref="track" @scroll.passive="updateScroll"
-                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10"
-                    style="scrollbar-width: none; -ms-overflow-style: none;">
+                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 xl:grid-cols-3 md:overflow-visible md:snap-none md:gap-6 md:pb-0 md:pt-0 w-full relative z-10 scrollbar-none">
                     @forelse($topEntrepreneurs as $student)
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
                             @include('featured.partials.featured-student-card', [
                                 'student' => $student,
                                 'type' => 'entre',
-                                'delay' => $loop->index * 40,
                             ])
                         </div>
                     @empty
@@ -299,8 +295,7 @@
             <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()"
                 @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
                 <div x-ref="track" @scroll.passive="updateScroll"
-                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:overflow-visible md:snap-none md:gap-8 md:pb-0 md:pt-0 w-full relative z-10"
-                    style="scrollbar-width: none; -ms-overflow-style: none;">
+                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-2 md:overflow-visible md:snap-none md:gap-8 md:pb-0 md:pt-0 w-full relative z-10 scrollbar-none">
                     @forelse($spotlightBusinesses as $featuredBusiness)
                         @php
                             $student = $featuredBusiness->user;
@@ -308,8 +303,7 @@
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,18rem)] sm:w-[calc(50%-0.75rem)] md:w-full md:shrink md:grow-0 flex h-auto">
                             <a href="{{ route('businesses.show', $featuredBusiness) }}"
-                                class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer"
-                                style="transition-delay: {{ $loop->index * 40 }}ms">
+                                class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer">
 
                                 {{-- Top Part: Venture Info & Description --}}
                                 <div>
@@ -440,8 +434,7 @@
             <div class="relative z-10 w-full" x-data="testimonyCarousel()" x-init="init()"
                 @mouseenter="stopAutoScroll()" @mouseleave="startAutoScroll()">
                 <div x-ref="track" @scroll.passive="updateScroll"
-                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden"
-                    style="scrollbar-width: none; -ms-overflow-style: none;">
+                    class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-6 pb-12 pt-4 items-stretch [&::-webkit-scrollbar]:hidden scrollbar-none">
                     @forelse($testimonies as $student)
                         <div data-carousel-slide
                             class="snap-start shrink-0 w-[min(100%,17rem)] sm:w-[calc(50%-0.75rem)] md:w-[calc((100%-3rem)/3)] lg:w-[calc((100%-4.5rem)/4)] flex h-auto">
@@ -450,49 +443,40 @@
                                 data-status="{{ $student->current_status ?? 'Member' }} at UCO Community"
                                 data-photo="{{ $student->profile_photo_url ?? '' }}"
                                 data-testimony="{{ $student->testimony }}"
-                                @click="openModal($el.dataset.name, $el.dataset.status, $el.dataset.photo, $el.dataset.testimony)"
-                                style="transition-delay: {{ $loop->index * 40 }}ms">
+                                @click="openModal($el.dataset.name, $el.dataset.status, $el.dataset.photo, $el.dataset.testimony)">
 
                                 {{-- Top Section: Image & Info --}}
                                 <div class="relative h-[280px] w-full flex-shrink-0">
                                     @if ($student->profile_photo_url)
                                         <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="w-full h-full" />
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
-                                            style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                        <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black testimony-card-initials">
                                             {{ strtoupper(substr($student->name, 0, 1)) }}
                                         </div>
                                     @endif
 
                                     {{-- Overlay Gradient --}}
-                                    <div
-                                        style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);">
-                                    </div>
+                                    <div class="testimony-shade"></div>
 
                                     {{-- Text Content on Image --}}
-                                    <div
-                                        style="position: absolute; bottom: 35px; left: 20px; right: 20px; color: white;">
-                                        <h3
-                                            style="font-size: 16px; font-weight: 900; margin-bottom: 2px; letter-spacing: -0.5px; line-height: 1.2;">
+                                    <div class="testimony-card-info">
+                                        <h3 class="testimony-card-name">
                                             {{ $student->full_titled_name }}</h3>
-                                        <p
-                                            style="color: #cbd5e1; font-size: 10px; font-weight: 600; margin-bottom: 0;">
+                                        <p class="testimony-card-role">
                                             {{ $student->current_status ?? 'Member' }} at UCO Community
                                         </p>
                                     </div>
                                 </div>
 
                                 {{-- Bottom Section: Testimony content --}}
-                                <div style="position: relative; padding: 30px 20px 25px 20px; text-align: center;"
-                                    class="flex-grow flex items-center justify-center bg-white rounded-b-[20px] relative group/text">
+                                <div class="testimony-card-body flex-grow flex items-center justify-center bg-white rounded-b-[20px] relative group/text">
                                     {{-- Quote Icon --}}
                                     <div
                                         class="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10 transition-transform duration-300 group-hover:scale-110">
                                         <i class="fa-solid fa-quote-left text-base"></i>
                                     </div>
 
-                                    <p style="color: #334155; font-weight: 500; line-height: 1.6; font-size: 12px; font-style: italic; margin: 0; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;"
-                                        class="transition-colors duration-300 group-hover:text-slate-900">
+                                    <p class="testimony-card-text transition-colors duration-300">
                                         "{{ $student->testimony }}"
                                     </p>
                                 </div>
@@ -528,7 +512,7 @@
                 <!-- Premium Glassmorphic Testimony Modal -->
                 <div x-show="showModal"
                     class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto"
-                    style="display: none;" x-cloak>
+                    x-cloak>
                     <!-- Backdrop with blur -->
                     <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
                         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"

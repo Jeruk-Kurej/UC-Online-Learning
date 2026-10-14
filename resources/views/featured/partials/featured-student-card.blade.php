@@ -1,4 +1,4 @@
-@props(['student', 'type' => 'intra', 'delay' => 0])
+@props(['student', 'type' => 'intra'])
 
 @php
     $isIntra = $type === 'intra';
@@ -6,9 +6,7 @@
 @endphp
 
 <a href="{{ route('users.show', $student) }}"
-    class="reveal-on-scroll uco-premium-card {{ $isIntra ? 'uco-premium-card--blue hover:border-blue-100/70' : 'uco-premium-card--orange hover:border-orange-100/70' }} group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl w-full flex flex-col justify-between cursor-pointer"
-    style="transition-delay: {{ $delay }}ms"
->
+    class="reveal-on-scroll uco-premium-card {{ $isIntra ? 'uco-premium-card--blue hover:border-blue-100/70' : 'uco-premium-card--orange hover:border-orange-100/70' }} group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl w-full flex flex-col justify-between cursor-pointer">
     <div>
         <div class="flex items-start gap-5">
             <div class="h-24 w-24 overflow-hidden rounded-sm flex-shrink-0 transition-transform duration-500 group-hover:scale-105">
