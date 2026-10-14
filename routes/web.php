@@ -11,7 +11,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\CollabController;
+use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\CompanyAchievementController;
+use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -69,15 +72,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('business.services', ServiceController::class)->parameters(['business' => 'business'])->names('businesses.services')->except(['index', 'show']);
 
     // Intrapreneur Achievements
-    Route::get('/intrapreneurs/{company}/achievements/create', [BusinessController::class, 'createAchievement'])->name('intrapreneurs.create_achievement');
-    Route::post('/intrapreneurs/{company}/achievements', [BusinessController::class, 'addAchievement'])->name('intrapreneurs.add_achievement');
-    Route::delete('/intrapreneurs/{company}/achievements', [BusinessController::class, 'deleteAchievement'])->name('intrapreneurs.delete_achievement');
+    Route::get('/intrapreneurs/{company}/achievements/create', [CompanyAchievementController::class, 'create'])->name('intrapreneurs.create_achievement');
+    Route::post('/intrapreneurs/{company}/achievements', [CompanyAchievementController::class, 'store'])->name('intrapreneurs.add_achievement');
+    Route::delete('/intrapreneurs/{company}/achievements', [CompanyAchievementController::class, 'destroy'])->name('intrapreneurs.delete_achievement');
 
     // Intrapreneur / Company Management
-    Route::get('/intrapreneurs/create', [BusinessController::class, 'createCompany'])->name('intrapreneurs.create');
-    Route::post('/intrapreneurs', [BusinessController::class, 'storeCompany'])->name('intrapreneurs.store');
-    Route::get('/intrapreneurs/{company}/edit', [BusinessController::class, 'editCompany'])->name('intrapreneurs.edit');
-    Route::put('/intrapreneurs/{company}', [BusinessController::class, 'updateCompany'])->name('intrapreneurs.update');
+    Route::get('/intrapreneurs/create', [CompanyController::class, 'create'])->name('intrapreneurs.create');
+    Route::post('/intrapreneurs', [CompanyController::class, 'store'])->name('intrapreneurs.store');
+    Route::get('/intrapreneurs/{company}/edit', [CompanyController::class, 'edit'])->name('intrapreneurs.edit');
+    Route::put('/intrapreneurs/{company}', [CompanyController::class, 'update'])->name('intrapreneurs.update');
 });
 
 // ============================================================
@@ -92,13 +95,13 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
     Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
     
-    Route::post('/business/import', [BusinessController::class, 'import'])->name('businesses.import');
-    Route::delete('/business/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
-    Route::post('/business/{business}/toggle-featured', [BusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
-    Route::get('/business', [BusinessController::class, 'adminIndex'])->name('businesses.admin');
-    Route::post('/business/{business}/status', [BusinessController::class, 'updateStatus'])->name('businesses.update-status');
-    Route::post('/intrapreneurs/{company}/status', [BusinessController::class, 'updateCompanyStatus'])->name('intrapreneurs.update-status');
-    Route::post('/business/{business}/approve', [BusinessController::class, 'approve'])->name('businesses.approve');
+    Route::post('/business/import', [AdminBusinessController::class, 'import'])->name('businesses.import');
+    Route::delete('/business/{business}', [AdminBusinessController::class, 'destroy'])->name('businesses.destroy');
+    Route::post('/business/{business}/toggle-featured', [AdminBusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
+    Route::get('/business', [AdminBusinessController::class, 'index'])->name('businesses.admin');
+    Route::post('/business/{business}/status', [AdminBusinessController::class, 'updateStatus'])->name('businesses.update-status');
+    Route::post('/intrapreneurs/{company}/status', [AdminBusinessController::class, 'updateCompanyStatus'])->name('intrapreneurs.update-status');
+    Route::post('/business/{business}/approve', [AdminBusinessController::class, 'approve'])->name('businesses.approve');
     
     Route::get('/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
     Route::post('/testimonies/{user:id}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');
@@ -113,7 +116,7 @@ Route::middleware(['throttle:showcase'])->group(function () {
 
     // These routes must be defined AFTER the resolver. They are used to preserve reverse routing (url generation) 
     // for existing Blade views without needing to refactor all route() calls.
-    Route::get('/business/{company}', [BusinessController::class, 'showIntrapreneur'])->name('intrapreneurs.show');
+    Route::get('/business/{company}', [CompanyController::class, 'show'])->name('intrapreneurs.show');
     Route::get('/business/{business}', [BusinessController::class, 'show'])->name('businesses.show');
 });
 

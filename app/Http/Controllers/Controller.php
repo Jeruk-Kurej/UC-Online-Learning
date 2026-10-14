@@ -13,4 +13,11 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 abstract class Controller
 {
     use AuthorizesRequests, ValidatesRequests;
+
+    // --- Current user ---
+
+    protected function currentUserIsAdmin(): bool
+    {
+        return (bool) request()->user()?->isAdmin();
+    }
 }

@@ -10,51 +10,19 @@ use App\Models\Company;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
+use App\Services\ImageOptimizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Maatwebsite\Excel\Facades\Excel;
-use App\Services\ImageOptimizerService;
 
 /**
- * Class BusinessController
- *
- * Handles showcase listings, detail views, and CRUD management for Businesses (Entrepreneurship)
- * and Companies (Intrapreneurship), as well as administration statuses, CSV importing, and achievements.
+ * Public directory, detail pages and owner create/edit for entrepreneur businesses.
  */
 class BusinessController extends Controller
 {
-    /**
-     * Get authenticated user as User instance.
-     *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthenticated
-     */
-    private function getAuthUser(): User
-    {
-        $user = Auth::user();
-        if (! $user instanceof User) {
-            abort(401, 'Unauthenticated.');
-        }
-
-        return $user;
-    }
-
-    /**
-     * Check if current authenticated user is an admin.
-     */
-    private function isUserAdmin(): bool
-    {
-        $user = Auth::user();
-
-        return $user instanceof User && $user->isAdmin();
-    }
-
     /**
      * Display a listing of the businesses.
      */
@@ -134,7 +102,7 @@ class BusinessController extends Controller
 
         // If admin, also get count of businesses waiting for approval
         $pendingCount = 0;
-        if ($this->isUserAdmin()) {
+        if ($this->currentUserIsAdmin()) {
             $pendingCount = Business::where('is_visible', false)->count();
         }
 
@@ -154,172 +122,6 @@ class BusinessController extends Controller
             'featuredBusinessCount',
             'pendingCount'
         ));
-    }
-
-    /**
-     * Display a listing of businesses for administrative management.
-     */
-    public function adminIndex(Request $request): View|Response
-    {
-        if (! $this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $viewType = $request->get('type', 'entrepreneur'); // 'entrepreneur' or 'intrapreneur'
-        $status = $request->get('status');
-        $search = $request->get('search');
-        $featured = $request->get('featured');
-
-        if ($viewType === 'intrapreneur') {
-            // ── Intrapreneur (Company) mode ──────────────────────────────────
-            $query = Company::with(['user', 'category']);
-
-            $totalBusinesses = Company::count();
-            $approvedBusinesses = Company::where('approval_status', 'approved')->count();
-            $pendingBusinesses = Company::where('approval_status', 'pending')->count();
-            $rejectedBusinesses = Company::whereIn('approval_status', ['rejected', 'need_revision'])->count();
-            $featuredBusinessesCount = 0;
-
-            if ($status) {
-                $query->where('approval_status', $status);
-            }
-
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                      ->orWhere('position', 'LIKE', "%{$search}%")
-                      ->orWhereHas('user', function ($uq) use ($search) {
-                          $uq->where('name', 'LIKE', "%{$search}%");
-                      });
-                });
-            }
-
-            $businesses = $query->latest()->paginate(10)->withQueryString();
-
-            if ($request->ajax()) {
-                return response()
-                    ->view('businesses.admin.partials.list', compact('businesses', 'viewType'))
-                    ->header('Vary', 'X-Requested-With');
-            }
-
-            return view('businesses.admin.index', compact(
-                'businesses',
-                'viewType',
-                'status',
-                'search',
-                'featured',
-                'totalBusinesses',
-                'pendingBusinesses',
-                'approvedBusinesses',
-                'rejectedBusinesses',
-                'featuredBusinessesCount'
-            ));
-        }
-
-        // ── Entrepreneur (Business) mode ─────────────────────────────────────
-        $viewType = 'entrepreneur';
-        $query = Business::with(['user', 'category'])->entrepreneur();
-
-        // Calculate statistics
-        $totalBusinesses = Business::entrepreneur()->count();
-        $pendingBusinesses = Business::entrepreneur()->where('approval_status', 'pending')->count();
-        $approvedBusinesses = Business::entrepreneur()->where('approval_status', 'approved')->count();
-        $rejectedBusinesses = Business::entrepreneur()->whereIn('approval_status', ['rejected', 'need_revision'])->count();
-        $featuredBusinessesCount = Business::entrepreneur()->where('is_featured', true)->count();
-
-        if ($status) {
-            $query->where('approval_status', $status);
-        }
-
-        if ($featured === 'yes') {
-            $query->where('is_featured', true);
-        } elseif ($featured === 'no') {
-            $query->where('is_featured', false);
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'LIKE', "%{$search}%");
-                  });
-            });
-        }
-
-        $businesses = $query->latest()->paginate(10)->withQueryString();
-
-        if ($request->ajax()) {
-            return response()
-                ->view('businesses.admin.partials.list', compact('businesses', 'viewType'))
-                ->header('Vary', 'X-Requested-With');
-        }
-
-        return view('businesses.admin.index', compact(
-            'businesses',
-            'viewType',
-            'status',
-            'search',
-            'featured',
-            'totalBusinesses',
-            'pendingBusinesses',
-            'approvedBusinesses',
-            'rejectedBusinesses',
-            'featuredBusinessesCount'
-        ));
-    }
-
-    /**
-     * Update business status (admin only).
-     */
-    public function updateStatus(Request $request, Business $business): RedirectResponse
-    {
-        if (! $this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $this->validate($request, [
-            'status' => 'required|in:approved,rejected,need_revision,pending',
-            'rejection_reason' => 'required_if:status,rejected,need_revision',
-        ]);
-
-        $status = $request->input('status');
-        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
-
-        $business->fill([
-            'approval_status' => $status,
-            'rejection_reason' => $rejectionReason,
-            'is_visible' => $status === 'approved',
-        ]);
-        $business->save();
-
-        return back()->with('success', 'Business status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
-    }
-
-    /**
-     * Update company status (admin only).
-     */
-    public function updateCompanyStatus(Request $request, Company $company): RedirectResponse
-    {
-        if (! $this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $this->validate($request, [
-            'status' => 'required|in:approved,rejected,need_revision,pending',
-            'rejection_reason' => 'required_if:status,rejected,need_revision',
-        ]);
-
-        $status = $request->input('status');
-        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
-
-        $company->fill([
-            'approval_status' => $status,
-            'rejection_reason' => $rejectionReason,
-            'is_visible' => $status === 'approved',
-        ]);
-        $company->save();
-
-        return back()->with('success', 'Company status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
     /**
@@ -395,32 +197,10 @@ class BusinessController extends Controller
 
         $company = Company::where('slug', $slug)->first();
         if ($company) {
-            return $this->showIntrapreneur($company);
+            return app(CompanyController::class)->show($company);
         }
 
         abort(404);
-    }
-
-    /**
-     * Display the specified intrapreneur (Company).
-     */
-    public function showIntrapreneur(Company $company): View
-    {
-        $company->load(['user', 'category']);
-
-        // Security check: Check if visible or authorized
-        $isOwner = auth()->id() === $company->user_id;
-        $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($company->user) === 'accepted';
-        $isAdmin = auth()->user()?->isAdmin();
-
-        $isUserVisible = $company->user?->is_visible ?? true;
-        $isCompanyVisible = $company->is_visible && $isUserVisible;
-
-        if (!$isCompanyVisible && !$isOwner && !$isCollabPartner && !$isAdmin) {
-            abort(404);
-        }
-
-        return view('businesses.show_intrapreneur', compact('company'));
     }
 
     /**
@@ -467,7 +247,7 @@ class BusinessController extends Controller
         $data = $validated;
 
         // Security: only admins can change visibility or featured status or primary owner
-        if (! $this->isUserAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             unset($data['is_visible'], $data['is_featured'], $data['user_id']);
         }
 
@@ -571,7 +351,7 @@ class BusinessController extends Controller
         $data['type'] = 'entrepreneur';
 
         // Student-created businesses are invisible until approved by admin
-        if (! $this->isUserAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             $data['is_visible'] = false;
         } else {
             $data['is_visible'] = true;
@@ -602,358 +382,10 @@ class BusinessController extends Controller
             $business->members()->sync($ownerIds);
         }
 
-        $message = $this->isUserAdmin()
+        $message = $this->currentUserIsAdmin()
             ? 'Business created successfully!'
             : 'Business submitted for approval! An admin will review it soon.';
 
         return redirect()->route('businesses.my')->with('success', $message);
-    }
-
-    /**
-     * Approve a business (admin only).
-     */
-    public function approve(Business $business): RedirectResponse
-    {
-        if (! $this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $business->is_visible = true;
-        $business->save();
-
-        return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
-    }
-
-    /**
-     * Toggle the featured status of a business.
-     */
-    public function toggleFeatured(Request $request, Business $business): RedirectResponse|JsonResponse
-    {
-        if (! $this->isUserAdmin()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => 'Unauthorized.'], 403);
-            }
-            abort(403);
-        }
-
-        if ($business->approval_status !== 'approved') {
-            $msg = 'Only approved businesses can be featured.';
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => $msg], 422);
-            }
-            return back()->withErrors(['approval' => $msg]);
-        }
-
-        if ($business->is_featured) {
-            $business->is_featured = false;
-            $business->save();
-            $msg = "\"{$business->name}\" removed from featured.";
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => true, 'message' => $msg]);
-            }
-
-            return back()->with('success', $msg);
-        }
-
-        $business->is_featured = true;
-        $business->save();
-        $msg = "\"{$business->name}\" is now featured.";
-        if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse(['success' => true, 'message' => $msg]);
-        }
-
-        return back()->with('success', $msg);
-    }
-
-    /**
-     * Delete a business.
-     */
-    public function destroy(Business $business): RedirectResponse
-    {
-        if (! $this->getAuthUser()->isAdmin()) {
-            abort(403);
-        }
-
-        $business->delete();
-
-        return redirect()->route('businesses.index')
-            ->with('success', 'Business deleted successfully.');
-    }
-
-    /**
-     * Import businesses from CSV/Excel using auto-detected importer.
-     */
-    public function import(Request $request): RedirectResponse|JsonResponse
-    {
-        $this->validate($request, [
-            'file' => 'required|mimes:xlsx,xls,csv|max:20480',
-        ]);
-
-        try {
-            $importId = (string) Str::uuid();
-            /** @var \Illuminate\Http\UploadedFile $file */
-            $file = $request->file('file');
-
-            $path = $file->store('imports', 'local');
-
-            $importer = \App\Factories\ImporterFactory::make($file->getRealPath(), $importId, $file->getClientOriginalName());
-
-            Excel::queueImport($importer, $path, 'local');
-
-            $format = $importer instanceof \App\Imports\UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
-
-            session(['active_import' => $importId]);
-
-            if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => true,
-                    'importId' => $importId,
-                    'format' => $format,
-                    'message' => "Import queued! Format: {$format}.",
-                ]);
-            }
-
-            return back()->with('success', "Import queued! Format: {$format}. Processing ~1500 rows in background...")
-                ->with('importId', $importId);
-        } catch (\Exception $e) {
-            Log::error('Import error: '.$e->getMessage());
-            if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Import failed: '.$e->getMessage(),
-                ], 500);
-            }
-
-            return back()->withErrors(['error' => $e->getMessage()]);
-        }
-    }
-
-    /**
-     * Show the form for creating a new company achievement.
-     */
-    public function createAchievement(Company $company): View
-    {
-        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
-
-        return view('businesses.add_achievement', compact('company'));
-    }
-
-    /**
-     * Add achievement to a company.
-     */
-    public function addAchievement(Company $company, Request $request): RedirectResponse|JsonResponse
-    {
-        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
-
-        $this->validate($request, [
-            'achievement' => 'required|string|max:500',
-        ]);
-
-        $newAchievement = trim((string) $request->input('achievement'));
-
-        $existing = trim($company->achievement);
-        if (empty($existing)) {
-            $updated = '- '.$newAchievement;
-        } else {
-            $updated = $existing."\n- ".$newAchievement;
-        }
-
-        $company->achievement = $updated;
-        $company->save();
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse([
-                'success' => true,
-                'message' => 'Achievement added successfully!',
-                'achievements' => $company->achievements_list,
-            ]);
-        }
-
-        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Achievement added successfully!');
-    }
-
-    /**
-     * Delete achievement from a company.
-     */
-    public function deleteAchievement(Company $company, Request $request): RedirectResponse|JsonResponse
-    {
-        if (Auth::id() !== $company->user_id && ! $this->isUserAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
-
-        $this->validate($request, [
-            'index' => 'required|integer|min:0',
-        ]);
-
-        $achievements = $company->achievements_list;
-        $index = (int) $request->input('index');
-
-        if (isset($achievements[$index])) {
-            unset($achievements[$index]);
-            $updated = empty($achievements) ? null : implode("\n", array_map(fn ($item) => '- '.$item, $achievements));
-            $company->achievement = $updated;
-            $company->save();
-        }
-
-        if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse([
-                'success' => true,
-                'message' => 'Achievement deleted successfully!',
-                'achievements' => $company->achievements_list ?? [],
-            ]);
-        }
-
-        return back()->with('success', 'Achievement deleted successfully!');
-    }
-
-
-
-
-
-    /**
-     * Show form to create a company work profile (Intrapreneur).
-     */
-    public function createCompany(): View
-    {
-        $categories = Category::all();
-        $provinces = Province::orderBy('name')->get();
-        return view('businesses.create_intrapreneur', compact('categories', 'provinces'));
-    }
-
-    /**
-     * Store a newly created company work profile (Intrapreneur).
-     */
-    public function storeCompany(Request $request): RedirectResponse
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'position' => 'required|string|max:255',
-            'level_position' => 'nullable|string|max:255',
-            'company_scale' => 'nullable|string|max:255',
-            'province' => 'nullable',
-            'city' => 'nullable',
-            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
-            'job_description' => 'required|string|min:10',
-            'logo_url' => 'nullable|image|max:5120',
-        ]);
-
-        $data = $validated;
-        $data['user_id'] = Auth::id();
-        $data['is_visible'] = true;
-        $data['approval_status'] = Auth::user()->isAdmin() ? 'approved' : 'pending';
-
-        if ($request->hasFile('logo_url')) {
-            $file = $request->file('logo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $data['logo_url'] = '/storage/'.$path;
-            }
-        }
-
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $provObj = Province::find($data['province']);
-            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $regObj = Regency::find($data['city']);
-            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
-        }
-
-        $company = Company::create($data);
-
-        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile registered successfully!');
-    }
-
-    /**
-     * Show form to edit a company work profile (Intrapreneur).
-     */
-    public function editCompany(Company $company): View
-    {
-        if (Auth::id() !== $company->user_id && !$this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $categories = Category::all();
-        $provinces = Province::orderBy('name')->get();
-
-        $selectedProvinceId = Province::where('name', $company->province)->first()?->id;
-        $availableCities = $selectedProvinceId
-            ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
-            : collect();
-
-        return view('businesses.edit_intrapreneur', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
-    }
-
-    /**
-     * Update a company work profile (Intrapreneur).
-     */
-    public function updateCompany(Company $company, Request $request): RedirectResponse
-    {
-        if (Auth::id() !== $company->user_id && !$this->isUserAdmin()) {
-            abort(403);
-        }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'position' => 'required|string|max:255',
-            'level_position' => 'nullable|string|max:255',
-            'company_scale' => 'nullable|string|max:255',
-            'province' => 'nullable',
-            'city' => 'nullable',
-            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
-            'job_description' => 'required|string|min:10',
-            'logo_url' => 'nullable|image|max:5120',
-        ]);
-
-        $data = $validated;
-
-        // Handle logo deletion
-        if ($request->boolean('delete_logo')) {
-            $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
-            $data['logo_url'] = null;
-        }
-
-        // Handle file uploads (Logo)
-        if ($request->hasFile('logo_url')) {
-            $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
-            $file = $request->file('logo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $data['logo_url'] = '/storage/'.$path;
-            }
-        }
-
-        if ($validated['name'] !== $company->name) {
-            $slug = Str::slug($validated['name']);
-            $original = $slug;
-            $i = 1;
-            while (Company::where('slug', $slug)->where('id', '!=', $company->id)->exists()) {
-                $slug = $original . '-' . $i++;
-            }
-            $data['slug'] = $slug;
-        }
-
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $provObj = Province::find($data['province']);
-            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $regObj = Regency::find($data['city']);
-            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
-        }
-
-        $company->update($data);
-
-        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile updated successfully!');
     }
 }
