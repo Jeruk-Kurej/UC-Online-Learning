@@ -110,10 +110,7 @@ test('a logo upload is stored on the public disk', function () {
     Storage::disk('public')->assertExists($path);
 });
 
-// Known bug, kept on purpose during the refactor (see docs/ROADMAP.md): update() copies
-// is_featured from the request after the admin-only filter, so owners can set it and any
-// save without the field (the edit form has none) clears it.
-test('an owner update cannot change owner, an admin update can; is_featured always follows the request', function () {
+test('an owner update cannot change featured, owner or visibility; an admin update can', function () {
     $w = businessWorld();
     $business = approvedBusiness($w['owner'], $w['category']);
 
@@ -125,17 +122,28 @@ test('an owner update cannot change owner, an admin update can; is_featured alwa
     expect($business->name)->toBe('Renamed Venture')
         ->and($business->slug)->toBe('approved-venture')
         ->and($business->user_id)->toBe($w['owner']->id)
-        ->and($business->is_featured)->toBeTrue()
+        ->and($business->is_featured)->toBeFalse()
         ->and($business->category_id)->toBe($w['other']->id);
-
-    $this->actingAs($w['owner'])->put(route('businesses.update', $business), businessPayload($w['other'], ['name' => 'Renamed Venture']));
-    expect($business->fresh()->is_featured)->toBeFalse();
 
     $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['other'], [
         'name' => 'Renamed Venture', 'user_id' => $w['stranger']->id, 'is_featured' => 1,
     ]));
     $business->refresh();
     expect($business->user_id)->toBe($w['stranger']->id)->and($business->is_featured)->toBeTrue();
+});
+
+test('saving the edit form keeps a business featured', function () {
+    $w = businessWorld();
+    $business = approvedBusiness($w['owner'], $w['category'], ['is_featured' => true]);
+
+    $this->actingAs($w['owner'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Owner Edit']));
+    expect($business->fresh()->is_featured)->toBeTrue();
+
+    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Edit']));
+    expect($business->fresh()->is_featured)->toBeTrue();
+
+    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Unfeature', 'is_featured' => 0]));
+    expect($business->fresh()->is_featured)->toBeFalse();
 });
 
 test('update syncs members and can delete the logo', function () {

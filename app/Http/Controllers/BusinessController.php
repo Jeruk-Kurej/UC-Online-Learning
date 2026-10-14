@@ -271,7 +271,9 @@ class BusinessController extends Controller
             $data['instagram'] = $validated['instagram_handle'];
             unset($data['instagram_handle']);
         }
-        $data['is_featured'] = $request->boolean('is_featured');
+        if ($this->currentUserIsAdmin() && $request->has('is_featured')) {
+            $data['is_featured'] = $request->boolean('is_featured');
+        }
 
         // Handle logo deletion
         if ($request->boolean('delete_logo')) {
