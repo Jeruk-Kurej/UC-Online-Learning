@@ -8,12 +8,16 @@ import Alpine from 'alpinejs';
 import toastStack from './components/toast-stack';
 import sharedImportManager from './components/import-manager';
 import importDropzone from './components/import-dropzone';
+import photoPicker from './components/photo-picker';
+import activityFiles from './components/activity-files';
 
 window.Alpine = Alpine;
 
 Alpine.data('toastStack', toastStack);
 Alpine.data('sharedImportManager', sharedImportManager);
 Alpine.data('importDropzone', importDropzone);
+Alpine.data('photoPicker', photoPicker);
+Alpine.data('activityFiles', activityFiles);
 
 window.initSectionBuilder = function(initialSections) {
     return {

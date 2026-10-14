@@ -303,42 +303,7 @@
                         }
                     }
                 @endphp
-                <div class="md:col-span-2 relative" x-data="{
-                    existingFiles: @js(array_values($activitiesList)),
-                    deletedFiles: [],
-                    newFiles: [],
-                    deleteFile(url) {
-                        if (!this.deletedFiles.includes(url)) {
-                            this.deletedFiles.push(url);
-                        }
-                    },
-                    undoDeleteFile(url) {
-                        this.deletedFiles = this.deletedFiles.filter(item => item !== url);
-                    },
-                    isDeleted(url) {
-                        return this.deletedFiles.includes(url);
-                    },
-                    handleNewFiles(event) {
-                        const files = Array.from(event.target.files);
-                        this.newFiles = [];
-                        files.forEach(file => {
-                            const fileObj = {
-                                name: file.name,
-                                size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-                                type: file.type,
-                                preview: null
-                            };
-                            if (file.type.startsWith('image/')) {
-                                const reader = new FileReader();
-                                reader.onload = (e) => {
-                                    fileObj.preview = e.target.result;
-                                };
-                                reader.readAsDataURL(file);
-                            }
-                            this.newFiles.push(fileObj);
-                        });
-                    }
-                }">
+                <div class="md:col-span-2 relative" x-data="activityFiles(@js(array_values($activitiesList)))">
                     <div class="flex items-center justify-between mb-3">
                         <label class="form-label-custom mb-0">Activities Documentation Files</label>
                         <div class="relative">

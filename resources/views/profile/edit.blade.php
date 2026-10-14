@@ -196,42 +196,7 @@
                             }
                         @endphp
 
-                        <div style="display: flex; flex-direction: column; gap: 20px;" x-data="{
-                            existingFiles: @js(array_values($activitiesList)),
-                            deletedFiles: [],
-                            newFiles: [],
-                            deleteFile(url) {
-                                if (!this.deletedFiles.includes(url)) {
-                                    this.deletedFiles.push(url);
-                                }
-                            },
-                            undoDeleteFile(url) {
-                                this.deletedFiles = this.deletedFiles.filter(item => item !== url);
-                            },
-                            isDeleted(url) {
-                                return this.deletedFiles.includes(url);
-                            },
-                            handleNewFiles(event) {
-                                const files = Array.from(event.target.files);
-                                this.newFiles = [];
-                                files.forEach(file => {
-                                    const fileObj = {
-                                        name: file.name,
-                                        size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
-                                        type: file.type,
-                                        preview: null
-                                    };
-                                    if (file.type.startsWith('image/')) {
-                                        const reader = new FileReader();
-                                        reader.onload = (e) => {
-                                            fileObj.preview = e.target.result;
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                    this.newFiles.push(fileObj);
-                                });
-                            }
-                        }">
+                        <div style="display: flex; flex-direction: column; gap: 20px;" x-data="activityFiles(@js(array_values($activitiesList)))">
                             <div style="display: flex; align-items: flex-start; gap: 25px;">
                                 <div style="width: 140px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0;">
                                     <label style="font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Activities Docs</label>

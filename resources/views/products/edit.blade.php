@@ -100,20 +100,7 @@
                     </div>
 
                     {{-- Product Photo Management --}}
-                    <div x-data="{ 
-                        previewUrl: '{{ $product->photo_url ?? '' }}',
-                        hasPhoto: {{ $product->photo_url ? 'true' : 'false' }},
-                        handleFileChange(event) {
-                            const file = event.target.files[0];
-                            if (file) {
-                                this.previewUrl = URL.createObjectURL(file);
-                                this.hasPhoto = true;
-                            }
-                        },
-                        triggerUpload() {
-                            document.getElementById('photo').click();
-                        }
-                    }" class="space-y-4 pt-6 border-t border-gray-100">
+                    <div x-data="photoPicker(@js($product->photo_url))" class="space-y-4 pt-6 border-t border-gray-100">
                         <label class="block text-sm font-medium text-gray-700">
                             Product Photo <span class="text-gray-400 font-normal">(Optional)</span>
                         </label>

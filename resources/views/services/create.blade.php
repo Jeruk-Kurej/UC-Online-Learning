@@ -97,20 +97,7 @@
                     </div>
 
                     {{-- Service Photo --}}
-                    <div x-data="{ 
-                        previewUrl: '',
-                        hasPhoto: false,
-                        handleFileChange(event) {
-                            const file = event.target.files[0];
-                            if (file) {
-                                this.previewUrl = URL.createObjectURL(file);
-                                this.hasPhoto = true;
-                            }
-                        },
-                        triggerUpload() {
-                            document.getElementById('photo').click();
-                        }
-                    }" class="space-y-4">
+                    <div x-data="photoPicker()" class="space-y-4">
                         <label class="block text-sm font-medium text-gray-700">
                             Service Photo <span class="text-red-500">*</span>
                         </label>

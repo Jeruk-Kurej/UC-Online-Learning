@@ -100,20 +100,7 @@
                     </div>
 
                     {{-- Service Photo Management --}}
-                    <div x-data="{ 
-                        previewUrl: '{{ $service->photo_url ?? '' }}',
-                        hasPhoto: {{ $service->photo_url ? 'true' : 'false' }},
-                        handleFileChange(event) {
-                            const file = event.target.files[0];
-                            if (file) {
-                                this.previewUrl = URL.createObjectURL(file);
-                                this.hasPhoto = true;
-                            }
-                        },
-                        triggerUpload() {
-                            document.getElementById('photo').click();
-                        }
-                    }" class="space-y-4 pt-6 border-t border-gray-100">
+                    <div x-data="photoPicker(@js($service->photo_url))" class="space-y-4 pt-6 border-t border-gray-100">
                         <label class="block text-sm font-medium text-gray-700">
                             Service Photo <span class="text-gray-400 font-normal">(Optional)</span>
                         </label>
