@@ -5,10 +5,12 @@ import registerEnterBlurs from './lib/enter-blurs';
 
 import Alpine from 'alpinejs';
 import toastStack from './components/toast-stack';
+import sharedImportManager from './components/import-manager';
 
 window.Alpine = Alpine;
 
 Alpine.data('toastStack', toastStack);
+Alpine.data('sharedImportManager', sharedImportManager);
 
 window.initSectionBuilder = function(initialSections) {
     return {
