@@ -1,6 +1,6 @@
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-300 reveal-stagger-6">
     @forelse ($businesses as $business)
-        <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full reveal-on-scroll" style="transition-delay: {{ ($loop->index % 6) * 50 }}ms">
+        <div class="bg-white border border-gray-100 rounded-lg overflow-hidden hover:border-gray-200 hover:shadow-lg transition-all duration-300 group relative flex flex-col h-full reveal-on-scroll">
             <a href="{{ $viewType === 'entrepreneur' ? route('businesses.show', $business) : route('intrapreneurs.show', $business) }}" class="block p-6 flex flex-col justify-between h-full">
                 <div class="flex items-start gap-5">
                     <div class="w-20 h-20 rounded-sm flex items-center justify-center overflow-hidden flex-shrink-0">

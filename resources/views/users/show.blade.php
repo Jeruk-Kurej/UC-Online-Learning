@@ -253,7 +253,7 @@
                                     @foreach($certDetails as $index => $cert)
                                         <div x-show="activeIndex === {{ $index }}"
                                              class="absolute inset-0 w-full h-full z-10"
-                                             style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                             @if($index !== 0) x-cloak @endif>
                                             
                                             @if($cert['isPdf'])
                                                 <div class="w-full h-full bg-slate-100 flex flex-col items-center justify-center p-6 text-center">
@@ -322,7 +322,7 @@
                                     @foreach($activitiesUrls as $index => $url)
                                         <div x-show="activeIndex === {{ $index }}"
                                              class="absolute inset-0 w-full h-full z-10"
-                                             style="{{ $index === 0 ? '' : 'display:none;' }}">
+                                             @if($index !== 0) x-cloak @endif>
                                             <div @click="lightboxUrl = '{{ $url }}'; showLightbox = true" 
                                                  class="w-full h-full cursor-zoom-in relative block transition-all duration-300 hover:scale-[1.02]">
                                                 <x-premium-image :src="$url" alt="Activity Image" class="w-full h-full" />

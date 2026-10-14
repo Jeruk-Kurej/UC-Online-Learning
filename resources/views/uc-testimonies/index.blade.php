@@ -13,7 +13,7 @@
                         Share your learning experience and discover stories from students and alumni in our UCO network.
                     </p>
                 </div>
-                <div class="reveal-on-scroll md:text-right" style="transition-delay: 90ms;">
+                <div class="reveal-on-scroll md:text-right delay-[90ms]">
                     <span class="inline-flex items-center gap-2 rounded-full border border-uco-yellow-300 bg-uco-yellow-50 px-4 py-2 text-xs font-semibold text-uco-yellow-800">
                         <i class="bi bi-chat-quote"></i>
                         {{ $testimonies->total() }} approved testimony(s)

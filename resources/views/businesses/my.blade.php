@@ -27,12 +27,10 @@
             </div>
 
             @if($myBusinesses->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal-stagger-12">
                     @foreach($myBusinesses as $b)
-                        @php $delay = ($loop->index % 12) * 50; @endphp
                         <a href="{{ route('businesses.show', $b) }}" 
-                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll" 
-                           style="transition-delay: {{ $delay }}ms;">
+                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll">
                             
                             {{-- Card Header --}}
                             <div class="flex items-start gap-4">
@@ -130,12 +128,10 @@
             </div>
 
             @if($myCompanies->count() > 0)
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 reveal-stagger-12">
                     @foreach($myCompanies as $c)
-                        @php $delay = ($loop->index % 12) * 50; @endphp
                         <a href="{{ route('intrapreneurs.show', $c) }}" 
-                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll" 
-                           style="transition-delay: {{ $delay }}ms;">
+                           class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll">
                             
                             {{-- Card Header --}}
                             <div class="flex items-start gap-4">

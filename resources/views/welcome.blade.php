@@ -51,7 +51,7 @@
                     </div>
                     
                     {{-- Right: Login Form --}}
-                    <div class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] relative overflow-hidden reveal-on-scroll" style="transition-delay: 200ms;">
+                    <div class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] relative overflow-hidden reveal-on-scroll delay-200">
                         {{-- Decorative corner elements --}}
                         <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-uco-orange-100 to-uco-yellow-100 rounded-bl-[4rem] opacity-50"></div>
                         <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 rounded-tr-[4rem] opacity-40"></div>

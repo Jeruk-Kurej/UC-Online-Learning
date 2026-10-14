@@ -14,7 +14,7 @@
         {{-- Page Header --}}
         <section class="relative overflow-hidden uco-hero-section-bleed py-8 md:py-10 mb-8 reveal-on-scroll">
             {{-- Background Effects with Gradient Mask --}}
-            <div class="absolute inset-0 overflow-hidden pointer-events-none" style="mask-image: linear-gradient(to bottom, black 50%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);">
+            <div class="absolute inset-0 overflow-hidden pointer-events-none uco-hero-mask">
                 <div class="uco-hero-mesh"></div>
             </div>
             <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6 md:flex-row md:items-end md:justify-between text-left">
@@ -40,7 +40,7 @@
         </section>
 
         {{-- Entrepreneur / Intrapreneur Tabs (Tactile Glass Cards) --}}
-        <div class="grid grid-cols-2 sm:flex sm:justify-center gap-3 sm:gap-4 mb-8 reveal-on-scroll" :class="{ 'opacity-50 pointer-events-none': isLoading }" style="transition-delay: 100ms;">
+        <div class="grid grid-cols-2 sm:flex sm:justify-center gap-3 sm:gap-4 mb-8 reveal-on-scroll delay-100" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             <!-- Entrepreneurs Card -->
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
                @click.prevent="updateType('entrepreneur', $el.href)"
@@ -119,7 +119,7 @@
         </div>
 
         {{-- Filters --}}
-        <div class="mb-8 reveal-on-scroll" style="transition-delay: 150ms;">
+        <div class="mb-8 reveal-on-scroll delay-150">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="space-y-4" @submit.prevent="updateList()">
                 <input type="hidden" name="view" :value="viewType">
                 
