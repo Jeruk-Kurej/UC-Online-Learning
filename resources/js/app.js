@@ -1,5 +1,6 @@
 import './bootstrap';
 import './image-preview';
+import registerConfirmSubmit from './lib/confirm-submit';
 
 import Alpine from 'alpinejs';
 
@@ -234,3 +235,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// --- Page modules (loaded only where their markup exists) ---
+
+registerConfirmSubmit();
+
+if (document.querySelector('[data-offering-form]')) {
+    import('./pages/offering-form').then(({ default: initOfferingForm }) => initOfferingForm());
+}

@@ -1,64 +1,6 @@
 <x-app-layout>
     @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-        <style>
-            .ts-wrapper {
-                width: 100% !important;
-                display: block !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                box-sizing: border-box !important;
-            }
-
-            .ts-wrapper .ts-control {
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 0.75rem !important;
-                padding: 10px 16px !important; 
-                min-height: 42px !important;
-                width: 100% !important;
-                box-sizing: border-box !important;
-                transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
-                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-                background: white !important;
-                display: flex !important;
-                align-items: center !important;
-            }
-
-            .ts-wrapper.focus .ts-control {
-                border-color: #111827 !important; /* Soft Gray 900 */
-                box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
-                ring: none !important;
-            }
-
-            .ts-dropdown {
-                background-color: white !important;
-                border: 1px solid #e2e8f0 !important;
-                border-radius: 1rem !important;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-                margin-top: 6px !important;
-                padding: 6px !important;
-                z-index: 1000 !important;
-            }
-
-            .ts-dropdown .option {
-                padding: 8px 12px !important;
-                font-size: 13px !important;
-                color: #475569 !important;
-                border-radius: 0.75rem !important;
-                margin-bottom: 2px !important;
-                transition: all 0.15s ease !important;
-            }
-
-            .ts-dropdown .option.active {
-                background-color: #fff7ed !important;
-                color: #f97316 !important;
-                font-weight: 600 !important;
-            }
-
-            .ts-wrapper .ts-control>input {
-                font-size: 14px !important;
-            }
-        </style>
+        @vite('resources/css/pages/offering-form.css')
     @endpush
     <div class="max-w-5xl mx-auto">
         {{-- Page Header - Elegant Design --}}
@@ -75,7 +17,7 @@
 
         <div class="bg-white shadow-sm sm:rounded-xl">
             <div class="p-6">
-                <form method="POST" action="{{ route('businesses.products.store', $business) }}" enctype="multipart/form-data" class="space-y-6">
+                <form data-offering-form method="POST" action="{{ route('businesses.products.store', $business) }}" enctype="multipart/form-data" class="space-y-6">
                     @csrf
 
                     {{-- Product Name --}}
@@ -141,6 +83,7 @@
                             <input type="number" 
                                    name="price" 
                                    id="price" 
+                                   data-fixed-placeholder="15000"
                                    value="{{ old('price') }}"
                                    min="0"
                                    step="any"
@@ -245,50 +188,4 @@
             </div>
         </div>
     </div>
-
-    @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const priceTypeSelect = document.getElementById("price_type");
-            const priceInput = document.getElementById("price");
-            const star = document.getElementById("price-required-star");
-
-            const handlePriceTypeChange = (value) => {
-                if (value === 'unspecified' || value === 'customize') {
-                    priceInput.value = '';
-                    priceInput.disabled = true;
-                    priceInput.required = false;
-                    priceInput.placeholder = value === 'unspecified' ? 'Price not specified' : 'Customized by order';
-                    if (star) star.style.display = 'none';
-                } else {
-                    priceInput.disabled = false;
-                    priceInput.required = true;
-                    priceInput.placeholder = '15000';
-                    if (star) star.style.display = 'inline';
-                }
-            };
-
-            if (priceTypeSelect && window.TomSelect) {
-                const ts = new TomSelect(priceTypeSelect, {
-                    create: false,
-                    placeholder: "-- Select Price Type --",
-                    searchField: ["text"],
-                });
-
-                ts.on('change', (val) => {
-                    handlePriceTypeChange(val);
-                });
-
-                // Run initially
-                handlePriceTypeChange(priceTypeSelect.value);
-            } else if (priceTypeSelect) {
-                priceTypeSelect.addEventListener('change', (e) => {
-                    handlePriceTypeChange(e.target.value);
-                });
-                handlePriceTypeChange(priceTypeSelect.value);
-            }
-        });
-    </script>
-    @endpush
 </x-app-layout>
