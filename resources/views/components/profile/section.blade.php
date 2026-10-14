@@ -1,6 +1,6 @@
 @props(['title'])
 
-<div class="profile-section">
+<div class="settings-card">
     @isset($actions)
         <div class="profile-section-head">
             <h2 class="profile-heading">{{ $title }}</h2>

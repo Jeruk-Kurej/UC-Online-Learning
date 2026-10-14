@@ -1,0 +1,33 @@
+@layer components {
+    /* --- Signed-in user's own pages (Edit Profile, My Testimony): page shell, title and white card --- */
+    .settings-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 25px;
+        font-family: 'Inter', -apple-system, sans-serif;
+        color: #1e293b;
+    }
+
+    .settings-title {
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: -1.2px;
+        margin: 0;
+        color: #0f172a;
+    }
+
+    .settings-subtitle {
+        color: #64748b;
+        font-size: 13px;
+        margin-top: 4px;
+        font-weight: 500;
+    }
+
+    .settings-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 35px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+}

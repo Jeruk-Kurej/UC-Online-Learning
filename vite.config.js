@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/css/pages/user-form.css',
                 'resources/css/pages/welcome.css',
                 'resources/css/pages/profile-edit.css',
+                'resources/css/pages/my-testimony.css',
                 'resources/css/vendor/tom-select.css',
             ],
             refresh: true,

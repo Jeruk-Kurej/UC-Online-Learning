@@ -3,13 +3,13 @@
         @vite('resources/css/pages/profile-edit.css')
     @endpush
 
-    <div class="profile-page">
+    <div class="settings-page">
 
         {{-- --- Header --- --}}
         <div class="profile-header">
             <div>
-                <h1 class="profile-title">Profile Settings</h1>
-                <p class="profile-subtitle">Manage your personal information and academic records.</p>
+                <h1 class="settings-title">Profile Settings</h1>
+                <p class="settings-subtitle">Manage your personal information and academic records.</p>
             </div>
         </div>
 

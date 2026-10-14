@@ -1,32 +1,10 @@
-/* --- Profile settings page --- */
-.profile-page {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 0 25px;
-    font-family: 'Inter', -apple-system, sans-serif;
-    color: #1e293b;
-}
+/* --- Profile settings page (shell, title and cards come from components/settings.css) --- */
 
 .profile-header {
     margin-bottom: 30px;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-}
-
-.profile-title {
-    font-size: 30px;
-    font-weight: 800;
-    letter-spacing: -1.2px;
-    margin: 0;
-    color: #0f172a;
-}
-
-.profile-subtitle {
-    color: #64748b;
-    font-size: 13px;
-    margin-top: 4px;
-    font-weight: 500;
 }
 
 .profile-layout {
@@ -128,14 +106,6 @@
     display: flex;
     flex-direction: column;
     gap: 30px;
-}
-
-.profile-section {
-    background: white;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 35px;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .profile-heading {
