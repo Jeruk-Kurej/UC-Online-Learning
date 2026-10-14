@@ -164,10 +164,20 @@ window.initSectionBuilder = function(initialSections) {
     };
 };
 
+// --- Start Alpine once page modules that register Alpine components are loaded ---
+
+const alpinePageModules = [];
+
+if (document.querySelector('[data-featured-page]')) {
+    alpinePageModules.push(import('./pages/featured'));
+}
+
+const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => Alpine.start());
+    document.addEventListener('DOMContentLoaded', startAlpine);
 } else {
-    Alpine.start();
+    startAlpine();
 }
 
 function initRevealOnScroll() {
