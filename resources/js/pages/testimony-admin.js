@@ -1,5 +1,61 @@
-// --- Admin testimonies: star button toggles whether a testimony is featured on the home page ---
+// --- Admin testimonies: AJAX list and the star button that features a testimony on the home page ---
+// Imported by app.js on pages with [data-testimony-admin]; Alpine starts after this module has run.
 // <button data-testimony-featured-toggle="{user id}">
+
+function testimonyAdminList() {
+    return {
+        isSubmitting: false,
+        debounceTimer: null,
+        init() {
+            window.addEventListener('popstate', () => {
+                this.updateList(window.location.href, false);
+            });
+        },
+        updateList(url = null, pushState = true, shouldScroll = false) {
+            this.isSubmitting = true;
+            if (!url) {
+                const form = this.$refs.filterForm;
+                if (!form) { console.error('filterForm ref not found!'); this.isSubmitting = false; return; }
+                const formData = new FormData(form);
+                const params = new URLSearchParams(formData);
+                url = `${form.action}?${params.toString()}`;
+            }
+
+            fetch(url, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                credentials: 'same-origin'
+            })
+            .then(res => {
+                if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
+                return res.text();
+            })
+            .then(html => {
+                const container = document.getElementById('testimonies-list-container');
+                if (container) {
+                    container.innerHTML = html;
+                }
+                if (pushState) window.history.pushState({}, '', url);
+                this.isSubmitting = false;
+                if (shouldScroll) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            })
+            .catch(err => {
+                console.error('Fetch failed:', err);
+                this.isSubmitting = false;
+            });
+        },
+        resetFilters() {
+            this.$refs.filterForm.reset();
+            this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+            this.updateList();
+        },
+        submitDebounced() {
+            if (this.debounceTimer) clearTimeout(this.debounceTimer);
+            this.debounceTimer = setTimeout(() => this.updateList(), 500);
+        }
+    };
+}
 
 function toggleFeatured(userId, buttonElement) {
     if (buttonElement.disabled) return;
@@ -71,12 +127,12 @@ function toggleFeatured(userId, buttonElement) {
     });
 }
 
-export default function initTestimonyAdmin() {
-    document.addEventListener('click', (event) => {
-        const button = event.target.closest('[data-testimony-featured-toggle]');
+document.addEventListener('click', (event) => {
+    const button = event.target.closest('[data-testimony-featured-toggle]');
 
-        if (button) {
-            toggleFeatured(button.dataset.testimonyFeaturedToggle, button);
-        }
-    });
-}
+    if (button) {
+        toggleFeatured(button.dataset.testimonyFeaturedToggle, button);
+    }
+});
+
+window.Alpine.data('testimonyAdminList', testimonyAdminList);

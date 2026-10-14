@@ -193,6 +193,10 @@ if (document.querySelector('[data-business-directory]')) {
     alpinePageModules.push(import('./pages/business-directory'));
 }
 
+if (document.querySelector('[data-testimony-admin]')) {
+    alpinePageModules.push(import('./pages/testimony-admin'));
+}
+
 const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
 
 if (document.readyState === 'loading') {
@@ -290,8 +294,4 @@ if (document.querySelector('[data-enter-blurs]')) {
 
 if (document.querySelector('[data-user-form]')) {
     import('./pages/user-form').then(({ default: initUserForm }) => initUserForm());
-}
-
-if (document.querySelector('[data-testimony-admin]')) {
-    import('./pages/testimony-admin').then(({ default: initTestimonyAdmin }) => initTestimonyAdmin());
 }

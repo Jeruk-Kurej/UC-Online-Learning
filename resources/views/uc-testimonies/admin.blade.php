@@ -2,58 +2,7 @@
     @section('title', 'Manage Testimonies')
 
     <div data-testimony-admin class="testimonies-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
-        x-data="{
-            isSubmitting: false,
-            debounceTimer: null,
-            init() {
-                window.addEventListener('popstate', () => {
-                    this.updateList(window.location.href, false);
-                });
-            },
-            updateList(url = null, pushState = true, shouldScroll = false) {
-                this.isSubmitting = true;
-                if (!url) {
-                    const form = this.$refs.filterForm;
-                    if (!form) { console.error('filterForm ref not found!'); this.isSubmitting = false; return; }
-                    const formData = new FormData(form);
-                    const params = new URLSearchParams(formData);
-                    url = `${form.action}?${params.toString()}`;
-                }
-
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin'
-                })
-                .then(res => {
-                    if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                    return res.text();
-                })
-                .then(html => {
-                    const container = document.getElementById('testimonies-list-container');
-                    if (container) {
-                        container.innerHTML = html;
-                    }
-                    if (pushState) window.history.pushState({}, '', url);
-                    this.isSubmitting = false;
-                    if (shouldScroll) {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                })
-                .catch(err => {
-                    console.error('Fetch failed:', err);
-                    this.isSubmitting = false;
-                });
-            },
-            resetFilters() {
-                this.$refs.filterForm.reset();
-                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
-                this.updateList();
-            },
-            submitDebounced() {
-                if (this.debounceTimer) clearTimeout(this.debounceTimer);
-                this.debounceTimer = setTimeout(() => this.updateList(), 500);
-            }
-        }"
+        x-data="testimonyAdminList"
         @ajax-pagination.window="updateList($event.detail.url, true, true)">
 
         {{-- Page Header --}}
