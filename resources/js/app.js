@@ -3,6 +3,7 @@ import './image-preview';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 import registerAjaxPagination from './lib/ajax-pagination';
+import registerConfirmForm from './lib/confirm-form';
 
 import Alpine from 'alpinejs';
 import toastStack from './components/toast-stack';
@@ -201,6 +202,10 @@ if (document.querySelector('[data-testimony-admin]')) {
     alpinePageModules.push(import('./pages/testimony-admin'));
 }
 
+if (document.querySelector('[data-business-show]')) {
+    alpinePageModules.push(import('./pages/business-show'));
+}
+
 const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
 
 if (document.readyState === 'loading') {
@@ -283,6 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 registerConfirmSubmit();
 registerAjaxPagination();
+registerConfirmForm();
 
 if (document.querySelector('[data-offering-form]')) {
     import('./pages/offering-form').then(({ default: initOfferingForm }) => initOfferingForm());

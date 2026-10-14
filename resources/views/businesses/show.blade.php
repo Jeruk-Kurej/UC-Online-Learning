@@ -36,25 +36,7 @@
         $hasContactsEditRoute = \Illuminate\Support\Facades\Route::has('businesses.contacts.edit');
         $hasContactsDestroyRoute = \Illuminate\Support\Facades\Route::has('businesses.contacts.destroy');
     @endphp
-    <div x-data="{
-        showUserModal: false,
-        fullscreenOpen: false,
-        fullscreenSrc: '',
-        fullscreenAlt: '',
-        openFullscreen(src, alt = 'Photo') {
-            this.fullscreenSrc = src;
-            this.fullscreenAlt = alt;
-            this.fullscreenOpen = true;
-        },
-        detailModalOpen: false,
-        detailItem: {},
-        openDetailModal(item) {
-            this.detailItem = item;
-            this.detailModalOpen = true;
-        }
-    }" x-init="$watch('showUserModal', val => document.body.style.overflow = val ? 'hidden' : '');
-    $watch('fullscreenOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal && !detailModalOpen) { document.body.style.overflow = ''; } });
-    $watch('detailModalOpen', val => { if (val) { document.body.style.overflow = 'hidden'; } else if (!showUserModal && !fullscreenOpen) { document.body.style.overflow = ''; } })">
+    <div data-business-show x-data="businessShowPage">
         {{-- Hero Section with Elegant Back Button --}}
         <div class="mb-8 px-4 sm:px-0">
             {{-- Breadcrumbs --}}
@@ -166,21 +148,7 @@
                 @php $heroPhotosCount = $businessPhotos->count(); @endphp
                 @if ($heroPhotosCount > 0)
                 <div class="relative h-64 sm:h-72 lg:h-80 overflow-hidden group"
-                    x-data="{
-                        activeHeroSlide: 0,
-                        heroSlidesCount: {{ $heroPhotosCount }},
-                        heroTimer: null,
-                        startHeroTimer() {
-                            if (this.heroSlidesCount > 1) {
-                                this.heroTimer = setInterval(() => {
-                                    this.activeHeroSlide = (this.activeHeroSlide + 1) % this.heroSlidesCount;
-                                }, 5000);
-                            }
-                        },
-                        stopHeroTimer() {
-                            if (this.heroTimer) clearInterval(this.heroTimer);
-                        }
-                    }"
+                    x-data="heroSlider({{ $heroPhotosCount }})"
                     x-init="startHeroTimer()" @mouseenter="stopHeroTimer()" @mouseleave="startHeroTimer()">
 
                     @foreach($businessPhotos as $index => $photo)
@@ -514,7 +482,7 @@
                                                         </a>
                                                         <form action="{{ route('businesses.products.destroy', [$business, $product]) }}"
                                                             method="POST"
-                                                            onsubmit="return confirm('Are you sure you want to delete this product?');"
+                                                            data-confirm="Are you sure you want to delete this product?"
                                                             class="inline">
                                                             @csrf
                                                             @method('DELETE')
@@ -653,7 +621,7 @@
                                                         </a>
                                                         <form action="{{ route('businesses.services.destroy', [$business, $service]) }}"
                                                             method="POST"
-                                                            onsubmit="return confirm('Are you sure you want to delete this service?');"
+                                                            data-confirm="Are you sure you want to delete this service?"
                                                             class="inline">
                                                             @csrf
                                                             @method('DELETE')
@@ -839,7 +807,7 @@
                                                     @endif
                                                     @if ($hasContactsDestroyRoute)
                                                         <form action="{{ route('businesses.contacts.destroy', [$business, $contact]) }}"
-                                                            method="POST" onsubmit="return confirm('Delete this contact?');"
+                                                            method="POST" data-confirm="Delete this contact?"
                                                             class="inline">
                                                             @csrf
                                                             @method('DELETE')
@@ -1419,37 +1387,4 @@
     </div>
 
 
-    {{-- Smart Scroll Restoration Script --}}
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Restore scroll position after a reload/redirect if stored
-            const scrollPos = sessionStorage.getItem('uco_business_scroll_pos');
-            if (scrollPos) {
-                // Use setTimeout to ensure all dynamic elements are rendered
-                setTimeout(() => {
-                    window.scrollTo({
-                        top: parseInt(scrollPos),
-                        behavior: 'instant'
-                    });
-                    sessionStorage.removeItem('uco_business_scroll_pos');
-                }, 50);
-            }
-
-            // Store scroll position on form submissions or specific actions
-            const saveScrollPos = () => {
-                sessionStorage.setItem('uco_business_scroll_pos', window.scrollY);
-            };
-
-            // Global listener for forms and action buttons that redirect back
-            document.querySelectorAll('form, .btn-save-scroll').forEach(el => {
-                el.addEventListener('submit', saveScrollPos);
-                el.addEventListener('click', (e) => {
-                    if (e.currentTarget.tagName === 'A' || e.currentTarget.tagName === 'BUTTON') {
-                        saveScrollPos();
-                    }
-                });
-            });
-        });
-    </script>
 </x-app-layout>
