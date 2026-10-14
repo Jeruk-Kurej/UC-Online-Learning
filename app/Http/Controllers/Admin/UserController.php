@@ -253,7 +253,7 @@ class UserController extends \App\Http\Controllers\Controller
             'testimony' => $validated['testimony'] ?? null,
             'activities_caption' => $validated['activities_caption'] ?? null,
             'show_contact_details' => $request->boolean('show_contact_details'),
-            'is_visible' => $request->has('is_visible'),
+            'is_visible' => $request->boolean('is_visible', true),
             'email_verified_at' => now(),
         ];
 
@@ -384,9 +384,13 @@ class UserController extends \App\Http\Controllers\Controller
             'current_status' => $validated['current_status'] ?? null,
             'testimony' => $validated['testimony'] ?? null,
             'activities_caption' => $validated['activities_caption'] ?? null,
-            'show_contact_details' => $request->boolean('show_contact_details'),
-            'is_visible' => $request->has('is_visible'),
         ];
+
+        foreach (['is_visible', 'show_contact_details'] as $flag) {
+            if ($request->has($flag)) {
+                $userData[$flag] = $request->boolean($flag);
+            }
+        }
 
         if (! empty($validated['password'])) {
             $userData['password'] = Hash::make($validated['password']);

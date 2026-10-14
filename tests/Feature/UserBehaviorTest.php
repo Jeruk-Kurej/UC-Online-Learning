@@ -152,17 +152,29 @@ test('removing a business from a user currently fails with a server error', func
     ]))->assertServerError();
 });
 
-// Known bug, kept on purpose during the refactor (see docs/ROADMAP.md): the admin edit form
-// has no is_visible or show_contact_details field, so every save turns both off.
-test('saving the admin edit form currently hides the user and their contact details', function () {
+test('saving the admin edit form keeps visibility and contact settings unless they are sent', function () {
     $w = userWorld();
     $target = User::factory()->create(['email' => 'visible@example.com', 'is_visible' => true, 'show_contact_details' => true]);
     $payload = userPayload(['email' => 'visible@example.com', 'password' => null, 'password_confirmation' => null]);
     unset($payload['is_visible']);
 
     $this->actingAs($w['admin'])->put(route('users.update', $target), $payload)->assertSessionHasNoErrors();
+    expect($target->fresh()->is_visible)->toBeTrue()->and($target->fresh()->show_contact_details)->toBeTrue();
 
+    $this->actingAs($w['admin'])->put(route('users.update', $target), $payload + ['is_visible' => 0, 'show_contact_details' => 0]);
     expect($target->fresh()->is_visible)->toBeFalse()->and($target->fresh()->show_contact_details)->toBeFalse();
+});
+
+test('a user created by an admin is visible unless told otherwise', function () {
+    $w = userWorld();
+    $payload = userPayload(['email' => 'fresh@example.com']);
+    unset($payload['is_visible']);
+
+    $this->actingAs($w['admin'])->post(route('users.store'), $payload);
+    expect(User::where('email', 'fresh@example.com')->value('is_visible'))->toBeTrue();
+
+    $this->actingAs($w['admin'])->post(route('users.store'), userPayload(['email' => 'hidden@example.com', 'is_visible' => 0]));
+    expect(User::where('email', 'hidden@example.com')->value('is_visible'))->toBeFalse();
 });
 
 test('update can add and remove activity documents', function () {
