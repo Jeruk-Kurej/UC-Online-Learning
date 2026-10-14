@@ -316,27 +316,7 @@
                     <div class="pt-6 border-t border-slate-100">
                         @if(count($activitiesUrls) > 0)
                             {{-- Sleek Carousel --}}
-                            <div x-data="{ 
-                                activeIndex: 0, 
-                                total: {{ count($activitiesUrls) }},
-                                autoplayTimer: null,
-                                startAutoplay() {
-                                    if (this.total > 1) {
-                                        this.autoplayTimer = setInterval(() => {
-                                            this.activeIndex = (this.activeIndex + 1) % this.total;
-                                        }, 3500);
-                                    }
-                                },
-                                resetAutoplay() {
-                                    if (this.autoplayTimer) {
-                                        clearInterval(this.autoplayTimer);
-                                        this.startAutoplay();
-                                    }
-                                },
-                                init() {
-                                    this.startAutoplay();
-                                }
-                            }" class="relative w-full h-[200px] md:h-[240px] bg-slate-50 rounded-2xl overflow-hidden group">
+                            <div x-data="autoplayCarousel({{ count($activitiesUrls) }})" class="relative w-full h-[200px] md:h-[240px] bg-slate-50 rounded-2xl overflow-hidden group">
                                 <!-- Slides -->
                                 <div class="w-full h-full relative flex items-center justify-center">
                                     @foreach($activitiesUrls as $index => $url)

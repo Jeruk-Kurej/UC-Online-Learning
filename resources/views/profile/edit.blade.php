@@ -10,7 +10,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
+        <form data-enter-blurs method="POST" action="{{ route('profile.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
 
@@ -319,12 +319,4 @@
         </form>
     </div>
 
-    <script>
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
-                event.preventDefault();
-                event.target.blur();
-            }
-        });
-    </script>
 </x-app-layout>
