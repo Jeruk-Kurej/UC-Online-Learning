@@ -1,11 +1,12 @@
 // --- Photo field that can be replaced, removed or restored before saving ---
-// x-data="removablePhoto(@js($currentPhotoUrl))"; the file input is x-ref="photoInput".
+// x-data="removablePhoto(@js($currentPhotoUrl), @js($hasRealPhoto))"; the file input is x-ref="photoInput".
+// The second argument covers URLs that are only a generated placeholder (they start as "no photo").
 
-export default function removablePhoto(initialUrl = '') {
+export default function removablePhoto(initialUrl = '', hasInitialPhoto = null) {
     return {
         initialUrl: initialUrl || '',
         previewUrl: initialUrl || '',
-        hasPhoto: Boolean(initialUrl),
+        hasPhoto: hasInitialPhoto ?? Boolean(initialUrl),
         photoDeleted: false,
         newPhotoSelected: false,
 

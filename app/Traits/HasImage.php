@@ -76,6 +76,14 @@ trait HasImage
     }
 
     /**
+     * Whether a resolved image URL is a real image rather than the UI-Avatars fallback.
+     */
+    protected function isRealImage(?string $url): bool
+    {
+        return $url && !str_contains($url, 'ui-avatars.com');
+    }
+
+    /**
      * Resolve image URL handling Google Drive, Local Storage, and External URLs.
      * Fallback to UI-Avatars if no valid image found.
      */

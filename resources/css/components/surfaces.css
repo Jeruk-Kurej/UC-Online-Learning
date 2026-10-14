@@ -44,6 +44,10 @@
 		background: linear-gradient(135deg, #f7931e, #fdb913);
 	}
 
+	.uco-initials-bg-deep {
+		background: linear-gradient(135deg, #f97316, #ea580c);
+	}
+
 	.uco-text-gradient-orange {
 		background: linear-gradient(135deg, #f7931e 0%, #ffc088 100%);
 		-webkit-background-clip: text;

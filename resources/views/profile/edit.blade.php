@@ -26,7 +26,7 @@
                             <div class="photo-box w-[140px] h-[180px] mb-3">
                                 <img :src="previewUrl" class="photo-box__image" x-show="hasPhoto && !photoDeleted">
 
-                                <div class="photo-box__initials" x-show="!hasPhoto || photoDeleted">
+                                <div class="photo-box__initials uco-initials-bg-deep" x-show="!hasPhoto || photoDeleted">
                                     <span class="profile-initials">{{ $user->initials }}</span>
                                 </div>
 

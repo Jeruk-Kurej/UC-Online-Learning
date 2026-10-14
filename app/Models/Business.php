@@ -69,6 +69,11 @@ class Business extends Model
         return $this->resolveImage($value, 'business');
     }
 
+    public function getHasLogoAttribute(): bool
+    {
+        return $this->isRealImage($this->logo_url);
+    }
+
     public function getProfileQualityScoreAttribute()
     {
         $score = 0;

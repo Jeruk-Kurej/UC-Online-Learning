@@ -148,65 +148,11 @@
                 </div>
 
                 {{-- Profile Photo --}}
-                <div class="relative" x-data="removablePhoto(@js($userToEdit->profile_photo_url))">
-                    <label class="form-label-custom">Profile Photo</label>
-                    <input type="hidden" name="delete_profile_photo_url" :value="photoDeleted ? '1' : '0'">
-
-                    <div class="flex items-start gap-5">
-                        <!-- Clickable Photo Box -->
-                        <div class="photo-box w-[110px] h-[140px] group hover:border-blue-500">
-                            
-                            <!-- Current / New Photo Preview -->
-                            <img :src="previewUrl" class="photo-box__image" x-show="hasPhoto && !photoDeleted">
-                            
-                            <!-- Initials Placeholder -->
-                            <div class="photo-box__initials" x-show="!hasPhoto || photoDeleted">
-                                <span class="text-3xl font-black text-white select-none">{{ strtoupper(substr($userToEdit->name, 0, 1)) }}</span>
-                            </div>
-
-                            <!-- Click to pick trigger -->
-                            <label for="profile_photo_url" class="absolute inset-0 cursor-pointer z-20">
-                                <input type="file" name="profile_photo_url" id="profile_photo_url" accept="image/*" class="hidden" x-ref="photoInput" @change="pick($event)">
-                            </label>
-
-                            <!-- Hover Overlay -->
-                            <div class="photo-box__overlay">
-                                <i class="bi bi-camera-fill text-white text-lg"></i>
-                                <span class="text-white text-[8px] font-black uppercase tracking-widest mt-1">Change</span>
-                            </div>
-                        </div>
-
-                        <!-- Action Buttons and Help Text -->
-                        <div class="flex flex-col justify-center h-[140px]">
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-2">JPG, PNG, WEBP — Max 5MB</p>
-                            
-                            <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
-                                <button type="button" @click="photoDeleted = true" 
-                                        class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
-                                    <i class="bi bi-trash3 text-sm"></i>
-                                    <span>Remove Photo</span>
-                                </button>
-                            </template>
-                            
-                            <template x-if="photoDeleted">
-                                <button type="button" @click="photoDeleted = false" 
-                                        class="inline-flex items-center gap-1.5 text-xs text-blue-500 hover:text-blue-700 font-bold transition-all">
-                                    <i class="bi bi-arrow-counterclockwise text-sm"></i>
-                                    <span>Undo Delete</span>
-                                </button>
-                            </template>
-
-                            <template x-if="newPhotoSelected">
-                                <button type="button" @click="cancelNew()" 
-                                        class="inline-flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-700 font-bold transition-all">
-                                    <i class="bi bi-x-circle text-sm"></i>
-                                    <span>Cancel New Photo</span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
+                <x-forms.removable-image label="Profile Photo" name="profile_photo_url" delete-name="delete_profile_photo_url"
+                    :url="$userToEdit->profile_photo_url" :initial="strtoupper(substr($userToEdit->name, 0, 1))" noun="Photo"
+                    hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[110px] h-[140px] group" actions-class="h-[140px]">
                     @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
+                </x-forms.removable-image>
             </div>
         </div>
 

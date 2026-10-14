@@ -46,6 +46,11 @@ class Company extends Model
         return $this->resolveImage($value, 'company');
     }
 
+    public function getHasLogoAttribute(): bool
+    {
+        return $this->isRealImage($this->logo_url);
+    }
+
     public function getAchievementsListAttribute(): array
     {
         if (empty($this->achievement)) {
