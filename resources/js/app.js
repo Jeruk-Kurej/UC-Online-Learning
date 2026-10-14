@@ -1,5 +1,4 @@
 import './bootstrap';
-import './image-preview';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 import registerAjaxPagination from './lib/ajax-pagination';
