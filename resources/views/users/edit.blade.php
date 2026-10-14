@@ -1,93 +1,6 @@
 <x-app-layout>
     @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-        <style>
-            .form-label-custom {
-                display: block; 
-                font-size: 10px; 
-                font-weight: 800; 
-                color: #64748b; 
-                text-transform: uppercase; 
-                margin-bottom: 8px;
-                letter-spacing: 0.5px;
-            }
-
-            .form-input-custom {
-                width: 100%; 
-                height: 44px; 
-                padding: 0 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 7px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                background: white;
-            }
-
-            .form-input-custom:focus {
-                border-color: #3b82f6 !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-            }
-
-            .form-file-container-custom {
-                position: relative; 
-                display: flex; 
-                align-items: center; 
-                justify-content: space-between; 
-                padding: 0 15px; 
-                height: 44px;
-                border: 1.5px dashed #cbd5e1; 
-                border-radius: 7px; 
-                background: #f8fafc; 
-                transition: all 0.2s ease;
-                cursor: pointer;
-                overflow: hidden;
-            }
-
-            .form-file-container-custom:hover {
-                border-color: #3b82f6;
-                background: white;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.05);
-            }
-
-            .form-textarea-custom {
-                width: 100%; 
-                padding: 12px 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 7px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                min-height: 100px;
-            }
-
-            .form-textarea-custom:focus {
-                border-color: #3b82f6 !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-            }
-
-            /* TomSelect Overrides */
-            .ts-wrapper .ts-control {
-                border: 1.5px solid #e2e8f0 !important;
-                border-radius: 7px !important;
-                height: 44px !important;
-                padding: 0 15px !important;
-                display: flex !important;
-                align-items: center !important;
-                font-size: 13px !important;
-                font-weight: 600 !important;
-                box-shadow: none !important;
-            }
-
-            .ts-wrapper.focus .ts-control {
-                border-color: #3b82f6 !important;
-                box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-            }
-        </style>
+        @vite('resources/css/pages/user-form.css')
     @endpush
 
     <div class="mb-6 flex items-center gap-4">
@@ -101,7 +14,7 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('users.update', $userToEdit) }}" enctype="multipart/form-data" class="space-y-6">
+    <form data-user-form data-enter-blurs method="POST" action="{{ route('users.update', $userToEdit) }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -147,7 +60,7 @@
                     <label for="student_status" class="form-label-custom">
                         Student Status <span class="text-red-500">*</span>
                     </label>
-                    <select name="student_status" id="student_status" required class="block w-full">
+                    <select name="student_status" id="student_status" data-tom-select="Select Status" required class="block w-full">
                         <option value="student aktif" {{ old('student_status', $userToEdit->student_status) === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
                         <option value="student non aktif" {{ old('student_status', $userToEdit->student_status) === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
                         <option value="student cuti" {{ old('student_status', $userToEdit->student_status) === 'student cuti' ? 'selected' : '' }}>Student Cuti</option>
@@ -355,7 +268,7 @@
                 {{-- Current Status --}}
                 <div>
                     <label for="current_status" class="form-label-custom">Current Career Status</label>
-                    <select name="current_status" id="current_status" class="block w-full">
+                    <select name="current_status" id="current_status" data-tom-select="Select Career Status" class="block w-full">
                         <option value="">Select Status</option>
                         <option value="Entrepreneur" {{ old('current_status', $userToEdit->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
                         <option value="Intrapreneur" {{ old('current_status', $userToEdit->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
@@ -557,7 +470,7 @@
                     <label for="owned_businesses" class="form-label-custom">
                         Owned Businesses to assign directly:
                     </label>
-                    <select name="owned_businesses[]" id="owned_businesses" multiple class="block w-full">
+                    <select name="owned_businesses[]" id="owned_businesses" data-tom-select="Select Businesses" multiple class="block w-full">
                         @foreach ($availableBusinesses as $b)
                             <option value="{{ $b->id }}" {{ in_array($b->id, old('owned_businesses', $userToEdit->businesses->pluck('id')->toArray() ?? [])) ? 'selected' : '' }}>
                                 {{ $b->name }} (Current owner: {{ $b->user->name ?? 'None' }})
@@ -579,61 +492,4 @@
             </button>
         </div>
     </form>
-
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                const roleSelect = document.getElementById('role');
-                const studentStatusSelect = document.getElementById('student_status');
-                const studentStatusContainer = document.getElementById('student_status_container');
-                const identityContactSection = document.getElementById('identity_contact_section');
-                const academicExtraSection = document.getElementById('academic_extra_section');
-                const businessAssignmentSection = document.getElementById('business_assignment_section');
-
-                function toggleStudentFields(role) {
-                    if (role === 'admin') {
-                        if (studentStatusContainer) studentStatusContainer.classList.add('hidden');
-                        if (identityContactSection) identityContactSection.classList.add('hidden');
-                        if (academicExtraSection) academicExtraSection.classList.add('hidden');
-                        if (businessAssignmentSection) businessAssignmentSection.classList.add('hidden');
-                        if (studentStatusSelect) studentStatusSelect.removeAttribute('required');
-                    } else {
-                        if (studentStatusContainer) studentStatusContainer.classList.remove('hidden');
-                        if (identityContactSection) identityContactSection.classList.remove('hidden');
-                        if (academicExtraSection) academicExtraSection.classList.remove('hidden');
-                        if (businessAssignmentSection) businessAssignmentSection.classList.remove('hidden');
-                        if (studentStatusSelect) studentStatusSelect.setAttribute('required', 'required');
-                    }
-                }
-
-                if (window.TomSelect) {
-                    new TomSelect('#role', { 
-                        create: false, 
-                        placeholder: "Select Role", 
-                        searchField: ["text"],
-                        onChange: function(value) {
-                            toggleStudentFields(value);
-                        }
-                    });
-                    new TomSelect('#student_status', { create: false, placeholder: "Select Status", searchField: ["text"] });
-                    new TomSelect('#current_status', { create: false, placeholder: "Select Career Status", searchField: ["text"] });
-                    new TomSelect('#owned_businesses', { create: false, placeholder: "Select Businesses", searchField: ["text"] });
-                }
-
-                // Initial run based on current role select value
-                if (roleSelect) {
-                    toggleStudentFields(roleSelect.value);
-                }
-
-                // Standardized behavior: Enter key blurs the field instead of submitting
-                document.addEventListener('keydown', function(event) {
-                    if (event.key === 'Enter' && event.target.tagName !== 'TEXTAREA') {
-                        event.preventDefault();
-                        event.target.blur();
-                    }
-                });
-            });
-        </script>
-    @endpush
 </x-app-layout>

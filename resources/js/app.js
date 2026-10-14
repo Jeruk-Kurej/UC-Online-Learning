@@ -1,6 +1,7 @@
 import './bootstrap';
 import './image-preview';
 import registerConfirmSubmit from './lib/confirm-submit';
+import registerEnterBlurs from './lib/enter-blurs';
 
 import Alpine from 'alpinejs';
 
@@ -246,4 +247,12 @@ if (document.querySelector('[data-offering-form]')) {
 
 if (document.querySelector('select[data-tom-select], select[data-region-province]')) {
     import('./components/tom-select-fields').then(({ default: initTomSelectFields }) => initTomSelectFields());
+}
+
+if (document.querySelector('[data-enter-blurs]')) {
+    registerEnterBlurs();
+}
+
+if (document.querySelector('[data-user-form]')) {
+    import('./pages/user-form').then(({ default: initUserForm }) => initUserForm());
 }
