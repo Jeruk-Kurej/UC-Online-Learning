@@ -63,7 +63,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, \App\Traits\HasImage;
+    use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug;
 
     protected $fillable = [
         // System
@@ -124,6 +124,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'submitted_at' => 'datetime',
+            'testimony' => \App\Casts\CleanText::class,
             'password' => 'hashed',
             'is_visible' => 'boolean',
             'is_featured' => 'boolean',
@@ -132,42 +133,11 @@ class User extends Authenticatable
         ];
     }
 
-    public function getRouteKeyName()
-    {
-        return 'slug';
-    }
-
-    protected static function booted(): void
-    {
-        static::creating(function (User $user) {
-            if (empty($user->slug) && !empty($user->name)) {
-                $user->slug = static::generateUniqueSlug($user->name);
-            }
-        });
-    }
-
-    private static function generateUniqueSlug(string $name): string
-    {
-        $slug = \Illuminate\Support\Str::slug($name);
-        $original = $slug;
-        $i = 1;
-        while (static::where('slug', $slug)->exists()) {
-            $slug = $original . '-' . $i++;
-        }
-        return $slug;
-    }
-
     // ─── Accessors ───
 
     public function getProfilePhotoUrlAttribute($value)
     {
         return $this->resolveImage($value, 'profile');
-    }
-
-    public function getTestimonyAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
     }
 
     public function getActivitiesDocUrlAttribute($value)

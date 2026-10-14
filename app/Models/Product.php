@@ -21,23 +21,19 @@ class Product extends Model
         'sort_order',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'name' => \App\Casts\CleanText::class,
+            'description' => \App\Casts\CleanText::class,
+        ];
+    }
+
     // ─── Accessors ───
 
     public function getPhotoUrlAttribute($value)
     {
         return $this->resolveImage($value, 'product');
-    }
-
-    public function getNameAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
-    }
-
-    public function getDescriptionAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
     }
 
     // ─── Relationships ───

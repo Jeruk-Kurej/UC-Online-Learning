@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Company extends Model
 {
-    use HasFactory, \App\Traits\HasImage;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
 
     protected $fillable = [
         'user_id',
@@ -35,52 +34,16 @@ class Company extends Model
     {
         return [
             'is_visible' => 'boolean',
+            'name' => \App\Casts\CompanyName::class,
+            'job_description' => \App\Casts\CleanText::class,
         ];
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     // ─── Accessors ───
 
-    public function getStatusAttribute(): string
-    {
-        return $this->approval_status ?? ($this->is_visible ? 'approved' : 'pending');
-    }
-
-    public function getStatusLabelAttribute(): string
-    {
-        $status = $this->status;
-        return match($status) {
-            'approved' => 'Approved',
-            'pending' => 'Pending Approval',
-            'rejected' => 'Rejected',
-            'need_revision' => 'Need Revision',
-            default => 'Pending Approval',
-        };
-    }
-
     public function getLogoUrlAttribute($value)
     {
         return $this->resolveImage($value, 'company');
-    }
-
-    public function getNameAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        $name = trim(strip_tags($cleaned));
-
-        if ($name === strtoupper($name)) {
-            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
-        }
-
-        $name = preg_replace('/\bPt\b/i', 'PT', $name);
-        $name = preg_replace('/\bCv\b/i', 'CV', $name);
-        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
-
-        return $name;
     }
 
     public function getAchievementsListAttribute(): array
@@ -107,34 +70,6 @@ class Company extends Model
         return $items;
     }
 
-    public function getJobDescriptionAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
-    }
-
-    // ─── Auto-generate slug ───
-
-    protected static function booted(): void
-    {
-        static::creating(function (Company $company) {
-            if (empty($company->slug)) {
-                $company->slug = static::generateUniqueSlug($company->name);
-            }
-        });
-    }
-
-    private static function generateUniqueSlug(string $name): string
-    {
-        $slug = Str::slug($name);
-        $original = $slug;
-        $i = 1;
-        while (static::where('slug', $slug)->exists()) {
-            $slug = $original . '-' . $i++;
-        }
-        return $slug;
-    }
-
     // ─── Relationships ───
 
     public function user()
@@ -145,14 +80,5 @@ class Company extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    // ─── Scopes ───
-
-    public function scopeVisible($query)
-    {
-        return $query->where('is_visible', true)
-            ->where('approval_status', 'approved')
-            ->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 }

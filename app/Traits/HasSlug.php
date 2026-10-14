@@ -6,63 +6,41 @@ use Illuminate\Support\Str;
 
 trait HasSlug
 {
-    /**
-     * Boot the trait.
-     */
-    protected static function bootHasSlug()
+    // --- Boot ---
+
+    protected static function bootHasSlug(): void
     {
         static::creating(function ($model) {
-            if (empty($model->slug)) {
-                $model->slug = $model->generateUniqueSlug($model->{$model->getSlugSourceColumn()});
-            }
-        });
+            $source = $model->{$model->getSlugSourceColumn()};
 
-        static::updating(function ($model) {
-            if ($model->isDirty($model->getSlugSourceColumn()) && !$model->isDirty('slug')) {
-                $model->slug = $model->generateUniqueSlug($model->{$model->getSlugSourceColumn()});
+            if (empty($model->slug) && ! empty($source)) {
+                $model->slug = static::generateUniqueSlug($source);
             }
         });
     }
 
-    /**
-     * Get the route key for the model.
-     *
-     * @return string
-     */
+    // --- Routing ---
+
     public function getRouteKeyName()
     {
         return 'slug';
     }
 
-    /**
-     * Get the column name to use as the slug source.
-     *
-     * @return string
-     */
-    protected function getSlugSourceColumn()
+    // --- Slug generation ---
+
+    protected function getSlugSourceColumn(): string
     {
         return 'name';
     }
 
-    /**
-     * Generate a unique slug.
-     *
-     * @param string $value
-     * @return string
-     */
-    protected function generateUniqueSlug($value)
+    protected static function generateUniqueSlug(string $value): string
     {
         $slug = Str::slug($value);
-        $originalSlug = $slug;
+        $original = $slug;
         $counter = 1;
 
-        while (static::where('slug', $slug)
-            ->when($this->exists, function ($query) {
-                return $query->where($this->getKeyName(), '!=', $this->getKey());
-            })
-            ->exists()) {
-            $slug = $originalSlug . '-' . $counter;
-            $counter++;
+        while (static::where('slug', $slug)->exists()) {
+            $slug = $original.'-'.$counter++;
         }
 
         return $slug;

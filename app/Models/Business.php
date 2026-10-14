@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @mixin \Illuminate\Database\Eloquent\Model
@@ -12,7 +11,7 @@ use Illuminate\Support\Str;
  */
 class Business extends Model
 {
-    use HasFactory, \App\Traits\HasImage;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
 
     protected $fillable = [
         'user_id',
@@ -56,14 +55,11 @@ class Business extends Model
     {
         return [
             'established_date' => 'date',
+            'name' => \App\Casts\CompanyName::class,
+            'description' => \App\Casts\CleanText::class,
             'is_visible' => 'boolean',
             'is_featured' => 'boolean',
         ];
-    }
-
-    public function getRouteKeyName()
-    {
-        return 'slug';
     }
 
     // ─── Accessors ───
@@ -71,45 +67,6 @@ class Business extends Model
     public function getLogoUrlAttribute($value)
     {
         return $this->resolveImage($value, 'business');
-    }
-
-    public function getNameAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        $name = trim(strip_tags($cleaned));
-
-        if ($name === strtoupper($name)) {
-            $name = \Illuminate\Support\Str::title(\Illuminate\Support\Str::lower($name));
-        }
-
-        $name = preg_replace('/\bPt\b/i', 'PT', $name);
-        $name = preg_replace('/\bCv\b/i', 'CV', $name);
-        $name = preg_replace('/\bTbk\b/i', 'Tbk', $name);
-
-        return $name;
-    }
-
-    public function getDescriptionAttribute($value)
-    {
-        $cleaned = preg_replace('/<br\s*\/?>/i', ' ', $value);
-        return trim(strip_tags($cleaned));
-    }
-
-    public function getStatusAttribute(): string
-    {
-        return $this->approval_status ?? ($this->is_visible ? 'approved' : 'pending');
-    }
-
-    public function getStatusLabelAttribute(): string
-    {
-        $status = $this->status;
-        return match($status) {
-            'approved' => 'Approved',
-            'pending' => 'Pending Approval',
-            'rejected' => 'Rejected',
-            'need_revision' => 'Need Revision',
-            default => 'Pending Approval',
-        };
     }
 
     public function getProfileQualityScoreAttribute()
@@ -133,32 +90,15 @@ class Business extends Model
         return round(($score / $total) * 100);
     }
 
-    // ─── Auto-generate slug ───
+    // ─── Model events ───
 
     protected static function booted(): void
     {
-        static::creating(function (Business $business) {
-            if (empty($business->slug)) {
-                $business->slug = static::generateUniqueSlug($business->name);
-            }
-        });
-
         static::saving(function (Business $business) {
             if ($business->approval_status !== 'approved') {
                 $business->is_featured = false;
             }
         });
-    }
-
-    private static function generateUniqueSlug(string $name): string
-    {
-        $slug = Str::slug($name);
-        $original = $slug;
-        $i = 1;
-        while (static::where('slug', $slug)->exists()) {
-            $slug = $original . '-' . $i++;
-        }
-        return $slug;
     }
 
     // ─── Relationships ───
@@ -194,13 +134,6 @@ class Business extends Model
     }
 
     // ─── Scopes ───
-
-    public function scopeVisible($query)
-    {
-        return $query->where('is_visible', true)
-            ->where('approval_status', 'approved')
-            ->whereHas('user', fn ($q) => $q->where('is_visible', true));
-    }
 
     public function scopeEntrepreneur($query)
     {
