@@ -5,7 +5,7 @@ use App\Http\Controllers\UcTestimonyController;
 use App\Http\Controllers\ImportController;
 use App\Http\Controllers\FeaturedController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceController;
@@ -13,6 +13,7 @@ use App\Http\Controllers\InboxController;
 use App\Http\Controllers\CollabController;
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CompanyAchievementController;
 use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Auth;
@@ -32,7 +33,7 @@ Route::middleware(['throttle:showcase'])->group(function () {
     Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
     Route::get('/business', [BusinessController::class, 'index'])->name('businesses.index');
     Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
-    Route::get('/google-drive-image/{id}', [UserController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
+    Route::get('/google-drive-image/{id}', [UserProfileController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
 });
 
 // ============================================================
@@ -89,11 +90,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
     
-    Route::resource('users', UserController::class)->except(['show', 'destroy']);
-    Route::post('/users/import', [UserController::class, 'import'])->name('users.import');
-    Route::get('/users/stats', [UserController::class, 'stats'])->name('users.stats');
-    Route::post('/users/{user}/toggle-featured', [UserController::class, 'toggleFeatured'])->name('users.toggle-featured');
-    Route::post('/users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::resource('users', AdminUserController::class)->except(['show', 'destroy']);
+    Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
+    Route::get('/users/stats', [AdminUserController::class, 'stats'])->name('users.stats');
+    Route::post('/users/{user}/toggle-featured', [AdminUserController::class, 'toggleFeatured'])->name('users.toggle-featured');
+    Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
     
     Route::post('/business/import', [AdminBusinessController::class, 'import'])->name('businesses.import');
     Route::delete('/business/{business}', [AdminBusinessController::class, 'destroy'])->name('businesses.destroy');
@@ -124,5 +125,5 @@ require __DIR__.'/auth.php';
 
 // Catch-all route for user profiles (must be at the very bottom to avoid intercepting other routes like /login or /about)
 Route::middleware(['throttle:showcase'])->group(function () {
-    Route::get('/{user}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/{user}', [UserProfileController::class, 'show'])->name('users.show');
 });

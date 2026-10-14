@@ -1,30 +1,24 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Imports\FormResponseImport;
 use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Province;
 use App\Models\User;
+use App\Services\ImageOptimizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Services\ImageOptimizerService;
 
 /**
- * Class UserController
- *
- * Handles student/user directory lists, administrative CRUD operations,
- * profile catalog show views, Google Drive media proxies, and background CSV/Excel imports.
+ * Admin management of student and alumni accounts: list, create, edit, featuring, activation and import.
  */
-class UserController extends Controller
+class UserController extends \App\Http\Controllers\Controller
 {
     /**
      * Featured user counts (total + by career focus).
@@ -49,27 +43,12 @@ class UserController extends Controller
     }
 
     /**
-     * Get authenticated user as User instance
-     */
-    private function getAuthUser(): User
-    {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (! $user) {
-            abort(401, 'Unauthenticated.');
-        }
-
-        return $user;
-    }
-
-    /**
      * Display a listing of users.
      */
     public function index(Request $request)
     {
         // ✅ CHANGED: Use Gate instead of authorize for better error handling
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can view user list.');
         }
 
@@ -199,7 +178,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can create users.');
         }
 
@@ -215,7 +194,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can create users.');
         }
 
@@ -312,49 +291,11 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified user profile catalog.
-     */
-    public function show($user)
-    {
-        if (! $user instanceof User) {
-            $user = User::where('slug', $user)->orWhere('id', $user)->firstOrFail();
-        }
-        // Publicly accessible catalog - removed admin guard
-
-        // Load relationships
-        $user->load([
-            'businesses' => function ($query) {
-                $query->where('is_visible', true)->with('category');
-            },
-            'memberOfBusinesses' => function ($query) use ($user) {
-                $query->where('is_visible', true)
-                    ->where('businesses.user_id', '!=', $user->id)
-                    ->with('category');
-            },
-            'skills',
-            'companies.category',
-        ]);
-
-        return view('users.show', [
-            'user' => $user,
-        ]);
-    }
-
-    /**
-     * Proxy public Google Drive image/file download to bypass browser cookies and CORS issues.
-     */
-    public function proxyGoogleDriveImage($id)
-    {
-        $url = 'https://drive.google.com/uc?export=view&id=' . $id;
-        return redirect($url);
-    }
-
-    /**
      * Show the form for editing the specified user.
      */
     public function edit(User $user)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can edit users.');
         }
 
@@ -381,7 +322,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can update users.');
         }
 
@@ -529,7 +470,7 @@ class UserController extends Controller
      */
     public function toggleFeatured(Request $request, User $user)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             if ($request->ajax() || $request->wantsJson()) {
                 return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
             }
@@ -566,7 +507,7 @@ class UserController extends Controller
      */
     public function toggleStatus(Request $request, User $user)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             if ($request->ajax() || $request->wantsJson()) {
                 return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle user status.'], 403);
             }
@@ -616,7 +557,7 @@ class UserController extends Controller
      */
     public function import(Request $request)
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can import users.');
         }
 
@@ -675,14 +616,12 @@ class UserController extends Controller
         }
     }
 
-
-
     /**
      * Download Excel template for user import.
      */
     public function downloadTemplate()
     {
-        if (! $this->getAuthUser()->isAdmin()) {
+        if (! $this->currentUserIsAdmin()) {
             abort(403, 'Only administrators can download import template.');
         }
 
@@ -1020,5 +959,4 @@ class UserController extends Controller
 
         return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
-
 }
