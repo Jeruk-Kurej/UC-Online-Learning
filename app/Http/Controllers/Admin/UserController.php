@@ -450,18 +450,10 @@ class UserController extends \App\Http\Controllers\Controller
         $user->save();
 
         // Update business ownership if selected
-        if ($request->has('owned_businesses')) {
-            $ownedBusinesses = (array) $request->input('owned_businesses');
-            // Remove this user from businesses they no longer own
-            Business::where('user_id', $user->id)
-                ->whereNotIn('id', $ownedBusinesses)
-                ->update(['user_id' => null]);
-
-            // Transfer selected businesses to this user
-            if (! empty($ownedBusinesses)) {
-                Business::whereIn('id', $ownedBusinesses)
-                    ->update(['user_id' => $user->id]);
-            }
+        $ownedBusinesses = (array) $request->input('owned_businesses');
+        if (! empty($ownedBusinesses)) {
+            Business::whereIn('id', $ownedBusinesses)
+                ->update(['user_id' => $user->id]);
         }
 
         return redirect()

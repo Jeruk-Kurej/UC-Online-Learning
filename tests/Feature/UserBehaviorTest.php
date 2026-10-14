@@ -136,20 +136,27 @@ test('update keeps the password unless given and moves business ownership', func
         ->and($gained->fresh()->user_id)->toBe($target->id)
         ->and($dropped->fresh()->user_id)->toBe($target->id);
 
+    $this->actingAs($w['admin'])->put(route('users.update', $target), userPayload([
+        'email' => 'target@example.com', 'password' => null, 'password_confirmation' => null, 'owned_businesses' => [$gained->id],
+    ]));
+    expect($dropped->fresh()->user_id)->toBe($target->id);
+
     $this->actingAs($w['admin'])->put(route('users.update', $target), userPayload(['email' => 'target@example.com', 'password' => 'Another-Secret-456', 'password_confirmation' => 'Another-Secret-456']));
     expect(Hash::check('Another-Secret-456', $target->fresh()->password))->toBeTrue();
 });
 
-// Known bug, kept on purpose during the refactor (see docs/ROADMAP.md): unticking a business
-// sets businesses.user_id to null, which the column does not allow, so the request fails.
-test('removing a business from a user currently fails with a server error', function () {
+test('assigning a business to a user who already owns one keeps both', function () {
     $w = userWorld();
     $target = User::factory()->create(['email' => 'owner@example.com']);
-    Business::create(['user_id' => $target->id, 'name' => 'Will Be Unticked']);
+    $existing = Business::create(['user_id' => $target->id, 'name' => 'Already Theirs']);
+    $incoming = Business::create(['user_id' => $w['student']->id, 'name' => 'Moved Over']);
 
     $this->actingAs($w['admin'])->put(route('users.update', $target), userPayload([
-        'email' => 'owner@example.com', 'password' => null, 'password_confirmation' => null, 'owned_businesses' => [],
-    ]))->assertServerError();
+        'email' => 'owner@example.com', 'password' => null, 'password_confirmation' => null, 'owned_businesses' => [$incoming->id],
+    ]))->assertRedirect(route('users.show', $target));
+
+    expect($existing->fresh()->user_id)->toBe($target->id)
+        ->and($incoming->fresh()->user_id)->toBe($target->id);
 });
 
 test('saving the admin edit form keeps visibility and contact settings unless they are sent', function () {
