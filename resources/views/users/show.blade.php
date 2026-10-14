@@ -616,7 +616,7 @@
                             </h2>
                         </div>
                         @if(auth()->id() === $user->id)
-                            <a href="{{ route('testimonies.my') }}" 
+                            <a href="{{ route('uc-testimonies.my') }}" 
                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-orange-200 bg-orange-50 hover:bg-orange-100 text-orange-700 font-bold text-xs transition-all shadow-sm">
                                 <i class="bi bi-pencil-square"></i> Edit My Testimony
                             </a>
