@@ -147,7 +147,7 @@
                                 </a>
                                 {{-- Change status (modal) --}}
                                 <button type="button" 
-                                        onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }})"
+                                        data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}"
                                         class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
                                         style="background-color: #6c757d;"
                                         onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
@@ -171,7 +171,7 @@
                                 </a>
                                 {{-- Change status (modal) --}}
                                 <button type="button" 
-                                        onclick="openStatusModal({{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }})"
+                                        data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}"
                                         class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
                                         style="background-color: #6c757d;"
                                         onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">

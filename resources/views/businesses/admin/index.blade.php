@@ -1,68 +1,9 @@
 <x-app-layout>
-    <div class="w-full max-w-[1600px] mx-auto py-8 px-4" 
+    <div data-business-admin class="w-full max-w-[1600px] mx-auto py-8 px-4" 
          @start-import.window="showImportModal = false"
          @close-import-modal.window="showImportModal = false"
          data-view-type="{{ $viewType ?? 'entrepreneur' }}"
-         x-data="{ 
-            showImportModal: false,
-            isSubmitting: false,
-            debounceTimer: null,
-            viewType: '',
-            submitDebounced() {
-                if (this.debounceTimer) clearTimeout(this.debounceTimer);
-                this.debounceTimer = setTimeout(() => this.updateList(), 500);
-            },
-            resetFilters() {
-                const currentType = this.viewType;
-                this.$refs.filterForm.reset();
-                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
-                // Re-apply viewType after reset
-                const typeInput = this.$refs.filterForm.querySelector('[name=type]');
-                if (typeInput) typeInput.value = currentType;
-                this.updateList();
-            },
-            switchType(type) {
-                this.viewType = type;
-                const typeInput = this.$refs.filterForm.querySelector('[name=type]');
-                if (typeInput) typeInput.value = type;
-                // Reset other filters
-                const searchInput = this.$refs.filterForm.querySelector('[name=search]');
-                if (searchInput) searchInput.value = '';
-                this.updateList();
-            },
-            updateList(url = null, pushState = true, shouldScroll = false) {
-                this.isSubmitting = true;
-                if (!url) {
-                    const form = this.$refs.filterForm;
-                    if (!form) { this.isSubmitting = false; return; }
-                    const formData = new FormData(form);
-                    const params = new URLSearchParams(formData);
-                    url = `${form.action}?${params.toString()}`;
-                }
-
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin'
-                })
-                .then(res => res.text())
-                .then(html => {
-                    const container = document.getElementById('businesses-admin-list-container');
-                    if (container) {
-                        container.innerHTML = html;
-                        container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
-                    }
-                    if (pushState) window.history.pushState({}, '', url);
-                    this.isSubmitting = false;
-                    if (shouldScroll) {
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                    }
-                })
-                .catch(err => {
-                    console.error('Fetch failed:', err);
-                    this.isSubmitting = false;
-                });
-            }
-         }"
+         x-data="businessAdminList"
          x-init="viewType = $el.dataset.viewType || 'entrepreneur'"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
@@ -205,7 +146,7 @@
     {{-- Status Modal --}}
     <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeStatusModal()"></div>
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" data-status-modal-close></div>
 
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
@@ -226,7 +167,7 @@
                                     
                                     <div class="mb-4">
                                         <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">New Status</label>
-                                        <select name="status" id="statusSelect" onchange="toggleReasonField()"
+                                        <select name="status" id="statusSelect" data-status-select
                                                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
                                             <option value="pending">Pending Approval</option>
                                             <option value="approved">Approved</option>
@@ -249,7 +190,7 @@
                         <button type="submit" class="w-full sm:w-auto btn-uco btn-uco-primary">
                             Save Changes
                         </button>
-                        <button type="button" onclick="closeStatusModal()" class="mt-3 sm:mt-0 w-full sm:w-auto btn-uco btn-uco-neutral">
+                        <button type="button" data-status-modal-close class="mt-3 sm:mt-0 w-full sm:w-auto btn-uco btn-uco-neutral">
                             Cancel
                         </button>
                     </div>
@@ -258,93 +199,6 @@
         </div>
     </div>
 
-    <script>
-        function openStatusModal(data) {
-            const modal = document.getElementById('statusModal');
-            const form = document.getElementById('statusForm');
-            const nameDisplay = document.getElementById('businessNameDisplay');
-            const statusSelect = document.getElementById('statusSelect');
-            const reasonArea = document.getElementById('rejection_reason');
-            
-            if (data.type === 'intrapreneur') {
-                form.action = `/admin/intrapreneurs/${data.id}/status`;
-            } else {
-                form.action = `/admin/business/${data.id}/status`;
-            }
-            nameDisplay.innerText = `Updating: ${data.name}`;
-            statusSelect.value = data.status;
-            reasonArea.value = data.reason || '';
-            
-            modal.classList.remove('hidden');
-            toggleReasonField();
-        }
-
-        function closeStatusModal() {
-            document.getElementById('statusModal').classList.add('hidden');
-        }
-
-        function toggleReasonField() {
-            const status = document.getElementById('statusSelect').value;
-            const reasonField = document.getElementById('reasonField');
-            if (status === 'rejected' || status === 'need_revision') {
-                reasonField.classList.remove('hidden');
-            } else {
-                reasonField.classList.add('hidden');
-            }
-        }
-
-        // Intercept featured toggle form submissions to handle them via AJAX
-        document.addEventListener('submit', function(e) {
-            const form = e.target;
-            if (form && form.classList.contains('toggle-featured-form')) {
-                e.preventDefault();
-                const button = form.querySelector('button');
-                const tokenInput = form.querySelector('input[name="_token"]');
-                if (!button || !tokenInput) return;
-
-                fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRF-TOKEN': tokenInput.value
-                    }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        const isFeaturedNow = data.message.includes('now featured');
-                        const tooltipEl = button.querySelector('.tooltip-text');
-                        if (isFeaturedNow) {
-                            button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500";
-                            if (tooltipEl) tooltipEl.textContent = 'Remove featured';
-                        } else {
-                            button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300";
-                            if (tooltipEl) tooltipEl.textContent = 'Make featured';
-                        }
-                        
-                        // Update featured badge count in header
-                        const countEl = document.querySelector('.featured-count');
-                        if (countEl) {
-                            let currentCount = parseInt(countEl.textContent, 10) || 0;
-                            countEl.textContent = isFeaturedNow ? currentCount + 1 : Math.max(0, currentCount - 1);
-                        }
-                        
-                        // Dispatch global toast message
-                        window.dispatchEvent(new CustomEvent('notify', {
-                            detail: { message: data.message, type: 'success' }
-                        }));
-                    } else {
-                        window.dispatchEvent(new CustomEvent('notify', {
-                            detail: { message: data.message || 'Error occurred', type: 'error' }
-                        }));
-                    }
-                })
-                .catch(err => {
-                    console.error('Featured toggle failed:', err);
-                });
-            }
-        });
-    </script>
 
         {{-- Import Modal --}}
         @if (auth()->user()?->isAdmin())
@@ -365,20 +219,7 @@
                  x-transition:leave="transition ease-in duration-150 transform"
                  x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                  x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-                 x-data="{
-                    isDragging: false,
-                    handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
-                    handleDragLeave() { this.isDragging = false; },
-                    handleDrop(e) {
-                        e.preventDefault();
-                        this.isDragging = false;
-                        if (e.dataTransfer.files.length > 0) {
-                            const file = e.dataTransfer.files[0];
-                            document.getElementById('biz_csv_file').files = e.dataTransfer.files;
-                            document.getElementById('biz_file_name').textContent = file.name;
-                        }
-                    }
-                 }"
+                 x-data="importDropzone('biz_csv_file', 'biz_file_name')"
                  @click.stop>
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-2xl font-black text-gray-900">Import Businesses</h3>
@@ -395,7 +236,7 @@
                          @dragover="handleDragOver"
                          @dragleave="handleDragLeave"
                          @drop="handleDrop">
-                        <input type="file" name="file" required class="hidden" id="biz_csv_file" onchange="document.getElementById('biz_file_name').textContent = this.files[0].name">
+                        <input type="file" name="file" required class="hidden" id="biz_csv_file" @change="showChosenFile">
                         <label for="biz_csv_file" class="cursor-pointer">
                             <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
                             <p class="mt-4 text-sm font-bold text-gray-600" id="biz_file_name">Click to select or drag CSV/Excel file here</p>

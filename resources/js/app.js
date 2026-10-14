@@ -7,11 +7,13 @@ import registerAjaxPagination from './lib/ajax-pagination';
 import Alpine from 'alpinejs';
 import toastStack from './components/toast-stack';
 import sharedImportManager from './components/import-manager';
+import importDropzone from './components/import-dropzone';
 
 window.Alpine = Alpine;
 
 Alpine.data('toastStack', toastStack);
 Alpine.data('sharedImportManager', sharedImportManager);
+Alpine.data('importDropzone', importDropzone);
 
 window.initSectionBuilder = function(initialSections) {
     return {
@@ -173,6 +175,10 @@ const alpinePageModules = [];
 
 if (document.querySelector('[data-featured-page]')) {
     alpinePageModules.push(import('./pages/featured'));
+}
+
+if (document.querySelector('[data-business-admin]')) {
+    alpinePageModules.push(import('./pages/business-admin'));
 }
 
 const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
