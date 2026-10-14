@@ -1418,14 +1418,6 @@
 
     </div>
 
-    {{-- 65/35 Grid Layout Styles --}}
-    <style>
-        @media (min-width: 768px) {
-            #biz-layout-grid {
-                grid-template-columns: 65fr 35fr;
-            }
-        }
-    </style>
 
     {{-- Smart Scroll Restoration Script --}}
 

@@ -131,44 +131,7 @@
                 {{-- Achievements & Contributions Card --}}
                 @if ($company->achievement || $canManage)
                     <div 
-                        x-data="{
-                            achievements: {{ json_encode($company->achievements_list) }},
-                            loading: false,
-                            deleteAchievement(index) {
-                                if (!confirm('Are you sure you want to delete this achievement?')) return;
-                                this.loading = true;
-                                fetch('{{ route('intrapreneurs.delete_achievement', $company) }}', {
-                                    method: 'DELETE',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                        'Accept': 'application/json'
-                                    },
-                                    body: JSON.stringify({ index: index })
-                                })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        return response.json().then(err => { throw err; });
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    if (data.success) {
-                                        this.achievements = data.achievements;
-                                        $dispatch('notify', { message: 'Achievement deleted successfully!', type: 'success' });
-                                    } else {
-                                        $dispatch('notify', { message: data.message || 'Failed to delete achievement.', type: 'error' });
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error(error);
-                                    $dispatch('notify', { message: 'An error occurred while deleting.', type: 'error' });
-                                })
-                                .finally(() => {
-                                    this.loading = false;
-                                });
-                            }
-                        }"
+                        x-data="achievementList(@js($company->achievements_list), @js(route('intrapreneurs.delete_achievement', $company)))"
                         class="bg-white shadow-lg sm:rounded-lg border border-soft-gray-100 overflow-hidden"
                     >
                         {{-- Section Header — same structure as "Our Products" --}}
@@ -359,12 +322,4 @@
             </div>
     </div>
 
-    {{-- Grid Layout Helper Styles --}}
-    <style>
-        @media (min-width: 768px) {
-            #biz-layout-grid {
-                grid-template-columns: 65fr 35fr;
-            }
-        }
-    </style>
 </x-app-layout>

@@ -1,0 +1,8 @@
+/* --- Detail pages (business and work profile): 65/35 two-column grid from md up --- */
+/* Kept outside @layer on purpose: it was an inline <style> after app.css, so it must still win over utilities. */
+
+@media (min-width: 768px) {
+	#biz-layout-grid {
+		grid-template-columns: 65fr 35fr;
+	}
+}

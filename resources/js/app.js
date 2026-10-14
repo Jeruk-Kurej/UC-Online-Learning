@@ -11,6 +11,7 @@ import importDropzone from './components/import-dropzone';
 import photoPicker from './components/photo-picker';
 import activityFiles from './components/activity-files';
 import autoplayCarousel from './components/autoplay-carousel';
+import achievementList from './components/achievement-list';
 
 window.Alpine = Alpine;
 
@@ -20,6 +21,7 @@ Alpine.data('importDropzone', importDropzone);
 Alpine.data('photoPicker', photoPicker);
 Alpine.data('activityFiles', activityFiles);
 Alpine.data('autoplayCarousel', autoplayCarousel);
+Alpine.data('achievementList', achievementList);
 
 window.initSectionBuilder = function(initialSections) {
     return {

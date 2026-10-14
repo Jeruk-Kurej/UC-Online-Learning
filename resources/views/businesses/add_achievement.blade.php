@@ -1,9 +1,4 @@
 <x-app-layout>
-    @push('styles')
-        <style>
-            /* Custom styling if any */
-        </style>
-    @endpush
     <div class="max-w-5xl mx-auto">
         {{-- Page Header - Elegant Design --}}
         <div class="mb-8 flex flex-row items-center gap-3">
