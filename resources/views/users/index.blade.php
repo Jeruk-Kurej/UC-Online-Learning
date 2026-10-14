@@ -1,58 +1,8 @@
 <x-app-layout>
-    <div class="users-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
+    <div data-user-admin class="users-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
         @start-import.window="showImportModal = false"
         @close-import-modal.window="showImportModal = false"
-        x-data="{
-            isSubmitting: false,
-            debounceTimer: null,
-            showImportModal: false,
-            init() {
-                window.addEventListener('popstate', () => {
-                    this.updateList(window.location.href, false);
-                });
-            },
-            updateList(url = null, pushState = true) {
-                this.isSubmitting = true;
-                if (!url) {
-                    const form = this.$refs.filterForm;
-                    if (!form) { console.error('filterForm ref not found!'); this.isSubmitting = false; return; }
-                    const formData = new FormData(form);
-                    const params = new URLSearchParams(formData);
-                    url = `${form.action}?${params.toString()}`;
-                }
-
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                    credentials: 'same-origin'
-                })
-                .then(res => {
-                    if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                    return res.text();
-                })
-                .then(html => {
-                    const container = document.getElementById('users-list-container');
-                    if (container) {
-                        container.innerHTML = html;
-                        container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
-                    }
-                    if (pushState) window.history.pushState({}, '', url);
-                    this.isSubmitting = false;
-                })
-                .catch(err => {
-                    console.error('Fetch failed:', err);
-                    this.isSubmitting = false;
-                });
-            },
-            resetFilters() {
-                this.$refs.filterForm.reset();
-                this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
-                this.updateList();
-            },
-            submitDebounced() {
-                if (this.debounceTimer) clearTimeout(this.debounceTimer);
-                this.debounceTimer = setTimeout(() => this.updateList(), 500);
-            }
-        }"
+        x-data="userAdminList"
         @ajax-pagination.window="updateList($event.detail.url)">
         
         {{-- Page Header --}}
@@ -100,21 +50,7 @@
 
         {{-- Statistics --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8"
-             @ajax-update-stats.window="
-                fetch('/users/stats', { headers: {'X-Requested-With':'XMLHttpRequest'} })
-                    .then(r => r.json())
-                    .then(d => {
-                        document.getElementById('stat-total').textContent = d.total;
-                        document.getElementById('stat-entrepreneurs').textContent = d.entrepreneurs;
-                        document.getElementById('stat-intrapreneurs').textContent = d.intrapreneurs;
-                        document.getElementById('stat-alumni').textContent = d.alumni;
-                        const statFeaturedTotal = document.getElementById('stat-featured-total');
-                        const statFeaturedIntra = document.getElementById('stat-featured-intra');
-                        const statFeaturedEntre = document.getElementById('stat-featured-entre');
-                        if (statFeaturedTotal) statFeaturedTotal.textContent = d.featured;
-                        if (statFeaturedIntra) statFeaturedIntra.textContent = d.featured_intrapreneurs;
-                        if (statFeaturedEntre) statFeaturedEntre.textContent = d.featured_entrepreneurs;
-                    })">
+             @ajax-update-stats.window="refreshStats()">
             <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
                 <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
                 <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
@@ -244,20 +180,7 @@
                  x-transition:leave="transition ease-in duration-150 transform"
                  x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                  x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-                 x-data="{
-                    isDragging: false,
-                    handleDragOver(e) { e.preventDefault(); this.isDragging = true; },
-                    handleDragLeave() { this.isDragging = false; },
-                    handleDrop(e) {
-                        e.preventDefault();
-                        this.isDragging = false;
-                        if (e.dataTransfer.files.length > 0) {
-                            const file = e.dataTransfer.files[0];
-                            document.getElementById('csv_file').files = e.dataTransfer.files;
-                            document.getElementById('file_name').textContent = file.name;
-                        }
-                    }
-                 }"
+                 x-data="importDropzone('csv_file', 'file_name')"
                  @click.stop>
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-2xl font-black text-gray-900">Import Data</h3>
@@ -274,7 +197,7 @@
                          @dragover="handleDragOver"
                          @dragleave="handleDragLeave"
                          @drop="handleDrop">
-                        <input type="file" name="file" required class="hidden" id="csv_file" onchange="document.getElementById('file_name').textContent = this.files[0].name">
+                        <input type="file" name="file" required class="hidden" id="csv_file" @change="showChosenFile">
                         <label for="csv_file" class="cursor-pointer">
                             <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
                             <p class="mt-4 text-sm font-bold text-gray-600" id="file_name">Click to select or drag CSV/Excel file here</p>

@@ -181,6 +181,10 @@ if (document.querySelector('[data-business-admin]')) {
     alpinePageModules.push(import('./pages/business-admin'));
 }
 
+if (document.querySelector('[data-user-admin]')) {
+    alpinePageModules.push(import('./pages/user-admin'));
+}
+
 const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
 
 if (document.readyState === 'loading') {
