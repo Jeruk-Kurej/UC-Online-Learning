@@ -1,5 +1,6 @@
 // --- Activity documentation files: mark existing ones for deletion, preview new ones ---
-// x-data="activityFiles(@js($existingUrls))"; used by the admin user edit form and the profile page.
+// x-data="activityFiles(@js($user->activity_files))"; the file input is x-ref="activityInput".
+// Used by the admin user edit form and the profile page.
 
 export default function activityFiles(existingFiles = []) {
     return {
@@ -19,6 +20,15 @@ export default function activityFiles(existingFiles = []) {
 
         isDeleted(url) {
             return this.deletedFiles.includes(url);
+        },
+
+        pickFiles() {
+            this.$refs.activityInput.click();
+        },
+
+        clearNewFiles() {
+            this.newFiles = [];
+            this.$refs.activityInput.value = '';
         },
 
         handleNewFiles(event) {

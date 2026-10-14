@@ -273,3 +273,20 @@ test('a profile opens by slug or by id and hides invisible businesses', function
 test('the google drive helper redirects to drive', function () {
     $this->get('/google-drive-image/abc123')->assertRedirect('https://drive.google.com/uc?export=view&id=abc123');
 });
+
+// --- Profile form data ---
+
+test('activity files describe each stored document with a preview when one exists', function () {
+    $user = User::factory()->create([
+        'name' => 'Budi Santoso',
+        'activities_doc_url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view;/storage/student-activities/act_1.png;/storage/student-activities/report.pdf',
+    ]);
+
+    expect($user->activity_files)->toBe([
+        ['url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view', 'previewUrl' => 'https://drive.google.com/thumbnail?sz=w400&id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345', 'name' => 'view'],
+        ['url' => '/storage/student-activities/act_1.png', 'previewUrl' => '/storage/student-activities/act_1.png', 'name' => 'act_1.png'],
+        ['url' => '/storage/student-activities/report.pdf', 'previewUrl' => null, 'name' => 'report.pdf'],
+    ])
+        ->and($user->initials)->toBe('BS')
+        ->and(User::factory()->create(['activities_doc_url' => null])->activity_files)->toBe([]);
+});

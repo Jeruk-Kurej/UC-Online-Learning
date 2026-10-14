@@ -53,6 +53,8 @@ use Illuminate\Notifications\Notifiable;
  * ── Computed / Accessor properties ────────────────────────────
  * @property-read string                     $full_titled_name
  * @property-read string                     $display_status
+ * @property-read array                      $activity_files
+ * @property-read string                     $initials
  *
  * ── Relationships ──────────────────────────────────────────────
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Business>  $businesses
@@ -155,6 +157,29 @@ class User extends Authenticatable
     public function setActivitiesDocUrlAttribute($value)
     {
         $this->attributes['activities_doc_url'] = is_array($value) ? json_encode(array_values($value)) : $value;
+    }
+
+    public function getActivityFilesAttribute(): array
+    {
+        return collect($this->activities_doc_url)->map(function (string $url) {
+            $name = basename(parse_url($url, PHP_URL_PATH) ?? $url);
+            $previewUrl = null;
+
+            if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+                if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
+                    $previewUrl = 'https://drive.google.com/thumbnail?sz=w400&id='.$matches[1];
+                }
+            } elseif (in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $previewUrl = $url;
+            }
+
+            return ['url' => $url, 'previewUrl' => $previewUrl, 'name' => $name];
+        })->values()->all();
+    }
+
+    public function getInitialsAttribute(): string
+    {
+        return strtoupper(substr($this->name, 0, 1)).strtoupper(substr(explode(' ', $this->name)[1] ?? '', 0, 1));
     }
 
     // ─── Relationships ───
