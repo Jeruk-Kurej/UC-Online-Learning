@@ -39,6 +39,11 @@
 		box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.04);
 	}
 
+	/* --- Orange fallback behind initials when there is no photo or logo --- */
+	.uco-initials-bg {
+		background: linear-gradient(135deg, #f7931e, #fdb913);
+	}
+
 	.uco-text-gradient-orange {
 		background: linear-gradient(135deg, #f7931e 0%, #ffc088 100%);
 		-webkit-background-clip: text;

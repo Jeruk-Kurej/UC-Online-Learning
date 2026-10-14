@@ -36,38 +36,38 @@
 
         {{-- Statistics --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">
+            <x-admin.stat-card class="delay-100">
+                <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Total Businesses</span>
                     <span x-show="viewType === 'intrapreneur'">Total Career Profiles</span>
-                </p>
-                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalBusinesses }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
-                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">
+                </x-slot:label>
+                {{ $totalBusinesses }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-150" tone="green">
+                <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Approved</span>
                     <span x-show="viewType === 'intrapreneur'">Active / Visible</span>
-                </p>
-                <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $approvedBusinesses }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
-                <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider mb-1">
+                </x-slot:label>
+                {{ $approvedBusinesses }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-200" tone="amber">
+                <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Pending Approval</span>
                     <span x-show="viewType === 'intrapreneur'">Hidden</span>
-                </p>
-                <p class="text-2xl sm:text-3xl font-bold text-amber-600">{{ $pendingBusinesses }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
-                <p class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">
+                </x-slot:label>
+                {{ $pendingBusinesses }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-[250ms]" tone="red">
+                <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Rejected / Revision</span>
                     <span x-show="viewType === 'intrapreneur'">— N/A —</span>
-                </p>
-                <p class="text-2xl sm:text-3xl font-bold text-red-600">{{ $rejectedBusinesses }}</p>
-            </div>
+                </x-slot:label>
+                {{ $rejectedBusinesses }}
+            </x-admin.stat-card>
         </div>
 
         {{-- Filters & Search --}}
-        <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
+        <div class="mb-8 reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
                 {{-- Hidden type input (kept in sync by switchType()) --}}
                 <input type="hidden" name="type" :value="viewType">

@@ -9,6 +9,8 @@ export default {
         './resources/views/**/*.blade.php',
         // Scripts moved out of Blade.
         './resources/js/{pages,components,lib}/**/*.js',
+        // Class components (in their group folders) that pick Tailwind classes in PHP.
+        './app/View/Components/*/*.php',
     ],
 
     // Tom Select builds its markup in JavaScript, so its class names never appear in the views.

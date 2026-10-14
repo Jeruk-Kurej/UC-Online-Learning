@@ -20,18 +20,18 @@
 
         {{-- Statistics --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Testimonies</p>
-                <p class="text-3xl font-bold text-gray-900" id="stat-total-testimonies">{{ $totalTestimonies }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
-                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">Featured Testimonies</p>
-                <p class="text-3xl font-bold text-blue-600" id="stat-featured-testimonies">{{ $featuredTestimonies }}</p>
-            </div>
+            <x-admin.stat-card class="delay-100" :compact-on-mobile="false" value-id="stat-total-testimonies">
+                <x-slot:label>Total Testimonies</x-slot:label>
+                {{ $totalTestimonies }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-150" tone="blue" :compact-on-mobile="false" value-id="stat-featured-testimonies">
+                <x-slot:label>Featured Testimonies</x-slot:label>
+                {{ $featuredTestimonies }}
+            </x-admin.stat-card>
         </div>
 
         {{-- Filters & Search --}}
-        <div class="mb-8 reveal-on-scroll" style="transition-delay: 300ms;">
+        <div class="mb-8 reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('uc-testimonies.admin') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
                 

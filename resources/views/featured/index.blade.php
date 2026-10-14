@@ -450,7 +450,7 @@
                                     @if ($student->profile_photo_url)
                                         <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="w-full h-full" />
                                     @else
-                                        <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black testimony-card-initials">
+                                        <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black uco-initials-bg">
                                             {{ strtoupper(substr($student->name, 0, 1)) }}
                                         </div>
                                     @endif

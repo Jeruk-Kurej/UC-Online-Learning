@@ -51,26 +51,26 @@
         {{-- Statistics --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8"
              @ajax-update-stats.window="refreshStats()">
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 100ms;">
-                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Total Users</p>
-                <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $totalUsers }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 150ms;">
-                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-wider mb-1">Entrepreneurs</p>
-                <p class="text-2xl sm:text-3xl font-bold text-blue-600">{{ $totalEntrepreneurs }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 200ms;">
-                <p class="text-[10px] font-bold text-green-500 uppercase tracking-wider mb-1">Intrapreneurs</p>
-                <p class="text-2xl sm:text-3xl font-bold text-green-600">{{ $totalIntrapreneurs }}</p>
-            </div>
-            <div class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll" style="transition-delay: 250ms;">
-                <p class="text-[10px] font-bold text-purple-500 uppercase tracking-wider mb-1">Alumni</p>
-                <p class="text-2xl sm:text-3xl font-bold text-purple-600">{{ $totalAlumni }}</p>
-            </div>
+            <x-admin.stat-card class="delay-100">
+                <x-slot:label>Total Users</x-slot:label>
+                {{ $totalUsers }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-150" tone="blue">
+                <x-slot:label>Entrepreneurs</x-slot:label>
+                {{ $totalEntrepreneurs }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-200" tone="green">
+                <x-slot:label>Intrapreneurs</x-slot:label>
+                {{ $totalIntrapreneurs }}
+            </x-admin.stat-card>
+            <x-admin.stat-card class="delay-[250ms]" tone="purple">
+                <x-slot:label>Alumni</x-slot:label>
+                {{ $totalAlumni }}
+            </x-admin.stat-card>
         </div>
 
         {{-- Filters & Search --}}
-        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll" style="transition-delay: 300ms;">
+        <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
                 

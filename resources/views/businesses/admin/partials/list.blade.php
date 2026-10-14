@@ -27,8 +27,7 @@
                                 @if($b->logo_url)
                                     <img src="{{ $b->logo_url }}" class="w-full h-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
-                                         style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black uco-initials-bg">
                                         {{ strtoupper(substr($b->name, 0, 1)) }}
                                     </div>
                                 @endif
@@ -54,8 +53,7 @@
                                 @if($hasRealPhoto)
                                     <img src="{{ $ownerPhoto }}" class="w-full h-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black"
-                                         style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                    <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black uco-initials-bg">
                                         {{ strtoupper(substr($ownerName, 0, 1)) }}
                                     </div>
                                 @endif
@@ -135,52 +133,16 @@
                         <div class="flex items-center justify-end gap-1.5">
                             @if(($viewType ?? 'entrepreneur') === 'intrapreneur')
                                 {{-- View intrapreneur profile --}}
-                                <a href="{{ route('intrapreneurs.show', $b) }}" 
-                                   class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                   style="background-color: #198754;"
-                                   onmouseover="this.style.backgroundColor='#157347'" onmouseout="this.style.backgroundColor='#198754'">
-                                    <i class="bi bi-eye-fill text-xs"></i>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">View Profile</div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                    </div>
-                                </a>
+                                <x-admin.icon-action :href="route('intrapreneurs.show', $b)" icon="bi-eye-fill" tip="View Profile" />
                                 {{-- Change status (modal) --}}
-                                <button type="button" 
-                                        data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}"
-                                        class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                        style="background-color: #6c757d;"
-                                        onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
-                                    <i class="bi bi-pencil-square text-xs"></i>
-                                    <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
-                                         <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Change Status</div>
-                                         <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-3"></div>
-                                     </div>
-                                </button>
+                                <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
+                                    data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}" />
                             @else
                                 {{-- View entrepreneur business --}}
-                                <a href="{{ route('businesses.show', $b) }}" 
-                                   class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                   style="background-color: #198754;"
-                                   onmouseover="this.style.backgroundColor='#157347'" onmouseout="this.style.backgroundColor='#198754'">
-                                    <i class="bi bi-eye-fill text-xs"></i>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">View Details</div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                    </div>
-                                </a>
+                                <x-admin.icon-action :href="route('businesses.show', $b)" icon="bi-eye-fill" tip="View Details" />
                                 {{-- Change status (modal) --}}
-                                <button type="button" 
-                                        data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}"
-                                        class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                        style="background-color: #6c757d;"
-                                        onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
-                                    <i class="bi bi-pencil-square text-xs"></i>
-                                    <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
-                                         <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Change Status</div>
-                                         <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-3"></div>
-                                     </div>
-                                </button>
+                                <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
+                                    data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}" />
                             @endif
                         </div>
                     </td>

@@ -1,5 +1,5 @@
 {{-- Users Table --}}
-<div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll" style="transition-delay: 350ms;">
+<div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll delay-[350ms]">
     <table class="w-full text-left">
         <thead class="bg-gray-50 border-b">
             <tr>
@@ -27,8 +27,7 @@
                                 @if($hasRealPhoto)
                                     <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black"
-                                         style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black uco-initials-bg">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                 @endif
@@ -103,45 +102,19 @@
                     <td class="px-4 py-3 whitespace-nowrap w-px">
                         <div class="flex items-center justify-end gap-1.5">
                             {{-- View --}}
-                            <a href="{{ route('users.show', $user) }}"
-                               class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                               style="background-color: #198754;"
-                               onmouseover="this.style.backgroundColor='#157347'" onmouseout="this.style.backgroundColor='#198754'">
-                                <i class="bi bi-eye-fill text-xs"></i>
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">View</div>
-                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                </div>
-                            </a>
+                            <x-admin.icon-action :href="route('users.show', $user)" icon="bi-eye-fill" tip="View" />
 
                             @if(auth()->user()?->isAdmin())
                                 {{-- Edit --}}
-                                <a href="{{ route('users.edit', $user) }}"
-                                   class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                   style="background-color: #6c757d;"
-                                   onmouseover="this.style.backgroundColor='#5c636a'" onmouseout="this.style.backgroundColor='#6c757d'">
-                                    <i class="bi bi-pencil-fill text-xs"></i>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">Edit</div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                    </div>
-                                </a>
+                                <x-admin.icon-action :href="route('users.edit', $user)" variant="secondary" icon="bi-pencil-fill" tip="Edit" />
 
                                 @if(auth()->id() !== $user->id)
                                     {{-- Disable / Enable --}}
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
-                                        <button type="submit"
-                                                class="relative group w-8 h-8 inline-flex items-center justify-center rounded-md text-white transition-colors"
-                                                style="background-color: {{ $user->is_visible ? '#dc3545' : '#198754' }};"
-                                                onmouseover="this.style.backgroundColor='{{ $user->is_visible ? '#bb2d3b' : '#157347' }}'"
-                                                onmouseout="this.style.backgroundColor='{{ $user->is_visible ? '#dc3545' : '#198754' }}'">
-                                            <i class="bi {{ $user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill' }} text-xs"></i>
-                                            <div class="absolute bottom-full right-0 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-end">
-                                                <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">{{ $user->is_visible ? 'Disable' : 'Enable' }}</div>
-                                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5 mr-2"></div>
-                                            </div>
-                                        </button>
+                                        <x-admin.icon-action type="submit" :variant="$user->is_visible ? 'danger' : 'success'"
+                                            :icon="$user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill'"
+                                            :tip="$user->is_visible ? 'Disable' : 'Enable'" tip-align="right" arrow-class="mr-2" />
                                     </form>
                                 @endif
                             @endif

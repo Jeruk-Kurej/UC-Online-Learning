@@ -35,35 +35,34 @@
                 @if($user->profile_photo_url)
                     <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="w-full h-full" />
                 @else
-                    <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black"
-                         style="background: linear-gradient(135deg, #f7931e, #fdb913);">
+                    <div class="w-full h-full flex items-center justify-center text-white text-4xl font-black uco-initials-bg">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                 @endif
                 
                 {{-- Overlay Gradient --}}
-                <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 40%, transparent 100%);"></div>
+                <div class="testimony-shade"></div>
                 
                 {{-- Text Content on Image --}}
-                <div style="position: absolute; bottom: 45px; left: 20px; right: 20px; color: white;">
-                    <h3 style="font-size: 18px; font-weight: 900; margin-bottom: 2px; letter-spacing: -0.5px; line-height: 1.2;">{{ $user->name }}</h3>
-                    <p style="color: #cbd5e1; font-size: 11px; font-weight: 600; margin-bottom: 2px;">
+                <div class="absolute bottom-[45px] left-5 right-5 text-white">
+                    <h3 class="text-[18px] font-black mb-0.5 tracking-[-0.5px] leading-[1.2]">{{ $user->name }}</h3>
+                    <p class="text-[#cbd5e1] text-[11px] font-semibold mb-0.5">
                         {{ $user->current_status ?? 'Member' }} at UCO Community
                     </p>
-                    <p style="color: #ff8a00; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px;">
+                    <p class="text-[#ff8a00] text-[9px] font-black uppercase tracking-[1px]">
                         {{ $user->major ?? 'Student' }}
                     </p>
                 </div>
             </div>
 
             {{-- Bottom Section: Testimony content --}}
-            <div style="position: relative; padding: 35px 20px 25px 20px; text-align: center;" class="flex-grow flex items-center justify-center bg-white rounded-b-[20px]">
+            <div class="relative pt-[35px] px-5 pb-[25px] text-center flex-grow flex items-center justify-center bg-white rounded-b-[20px]">
                 {{-- Quote Icon --}}
                 <div class="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10">
                     <i class="fa-solid fa-quote-left text-base"></i>
                 </div>
 
-                <p style="color: #334155; font-weight: 600; line-height: 1.6; font-size: 13px; font-style: italic; margin: 0;">
+                <p class="text-[#334155] font-semibold leading-[1.6] text-[13px] italic m-0">
                     “{{ Str::limit($user->testimony, 200) }}”
                 </p>
             </div>
