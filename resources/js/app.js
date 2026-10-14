@@ -185,6 +185,10 @@ if (document.querySelector('[data-user-admin]')) {
     alpinePageModules.push(import('./pages/user-admin'));
 }
 
+if (document.querySelector('[data-business-directory]')) {
+    alpinePageModules.push(import('./pages/business-directory'));
+}
+
 const startAlpine = () => Promise.all(alpinePageModules).then(() => Alpine.start());
 
 if (document.readyState === 'loading') {

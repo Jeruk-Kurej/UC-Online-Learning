@@ -1,82 +1,14 @@
 @use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
     @section('title', 'Business Directory')
-    <div class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-8" 
+    <div data-business-directory class="businesses-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pb-8" 
           data-view-type="{{ $viewType }}"
-          x-data="{ 
-             showImportModal: false, 
-             isLoading: false,
-             viewType: '',
-             isPending: {{ request('status') === 'pending' ? 'true' : 'false' }},
-             debounceTimer: null,
-             
-             // Dependent Dropdown Logic
-             provinceCityMap: {{ json_encode($provinceCityMap) }},
-             selectedProvince: '{{ request('province') }}',
-             selectedCity: '{{ request('city') }}',
-             
-             get filteredCities() {
-                 if (!this.selectedProvince) return [];
-                 return this.provinceCityMap[this.selectedProvince] || [];
-             },
-
-             init() {
-                 window.addEventListener('popstate', () => {
-                     this.updateList(window.location.href, false);
-                 });
-             },
-             updateList(url = null, pushState = true, shouldScroll = false) {
-                 this.isLoading = true;
-                 if (!url) {
-                     const form = this.$refs.filterForm;
-                     if (!form) { console.error('filterForm ref not found!'); this.isLoading = false; return; }
-                     const formData = new FormData(form);
-                     const params = new URLSearchParams(formData);
-                     url = `${form.action}?${params.toString()}`;
-                 }
-
-                 fetch(url, {
-                     headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                     credentials: 'same-origin'
-                 })
-                 .then(res => {
-                     if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                     return res.text();
-                 })
-                 .then(html => {
-                     const container = document.getElementById('businesses-list-container');
-                     if (container) {
-                         container.innerHTML = html;
-                         container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
-                     }
-                     if (pushState) window.history.pushState({}, '', url);
-                     this.isLoading = false;
-                     if (shouldScroll) {
-                         window.scrollTo({ top: 0, behavior: 'smooth' });
-                     }
-                 })
-                 .catch(err => {
-                     console.error('Fetch failed:', err);
-                     this.isLoading = false;
-                 });
-             },
-             updateType(type, url, pending = false) {
-                 this.viewType = type;
-                 this.isPending = pending;
-                 this.updateList(url);
-             },
-             submitDebounced() {
-                 if (this.debounceTimer) clearTimeout(this.debounceTimer);
-                 this.debounceTimer = setTimeout(() => this.updateList(), 500);
-             },
-             resetFilters() {
-                 this.selectedProvince = '';
-                 this.selectedCity = '';
-                 const form = this.$refs.filterForm;
-                 form.querySelectorAll('input[type=text], select').forEach(el => el.value = '');
-                 this.updateList();
-             }
-          }"
+          x-data="businessDirectory(@js([
+             'isPending' => request('status') === 'pending',
+             'provinceCityMap' => $provinceCityMap,
+             'selectedProvince' => (string) request('province'),
+             'selectedCity' => (string) request('city'),
+          ]))"
           x-init="viewType = $el.dataset.viewType || 'entrepreneur'; init()"
           @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- Page Header --}}
