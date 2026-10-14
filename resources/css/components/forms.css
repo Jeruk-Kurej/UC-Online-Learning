@@ -1,0 +1,155 @@
+@layer components {
+    /* TomSelect & Custom Form Stylings */
+    .ts-wrapper {
+        width: 100% !important;
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .ts-wrapper .ts-control {
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 7px !important;
+        padding: 0 15px !important; 
+        min-height: 44px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: none !important;
+        background: white !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    .ts-wrapper.focus .ts-control {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        ring: none !important;
+    }
+
+    /* Prevent double-border if form-input-custom is applied to the original select */
+    .ts-wrapper.form-input-custom {
+        border: none !important;
+        height: auto !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+    }
+
+    .ts-dropdown {
+        background-color: white !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 1rem !important;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        margin-top: 6px !important;
+        padding: 6px !important;
+        z-index: 1000 !important;
+    }
+
+    .ts-dropdown .option {
+        padding: 8px 12px !important;
+        font-size: 13px !important;
+        color: #475569 !important;
+        border-radius: 0.75rem !important;
+        margin-bottom: 2px !important;
+        transition: all 0.15s ease !important;
+    }
+
+    .ts-dropdown .option.active {
+        background-color: #fff7ed !important;
+        color: #f97316 !important;
+        font-weight: 600 !important;
+    }
+
+    .ts-wrapper .ts-control>input {
+        font-size: 14px !important;
+    }
+
+    /* Selected Pill Tag Styling (Single & Multiple Selects) */
+    .ts-control .item,
+    .ts-wrapper.multi .ts-control > div,
+    .ts-wrapper.multi .ts-control .item {
+        background-color: #f1f5f9 !important;
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 6px !important;
+        padding: 2px 8px !important;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        margin: 2px 4px 2px 0 !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+        transition: all 0.15s ease !important;
+    }
+
+    .ts-control .item:hover,
+    .ts-wrapper.multi .ts-control > div:hover,
+    .ts-wrapper.multi .ts-control .item:hover {
+        background-color: #e2e8f0 !important;
+        background: #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    .ts-control .item .remove,
+    .ts-wrapper.multi .ts-control > div .remove,
+    .ts-wrapper.multi .ts-control .item .remove {
+        border: none !important;
+        color: #94a3b8 !important;
+        font-size: 10px !important;
+        font-weight: bold !important;
+        margin-left: 4px !important;
+        padding: 0 2px !important;
+        transition: color 0.15s ease !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+    }
+
+    .ts-control .item .remove:hover,
+    .ts-wrapper.multi .ts-control > div .remove:hover,
+    .ts-wrapper.multi .ts-control .item .remove:hover {
+        color: #ef4444 !important;
+        background: transparent !important;
+    }
+
+    .form-input-custom {
+        width: 100% !important;
+        border: 1.5px solid #e2e8f0 !important;
+        border-radius: 7px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        color: #0f172a !important;
+        transition: all 0.2s ease !important;
+        box-sizing: border-box !important;
+    }
+
+    input.form-input-custom, 
+    select.form-input-custom {
+        height: 44px !important;
+        padding: 0 15px !important;
+    }
+
+    textarea.form-input-custom {
+        padding: 12px 15px !important;
+    }
+
+    .form-input-custom:focus {
+        border-color: #3b82f6 !important;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        outline: none !important;
+    }
+
+    label.form-label-custom {
+        display: block;
+        font-size: 11px;
+        font-weight: 800;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 8px;
+    }
+}

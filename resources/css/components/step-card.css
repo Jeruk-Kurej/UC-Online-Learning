@@ -1,0 +1,41 @@
+@layer components {
+	.uco-step-card {
+		border-radius: 1rem;
+		border: 1px solid rgb(229 231 235);
+		background: #fff;
+		padding: 1rem;
+		box-shadow: 0 4px 18px rgba(17, 24, 39, 0.05);
+		transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+	}
+
+	.uco-step-card:hover {
+		transform: translateY(-4px);
+		border-color: rgb(255 214 51);
+		box-shadow: 0 14px 30px rgba(247, 147, 30, 0.15);
+	}
+
+	.uco-step-card h3 {
+		margin-top: 0.75rem;
+		margin-bottom: 0.35rem;
+		font-size: 1rem;
+		font-weight: 700;
+		color: rgb(17 24 39);
+	}
+
+	.uco-step-card p {
+		font-size: 0.875rem;
+		line-height: 1.45;
+		color: rgb(75 85 99);
+	}
+
+	.uco-step-icon {
+		display: inline-flex;
+		width: 2.4rem;
+		height: 2.4rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 0.75rem;
+		background: linear-gradient(135deg, rgba(255, 140, 46, 0.18), rgba(255, 214, 51, 0.24));
+		color: rgb(230 115 0);
+	}
+}
