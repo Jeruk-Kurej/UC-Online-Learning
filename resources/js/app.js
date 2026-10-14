@@ -14,6 +14,7 @@ import activityFiles from './components/activity-files';
 import autoplayCarousel from './components/autoplay-carousel';
 import achievementList from './components/achievement-list';
 import sectionBuilder from './components/section-builder';
+import guestToasts from './components/guest-toasts';
 
 window.Alpine = Alpine;
 
@@ -25,6 +26,7 @@ Alpine.data('activityFiles', activityFiles);
 Alpine.data('autoplayCarousel', autoplayCarousel);
 Alpine.data('achievementList', achievementList);
 Alpine.data('sectionBuilder', sectionBuilder);
+Alpine.data('guestToasts', guestToasts);
 
 
 // --- Start Alpine once page modules that register Alpine components are loaded ---

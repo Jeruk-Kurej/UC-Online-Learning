@@ -10,29 +10,9 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
     
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/pages/welcome.css'])
     
-    {{-- Manual fallback: Read manifest and inject assets --}}
-    @php
-        $manifestPath = public_path('build/manifest.json');
-        if (file_exists($manifestPath)) {
-            $manifest = json_decode(file_get_contents($manifestPath), true);
-            $cssFile = $manifest['resources/css/app.css']['file'] ?? null;
-            $jsFile = $manifest['resources/js/app.js']['file'] ?? null;
-        }
-    @endphp
     
-    @if(isset($cssFile))
-        <link rel="stylesheet" href="/build/{{ $cssFile }}">
-    @endif
-    
-    @if(isset($jsFile))
-        <script type="module" src="/build/{{ $jsFile }}"></script>
-    @endif
-    
-    <style>
-        body { font-family: 'Inter', system-ui, sans-serif; }
-    </style>
 </head>
 <body class="antialiased bg-soft-white overflow-x-hidden">
     <div class="min-h-screen flex flex-col relative overflow-x-hidden">
@@ -220,106 +200,8 @@
         </section>
 
         {{-- Dynamic JS Toast Trigger --}}
-        <div x-data="{ 
-                toasts: [], 
-                init() {
-                    @if(session('success')) this.add({ detail: { message: '{{ session('success') }}', type: 'success' } }); @endif
-                    @if(session('error')) this.add({ detail: { message: '{{ session('error') }}', type: 'error' } }); @endif
-                    @if(session('status')) this.add({ detail: { message: '{{ session('status') }}', type: 'status' } }); @endif
-                    @if($errors->any()) 
-                        @foreach($errors->all() as $error)
-                            this.add({ detail: { message: '{{ $error }}', type: 'error' } });
-                        @endforeach
-                    @endif
-                },
-                add(e) { 
-                    const id = Date.now() + Math.random();
-                    const { message, type } = e.detail;
-                    this.toasts.push({ id, message, type: type || 'success' });
-                    setTimeout(() => this.remove(id), 5000);
-                },
-                remove(id) {
-                    this.toasts = this.toasts.filter(t => t.id !== id);
-                }
-             }"
-             @notify.window="add($event)"
-             class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
-            
-            <template x-for="toast in toasts" :key="toast.id">
-                <div x-show="true"
-                     x-transition:enter="transition ease-out duration-300"
-                     x-transition:enter-start="opacity-0 translate-y-[-8px]"
-                     x-transition:enter-end="opacity-100 translate-y-0"
-                     x-transition:leave="transition ease-in duration-300"
-                     x-transition:leave-start="opacity-100 translate-y-0"
-                     x-transition:leave-end="opacity-0 translate-y-[-8px]"
-                     class="pointer-events-auto max-w-sm w-full p-4 rounded-xl shadow-lg flex items-start justify-between gap-3 text-white transition-all duration-300"
-                     :class="{
-                        'bg-emerald-600': toast.type === 'success',
-                        'bg-red-600': toast.type === 'error',
-                        'bg-blue-600': toast.type === 'info' || toast.type === 'status',
-                        'bg-yellow-600': toast.type === 'warning'
-                     }">
-                    <div class="flex items-center gap-3">
-                        <template x-if="toast.type === 'success'"><i class="bi bi-check-circle-fill text-lg"></i></template>
-                        <template x-if="toast.type === 'error'"><i class="bi bi-exclamation-triangle-fill text-lg"></i></template>
-                        <template x-if="toast.type === 'info' || toast.type === 'status'"><i class="bi bi-info-circle-fill text-lg"></i></template>
-                        <template x-if="toast.type === 'warning'"><i class="bi bi-exclamation-circle-fill text-lg"></i></template>
-                        <span class="text-sm font-semibold" x-text="toast.message"></span>
-                    </div>
-                    <button @click="remove(toast.id)" class="text-white/80 hover:text-white transition-colors">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-            </template>
-        </div>
+        <x-flash.guest-toasts />
     </div>
     
-    <style>
-        @keyframes float-slow {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-20px) translateX(10px); }
-        }
-        
-        @keyframes float-slower {
-            0%, 100% { transform: translateY(0px) translateX(0px) rotate(45deg); }
-            50% { transform: translateY(-25px) translateX(-10px) rotate(50deg); }
-        }
-        
-        @keyframes float-medium {
-            0%, 100% { transform: translateY(0px) translateX(0px); }
-            50% { transform: translateY(-15px) translateX(-15px); }
-        }
-        
-        @keyframes pulse-slow {
-            0%, 100% { opacity: 0.4; transform: scale(1); }
-            50% { opacity: 0.2; transform: scale(1.2); }
-        }
-        
-        @keyframes pulse-slower {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.15; transform: scale(1.3); }
-        }
-        
-        .animate-float-slow {
-            animation: float-slow 8s ease-in-out infinite;
-        }
-        
-        .animate-float-slower {
-            animation: float-slower 12s ease-in-out infinite;
-        }
-        
-        .animate-float-medium {
-            animation: float-medium 10s ease-in-out infinite;
-        }
-        
-        .animate-pulse-slow {
-            animation: pulse-slow 4s ease-in-out infinite;
-        }
-        
-        .animate-pulse-slower {
-            animation: pulse-slower 6s ease-in-out infinite;
-        }
-    </style>
 </body>
 </html>
