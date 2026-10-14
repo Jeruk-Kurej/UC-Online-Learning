@@ -1,54 +1,6 @@
 <x-app-layout>
     @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-        <style>
-            .form-label-custom {
-                display: block; 
-                font-size: 11px; 
-                font-weight: 800; 
-                color: #475569; 
-                text-transform: uppercase; 
-                margin-bottom: 8px;
-                letter-spacing: 0.5px;
-            }
-
-            .form-input-custom {
-                width: 100%; 
-                height: 44px; 
-                padding: 0 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 8px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                background: white;
-            }
-
-            .form-input-custom:focus {
-                border-color: #f7931e !important;
-                box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
-            }
-
-            .form-textarea-custom {
-                width: 100%; 
-                padding: 12px 15px; 
-                border: 1.5px solid #e2e8f0; 
-                border-radius: 8px; 
-                font-size: 13px; 
-                font-weight: 600; 
-                outline: none; 
-                box-sizing: border-box;
-                transition: all 0.2s ease;
-                min-height: 120px;
-            }
-
-            .form-textarea-custom:focus {
-                border-color: #f7931e !important;
-                box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
-            }
-        </style>
+        @vite('resources/css/pages/work-profile-create.css')
     @endpush
 
     <div class="max-w-4xl mx-auto px-4 py-8">
@@ -92,7 +44,7 @@
                     {{-- Category --}}
                     <div>
                         <label for="category_id" class="form-label-custom">Industry Category <span class="text-red-500">*</span></label>
-                        <select name="category_id" id="category_id" required 
+                        <select name="category_id" id="category_id" data-tom-select="Select Category" required 
                                 class="form-input-custom @error('category_id') border-red-500 @enderror">
                             <option value="">Select Category</option>
                             @foreach($categories as $cat)
@@ -116,7 +68,7 @@
                     {{-- Level --}}
                     <div>
                         <label for="level_position" class="form-label-custom">Job Role Level</label>
-                        <select name="level_position" id="level_position" 
+                        <select name="level_position" id="level_position" data-tom-select="Select Level" 
                                 class="form-input-custom @error('level_position') border-red-500 @enderror">
                             <option value="">Select Level</option>
                             <option value="Intern" {{ old('level_position') === 'Intern' ? 'selected' : '' }}>Intern / Magang</option>
@@ -131,7 +83,7 @@
                     {{-- Company Scale --}}
                     <div>
                         <label for="company_scale" class="form-label-custom">Company Scale</label>
-                        <select name="company_scale" id="company_scale" 
+                        <select name="company_scale" id="company_scale" data-tom-select="Select Scale" 
                                 class="form-input-custom @error('company_scale') border-red-500 @enderror">
                             <option value="">Select Scale</option>
                             <option value="Perusahaan swasta lokal/regional" {{ old('company_scale') === 'Perusahaan swasta lokal/regional' ? 'selected' : '' }}>Swasta Lokal / Regional</option>
@@ -155,7 +107,7 @@
                     {{-- Province --}}
                     <div>
                         <label for="province" class="form-label-custom">Province</label>
-                        <select name="province" id="province" class="form-input-custom">
+                        <select name="province" id="province" data-region-province data-region-city="#city" class="form-input-custom">
                             <option value="">Select Province</option>
                             @foreach($provinces as $prov)
                                 <option value="{{ $prov->id }}" {{ old('province') == $prov->id ? 'selected' : '' }}>{{ ucwords(strtolower($prov->name)) }}</option>
@@ -166,7 +118,7 @@
                     {{-- City --}}
                     <div>
                         <label for="city" class="form-label-custom">City / Regency</label>
-                        <select name="city" id="city" class="form-input-custom">
+                        <select name="city" id="city" data-region-city-placeholder="Select Province First" data-region-city-starts-disabled class="form-input-custom">
                             <option value="">Select Province First</option>
                         </select>
                     </div>
@@ -202,56 +154,4 @@
             </form>
         </div>
     </div>
-
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                if (window.TomSelect) {
-                    new TomSelect('#category_id', { create: false, placeholder: "Select Category", searchField: ["text"] });
-                    new TomSelect('#level_position', { create: false, placeholder: "Select Level", searchField: ["text"] });
-                    new TomSelect('#company_scale', { create: false, placeholder: "Select Scale", searchField: ["text"] });
-                    
-                    const citySelect = new TomSelect('#city', { 
-                        create: false, 
-                        placeholder: "Select Province First", 
-                        searchField: ["name"],
-                        valueField: 'id',
-                        labelField: 'name'
-                    });
-                    citySelect.disable();
-
-                    const provinceSelect = new TomSelect('#province', { 
-                        create: false, 
-                        placeholder: "Select Province", 
-                        searchField: ["text"],
-                        onChange: function(value) {
-                            citySelect.clear();
-                            citySelect.clearOptions();
-
-                            if (!value) {
-                                citySelect.disable();
-                                citySelect.settings.placeholder = "Select Province First";
-                                citySelect.inputState();
-                                return;
-                            }
-
-                            citySelect.disable();
-                            citySelect.settings.placeholder = "Loading cities...";
-                            citySelect.inputState();
-
-                            fetch(`/api/regencies?province_id=${value}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    citySelect.addOptions(data);
-                                    citySelect.enable();
-                                    citySelect.settings.placeholder = "Select City";
-                                    citySelect.inputState();
-                                });
-                        }
-                    });
-                }
-            });
-        </script>
-    @endpush
 </x-app-layout>

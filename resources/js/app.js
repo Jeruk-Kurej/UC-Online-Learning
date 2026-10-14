@@ -243,3 +243,7 @@ registerConfirmSubmit();
 if (document.querySelector('[data-offering-form]')) {
     import('./pages/offering-form').then(({ default: initOfferingForm }) => initOfferingForm());
 }
+
+if (document.querySelector('select[data-tom-select], select[data-region-province]')) {
+    import('./components/tom-select-fields').then(({ default: initTomSelectFields }) => initTomSelectFields());
+}

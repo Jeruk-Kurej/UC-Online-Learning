@@ -9,6 +9,10 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    // Tom Select builds its markup in JavaScript, so its class names never appear in the views.
+    // Keep the component rules styled for them (resources/css/components/forms.css).
+    safelist: [{ pattern: /^ts-/ }],
+
     theme: {
         extend: {
             fontFamily: {

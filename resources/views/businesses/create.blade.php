@@ -2,7 +2,7 @@
     @section('title', 'Register New Business')
 
     @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
+        @vite('resources/css/vendor/tom-select.css')
     @endpush
     <div class="mb-6 flex items-center gap-4">
         <a href="{{ (auth()->check() && auth()->user()->isAdmin()) ? route('businesses.index') : route('businesses.my') }}" 
@@ -39,7 +39,7 @@
                     <label for="category_id" class="form-label-custom">
                         Business Category <span class="text-red-500">*</span>
                     </label>
-                    <select name="category_id" id="category_id" required class="block w-full">
+                    <select name="category_id" id="category_id" data-tom-select="Select Category" required class="block w-full">
                         <option value="" disabled selected>Select Category</option>
                         @foreach($categories as $cat)
                             <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
@@ -55,7 +55,7 @@
                     <label for="business_mode" class="form-label-custom">
                         Offering Type <span class="text-red-500">*</span>
                     </label>
-                    <select name="business_mode" id="business_mode" required class="block w-full">
+                    <select name="business_mode" id="business_mode" data-tom-select="Select Mode" required class="block w-full">
                         <option value="product" {{ old('business_mode') === 'product' ? 'selected' : '' }}>Product Only</option>
                         <option value="service" {{ old('business_mode') === 'service' ? 'selected' : '' }}>Service Only</option>
                         <option value="both" {{ old('business_mode', 'both') === 'both' ? 'selected' : '' }}>Product & Service</option>
@@ -143,7 +143,7 @@
                 {{-- Province --}}
                 <div>
                     <label for="province" class="form-label-custom">Province</label>
-                    <select name="province" id="province" class="block w-full">
+                    <select name="province" id="province" data-region-province data-region-city="#city" class="block w-full">
                         <option value="">Select Province</option>
                         @foreach($provinces as $prov)
                             <option value="{{ $prov->id }}" {{ old('province') == $prov->id ? 'selected' : '' }}>{{ ucwords(strtolower($prov->name)) }}</option>
@@ -154,7 +154,7 @@
                 {{-- City --}}
                 <div>
                     <label for="city" class="form-label-custom">City / Regency</label>
-                    <select name="city" id="city" class="block w-full">
+                    <select name="city" id="city" data-region-city-placeholder="Select Province First" data-region-city-starts-disabled class="block w-full">
                         <option value="">Select Province First</option>
                     </select>
                 </div>
@@ -214,7 +214,7 @@
                         <label for="user_id" class="form-label-custom">
                             Primary Owner (Admin Only)
                         </label>
-                        <select name="user_id" id="user_id" class="block w-full">
+                        <select name="user_id" id="user_id" data-tom-select="Select Primary Owner" class="block w-full">
                             <option value="">Select Primary Owner</option>
                             @foreach($users as $ownerUser)
                                 <option value="{{ $ownerUser->id }}" {{ old('user_id') == $ownerUser->id ? 'selected' : '' }}>
@@ -229,7 +229,7 @@
                         <label for="owner_ids" class="form-label-custom">
                             Additional Owners (Optional)
                         </label>
-                        <select name="owner_ids[]" id="owner_ids" multiple class="block w-full">
+                        <select name="owner_ids[]" id="owner_ids" data-tom-select="Select Additional Owners" multiple class="block w-full">
                             @foreach($users as $ownerUser)
                                 <option value="{{ $ownerUser->id }}" {{ in_array($ownerUser->id, old('owner_ids', [])) ? 'selected' : '' }}>
                                     {{ $ownerUser->name }} ({{ $ownerUser->email }})
@@ -253,60 +253,4 @@
             </button>
         </div>
     </form>
-
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                if (window.TomSelect) {
-                    new TomSelect('#category_id', { create: false, placeholder: "Select Category", searchField: ["text"] });
-                    new TomSelect('#business_mode', { create: false, placeholder: "Select Mode", searchField: ["text"] });
-                    
-                    const citySelect = new TomSelect('#city', { 
-                        create: false, 
-                        placeholder: "Select Province First", 
-                        searchField: ["name"],
-                        valueField: 'id',
-                        labelField: 'name'
-                    });
-                    citySelect.disable();
-
-                    const provinceSelect = new TomSelect('#province', { 
-                        create: false, 
-                        placeholder: "Select Province", 
-                        searchField: ["text"],
-                        onChange: function(value) {
-                            citySelect.clear();
-                            citySelect.clearOptions();
-
-                            if (!value) {
-                                citySelect.disable();
-                                citySelect.settings.placeholder = "Select Province First";
-                                citySelect.inputState();
-                                return;
-                            }
-
-                            citySelect.disable();
-                            citySelect.settings.placeholder = "Loading cities...";
-                            citySelect.inputState();
-
-                            fetch(`/api/regencies?province_id=${value}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    citySelect.addOptions(data);
-                                    citySelect.enable();
-                                    citySelect.settings.placeholder = "Select City";
-                                    citySelect.inputState();
-                                });
-                        }
-                    });
-
-                    @if(auth()->check() && auth()->user()->isAdmin())
-                        new TomSelect('#user_id', { create: false, placeholder: "Select Primary Owner", searchField: ["text"] });
-                        new TomSelect('#owner_ids', { create: false, placeholder: "Select Additional Owners", searchField: ["text"] });
-                    @endif
-                }
-            });
-        </script>
-    @endpush
 </x-app-layout>

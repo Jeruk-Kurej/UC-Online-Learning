@@ -1,13 +1,6 @@
 <x-app-layout>
     @push('styles')
-        <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-        <style>
-            .ts-control > .item, .ts-dropdown .option {
-                overflow: hidden !important;
-                text-overflow: ellipsis !important;
-                white-space: nowrap !important;
-            }
-        </style>
+        @vite('resources/css/pages/work-profile-edit.css')
     @endpush
 
     {{-- Header Section --}}
@@ -40,7 +33,7 @@
                     {{-- Category --}}
                     <div>
                         <label for="category_id" class="form-label-custom">Industry Category <span class="text-red-500">*</span></label>
-                        <select name="category_id" id="category_id" required 
+                        <select name="category_id" id="category_id" data-tom-select="Select Category" required 
                                 class="form-input-custom @error('category_id') border-red-500 @enderror">
                             <option value="">Select Category</option>
                             @foreach($categories as $cat)
@@ -64,7 +57,7 @@
                     {{-- Level --}}
                     <div>
                         <label for="level_position" class="form-label-custom">Job Role Level</label>
-                        <select name="level_position" id="level_position" 
+                        <select name="level_position" id="level_position" data-tom-select="Select Level" 
                                 class="form-input-custom @error('level_position') border-red-500 @enderror">
                             <option value="">Select Level</option>
                             <option value="Intern" {{ old('level_position', $company->level_position) === 'Intern' ? 'selected' : '' }}>Intern / Magang</option>
@@ -79,7 +72,7 @@
                     {{-- Company Scale --}}
                     <div>
                         <label for="company_scale" class="form-label-custom">Company Scale</label>
-                        <select name="company_scale" id="company_scale" 
+                        <select name="company_scale" id="company_scale" data-tom-select="Select Scale" 
                                 class="form-input-custom @error('company_scale') border-red-500 @enderror">
                             <option value="">Select Scale</option>
                             <option value="Perusahaan swasta lokal/regional" {{ old('company_scale', $company->company_scale) === 'Perusahaan swasta lokal/regional' ? 'selected' : '' }}>Swasta Lokal / Regional</option>
@@ -103,7 +96,7 @@
                     {{-- Province --}}
                     <div>
                         <label for="province" class="form-label-custom">Province</label>
-                        <select name="province" id="province" class="form-input-custom">
+                        <select name="province" id="province" data-region-province data-region-city="#city" class="form-input-custom">
                             <option value="">Select Province</option>
                             @foreach($provinces as $prov)
                                 <option value="{{ $prov->id }}" {{ (old('province', $selectedProvinceId) == $prov->id) ? 'selected' : '' }}>
@@ -116,7 +109,7 @@
                     {{-- City --}}
                     <div>
                         <label for="city" class="form-label-custom">City / Regency</label>
-                        <select name="city" id="city" class="form-input-custom">
+                        <select name="city" id="city" data-region-city-placeholder="Select City" class="form-input-custom">
                             <option value="">Select Province First</option>
                             @foreach($availableCities as $city_item)
                                 <option value="{{ $city_item->id }}" {{ (old('city', $company->city) == $city_item->name) ? 'selected' : '' }}>
@@ -231,60 +224,4 @@
                 </div>
             </form>
         </div>
-
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                if (window.TomSelect) {
-                    new TomSelect('#category_id', { create: false, placeholder: "Select Category", searchField: ["text"] });
-                    new TomSelect('#level_position', { create: false, placeholder: "Select Level", searchField: ["text"] });
-                    new TomSelect('#company_scale', { create: false, placeholder: "Select Scale", searchField: ["text"] });
-                    
-                    const citySelect = new TomSelect('#city', { 
-                        create: false, 
-                        placeholder: "Select Province First", 
-                        searchField: ["name"],
-                        valueField: 'id',
-                        labelField: 'name'
-                    });
-                    
-                    // Enable/disable based on whether a province was preselected
-                    if (!document.getElementById('province').value) {
-                        citySelect.disable();
-                    }
-
-                    const provinceSelect = new TomSelect('#province', { 
-                        create: false, 
-                        placeholder: "Select Province", 
-                        searchField: ["text"],
-                        onChange: function(value) {
-                            citySelect.clear();
-                            citySelect.clearOptions();
-
-                            if (!value) {
-                                citySelect.disable();
-                                citySelect.settings.placeholder = "Select Province First";
-                                citySelect.inputState();
-                                return;
-                            }
-
-                            citySelect.disable();
-                            citySelect.settings.placeholder = "Loading cities...";
-                            citySelect.inputState();
-
-                            fetch(`/api/regencies?province_id=${value}`)
-                                .then(response => response.json())
-                                .then(data => {
-                                    citySelect.addOptions(data);
-                                    citySelect.enable();
-                                    citySelect.settings.placeholder = "Select City";
-                                    citySelect.inputState();
-                                });
-                        }
-                    });
-                }
-            });
-        </script>
-    @endpush
 </x-app-layout>

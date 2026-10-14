@@ -1,0 +1,49 @@
+/* --- Work profile create form: Tom Select theme, then the form field styles (same order as before) --- */
+@import '../vendor/tom-select.css';
+
+.form-label-custom {
+    display: block; 
+    font-size: 11px; 
+    font-weight: 800; 
+    color: #475569; 
+    text-transform: uppercase; 
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.form-input-custom {
+    width: 100%; 
+    height: 44px; 
+    padding: 0 15px; 
+    border: 1.5px solid #e2e8f0; 
+    border-radius: 8px; 
+    font-size: 13px; 
+    font-weight: 600; 
+    outline: none; 
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    background: white;
+}
+
+.form-input-custom:focus {
+    border-color: #f7931e !important;
+    box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
+}
+
+.form-textarea-custom {
+    width: 100%; 
+    padding: 12px 15px; 
+    border: 1.5px solid #e2e8f0; 
+    border-radius: 8px; 
+    font-size: 13px; 
+    font-weight: 600; 
+    outline: none; 
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    min-height: 120px;
+}
+
+.form-textarea-custom:focus {
+    border-color: #f7931e !important;
+    box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1) !important;
+}
