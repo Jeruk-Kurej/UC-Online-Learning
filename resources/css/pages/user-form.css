@@ -1,33 +1,9 @@
-/* --- Admin user create/edit form: Tom Select theme, then the form field styles (same order as before) --- */
+/* --- Admin user create/edit form: Tom Select theme, then what this form adds to components/forms.css --- */
 @import '../vendor/tom-select.css';
 
-.form-label-custom {
-    display: block;
-    font-size: 10px;
-    font-weight: 800;
-    color: #64748b;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    letter-spacing: 0.5px;
-}
-
 .form-input-custom {
-    width: 100%;
-    height: 44px;
-    padding: 0 15px;
-    border: 1.5px solid #e2e8f0;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 600;
     outline: none;
-    box-sizing: border-box;
-    transition: all 0.2s ease;
     background: white;
-}
-
-.form-input-custom:focus {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
 .form-file-container-custom {
@@ -69,20 +45,9 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
-/* TomSelect Overrides */
 .ts-wrapper .ts-control {
-    border: 1.5px solid #e2e8f0 !important;
-    border-radius: 7px !important;
     height: 44px !important;
     padding: 0 15px !important;
-    display: flex !important;
-    align-items: center !important;
     font-size: 13px !important;
     font-weight: 600 !important;
-    box-shadow: none !important;
-}
-
-.ts-wrapper.focus .ts-control {
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }

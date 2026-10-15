@@ -26,23 +26,12 @@
                 Core Information
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {{-- --- Business Name --- --}}
-                <div class="relative pb-5">
-                    <label for="name" class="form-label-custom">
-                        Business Name <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="business" name="name" label="Business Name" required>
                     <input type="text" name="name" id="name" value="{{ old('name', $business?->name) }}" required
                            class="form-input-custom @error('name') border-red-500 @enderror">
-                    @error('name')
-                        <p class="absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Business Category --- --}}
-                <div class="relative pb-5">
-                    <label for="category_id" class="form-label-custom">
-                        Business Category <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="business" name="category_id" label="Business Category" required>
                     <select name="category_id" id="category_id" data-tom-select="Select Category" required class="block w-full">
                         <option value="" disabled @unless ($business) selected @endunless>Select Category</option>
                         @foreach ($categories as $cat)
@@ -51,51 +40,26 @@
                             </option>
                         @endforeach
                     </select>
-                    @error('category_id')
-                        <p class="absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Offering Type / Mode --- --}}
-                <div class="relative pb-5">
-                    <label for="business_mode" class="form-label-custom">
-                        Offering Type <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="business" name="business_mode" label="Offering Type" required>
                     <select name="business_mode" id="business_mode" data-tom-select="Select Mode" required class="block w-full">
                         <option value="product" {{ old('business_mode', $business ? $business->offering_type : 'both') === 'product' ? 'selected' : '' }}>Product Only</option>
                         <option value="service" {{ old('business_mode', $business ? $business->offering_type : 'both') === 'service' ? 'selected' : '' }}>Service Only</option>
                         <option value="both" {{ old('business_mode', $business ? $business->offering_type : 'both') === 'both' ? 'selected' : '' }}>Product & Service</option>
                     </select>
-                    @error('business_mode')
-                        <p class="absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Established Date --- --}}
-                <div class="relative pb-5">
-                    <label for="established_date" class="form-label-custom">
-                        Established Date
-                    </label>
+                <x-forms.field look="business" name="established_date" label="Established Date">
                     <input type="date" name="established_date" id="established_date" value="{{ old('established_date', $business?->established_date?->format('Y-m-d')) }}"
                            class="form-input-custom @error('established_date') border-red-500 @enderror">
-                    @error('established_date')
-                        <p class="absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Description --- --}}
-                <div class="relative pb-5 md:col-span-2">
-                    <label for="description" class="form-label-custom">
-                        Description <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="business" name="description" label="Description" required class="md:col-span-2">
                     <textarea name="description" id="description" rows="3" required
                               class="form-input-custom">{{ old('description', $business?->description) }}</textarea>
-                    @error('description')
-                        <p class="absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Business Logo --- --}}
                 @if ($business)
                     <x-forms.removable-image class="pb-5 md:col-span-2" label="Business Logo" name="logo" delete-name="delete_logo"
                                              :url="$business->logo_url" :has-image="$business->has_logo" :initial="strtoupper(substr($business->name, 0, 1))" noun="Logo"
@@ -136,9 +100,7 @@
                 Location & Contact Details
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {{-- --- Province --- --}}
-                <div>
-                    <label for="province" class="form-label-custom">Province</label>
+                <x-forms.field look="business" name="province" label="Province" :show-error="false">
                     <select name="province" id="province" data-region-province data-region-city="#city" class="block w-full">
                         <option value="">Select Province</option>
                         @foreach ($provinces as $prov)
@@ -147,11 +109,9 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
+                </x-forms.field>
 
-                {{-- --- City --- --}}
-                <div>
-                    <label for="city" class="form-label-custom">City / Regency</label>
+                <x-forms.field look="business" name="city" label="City / Regency" :show-error="false">
                     <select name="city" id="city" data-region-city-placeholder="{{ $business ? 'Select City' : 'Select Province First' }}" @unless ($business) data-region-city-starts-disabled @endunless class="block w-full">
                         <option value="">Select Province First</option>
                         @foreach ($availableCities as $city)
@@ -160,49 +120,37 @@
                             </option>
                         @endforeach
                     </select>
-                </div>
+                </x-forms.field>
 
-                {{-- --- Full Address --- --}}
-                <div class="md:col-span-2">
-                    <label for="address" class="form-label-custom">Full Address</label>
+                <x-forms.field look="business" name="address" label="Full Address" :show-error="false" class="md:col-span-2">
                     <textarea name="address" id="address" rows="2"
                               class="form-input-custom">{{ old('address', $business?->address) }}</textarea>
-                </div>
+                </x-forms.field>
 
-                {{-- --- Phone Number --- --}}
-                <div>
-                    <label for="phone" class="form-label-custom">Business Phone Number</label>
+                <x-forms.field look="business" name="phone" label="Business Phone Number" :show-error="false">
                     <input type="tel" name="phone" id="phone" value="{{ old('phone', $business?->phone_number) }}"
                            class="form-input-custom">
-                </div>
+                </x-forms.field>
 
-                {{-- --- WhatsApp Number --- --}}
-                <div>
-                    <label for="whatsapp_number" class="form-label-custom">Business WhatsApp Number</label>
+                <x-forms.field look="business" name="whatsapp_number" label="Business WhatsApp Number" :show-error="false">
                     <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ old('whatsapp_number', $business?->whatsapp) }}"
                            class="form-input-custom" placeholder="e.g. 62812...">
-                </div>
+                </x-forms.field>
 
-                {{-- --- Email Address --- --}}
-                <div>
-                    <label for="email" class="form-label-custom">Business Email</label>
+                <x-forms.field look="business" name="email" label="Business Email" :show-error="false">
                     <input type="email" name="email" id="email" value="{{ old('email', $business?->email) }}"
                            class="form-input-custom">
-                </div>
+                </x-forms.field>
 
-                {{-- --- Website --- --}}
-                <div>
-                    <label for="website" class="form-label-custom">Website URL</label>
+                <x-forms.field look="business" name="website" label="Website URL" :show-error="false">
                     <input type="url" name="website" id="website" value="{{ old('website', $business?->website) }}"
                            class="form-input-custom" placeholder="https://...">
-                </div>
+                </x-forms.field>
 
-                {{-- --- Instagram Handle --- --}}
-                <div>
-                    <label for="instagram_handle" class="form-label-custom">Instagram Handle</label>
+                <x-forms.field look="business" name="instagram_handle" label="Instagram Handle" :show-error="false">
                     <input type="text" name="instagram_handle" id="instagram_handle" value="{{ old('instagram_handle', $business?->instagram) }}"
                            class="form-input-custom" placeholder="username">
-                </div>
+                </x-forms.field>
             </div>
         </div>
 
@@ -212,11 +160,7 @@
                     Ownership Management
                 </h2>
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    {{-- --- Primary Owner --- --}}
-                    <div>
-                        <label for="user_id" class="form-label-custom">
-                            Primary Owner (Admin Only)
-                        </label>
+                    <x-forms.field look="business" name="user_id" label="Primary Owner (Admin Only)" :show-error="false">
                         <select name="user_id" id="user_id" data-tom-select="Select Primary Owner" class="block w-full">
                             <option value="">Select Primary Owner</option>
                             @foreach ($users as $ownerUser)
@@ -225,13 +169,9 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </x-forms.field>
 
-                    {{-- --- Additional Owners --- --}}
-                    <div>
-                        <label for="owner_ids" class="form-label-custom">
-                            Additional Owners (Optional)
-                        </label>
+                    <x-forms.field look="business" name="owner_ids" label="Additional Owners (Optional)" :show-error="false">
                         <select name="owner_ids[]" id="owner_ids" data-tom-select="Select Additional Owners" multiple class="block w-full">
                             @foreach ($users as $ownerUser)
                                 <option value="{{ $ownerUser->id }}" {{ in_array($ownerUser->id, old('owner_ids', $memberIds)) ? 'selected' : '' }}>
@@ -239,7 +179,7 @@
                                 </option>
                             @endforeach
                         </select>
-                    </div>
+                    </x-forms.field>
                 </div>
             </div>
         @endif

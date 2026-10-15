@@ -17,21 +17,14 @@
                 <form method="POST" action="{{ route('intrapreneurs.add_achievement', $company) }}" class="space-y-6">
                     @csrf
 
-                    {{-- --- Achievement Textarea --- --}}
-                    <div>
-                        <label for="achievement" class="mb-2 block text-sm font-medium text-gray-700">
-                            Achievement Details <span class="text-red-500">*</span>
-                        </label>
+                    <x-forms.field look="offering" name="achievement" label="Achievement Details" required>
                         <textarea name="achievement"
                                   id="achievement"
                                   rows="4"
                                   required
                                   class="@error('achievement') border-red-500 @enderror block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm"
                                   placeholder="e.g. Winner of National Business Plan Competition 2026...">{{ old('achievement') }}</textarea>
-                        @error('achievement')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                    </x-forms.field>
 
                     {{-- --- Submit Buttons --- --}}
                     <div class="flex items-center justify-between border-t-2 border-soft-gray-100 pt-6">

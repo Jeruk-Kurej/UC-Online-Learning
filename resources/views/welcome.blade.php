@@ -65,8 +65,7 @@
                         <form method="POST" action="/login" class="relative z-10 space-y-5">
                             @csrf
 
-                            <div>
-                                <label for="email" class="form-label-custom">Email</label>
+                            <x-forms.field look="login" name="email" label="Email">
                                 <input id="email"
                                        type="email"
                                        name="email"
@@ -76,13 +75,9 @@
                                        autocomplete="username"
                                        class="form-input-custom @error('email') border-red-500 @enderror"
                                        placeholder="name@example.com">
-                                @error('email')
-                                    <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            </x-forms.field>
 
-                            <div>
-                                <label for="password" class="form-label-custom">Password</label>
+                            <x-forms.field look="login" name="password" label="Password">
                                 <input id="password"
                                        type="password"
                                        name="password"
@@ -90,10 +85,7 @@
                                        autocomplete="current-password"
                                        class="form-input-custom @error('password') border-red-500 @enderror"
                                        placeholder="Enter your password">
-                                @error('password')
-                                    <p class="mt-2 text-xs font-medium text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                            </x-forms.field>
 
                             <button type="submit"
                                     class="w-full rounded-[7px] bg-uco-orange-500 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition-all duration-200 hover:bg-uco-orange-600">

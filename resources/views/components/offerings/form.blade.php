@@ -19,11 +19,7 @@
                     @method('PUT')
                 @endif
 
-                {{-- --- Name --- --}}
-                <div>
-                    <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
-                        {{ $noun }} Name <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="offering" name="name" :label="$noun . ' Name'" required>
                     <input type="text"
                            name="name"
                            id="name"
@@ -31,32 +27,18 @@
                            required
                            class="@error('name') border-red-500 @enderror block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm"
                            @unless ($isEdit) placeholder="{{ $look['namePlaceholder'] }}" @endunless>
-                    @error('name')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Description --- --}}
-                <div>
-                    <label for="description" class="mb-2 block text-sm font-medium text-gray-700">
-                        Description <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="offering" name="description" label="Description" required>
                     <textarea name="description"
                               id="description"
                               rows="4"
                               required
                               class="@error('description') border-red-500 @enderror block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm"
                               @unless ($isEdit) placeholder="{{ $look['descriptionPlaceholder'] }}" @endunless>{{ old('description', $offering?->description) }}</textarea>
-                    @error('description')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
-                {{-- --- Price type --- --}}
-                <div>
-                    <label for="price_type" class="mb-2 block text-sm font-medium text-gray-700">
-                        Price Type <span class="text-red-500">*</span>
-                    </label>
+                <x-forms.field look="offering" name="price_type" label="Price Type" required>
                     <select name="price_type"
                             id="price_type"
                             required
@@ -69,10 +51,7 @@
                         <option value="customize" {{ $selectedPriceType === 'customize' ? 'selected' : '' }}>Customize by Order</option>
                         <option value="unspecified" {{ $selectedPriceType === 'unspecified' ? 'selected' : '' }}>Unspecified Price</option>
                     </select>
-                    @error('price_type')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
 
                 {{-- --- Price --- --}}
                 <div>

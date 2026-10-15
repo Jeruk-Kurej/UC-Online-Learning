@@ -33,16 +33,11 @@
                     @enderror
                 </x-forms.removable-image>
 
-                {{-- --- Job Description --- --}}
-                <div class="md:col-span-2">
-                    <label for="job_description" class="form-label-custom">Job Description & Responsibilities <span class="text-red-500">*</span></label>
+                <x-forms.field look="work-profile" name="job_description" label="Job Description & Responsibilities" required class="md:col-span-2">
                     <textarea name="job_description" id="job_description" rows="4" required
                               class="form-input-custom @error('job_description') border-red-500 @enderror"
                               placeholder="Describe your job roles, day-to-day operations, and career contributions...">{{ old('job_description', $company->job_description) }}</textarea>
-                    @error('job_description')
-                        <p class="mt-1 text-xs font-medium text-red-600">{{ $message }}</p>
-                    @enderror
-                </div>
+                </x-forms.field>
             </div>
 
             {{-- --- Action Buttons --- --}}

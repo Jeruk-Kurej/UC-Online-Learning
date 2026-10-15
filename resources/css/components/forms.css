@@ -25,7 +25,6 @@
     .ts-wrapper.focus .ts-control {
         border-color: #3b82f6 !important;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
-        ring: none !important;
     }
 
     /* Prevent double-border if form-input-custom is applied to the original select */
@@ -71,7 +70,6 @@
     .ts-control .item,
     .ts-wrapper.multi .ts-control > div,
     .ts-wrapper.multi .ts-control .item {
-        background-color: #f1f5f9 !important;
         background: #f1f5f9 !important;
         color: #334155 !important;
         border: 1px solid #e2e8f0 !important;
@@ -90,7 +88,6 @@
     .ts-control .item:hover,
     .ts-wrapper.multi .ts-control > div:hover,
     .ts-wrapper.multi .ts-control .item:hover {
-        background-color: #e2e8f0 !important;
         background: #e2e8f0 !important;
         color: #0f172a !important;
     }
