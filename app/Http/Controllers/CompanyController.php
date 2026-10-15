@@ -39,7 +39,7 @@ class CompanyController extends Controller
             abort(404);
         }
 
-        return view('businesses.show_intrapreneur', [
+        return view('work-profiles.show', [
             'company' => $company,
             'student' => $company->user,
             'canManage' => auth()->check() && (auth()->user()->id === $company->user_id || auth()->user()->isAdmin()),
@@ -54,7 +54,7 @@ class CompanyController extends Controller
         $categories = Category::all();
         $provinces = Province::orderBy('name')->get();
 
-        return view('businesses.create_intrapreneur', [
+        return view('work-profiles.create', [
             'company' => null,
             'categories' => $categories,
             'provinces' => $provinces,
@@ -102,7 +102,7 @@ class CompanyController extends Controller
             ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
             : collect();
 
-        return view('businesses.edit_intrapreneur', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
+        return view('work-profiles.edit', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
     }
 
     /**

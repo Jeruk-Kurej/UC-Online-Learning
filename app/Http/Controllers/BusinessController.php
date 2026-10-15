@@ -11,6 +11,7 @@ use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -78,36 +79,6 @@ class BusinessController extends Controller
         }
 
         $businesses = $query->latest()->paginate(6)->withQueryString();
-        $categories = Category::all();
-
-        $locationQuery = $viewType === 'intrapreneur' ? Company::visible() : Business::visible();
-
-        $availableProvinces = $locationQuery->whereNotNull('province')->distinct()->pluck('province')->sort();
-
-        $cityQuery = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())->whereNotNull('city');
-        $selectedProvince = $request->get('province');
-        if ($selectedProvince) {
-            $cityQuery->where('province', $selectedProvince);
-        }
-        $availableCities = $cityQuery->distinct()->pluck('city')->sort();
-
-        // --- Province → city map for the dependent dropdown ---
-        $provinceCityMap = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())
-            ->whereNotNull('province')
-            ->whereNotNull('city')
-            ->select('province', 'city')
-            ->distinct()
-            ->get()
-            ->groupBy('province')
-            ->map(fn ($items) => $items->pluck('city')->sort()->values())
-            ->toArray();
-
-        $featuredBusinessCount = Business::where('is_featured', true)->count();
-
-        $pendingCount = 0;
-        if ($this->currentUserIsAdmin()) {
-            $pendingCount = Business::where('is_visible', false)->count();
-        }
 
         if ($request->ajax()) {
             return response()
@@ -115,16 +86,14 @@ class BusinessController extends Controller
                 ->header('Vary', 'X-Requested-With');
         }
 
-        return view('businesses.index', compact(
-            'businesses',
-            'categories',
-            'viewType',
-            'availableCities',
-            'availableProvinces',
-            'provinceCityMap',
-            'featuredBusinessCount',
-            'pendingCount'
-        ));
+        return view('businesses.index', [
+            'businesses' => $businesses,
+            'categories' => Category::all(),
+            'viewType' => $viewType,
+            'availableProvinces' => $this->directoryLocations($viewType)->whereNotNull('province')->distinct()->pluck('province')->sort(),
+            'directoryState' => $this->directoryState($request, $viewType),
+            'featuredBusinessCount' => Business::where('is_featured', true)->count(),
+        ]);
     }
 
     /**
@@ -348,5 +317,40 @@ class BusinessController extends Controller
         if ($request->has('owner_ids')) {
             $business->members()->sync((array) $request->input('owner_ids'));
         }
+    }
+
+    // --- Directory filters ---
+
+    private function directoryLocations(string $viewType): Builder
+    {
+        return $viewType === 'intrapreneur' ? Company::visible() : Business::visible();
+    }
+
+    /**
+     * Initial state of the directory's Alpine component (tabs, province → city dropdown).
+     */
+    private function directoryState(Request $request, string $viewType): array
+    {
+        $cityQuery = $this->directoryLocations($viewType)->whereNotNull('city');
+        if ($request->get('province')) {
+            $cityQuery->where('province', $request->get('province'));
+        }
+
+        return [
+            'viewType' => $viewType,
+            'isPending' => $request->get('status') === 'pending',
+            'provinceCityMap' => $this->directoryLocations($viewType)
+                ->whereNotNull('province')
+                ->whereNotNull('city')
+                ->select('province', 'city')
+                ->distinct()
+                ->get()
+                ->groupBy('province')
+                ->map(fn ($items) => $items->pluck('city')->sort()->values())
+                ->toArray(),
+            'selectedProvince' => (string) $request->get('province'),
+            'selectedCity' => (string) $request->get('city'),
+            'availableCities' => $cityQuery->distinct()->pluck('city')->sort()->values(),
+        ];
     }
 }

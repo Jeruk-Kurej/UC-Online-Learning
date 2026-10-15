@@ -23,7 +23,7 @@ class CompanyAchievementController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        return view('businesses.add_achievement', compact('company'));
+        return view('work-profiles.add-achievement', compact('company'));
     }
 
     /**

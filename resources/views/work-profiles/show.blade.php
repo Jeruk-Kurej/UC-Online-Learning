@@ -2,64 +2,36 @@
     @section('title', $company->name . ' - ' . ($company->category->name ?? 'Company'))
 
     <div class="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-8">
-        {{-- --- Breadcrumbs --- --}}
-        <nav class="mb-8 flex pt-4 text-sm font-medium sm:pt-6" aria-label="Breadcrumb">
-            <ol class="flex items-center space-x-2">
-                <li><a href="{{ route('businesses.index') }}?view=intrapreneur" class="text-gray-400 transition hover:text-uco-orange-500">Directory</a></li>
-                <li class="flex items-center space-x-2">
-                    <svg class="h-4 w-4 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" />
-                    </svg>
-                    <span class="text-gray-900">{{ $company->name }}</span>
-                </li>
-            </ol>
-        </nav>
+        <x-ui.breadcrumbs class="mb-8 pt-4 sm:pt-6" :href="route('businesses.index', ['view' => 'intrapreneur'])" :current="$company->name" />
 
-        {{-- --- Hero Header Section --- --}}
         <div class="mb-8 px-4 sm:px-0">
-            <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div class="flex flex-1 flex-row items-center gap-4 sm:items-start sm:gap-5">
-                    {{-- --- Logo --- --}}
-                    @if ($company->logo_url)
-                        <img src="{{ storage_image_url($company->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
-                             alt="{{ $company->name }} Logo" loading="lazy"
-                             class="h-16 w-16 flex-shrink-0 rounded-sm object-contain sm:h-20 sm:w-20">
-                    @else
-                        <div
-                             class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 sm:h-20 sm:w-20">
-                            <i class="bi bi-building text-2xl text-soft-gray-300 sm:text-3xl"></i>
-                        </div>
-                    @endif
+            <x-business.profile-heading :name="$company->name" :logo-url="$company->logo_url" fallback-icon="bi-building">
+                <x-slot:badges>
+                    <span class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+                        <i class="bi bi-person-workspace text-[10px]"></i>
+                        Intrapreneur
+                    </span>
 
-                    <div class="min-w-0 flex-1">
-                        <div class="mb-2 flex flex-wrap items-center gap-2">
-                            <span class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-                                <i class="bi bi-person-workspace text-[10px]"></i>
-                                Intrapreneur
-                            </span>
-
-                            @if ($company->category)
-                                <span class="inline-flex items-center gap-1.5 rounded-xl bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
-                                    {{ $company->category->name }}
-                                </span>
-                            @endif
-                        </div>
-                        <h1 class="text-2xl font-bold leading-tight tracking-tight text-soft-gray-900 sm:text-3xl">
-                            {{ $company->name }}
-                        </h1>
-                    </div>
-                </div>
-                @auth
-                    @if ($canManage)
-                        <a href="{{ route('intrapreneurs.edit', $company) }}"
-                           class="btn-uco btn-uco-secondary flex-shrink-0">
-                            <i class="bi bi-pencil-square"></i>
-                            <span class="hidden sm:inline">Edit Work Profile</span>
-                            <span class="sm:hidden">Edit</span>
-                        </a>
+                    @if ($company->category)
+                        <span class="inline-flex items-center gap-1.5 rounded-xl bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+                            {{ $company->category->name }}
+                        </span>
                     @endif
-                @endauth
-            </div>
+                </x-slot:badges>
+
+                <x-slot:actions>
+                    @auth
+                        @if ($canManage)
+                            <a href="{{ route('intrapreneurs.edit', $company) }}"
+                               class="btn-uco btn-uco-secondary flex-shrink-0">
+                                <i class="bi bi-pencil-square"></i>
+                                <span class="hidden sm:inline">Edit Work Profile</span>
+                                <span class="sm:hidden">Edit</span>
+                            </a>
+                        @endif
+                    @endauth
+                </x-slot:actions>
+            </x-business.profile-heading>
         </div>
 
         {{-- --- 2-column layout --- --}}
@@ -77,47 +49,22 @@
                             </p>
                         </div>
 
-                        {{-- --- Metadata Grid --- --}}
+                        {{-- --- Insights --- --}}
                         <div class="mb-4 grid grid-cols-1 gap-x-4 gap-y-6 border-y border-gray-100 py-8 sm:grid-cols-3 md:gap-x-6 lg:gap-x-8">
-                            {{-- --- Company Scale --- --}}
-                            <div class="flex items-start gap-4 border-r border-gray-100 pr-4 sm:gap-2 md:gap-4 md:pr-6 lg:pr-8">
-                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-blue-100/50 bg-blue-50 text-blue-600 shadow-sm sm:h-9 sm:w-9 md:h-11 md:w-11">
-                                    <i class="bi bi-graph-up-arrow text-lg sm:text-sm md:text-lg"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="mb-1.5 text-[10px] font-bold uppercase leading-none tracking-widest text-gray-400">Company Scale</p>
-                                    <h5 class="text-sm font-extrabold text-gray-800 sm:text-xs md:text-sm lg:text-base">{{ $company->company_scale ?: 'Undisclosed' }}</h5>
-                                    <p class="mt-0.5 text-[9px] font-medium text-gray-400">Scale of operations</p>
-                                </div>
-                            </div>
+                            <x-business.insight class="border-r border-gray-100 pr-4 md:pr-6 lg:pr-8" icon="bi-graph-up-arrow" tone="blue" caption="Scale of operations">
+                                <x-slot:label>Company Scale</x-slot:label>
+                                {{ $company->company_scale ?: 'Undisclosed' }}
+                            </x-business.insight>
 
-                            {{-- --- Started Working --- --}}
-                            <div class="flex items-start gap-4 border-r border-gray-100 pr-4 sm:gap-2 md:gap-4 md:pr-6 lg:pr-8">
-                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-indigo-100/50 bg-indigo-50 text-indigo-600 shadow-sm sm:h-9 sm:w-9 md:h-11 md:w-11">
-                                    <i class="bi bi-calendar-check-fill text-lg sm:text-sm md:text-lg"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="mb-1.5 text-[10px] font-bold uppercase leading-none tracking-widest text-gray-400">Started Working</p>
-                                    <h5 class="text-sm font-extrabold text-gray-800 sm:text-xs md:text-sm lg:text-base">
-                                        {{ $company->year_started_working ? 'Year ' . $company->year_started_working : 'Timeline Undisclosed' }}
-                                    </h5>
-                                    <p class="mt-0.5 text-[9px] font-medium text-gray-400">Employment inception</p>
-                                </div>
-                            </div>
+                            <x-business.insight class="border-r border-gray-100 pr-4 md:pr-6 lg:pr-8" icon="bi-calendar-check-fill" tone="indigo" caption="Employment inception">
+                                <x-slot:label>Started Working</x-slot:label>
+                                {{ $company->year_started_working ? 'Year ' . $company->year_started_working : 'Timeline Undisclosed' }}
+                            </x-business.insight>
 
-                            {{-- --- Job Position --- --}}
-                            <div class="flex items-start gap-4 sm:gap-2 md:gap-4">
-                                <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-lg border border-orange-100/50 bg-orange-50 text-uco-orange-600 shadow-sm sm:h-9 sm:w-9 md:h-11 md:w-11">
-                                    <i class="bi bi-person-badge-fill text-lg sm:text-sm md:text-lg"></i>
-                                </div>
-                                <div class="min-w-0 flex-1">
-                                    <p class="mb-1.5 text-[10px] font-bold uppercase leading-none tracking-widest text-gray-400">Job Role / Level</p>
-                                    <h5 class="text-sm font-extrabold text-gray-800 sm:text-xs md:text-sm lg:text-base">{{ $company->position ?: 'Not specified' }}</h5>
-                                    <p class="mt-0.5 text-[9px] font-medium text-gray-400">
-                                        {{ $company->level_position ? $company->level_position : 'Career Track' }}
-                                    </p>
-                                </div>
-                            </div>
+                            <x-business.insight icon="bi-person-badge-fill" tone="orange" :caption="$company->level_position ?: 'Career Track'">
+                                <x-slot:label>Job Role / Level</x-slot:label>
+                                {{ $company->position ?: 'Not specified' }}
+                            </x-business.insight>
                         </div>
                     </div>
                 </div>

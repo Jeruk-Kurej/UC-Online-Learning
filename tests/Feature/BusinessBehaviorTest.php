@@ -203,7 +203,7 @@ test('the showcase url resolves businesses first, then work profiles', function 
     $company = Company::create(['user_id' => $w['owner']->id, 'name' => 'Employer Only', 'is_visible' => true, 'approval_status' => 'approved']);
 
     $this->get('/business/'.$business->slug)->assertOk()->assertViewIs('businesses.show');
-    $this->get('/business/'.$company->slug)->assertOk()->assertViewIs('businesses.show_intrapreneur');
+    $this->get('/business/'.$company->slug)->assertOk()->assertViewIs('work-profiles.show');
     $this->get('/business/nothing-here')->assertNotFound();
 });
 

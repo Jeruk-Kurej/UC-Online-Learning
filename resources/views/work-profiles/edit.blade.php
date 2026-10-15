@@ -21,7 +21,7 @@
             @method('PUT')
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                @include('businesses.partials.work-profile-fields')
+                @include('work-profiles.partials.fields')
 
                 {{-- --- Logo Upload with Live Preview & Remove Option --- --}}
                 <x-forms.removable-image class="pb-5 md:col-span-2" label="Company Logo" name="logo_url" delete-name="delete_logo"

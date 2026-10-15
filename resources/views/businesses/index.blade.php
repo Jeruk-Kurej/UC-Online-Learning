@@ -1,16 +1,7 @@
-@use('Illuminate\Support\Facades\Storage')
 <x-app-layout>
     @section('title', 'Business Directory')
     <div data-business-directory class="businesses-wrapper mx-auto max-w-[1600px] px-4 pb-8 sm:px-6 lg:px-8"
-         data-view-type="{{ $viewType }}"
-         x-data="businessDirectory(@js([
-    'isPending' => request('status') === 'pending',
-    'provinceCityMap' => $provinceCityMap,
-    'selectedProvince' => (string) request('province'),
-    'selectedCity' => (string) request('city'),
-]))"
-         x-init="viewType = $el.dataset.viewType || 'entrepreneur';
-         init()"
+         x-data="businessDirectory(@js($directoryState))" x-init="init()"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         {{-- --- Page Header --- --}}
         <section class="uco-hero-section-bleed reveal-on-scroll relative mb-8 overflow-hidden py-8 md:py-10">
@@ -42,83 +33,8 @@
 
         {{-- --- Entrepreneur / Intrapreneur Tabs --- --}}
         <div class="reveal-on-scroll mb-8 grid grid-cols-2 gap-3 delay-100 sm:flex sm:justify-center sm:gap-4" :class="{ 'opacity-50 pointer-events-none': isLoading }">
-            {{-- --- Entrepreneurs Card --- --}}
-            <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}"
-               @click.prevent="updateType('entrepreneur', $el.href)"
-               class="group relative flex w-full select-none items-center justify-start gap-2 overflow-hidden rounded-xl border bg-white/90 px-3 py-3 backdrop-blur-md transition-all duration-300 sm:w-auto sm:min-w-[240px] sm:gap-4 sm:rounded-2xl sm:px-6 sm:py-4"
-               :class="(viewType === 'entrepreneur' && !isPending) ?
-               'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' :
-               'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
-
-                {{-- --- Shimmer Overlay --- --}}
-                <div class="absolute inset-0 bg-gradient-to-br from-uco-orange-500/5 to-yellow-500/5 opacity-0 transition-opacity duration-500"
-                     :class="(viewType === 'entrepreneur' && !isPending) && 'opacity-100'"></div>
-
-                {{-- --- Slow Repeating Shimmer Sweep / Hover Sweep --- --}}
-                <div class="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/80 to-transparent transition-all"
-                     :class="(viewType === 'entrepreneur' && !isPending) ? 'animate-uco-shimmer' : 'group-hover:animate-uco-shimmer-once'"></div>
-
-                {{-- --- Floating Light Orb inside (Active) --- --}}
-                <div class="absolute -bottom-6 -right-6 h-16 w-16 scale-75 rounded-full bg-uco-orange-500/15 opacity-0 blur-md filter transition-all duration-500"
-                     :class="(viewType === 'entrepreneur' && !isPending) && 'opacity-100 scale-125'"></div>
-
-                {{-- --- Icon Box with dynamic hover & active transitions --- --}}
-                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-300"
-                     :class="(viewType === 'entrepreneur' && !isPending) ?
-                     'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' :
-                     'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
-                    <i class="bi bi-briefcase text-lg"></i>
-                </div>
-
-                {{-- --- Typography Label details --- --}}
-                <div class="flex min-w-0 flex-col text-left">
-                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
-                    <span class="truncate text-xs font-bold transition-colors duration-300 sm:text-sm"
-                          :class="(viewType === 'entrepreneur' && !isPending) ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
-                        Entrepreneurs
-                    </span>
-                </div>
-            </a>
-
-            {{-- --- Intrapreneurs Card --- --}}
-            <a href="{{ route('businesses.index', ['view' => 'intrapreneur']) }}"
-               @click.prevent="updateType('intrapreneur', $el.href)"
-               class="group relative flex w-full select-none items-center justify-start gap-2 overflow-hidden rounded-xl border bg-white/90 px-3 py-3 backdrop-blur-md transition-all duration-300 sm:w-auto sm:min-w-[240px] sm:gap-4 sm:rounded-2xl sm:px-6 sm:py-4"
-               :class="viewType === 'intrapreneur'
-                   ?
-                   'border-uco-orange-400/80 -translate-y-1 shadow-[0_20px_40px_rgba(247,147,30,0.16),0_4px_12px_rgba(247,147,30,0.06)] ring-4 ring-uco-orange-500/10' :
-                   'border-slate-200/80 hover:border-slate-300/80 hover:-translate-y-0.5 shadow-[0_2px_4px_rgba(0,0,0,0.02)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.05)] hover:ring-4 hover:ring-slate-100'">
-
-                {{-- --- Shimmer Overlay --- --}}
-                <div class="absolute inset-0 bg-gradient-to-br from-uco-orange-500/5 to-yellow-500/5 opacity-0 transition-opacity duration-500"
-                     :class="viewType === 'intrapreneur' && 'opacity-100'"></div>
-
-                {{-- --- Slow Repeating Shimmer Sweep / Hover Sweep --- --}}
-                <div class="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 skew-x-12 bg-gradient-to-r from-transparent via-white/80 to-transparent transition-all"
-                     :class="viewType === 'intrapreneur' ? 'animate-uco-shimmer' : 'group-hover:animate-uco-shimmer-once'"></div>
-
-                {{-- --- Floating Light Orb inside (Active) --- --}}
-                <div class="absolute -bottom-6 -right-6 h-16 w-16 scale-75 rounded-full bg-uco-orange-500/15 opacity-0 blur-md filter transition-all duration-500"
-                     :class="viewType === 'intrapreneur' && 'opacity-100 scale-125'"></div>
-
-                {{-- --- Icon Box with dynamic hover & active transitions --- --}}
-                <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-300"
-                     :class="viewType === 'intrapreneur'
-                         ?
-                         'bg-uco-orange-500 text-white scale-110 rotate-3 shadow-md shadow-uco-orange-500/25' :
-                         'bg-slate-50 border border-slate-100 text-slate-400 group-hover:text-slate-600 group-hover:scale-105 group-hover:bg-slate-100/50'">
-                    <i class="bi bi-building text-lg"></i>
-                </div>
-
-                {{-- --- Typography Label details --- --}}
-                <div class="flex min-w-0 flex-col text-left">
-                    <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
-                    <span class="truncate text-xs font-bold transition-colors duration-300 sm:text-sm"
-                          :class="viewType === 'intrapreneur' ? 'text-slate-900' : 'text-slate-500 group-hover:text-slate-900'">
-                        Intrapreneurs
-                    </span>
-                </div>
-            </a>
+            <x-business.directory-tab type="entrepreneur" icon="bi-briefcase" label="Entrepreneurs" />
+            <x-business.directory-tab type="intrapreneur" icon="bi-building" label="Intrapreneurs" />
         </div>
 
         {{-- --- Filters --- --}}
@@ -157,15 +73,13 @@
                                         x-model="selectedCity"
                                         @change="submitDebounced()" class="min-w-[150px] flex-1 cursor-pointer px-3 text-sm">
                         <option value="">All Cities</option>
-                        <template x-for="city in (selectedProvince ? filteredCities : {{ json_encode($availableCities->values()) }})" :key="city">
+                        <template x-for="city in (selectedProvince ? filteredCities : availableCities)" :key="city">
                             <option :value="city" x-text="city"></option>
                         </template>
                     </x-ui.filter-select>
                 </div>
             </form>
         </div>
-
-        {{-- --- Scrollable Quick Tags for Categories --- --}}
 
         {{-- --- Grid --- --}}
         @if (auth()->user()?->isAdmin() && $errors->has('featured'))

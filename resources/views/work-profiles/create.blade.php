@@ -32,7 +32,7 @@
                 @csrf
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    @include('businesses.partials.work-profile-fields')
+                    @include('work-profiles.partials.fields')
 
                     <x-forms.field look="work-profile" name="logo_url" label="Company Logo">
                         <input type="file" name="logo_url" id="logo_url" accept="image/*"

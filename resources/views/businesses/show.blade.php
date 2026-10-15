@@ -15,7 +15,7 @@
                     {{-- --- Products section --- --}}
                     @if ($offersProducts && ($products->isNotEmpty() || $canManageBusiness))
                         <x-business.offerings-section :business="$business" type="product" :offerings="$products" :can-manage="$canManageBusiness"
-                                                      eyebrow="What We Offer" empty-message="No products added yet. Start building your product catalog." group-actions />
+                                                      eyebrow="What We Offer" empty-message="No products added yet. Start building your product catalog." />
                     @endif
 
                     {{-- --- Services section --- --}}
