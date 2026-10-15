@@ -4,7 +4,6 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-12.x-red.svg?style=flat-square&logo=laravel)](https://laravel.com/)
 [![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-blue.svg?style=flat-square&logo=php)](https://www.php.net/)
 [![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v3-blueviolet.svg?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg?style=flat-square&logo=docker)](https://www.docker.com/)
 
 ---
 
@@ -43,7 +42,7 @@ Administrators curate what is public: they approve businesses and work profiles 
 - **Database Engine:** MySQL with Eloquent ORM
 - **Frontend Assets:** Blade Templates, Tailwind CSS, Alpine.js, Vite
 - **Storage Integrations:** Cloudinary CDN for profile pictures and product media uploads
-- **Deployment:** Vercel (`vercel.json`); a `Dockerfile` is also provided
+- **Deployment:** Vercel (`vercel.json`)
 
 ---
 

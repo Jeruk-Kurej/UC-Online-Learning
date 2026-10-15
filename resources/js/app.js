@@ -1,4 +1,3 @@
-import './bootstrap';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 import registerAjaxPagination from './lib/ajax-pagination';
@@ -99,8 +98,6 @@ function initRevealOnScroll() {
 	});
 }
 
-window.initRevealOnScroll = initRevealOnScroll;
-
 // --- Global toast helper ---
 window.showToast = function(message, type = 'success') {
     window.dispatchEvent(new CustomEvent('notify', {
@@ -116,8 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const target = e.target;
         if (target.tagName === 'INPUT' && target.type === 'number') {
             const isPrice = target.name.includes('price') || 
-                           target.id === 'price' || 
-                           target.classList.contains('price-input');
+                           target.id === 'price';
             
             if (isPrice && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
                 e.preventDefault();

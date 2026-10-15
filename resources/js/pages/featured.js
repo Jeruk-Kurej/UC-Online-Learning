@@ -3,7 +3,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // --- Featured page: testimony carousels and GSAP scroll/hover animations ---
 // Imported by app.js on pages with [data-featured-page]; Alpine starts after this module has run.
-// gsap stays reachable as window.gsap, as it was when it came from the CDN.
+// window.gsap is read by the screenshot checks in .claude/safety-net to finish animations before a shot.
 
 window.gsap = gsap;
 
