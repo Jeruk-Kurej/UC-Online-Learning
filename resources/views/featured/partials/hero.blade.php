@@ -88,7 +88,7 @@
                                         @else
                                             <div
                                                  class="flex h-full w-full items-center justify-center text-[10px] font-black text-uco-orange-400">
-                                                {{ strtoupper(substr($business->name, 0, 1)) }}
+                                                {{ $business->initial }}
                                             </div>
                                         @endif
                                     </div>

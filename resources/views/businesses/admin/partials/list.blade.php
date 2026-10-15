@@ -28,7 +28,7 @@
                                     <img src="{{ $b->logo_url }}" class="h-full w-full object-contain">
                                 @else
                                     <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
-                                        {{ strtoupper(substr($b->name, 0, 1)) }}
+                                        {{ $b->initial }}
                                     </div>
                                 @endif
                             </div>
@@ -49,7 +49,7 @@
                                     <img src="{{ $b->user->profile_photo_url }}" class="h-full w-full object-contain">
                                 @else
                                     <div class="uco-initials-bg flex h-full w-full items-center justify-center text-[10px] font-black text-white">
-                                        {{ strtoupper(substr($b->user?->name ?? 'Unknown', 0, 1)) }}
+                                        {{ $b->user?->initial ?? 'U' }}
                                     </div>
                                 @endif
                             </div>

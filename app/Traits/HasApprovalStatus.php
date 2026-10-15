@@ -40,6 +40,11 @@ trait HasApprovalStatus
 
     // --- Admin decision: only approved items are visible; a reason is kept for rejections and revision requests ---
 
+    public function hasReviewFeedback(): bool
+    {
+        return in_array($this->status, ['rejected', 'need_revision']) && $this->rejection_reason;
+    }
+
     public function applyApprovalStatus(string $status, ?string $reason): void
     {
         $this->fill([

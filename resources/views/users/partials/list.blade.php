@@ -24,7 +24,7 @@
                                     <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-full w-full object-contain">
                                 @else
                                     <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        {{ $user->initial }}
                                     </div>
                                 @endif
                             </div>

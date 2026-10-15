@@ -44,7 +44,7 @@
                                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="h-full w-full" />
                             @else
                                 <div class="uco-initials-bg flex h-full w-full items-center justify-center text-4xl font-black text-white">
-                                    {{ strtoupper(substr($student->name, 0, 1)) }}
+                                    {{ $student->initial }}
                                 </div>
                             @endif
 

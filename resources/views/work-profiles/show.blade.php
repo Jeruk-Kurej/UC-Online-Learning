@@ -135,7 +135,7 @@
                     <x-people.profile-card :person="$student" title-start="Employed" title-end="Student" :status="$student->display_status"
                                            career="Intrapreneur" with-linkedin>
                         {{-- --- Skills --- --}}
-                        @if ($student->skills->count() > 0)
+                        @if ($student->skills->isNotEmpty())
                             <div class="pointer-events-none relative z-10 my-5 h-px w-full bg-gray-100"></div>
                             <div>
                                 <h3 class="mb-4 text-[11px] font-black uppercase tracking-[0.15em] text-gray-400">Skills</h3>

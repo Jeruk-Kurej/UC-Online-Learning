@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
  */
 class Business extends Model
 {
-    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink;
 
     protected $fillable = [
         'user_id',
@@ -180,6 +180,30 @@ class Business extends Model
         $handles = array_filter(array_map('trim', preg_split('/[,;\s]+/', (string) $this->instagram)));
 
         return array_values(array_filter(array_map(fn (string $handle) => ltrim($handle, '@'), $handles), fn (string $handle) => ! empty($handle)));
+    }
+
+    public function getWebsiteUrlAttribute(): ?string
+    {
+        if (! $this->website) {
+            return null;
+        }
+
+        return str_starts_with($this->website, 'http') ? $this->website : 'https://'.$this->website;
+    }
+
+    public function getWebsiteLabelAttribute(): ?string
+    {
+        return $this->website ? preg_replace('#^https?://#', '', $this->website) : null;
+    }
+
+    public function getTypeLabelAttribute(): string
+    {
+        return ucfirst($this->type ?? 'Entrepreneur');
+    }
+
+    public function isEntrepreneur(): bool
+    {
+        return strtolower($this->type ?? '') === 'entrepreneur';
     }
 
     public function whatsappLinkFor(Product $offering): ?string

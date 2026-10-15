@@ -19,7 +19,7 @@
                              class="h-12 w-12 rounded-sm object-contain transition-transform group-hover:scale-105">
                     @else
                         <div class="flex h-12 w-12 items-center justify-center rounded-sm bg-gradient-to-br from-gray-50 to-gray-100 text-base font-black text-gray-400 transition-transform group-hover:scale-105 group-hover:from-orange-50 group-hover:to-orange-100 group-hover:text-orange-600">
-                            {{ strtoupper(substr($addOwner->name, 0, 1)) }}
+                            {{ $addOwner->initial }}
                         </div>
                     @endif
                     <div class="w-full min-w-0">

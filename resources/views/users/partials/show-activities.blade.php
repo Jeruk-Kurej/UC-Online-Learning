@@ -48,7 +48,7 @@
             </div>
             <div class="relative z-10 flex items-center gap-2 border-t border-slate-200 pt-3">
                 <div class="flex h-6 w-6 items-center justify-center rounded-full border border-orange-100 bg-orange-50 text-[10px] font-black text-orange-600">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                    {{ $user->initial }}
                 </div>
                 <p class="text-[10px] font-bold text-slate-500">— {{ $user->name }}</p>
             </div>

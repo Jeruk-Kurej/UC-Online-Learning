@@ -6,7 +6,7 @@
                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="size-full">
                     <x-slot name="fallback">
                         <div class="{{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} flex h-full w-full items-center justify-center bg-gradient-to-br text-3xl font-black">
-                            {{ strtoupper(substr($student->name, 0, 1)) }}
+                            {{ $student->initial }}
                         </div>
                     </x-slot>
                 </x-premium-image>

@@ -36,7 +36,7 @@
     <div class="mt-2 flex items-center gap-2 border-t border-gray-100 pt-4">
         @if ($partner->show_contact_details)
             @if ($partner->whatsapp)
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $partner->whatsapp) }}" target="_blank"
+                <a href="{{ $partner->whatsapp_link }}" target="_blank"
                    class="inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-green-300 bg-green-50 text-xs font-bold text-green-700 transition-all hover:bg-green-100">
                     <i class="bi bi-whatsapp"></i> Chat WA
                 </a>

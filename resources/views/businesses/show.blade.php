@@ -19,7 +19,7 @@
                     @endif
 
                     {{-- --- Services section --- --}}
-                    @if ($offersServices && ($services->count() > 0 || $canManageBusiness))
+                    @if ($offersServices && ($services->isNotEmpty() || $canManageBusiness))
                         <x-business.offerings-section :business="$business" type="service" :offerings="$services" :can-manage="$canManageBusiness"
                                                       eyebrow="Expert Solutions" empty-message="No services added yet. Add your first service to showcase what you offer." />
                     @endif

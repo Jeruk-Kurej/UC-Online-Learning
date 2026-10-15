@@ -58,7 +58,7 @@
         <option value="">Select Province</option>
         @foreach ($provinces as $prov)
             <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>
-                {{ ucwords(strtolower($prov->name)) }}
+                {{ $prov->display_name }}
             </option>
         @endforeach
     </select>
@@ -69,7 +69,7 @@
         <option value="">Select Province First</option>
         @foreach ($availableCities as $city_item)
             <option value="{{ $city_item->id }}" {{ old('city', $company?->city) == $city_item->name ? 'selected' : '' }}>
-                {{ ucwords(strtolower($city_item->name)) }}
+                {{ $city_item->display_name }}
             </option>
         @endforeach
     </select>

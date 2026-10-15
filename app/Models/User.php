@@ -77,7 +77,7 @@ use Illuminate\Support\Carbon;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug;
+    use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink;
 
     protected $fillable = [
         // --- System ---
@@ -208,6 +208,20 @@ class User extends Authenticatable
     public function getProfilePhotoMiniUrlAttribute(): ?string
     {
         return storage_image_url($this->profile_photo_url, ['width' => 150, 'height' => 150, 'crop' => 'thumb']);
+    }
+
+    public function getLinkedinUrlAttribute(): ?string
+    {
+        if (! $this->linkedin) {
+            return null;
+        }
+
+        return str_starts_with($this->linkedin, 'http') ? $this->linkedin : 'https://linkedin.com/in/'.$this->linkedin;
+    }
+
+    public function getFocusLabelAttribute(): string
+    {
+        return $this->current_status ?: (ucfirst((string) $this->role) ?: '-');
     }
 
     public function getRoleLabelAttribute(): string
@@ -362,5 +376,20 @@ class User extends Authenticatable
     public function getDisplayStatusAttribute(): string
     {
         return str_contains(strtolower($this->student_status ?? ''), 'alumni') ? 'Alumni' : 'Student';
+    }
+
+    // --- Contact details on the profile ---
+
+    public function hasContactDetails(bool $withLinkedin = true): bool
+    {
+        return (bool) ($this->whatsapp || $this->email || ($withLinkedin && $this->linkedin));
+    }
+
+    /**
+     * Contacts show when the person allows it; admins always see them.
+     */
+    public function contactsVisibleTo(?User $viewer): bool
+    {
+        return (bool) ($this->show_contact_details || $viewer?->isAdmin());
     }
 }

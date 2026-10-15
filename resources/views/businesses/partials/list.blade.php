@@ -55,7 +55,7 @@
                                     @if ($business->public_owner->profile_photo_url)
                                         <img src="{{ $business->public_owner->profile_photo_url }}" alt="{{ $business->public_owner->name }}" class="h-full w-full object-contain">
                                     @else
-                                        <span class="text-xs font-black text-gray-300">{{ strtoupper(substr($business->public_owner->name, 0, 1)) }}</span>
+                                        <span class="text-xs font-black text-gray-300">{{ $business->public_owner->initial }}</span>
                                     @endif
                                 </div>
                                 <div class="min-w-0">

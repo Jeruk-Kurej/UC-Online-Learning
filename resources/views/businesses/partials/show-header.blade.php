@@ -4,9 +4,9 @@
 
     <x-business.profile-heading :name="$business->name" :logo-url="$business->logo_url" fallback-icon="bi-briefcase">
         <x-slot:badges>
-            <span class="{{ strtolower($business->type ?? '') === 'entrepreneur' ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' }} inline-flex items-center gap-1.5 rounded-xl px-3 py-1 text-xs font-semibold">
+            <span class="{{ $business->isEntrepreneur() ? 'bg-orange-100 text-orange-700' : 'bg-indigo-100 text-indigo-700' }} inline-flex items-center gap-1.5 rounded-xl px-3 py-1 text-xs font-semibold">
                 <i class="bi bi-person-workspace text-[10px]"></i>
-                {{ ucfirst($business->type ?? 'Entrepreneur') }}
+                {{ $business->type_label }}
             </span>
 
             <x-business.mode-badge :mode="$business->offering_mode" />

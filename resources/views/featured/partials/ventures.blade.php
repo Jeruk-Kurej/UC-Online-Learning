@@ -46,7 +46,7 @@
                                     @else
                                         <div
                                              class="flex h-full w-full items-center justify-center rounded-[0.8rem] bg-orange-50 text-2xl font-black text-uco-orange-500">
-                                            {{ strtoupper(substr($featuredBusiness->name, 0, 1)) }}
+                                            {{ $featuredBusiness->initial }}
                                         </div>
                                     @endif
                                 </div>
@@ -81,7 +81,7 @@
                                     @else
                                         <div
                                              class="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 to-orange-100/40 text-sm font-black text-uco-orange-500">
-                                            {{ strtoupper(substr($featuredBusiness->user->name, 0, 1)) }}
+                                            {{ $featuredBusiness->user->initial }}
                                         </div>
                                     @endif
                                 </div>

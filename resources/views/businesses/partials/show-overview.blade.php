@@ -29,7 +29,7 @@
             <x-business.insight class="border-gray-100 sm:border-r sm:pr-4 md:pr-6 lg:pr-8" icon="bi-rocket-takeoff-fill" tone="indigo" caption="Operational milestone" italic-caption>
                 <x-slot:label>Venture Inception</x-slot:label>
                 @if ($business->established_date)
-                    Est. {{ \Carbon\Carbon::parse($business->established_date)->format('M Y') }}
+                    Est. {{ $business->established_date->format('M Y') }}
                 @else
                     Timeline Undisclosed
                 @endif
@@ -93,13 +93,13 @@
                         <p class="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Connect</p>
                         <div class="flex flex-wrap gap-3">
                             @if ($business->website)
-                                <a href="{{ str_starts_with($business->website, 'http') ? $business->website : 'https://' . $business->website }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-gray-700 transition-colors hover:bg-gray-100">
+                                <a href="{{ $business->website_url }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-gray-700 transition-colors hover:bg-gray-100">
                                     <i class="bi bi-globe text-gray-500"></i>
-                                    <span class="text-xs font-bold">{{ preg_replace('#^https?://#', '', $business->website) }}</span>
+                                    <span class="text-xs font-bold">{{ $business->website_label }}</span>
                                 </a>
                             @endif
                             @if ($business->whatsapp)
-                                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $business->whatsapp) }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-green-700 transition-colors hover:bg-green-100">
+                                <a href="{{ $business->whatsapp_link }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-green-700 transition-colors hover:bg-green-100">
                                     <i class="bi bi-whatsapp"></i>
                                     <span class="text-xs font-bold">{{ $business->whatsapp }}</span>
                                 </a>

@@ -40,7 +40,7 @@
                                     </span>
                                 </div>
                                 <p class="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-600">
-                                    {{ Str::limit(strip_tags($message->body), 150) }}
+                                    {{ $message->excerpt }}
                                 </p>
                                 @if ($message->sender)
                                     <div class="flex items-center gap-2 border-t border-gray-100 pt-2">

@@ -7,7 +7,7 @@
             <div class="relative flex h-28 w-28 flex-shrink-0 items-center justify-center overflow-hidden md:h-32 md:w-32">
                 <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="size-full">
                     <x-slot name="fallback">
-                        <span class="select-none text-4xl font-black text-slate-400">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        <span class="select-none text-4xl font-black text-slate-400">{{ $user->initial }}</span>
                     </x-slot>
                 </x-premium-image>
             </div>
@@ -56,14 +56,14 @@
         <div class="space-y-1.5 border-t border-slate-100 pt-4">
             <x-people.detail-row label="Major">{{ $user->major ?: '-' }}</x-people.detail-row>
             <x-people.detail-row label="Join UC Online">{{ $user->year_of_enrollment ?: '-' }}</x-people.detail-row>
-            <x-people.detail-row label="Focus" class="capitalize">{{ $user->current_status ?: (ucfirst($user->role) ?: '-') }}</x-people.detail-row>
+            <x-people.detail-row label="Focus" class="capitalize">{{ $user->focus_label }}</x-people.detail-row>
         </div>
 
         {{-- --- Contact Details Block --- --}}
-        @if (($user->whatsapp || $user->email || $user->linkedin) && ($user->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
+        @if ($user->hasContactDetails() && $user->contactsVisibleTo(auth()->user()))
             <div class="space-y-1.5 border-t border-slate-100 pt-4">
                 @if ($user->whatsapp)
-                    <x-people.contact-row :href="'https://wa.me/' . preg_replace('/[^0-9]/', '', $user->whatsapp)" icon="bi-whatsapp" label="WhatsApp" tone="green" new-tab>
+                    <x-people.contact-row :href="$user->whatsapp_link" icon="bi-whatsapp" label="WhatsApp" tone="green" new-tab>
                         {{ $user->whatsapp }}
                     </x-people.contact-row>
                 @endif
@@ -73,12 +73,12 @@
                     </x-people.contact-row>
                 @endif
                 @if ($user->linkedin)
-                    <x-people.contact-row :href="str_starts_with($user->linkedin, 'http') ? $user->linkedin : 'https://linkedin.com/in/' . $user->linkedin" icon="bi-linkedin" label="LinkedIn" tone="indigo" new-tab>
+                    <x-people.contact-row :href="$user->linkedin_url" icon="bi-linkedin" label="LinkedIn" tone="indigo" new-tab>
                         {{ $user->linkedin }}
                     </x-people.contact-row>
                 @endif
             </div>
-        @elseif($user->whatsapp || $user->email || $user->linkedin)
+        @elseif ($user->hasContactDetails())
             <div class="border-t border-slate-100 pt-4">
                 <div class="rounded-xl border border-slate-100 bg-slate-50 px-3 py-2 text-center">
                     <p class="text-[10px] font-bold uppercase leading-relaxed tracking-wider text-slate-400">
@@ -89,7 +89,7 @@
         @endif
 
         {{-- --- Core Competencies Block --- --}}
-        @if ($user->skills->count() > 0)
+        @if ($user->skills->isNotEmpty())
             <div class="space-y-2 border-t border-slate-100 pt-4">
                 <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">Core Competencies</div>
                 <div class="flex flex-wrap gap-1.5">

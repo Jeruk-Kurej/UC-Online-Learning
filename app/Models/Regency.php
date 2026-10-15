@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Regency extends Model
 {
-    use RegencyTrait;
+    use RegencyTrait, \App\Traits\HasTitleCaseName;
 
     /**
      * Table name.

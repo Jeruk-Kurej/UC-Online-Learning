@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Province extends Model
 {
-    use ProvinceTrait;
+    use ProvinceTrait, \App\Traits\HasTitleCaseName;
 
     /**
      * Table name.

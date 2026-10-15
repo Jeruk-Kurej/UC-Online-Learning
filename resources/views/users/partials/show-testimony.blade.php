@@ -33,7 +33,7 @@
                     <img src="{{ $user->profile_photo_url }}" class="h-10 w-10 rounded-full border-2 border-orange-400 object-cover shadow-sm">
                 @else
                     <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 text-sm font-extrabold text-white shadow-sm">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                        {{ $user->initial }}
                     </div>
                 @endif
                 <div>

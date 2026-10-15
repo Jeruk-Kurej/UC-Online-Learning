@@ -38,7 +38,7 @@
                                 @if (auth()->user()->profile_photo_url)
                                     <img src="{{ storage_image_url(auth()->user()->profile_photo_url, 'profile_thumb') }}" alt="{{ auth()->user()->name }}" class="h-full w-full object-contain">
                                 @else
-                                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                                    {{ auth()->user()->initial }}
                                 @endif
                             </div>
                             <div class="min-w-0 flex-1">
@@ -133,7 +133,7 @@
                                     @if ($testimony->profile_photo_url)
                                         <img src="{{ storage_image_url($testimony->profile_photo_url, 'profile_thumb') }}" alt="{{ $testimony->name }}" class="h-full w-full object-contain">
                                     @else
-                                        {{ strtoupper(substr($testimony->name, 0, 1)) }}
+                                        {{ $testimony->initial }}
                                     @endif
                                 </div>
                                 <div>

@@ -62,7 +62,7 @@
 
                 @if ($business)
                     <x-forms.removable-image class="pb-5 md:col-span-2" label="Business Logo" name="logo" delete-name="delete_logo"
-                                             :url="$business->logo_url" :has-image="$business->has_logo" :initial="strtoupper(substr($business->name, 0, 1))" noun="Logo"
+                                             :url="$business->logo_url" :has-image="$business->has_logo" :initial="$business->initial" noun="Logo"
                                              hint="JPG, PNG, WEBP — Max 20MB" box-class="w-[120px] h-[120px] rounded-xl bg-[#f8fafc] border-[1.5px] border-[#e2e8f0] group shadow-sm flex items-center justify-center p-2"
                                              actions-class="h-[120px]" image-class="">
                         @error('logo')
@@ -105,7 +105,7 @@
                         <option value="">Select Province</option>
                         @foreach ($provinces as $prov)
                             <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>
-                                {{ ucwords(strtolower($prov->name)) }}
+                                {{ $prov->display_name }}
                             </option>
                         @endforeach
                     </select>
@@ -116,7 +116,7 @@
                         <option value="">Select Province First</option>
                         @foreach ($availableCities as $city)
                             <option value="{{ $city->id }}" {{ old('city', $business?->city) == $city->name ? 'selected' : '' }}>
-                                {{ ucwords(strtolower($city->name)) }}
+                                {{ $city->display_name }}
                             </option>
                         @endforeach
                     </select>

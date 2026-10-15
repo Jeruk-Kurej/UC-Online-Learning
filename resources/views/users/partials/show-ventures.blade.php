@@ -1,5 +1,5 @@
 {{-- --- Profile page lists: businesses the person owns, businesses they help run, and workplaces --- --}}
-@if ($user->businesses->count() > 0)
+@if ($user->businesses->isNotEmpty())
     <div class="space-y-6">
         <x-people.section-heading start="Owned" end="Businesses" />
         <div class="grid grid-cols-1 gap-6">
@@ -29,7 +29,7 @@
     </div>
 @endif
 
-@if ($user->memberOfBusinesses->count() > 0)
+@if ($user->memberOfBusinesses->isNotEmpty())
     <div class="space-y-6">
         <x-people.section-heading start="Also" end="Manages" tone="blue" />
         <div class="grid grid-cols-1 gap-6">
@@ -57,7 +57,7 @@
     </div>
 @endif
 
-@if ($user->companies->count() > 0)
+@if ($user->companies->isNotEmpty())
     <div class="space-y-6">
         <x-people.section-heading start="Employment" end="History" />
         <div class="grid grid-cols-1 gap-6">

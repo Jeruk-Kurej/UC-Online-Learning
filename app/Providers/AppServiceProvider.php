@@ -45,11 +45,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(30);
         });
 
-        // --- Unread inbox count for the navigation bell ---
+        // --- Navigation: the signed-in user and the unread inbox count for the bell ---
         View::composer('layouts.navigation', function ($view) {
-            $view->with('unreadInboxCount', auth()->check()
-                ? Message::where('recipient_id', auth()->id())->whereNull('read_at')->count()
-                : 0);
+            $view->with([
+                'authUser' => auth()->user(),
+                'unreadInboxCount' => auth()->check()
+                    ? Message::where('recipient_id', auth()->id())->whereNull('read_at')->count()
+                    : 0,
+            ]);
         });
     }
 }

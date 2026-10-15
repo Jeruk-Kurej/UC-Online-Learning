@@ -21,7 +21,7 @@
     </div>
 
     <div class="p-6">
-        @if ($offerings->count() > 0)
+        @if ($offerings->isNotEmpty())
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 @foreach ($offerings as $offering)
                     <x-business.offering-card :business="$business" :offering="$offering" :can-manage="$canManage" />

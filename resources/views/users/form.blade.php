@@ -108,7 +108,7 @@
                 {{-- --- Profile Photo --- --}}
                 @if ($userToEdit)
                     <x-forms.removable-image label="Profile Photo" name="profile_photo_url" delete-name="delete_profile_photo_url"
-                                             :url="$userToEdit->profile_photo_url" :initial="strtoupper(substr($userToEdit->name, 0, 1))" noun="Photo"
+                                             :url="$userToEdit->profile_photo_url" :initial="$userToEdit->initial" noun="Photo"
                                              hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[110px] h-[140px] group" actions-class="h-[140px]">
                         @error('profile_photo_url')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

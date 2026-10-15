@@ -112,7 +112,7 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 @if ($message->sender->show_contact_details && $message->sender->whatsapp)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $message->sender->whatsapp) }}" target="_blank"
+                                    <a href="{{ $message->sender->whatsapp_link }}" target="_blank"
                                        class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all hover:bg-green-700">
                                         <i class="bi bi-whatsapp"></i> Chat WhatsApp
                                     </a>

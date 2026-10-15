@@ -11,15 +11,12 @@
         {{-- --- Ventures (entrepreneurship) --- --}}
         <x-business.portfolio-section class="mb-16" icon="bi-shop" title="My Ventures (Entrepreneurship)" subtitle="Businesses you own, operate, or co-founded."
                                       :action-url="route('businesses.create')" action-label="Register New Business">
-            @if ($myBusinesses->count() > 0)
+            @if ($myBusinesses->isNotEmpty())
                 <div class="reveal-stagger-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($myBusinesses as $b)
                         <x-business.portfolio-card :href="route('businesses.show', $b)" :item="$b" category-fallback="Uncategorized">
                             <x-slot:badges>
-                                <span class="{{ $b->status === 'approved' ? 'bg-green-500 text-white' : ($b->status === 'rejected' ? 'bg-red-500 text-white' : 'bg-uco-orange-500 text-white') }} flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[9px] font-black uppercase tracking-wider shadow-sm">
-                                    <i class="bi {{ $b->status === 'approved' ? 'bi-check-circle-fill' : ($b->status === 'rejected' ? 'bi-x-circle-fill' : 'bi-hourglass-split') }} text-[9px]"></i>
-                                    {{ $b->status_label }}
-                                </span>
+                                <x-business.status-pill :item="$b" />
 
                                 @if ($b->is_featured && $b->status === 'approved')
                                     <span class="flex items-center gap-1.5 rounded-lg bg-yellow-400 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-yellow-900 shadow-sm">
@@ -32,13 +29,8 @@
                                 {{ $b->description ?: 'No description provided' }}
                             </p>
 
-                            @if (in_array($b->status, ['rejected', 'need_revision']) && $b->rejection_reason)
-                                <div class="{{ $b->status === 'rejected' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100' }} mb-4 rounded-xl border p-3 text-left">
-                                    <p class="{{ $b->status === 'rejected' ? 'text-red-600' : 'text-blue-600' }} mb-1 text-[10px] font-bold uppercase tracking-wider">
-                                        {{ $b->status === 'rejected' ? 'Rejection Reason:' : 'Revision Feedback:' }}
-                                    </p>
-                                    <p class="{{ $b->status === 'rejected' ? 'text-red-700' : 'text-blue-700' }} text-xs italic">"{{ $b->rejection_reason }}"</p>
-                                </div>
+                            @if ($b->hasReviewFeedback())
+                                <x-business.review-feedback :item="$b" />
                             @endif
                         </x-business.portfolio-card>
                     @endforeach
@@ -54,7 +46,7 @@
         <x-business.portfolio-section icon="bi-briefcase" title="My Professional Career (Intrapreneurship)"
                                       subtitle="Companies and corporate environments where you are currently employed as a professional."
                                       :action-url="route('intrapreneurs.create')" action-label="Register Work Profile">
-            @if ($myCompanies->count() > 0)
+            @if ($myCompanies->isNotEmpty())
                 <div class="reveal-stagger-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
                     @foreach ($myCompanies as $c)
                         <x-business.portfolio-card :href="route('intrapreneurs.show', $c)" :item="$c" category-fallback="Corporate">

@@ -22,7 +22,7 @@
             @if ($person->profile_photo_thumb_url)
                 <x-premium-image :src="$person->profile_photo_thumb_url" :alt="$person->name" class="h-full w-full" />
             @else
-                <span class="select-none text-3xl font-black opacity-20">{{ strtoupper(substr($person->name, 0, 1)) }}</span>
+                <span class="select-none text-3xl font-black opacity-20">{{ $person->initial }}</span>
             @endif
         </div>
         <div class="min-w-0 flex-1">
@@ -51,54 +51,20 @@
     </div>
 
     {{-- --- Contacts --- --}}
-    @if (($person->whatsapp || $person->email || ($withLinkedin && $person->linkedin)) && ($person->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
+    @if ($person->hasContactDetails($withLinkedin) && $person->contactsVisibleTo(auth()->user()))
         <div class="pointer-events-none relative z-10 my-5 h-px w-full bg-gray-100"></div>
         <div class="relative z-20 space-y-4">
             @if ($person->whatsapp)
-                <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $person->whatsapp) }}" target="_blank" class="group flex cursor-pointer items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-50 text-green-500 transition-colors group-hover:bg-green-100">
-                            <i class="bi bi-whatsapp text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black uppercase leading-tight tracking-widest text-gray-400">WhatsApp</p>
-                            <p class="mt-0.5 text-sm font-bold leading-tight text-gray-800 transition-colors group-hover:text-green-600">{{ $person->whatsapp }}</p>
-                        </div>
-                    </div>
-                    <i class="bi bi-arrow-up-right text-sm text-gray-300 transition-colors group-hover:text-green-500"></i>
-                </a>
+                <x-people.contact-tile :href="$person->whatsapp_link" icon="bi-whatsapp" label="WhatsApp" tone="green" new-tab>{{ $person->whatsapp }}</x-people.contact-tile>
             @endif
-
             @if ($person->email)
-                <a href="mailto:{{ $person->email }}" class="group flex cursor-pointer items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-500 transition-colors group-hover:bg-blue-100">
-                            <i class="bi bi-envelope text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black uppercase leading-tight tracking-widest text-gray-400">Email</p>
-                            <p class="mt-0.5 text-sm font-bold leading-tight text-gray-800 transition-colors group-hover:text-blue-600">{{ $person->email }}</p>
-                        </div>
-                    </div>
-                    <i class="bi bi-arrow-up-right text-sm text-gray-300 transition-colors group-hover:text-blue-500"></i>
-                </a>
+                <x-people.contact-tile :href="'mailto:' . $person->email" icon="bi-envelope" label="Email" tone="blue">{{ $person->email }}</x-people.contact-tile>
             @endif
             @if ($withLinkedin && $person->linkedin)
-                <a href="{{ str_starts_with($person->linkedin, 'http') ? $person->linkedin : 'https://linkedin.com/in/' . $person->linkedin }}" target="_blank" class="group flex cursor-pointer items-center justify-between">
-                    <div class="flex items-center gap-4">
-                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-50 text-indigo-500 transition-colors group-hover:bg-indigo-100">
-                            <i class="bi bi-linkedin text-lg"></i>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-black uppercase leading-tight tracking-widest text-gray-400">LinkedIn</p>
-                            <p class="mt-0.5 text-sm font-bold leading-tight text-gray-800 transition-colors group-hover:text-indigo-600">{{ $person->linkedin }}</p>
-                        </div>
-                    </div>
-                    <i class="bi bi-arrow-up-right text-sm text-gray-300 transition-colors group-hover:text-indigo-500"></i>
-                </a>
+                <x-people.contact-tile :href="$person->linkedin_url" icon="bi-linkedin" label="LinkedIn" tone="indigo" new-tab>{{ $person->linkedin }}</x-people.contact-tile>
             @endif
         </div>
-    @elseif($person->whatsapp || $person->email || ($withLinkedin && $person->linkedin))
+    @elseif ($person->hasContactDetails($withLinkedin))
         <div class="pointer-events-none relative z-10 my-5 h-px w-full bg-gray-100"></div>
         <div class="relative z-20 px-5 py-2 text-center">
             <p class="text-[10px] font-bold uppercase leading-relaxed tracking-widest text-gray-400">

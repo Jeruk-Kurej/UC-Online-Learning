@@ -25,7 +25,7 @@
 
                 {{-- --- Logo Upload with Live Preview & Remove Option --- --}}
                 <x-forms.removable-image class="pb-5 md:col-span-2" label="Company Logo" name="logo_url" delete-name="delete_logo"
-                                         :url="$company->logo_url" :has-image="$company->has_logo" :initial="strtoupper(substr($company->name, 0, 1))" noun="Logo"
+                                         :url="$company->logo_url" :has-image="$company->has_logo" :initial="$company->initial" noun="Logo"
                                          hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[120px] h-[120px] rounded-xl bg-[#f8fafc] border-[1.5px] border-[#e2e8f0] group shadow-sm flex items-center justify-center p-2"
                                          actions-class="h-[120px]" image-class="" initials-class="uco-initials-bg">
                     @error('logo_url')
