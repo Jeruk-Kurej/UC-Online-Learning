@@ -54,7 +54,7 @@
 </x-forms.field>
 
 <x-forms.field look="work-profile" name="province" label="Province" :show-error="false">
-    <select name="province" id="province" data-region-province data-region-city="#city" class="form-input-custom">
+    <select name="province" id="province" data-region-province data-region-city="#city" data-regencies-url="{{ route('api.regencies', [], false) }}" class="form-input-custom">
         <option value="">Select Province</option>
         @foreach ($provinces as $prov)
             <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>

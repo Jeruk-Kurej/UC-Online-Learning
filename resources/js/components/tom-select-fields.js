@@ -10,7 +10,7 @@ function initPlainSelects() {
 }
 
 // --- Province → city ---
-// <select data-region-province data-region-city="#city">
+// <select data-region-province data-region-city="#city" data-regencies-url="/api/regencies">
 // <select id="city" data-region-city-placeholder="Select City" data-region-city-starts-disabled>
 // Without data-region-city-starts-disabled, the city list starts disabled only when no province is chosen.
 
@@ -49,7 +49,7 @@ function initRegionPairs() {
                 citySelect.settings.placeholder = 'Loading cities...';
                 citySelect.inputState();
 
-                fetch(`/api/regencies?province_id=${value}`)
+                fetch(`${provinceElement.dataset.regenciesUrl}?province_id=${value}`)
                     .then((response) => response.json())
                     .then((data) => {
                         citySelect.addOptions(data);

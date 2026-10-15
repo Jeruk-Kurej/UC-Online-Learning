@@ -25,7 +25,6 @@ const TAB_CLASSES = {
 function businessDirectory(state) {
     return {
         ...ajaxList({ container: 'businesses-list-container', loadingKey: 'isLoading' }),
-        showImportModal: false,
         viewType: state.viewType,
         isPending: state.isPending,
         availableCities: state.availableCities,

@@ -101,7 +101,7 @@
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <x-forms.field look="business" name="province" label="Province" :show-error="false">
-                    <select name="province" id="province" data-region-province data-region-city="#city" class="block w-full">
+                    <select name="province" id="province" data-region-province data-region-city="#city" data-regencies-url="{{ route('api.regencies', [], false) }}" class="block w-full">
                         <option value="">Select Province</option>
                         @foreach ($provinces as $prov)
                             <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>

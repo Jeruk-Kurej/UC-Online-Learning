@@ -1,5 +1,6 @@
 // --- Import progress: upload, polling, floating card and detail modal ---
-// Used by partials/import-progress on the admin user and business lists.
+// Used by partials/import-progress on the admin user and business lists; the partial passes the endpoint URLs as
+// data-check-url, data-progress-url (with __ID__ for the import id) and data-clear-url.
 
 export default function sharedImportManager() {
     return {
@@ -17,8 +18,11 @@ export default function sharedImportManager() {
         showDetailModal: false,
         polling: null,
         fileName: '',
+        urls: {},
 
         init() {
+            this.urls = { ...this.$el.dataset };
+
             // --- Restore from localStorage first (survives a page refresh) ---
             const saved = localStorage.getItem('uco_active_import');
             if (saved) {
@@ -47,7 +51,7 @@ export default function sharedImportManager() {
 
         async checkActiveImport() {
             try {
-                const res = await fetch('/import-progress/check', {
+                const res = await fetch(this.urls.checkUrl, {
                     headers: {
                         Accept: 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -154,7 +158,7 @@ export default function sharedImportManager() {
         async poll() {
             if (!this.importId) return;
             try {
-                const res = await fetch(`/import-progress/${this.importId}`, {
+                const res = await fetch(this.urls.progressUrl.replace('__ID__', this.importId), {
                     headers: {
                         Accept: 'application/json',
                     },
@@ -181,7 +185,7 @@ export default function sharedImportManager() {
                     this.polling = null;
                     localStorage.removeItem('uco_active_import');
                     this._refreshPageList();
-                    fetch('/clear-active-import', {
+                    fetch(this.urls.clearUrl, {
                         method: 'POST',
                         headers: {
                             Accept: 'application/json',
@@ -230,7 +234,7 @@ export default function sharedImportManager() {
 
             localStorage.removeItem('uco_active_import');
 
-            fetch('/clear-active-import', {
+            fetch(this.urls.clearUrl, {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

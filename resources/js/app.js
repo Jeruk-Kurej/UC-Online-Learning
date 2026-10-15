@@ -1,20 +1,26 @@
-import registerConfirmSubmit from './lib/confirm-submit';
-import registerEnterBlurs from './lib/enter-blurs';
-import registerAjaxPagination from './lib/ajax-pagination';
-import registerConfirmForm from './lib/confirm-form';
+// --- App entry: shared Alpine components, global behaviour, then page modules loaded only where their markup exists ---
 
 import Alpine from 'alpinejs';
-import toastStack from './components/toast-stack';
-import sharedImportManager from './components/import-manager';
-import importDropzone from './components/import-dropzone';
-import photoPicker from './components/photo-picker';
-import removablePhoto from './components/removable-photo';
-import fileDrop from './components/file-drop';
+import registerAjaxPagination from './lib/ajax-pagination';
+import registerConfirmForm from './lib/confirm-form';
+import registerConfirmSubmit from './lib/confirm-submit';
+import registerEnterBlurs from './lib/enter-blurs';
+import registerPriceArrowKeys from './lib/price-arrow-keys';
+import revealOnScroll from './lib/reveal-on-scroll';
+import showToast from './lib/show-toast';
+import achievementList from './components/achievement-list';
 import activityFiles from './components/activity-files';
 import autoplayCarousel from './components/autoplay-carousel';
-import achievementList from './components/achievement-list';
-import sectionBuilder from './components/section-builder';
+import fileDrop from './components/file-drop';
 import guestToasts from './components/guest-toasts';
+import importDropzone from './components/import-dropzone';
+import sharedImportManager from './components/import-manager';
+import photoPicker from './components/photo-picker';
+import removablePhoto from './components/removable-photo';
+import sectionBuilder from './components/section-builder';
+import toastStack from './components/toast-stack';
+
+// --- Shared Alpine components ---
 
 window.Alpine = Alpine;
 
@@ -66,79 +72,20 @@ if (document.readyState === 'loading') {
     startAlpine();
 }
 
-function initRevealOnScroll() {
-    const targets = document.querySelectorAll('.reveal-on-scroll:not([data-reveal-bound="1"])');
+// --- Global behaviour ---
 
-    if (!targets.length) {
-        return;
-    }
-
-    if (!('IntersectionObserver' in window)) {
-        targets.forEach((target) => {
-            target.classList.add('is-visible');
-            target.dataset.revealBound = '1';
-        });
-        return;
-    }
-
-    if (!window.__ucoRevealObserver) {
-        window.__ucoRevealObserver = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        window.__ucoRevealObserver.unobserve(entry.target);
-                    }
-                });
-            },
-            { threshold: 0.02 },
-        );
-    }
-
-    targets.forEach((target) => {
-        target.dataset.revealBound = '1';
-        window.__ucoRevealObserver.observe(target);
-    });
-}
-
-// --- Global toast helper ---
-window.showToast = function (message, type = 'success') {
-    window.dispatchEvent(
-        new CustomEvent('notify', {
-            detail: { message, type },
-        }),
-    );
-};
+window.showToast = showToast;
 
 document.addEventListener('DOMContentLoaded', () => {
-    initRevealOnScroll();
-
-    // --- Price inputs: arrow keys step by 1000, any value is allowed ---
-    document.addEventListener('keydown', (e) => {
-        const target = e.target;
-        if (target.tagName === 'INPUT' && target.type === 'number') {
-            const isPrice = target.name.includes('price') || target.id === 'price';
-
-            if (isPrice && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
-                e.preventDefault();
-                const step = 1000;
-                const currentVal = parseFloat(target.value) || 0;
-                const newVal = e.key === 'ArrowUp' ? currentVal + step : currentVal - step;
-
-                target.value = Math.max(0, newVal);
-
-                target.dispatchEvent(new Event('input', { bubbles: true }));
-                target.dispatchEvent(new Event('change', { bubbles: true }));
-            }
-        }
-    });
+    revealOnScroll();
+    registerPriceArrowKeys();
 });
-
-// --- Page modules (loaded only where their markup exists) ---
 
 registerConfirmSubmit();
 registerAjaxPagination();
 registerConfirmForm();
+
+// --- Page modules without Alpine components ---
 
 if (document.querySelector('[data-offering-form]')) {
     import('./pages/offering-form').then(({ default: initOfferingForm }) => initOfferingForm());

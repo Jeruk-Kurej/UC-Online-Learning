@@ -1,5 +1,8 @@
 <div x-data="sharedImportManager()"
      x-init="init()"
+     data-check-url="{{ route('import.check', [], false) }}"
+     data-progress-url="{{ route('import.progress', ['sessionId' => '__ID__'], false) }}"
+     data-clear-url="{{ route('import.clear', [], false) }}"
      @start-import.window="uploadImportFile($event.detail)"
      class="relative">
 
