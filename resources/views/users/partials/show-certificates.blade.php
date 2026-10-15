@@ -36,36 +36,12 @@
                 @endforeach
             </div>
 
-            {{-- --- Navigation Arrows --- --}}
-            <template x-if="total > 1">
-                <div>
-                    <button @click="activeIndex = (activeIndex - 1 + total) % total"
-                            class="absolute left-3 top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/60 bg-white/90 text-slate-800 opacity-0 shadow-sm backdrop-blur-sm transition duration-200 hover:bg-white group-hover:opacity-100">
-                        <i class="bi bi-chevron-left text-sm"></i>
-                    </button>
-                    <button @click="activeIndex = (activeIndex + 1) % total"
-                            class="absolute right-3 top-1/2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/60 bg-white/90 text-slate-800 opacity-0 shadow-sm backdrop-blur-sm transition duration-200 hover:bg-white group-hover:opacity-100">
-                        <i class="bi bi-chevron-right text-sm"></i>
-                    </button>
-                </div>
-            </template>
+            <x-people.slide-controls layer="z-20" />
 
-            {{-- --- Dots Indicators --- --}}
-            <template x-if="total > 1">
-                <div class="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-                    <template x-for="(item, index) in total" :key="index">
-                        <button @click="activeIndex = index"
-                                class="h-1.5 w-1.5 rounded-full transition-all duration-300"
-                                :class="activeIndex === index ? 'bg-[#f7931e] w-4' : 'bg-slate-300'"></button>
-                    </template>
-                </div>
-            </template>
-
-            {{-- --- Label --- --}}
-            <div class="absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-md border border-slate-200/60 bg-white/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm backdrop-blur-md">
+            <x-people.slide-label layer="z-20">
                 <i class="bi bi-patch-check-fill text-[#f7931e]"></i>
                 <span>Certifications</span>
-            </div>
+            </x-people.slide-label>
         </div>
     </div>
 @endif

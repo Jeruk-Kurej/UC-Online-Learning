@@ -54,58 +54,28 @@
 
         {{-- --- Academic Details Block --- --}}
         <div class="space-y-1.5 border-t border-slate-100 pt-4">
-            <div class="-mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Major</span>
-                <span class="ml-2 text-right font-extrabold text-slate-700">{{ $user->major ?: '-' }}</span>
-            </div>
-            <div class="-mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Join UC Online</span>
-                <span class="ml-2 text-right font-extrabold text-slate-700">{{ $user->year_of_enrollment ?: '-' }}</span>
-            </div>
-            <div class="-mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs">
-                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Focus</span>
-                <span class="ml-2 text-right font-extrabold capitalize text-slate-700">{{ $user->current_status ?: (ucfirst($user->role) ?: '-') }}</span>
-            </div>
+            <x-people.detail-row label="Major">{{ $user->major ?: '-' }}</x-people.detail-row>
+            <x-people.detail-row label="Join UC Online">{{ $user->year_of_enrollment ?: '-' }}</x-people.detail-row>
+            <x-people.detail-row label="Focus" class="capitalize">{{ $user->current_status ?: (ucfirst($user->role) ?: '-') }}</x-people.detail-row>
         </div>
 
         {{-- --- Contact Details Block --- --}}
         @if (($user->whatsapp || $user->email || $user->linkedin) && ($user->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
             <div class="space-y-1.5 border-t border-slate-100 pt-4">
                 @if ($user->whatsapp)
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $user->whatsapp) }}" target="_blank"
-                       class="group -mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs transition duration-200 hover:border-green-100/50 hover:bg-green-50/50">
-                        <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 transition-colors group-hover:text-green-600">
-                            <i class="bi bi-whatsapp text-sm text-green-600"></i>
-                            WhatsApp
-                        </span>
-                        <span class="ml-2 break-all text-right font-extrabold text-slate-700 transition-colors group-hover:text-green-700">
-                            {{ $user->whatsapp }}
-                        </span>
-                    </a>
+                    <x-people.contact-row :href="'https://wa.me/' . preg_replace('/[^0-9]/', '', $user->whatsapp)" icon="bi-whatsapp" label="WhatsApp" tone="green" new-tab>
+                        {{ $user->whatsapp }}
+                    </x-people.contact-row>
                 @endif
                 @if ($user->email)
-                    <a href="mailto:{{ $user->email }}"
-                       class="group -mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs transition duration-200 hover:border-blue-100/50 hover:bg-blue-50/50">
-                        <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 transition-colors group-hover:text-blue-600">
-                            <i class="bi bi-envelope text-sm text-blue-600"></i>
-                            Email
-                        </span>
-                        <span class="ml-2 break-all text-right font-extrabold text-slate-700 transition-colors group-hover:text-blue-700">
-                            {{ $user->email }}
-                        </span>
-                    </a>
+                    <x-people.contact-row :href="'mailto:' . $user->email" icon="bi-envelope" label="Email" tone="blue">
+                        {{ $user->email }}
+                    </x-people.contact-row>
                 @endif
                 @if ($user->linkedin)
-                    <a href="{{ str_starts_with($user->linkedin, 'http') ? $user->linkedin : 'https://linkedin.com/in/' . $user->linkedin }}" target="_blank"
-                       class="group -mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs transition duration-200 hover:border-indigo-100/50 hover:bg-indigo-50/50">
-                        <span class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 transition-colors group-hover:text-indigo-600">
-                            <i class="bi bi-linkedin text-sm text-indigo-600"></i>
-                            LinkedIn
-                        </span>
-                        <span class="ml-2 break-all text-right font-extrabold text-slate-700 transition-colors group-hover:text-indigo-700">
-                            {{ $user->linkedin }}
-                        </span>
-                    </a>
+                    <x-people.contact-row :href="str_starts_with($user->linkedin, 'http') ? $user->linkedin : 'https://linkedin.com/in/' . $user->linkedin" icon="bi-linkedin" label="LinkedIn" tone="indigo" new-tab>
+                        {{ $user->linkedin }}
+                    </x-people.contact-row>
                 @endif
             </div>
         @elseif($user->whatsapp || $user->email || $user->linkedin)

@@ -3,11 +3,7 @@
 
         {{-- --- Top Back Button Bar --- --}}
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <a href="{{ route('inbox.index') }}"
-               class="group inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:border-gray-900 hover:bg-gray-900 hover:text-white hover:shadow-md">
-                <i class="bi bi-arrow-left text-base transition-transform duration-200 group-hover:-translate-x-0.5"></i>
-                <span>Back to Inbox</span>
-            </a>
+            <x-ui.back-link :href="route('inbox.index')" label="Back to Inbox" />
 
             <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700">
                 <i class="bi bi-envelope-open-fill"></i> Collaboration Message

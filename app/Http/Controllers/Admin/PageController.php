@@ -10,9 +10,12 @@ class PageController extends Controller
 {
     public function edit(Page $page)
     {
-        $initialSections = Page::sectionsFor($page);
-
-        return view('admin.pages.edit', compact('page', 'initialSections'));
+        return view('admin.pages.edit', [
+            'page' => $page,
+            'initialSections' => Page::sectionsFor($page),
+            'sectionTypes' => Page::SECTION_TYPES,
+            'featureIcons' => Page::FEATURE_ICONS,
+        ]);
     }
 
     public function update(Request $request, Page $page)

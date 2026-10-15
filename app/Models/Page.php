@@ -12,6 +12,29 @@ class Page extends Model
         'content_json' => 'array',
     ];
 
+    // --- Section types the About builder can add (button label and icon) ---
+
+    public const SECTION_TYPES = [
+        'hero' => ['label' => 'Hero Header', 'icon' => 'bi-layout-text-window-reverse'],
+        'feature_cards' => ['label' => 'Feature Cards Grid', 'icon' => 'bi-grid-3x3-gap'],
+        'stats_grid' => ['label' => 'Impact Stats Grid', 'icon' => 'bi-bar-chart-line'],
+        'text_block' => ['label' => 'Text / FAQ Block', 'icon' => 'bi-chat-square-text'],
+        'cta_banner' => ['label' => 'CTA Banner', 'icon' => 'bi-megaphone'],
+    ];
+
+    // --- Icons a feature card can pick ---
+
+    public const FEATURE_ICONS = [
+        'bi-rocket-takeoff' => 'Rocket (Rapid Launch)',
+        'bi-people' => 'People (Global Network)',
+        'bi-graph-up-arrow' => 'Graph (Scalable Growth)',
+        'bi-lightning-charge' => 'Lightning',
+        'bi-shield-check' => 'Shield',
+        'bi-trophy' => 'Trophy',
+        'bi-star' => 'Star',
+        'bi-lightbulb' => 'Lightbulb',
+    ];
+
     // --- Sections ---
 
     /**

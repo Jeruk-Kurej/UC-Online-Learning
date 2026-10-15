@@ -43,52 +43,28 @@
                         </div>
                     </div>
 
-                    {{-- --- Type 1: hero section --- --}}
+                    {{-- --- Hero --- --}}
                     <template x-if="sec.type === 'hero'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Top Tagline Badge</label>
-                                    <input type="text" x-model="sec.badge" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Main Headline Title</label>
-                                    <input type="text" x-model="sec.title" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
+                                <x-cms.field label="Top Tagline Badge" model="sec.badge" />
+                                <x-cms.field label="Main Headline Title" model="sec.title" />
                             </div>
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Subtitle Description</label>
-                                <textarea x-model="sec.subtitle" rows="2" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:border-uco-orange-500 focus:ring-uco-orange-500"></textarea>
-                            </div>
+                            <x-cms.field label="Subtitle Description" model="sec.subtitle" look="body" :rows="2" />
                         </div>
                     </template>
 
-                    {{-- --- Type 2: feature cards grid --- --}}
+                    {{-- --- Feature cards --- --}}
                     <template x-if="sec.type === 'feature_cards'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Section Badge</label>
-                                    <input type="text" x-model="sec.badge" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Section Title</label>
-                                    <input type="text" x-model="sec.title" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Section Subtitle</label>
-                                    <input type="text" x-model="sec.subtitle" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
+                                <x-cms.field label="Section Badge" model="sec.badge" />
+                                <x-cms.field label="Section Title" model="sec.title" />
+                                <x-cms.field label="Section Subtitle" model="sec.subtitle" look="body" />
                             </div>
 
-                            {{-- --- Cards Container --- --}}
                             <div class="space-y-4 border-t border-gray-100 pt-4">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Feature Cards (<span x-text="sec.cards ? sec.cards.length : 0"></span>)</span>
-                                    <button type="button" @click="addCard(sIdx)" class="inline-flex items-center gap-1.5 rounded-lg border border-uco-orange-200 bg-uco-orange-50 px-3.5 py-1.5 text-xs font-bold text-uco-orange-700 transition-colors hover:bg-uco-orange-100">
-                                        <i class="bi bi-plus-circle"></i> Add Card
-                                    </button>
-                                </div>
+                                <x-cms.list-heading label="Feature Cards" count="sec.cards ? sec.cards.length : 0" add="addCard(sIdx)" button="Add Card" />
 
                                 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     <template x-for="(card, cIdx) in sec.cards" :key="cIdx">
@@ -100,29 +76,9 @@
                                                 </button>
                                             </div>
 
-                                            <div class="space-y-1">
-                                                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Icon</label>
-                                                <select x-model="card.icon" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-800 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                                    <option value="bi-rocket-takeoff">Rocket (Rapid Launch)</option>
-                                                    <option value="bi-people">People (Global Network)</option>
-                                                    <option value="bi-graph-up-arrow">Graph (Scalable Growth)</option>
-                                                    <option value="bi-lightning-charge">Lightning</option>
-                                                    <option value="bi-shield-check">Shield</option>
-                                                    <option value="bi-trophy">Trophy</option>
-                                                    <option value="bi-star">Star</option>
-                                                    <option value="bi-lightbulb">Lightbulb</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="space-y-1">
-                                                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Title</label>
-                                                <input type="text" x-model="card.title" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                            </div>
-
-                                            <div class="space-y-1">
-                                                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Description</label>
-                                                <textarea x-model="card.description" rows="3" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs font-medium text-gray-700 focus:border-uco-orange-500 focus:ring-uco-orange-500"></textarea>
-                                            </div>
+                                            <x-cms.field label="Icon" model="card.icon" look="item-label" :options="$featureIcons" />
+                                            <x-cms.field label="Title" model="card.title" look="item-heading" />
+                                            <x-cms.field label="Description" model="card.description" look="item-body" :rows="3" />
                                         </div>
                                     </template>
                                 </div>
@@ -130,21 +86,13 @@
                         </div>
                     </template>
 
-                    {{-- --- Type 3: stats grid --- --}}
+                    {{-- --- Stats grid --- --}}
                     <template x-if="sec.type === 'stats_grid'">
                         <div class="space-y-6">
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Stats Section Title</label>
-                                <input type="text" x-model="sec.title" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                            </div>
+                            <x-cms.field label="Stats Section Title" model="sec.title" />
 
                             <div class="space-y-4 border-t border-gray-100 pt-4">
-                                <div class="flex items-center justify-between">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500">Stat Metric Cards (<span x-text="sec.items ? sec.items.length : 0"></span>)</span>
-                                    <button type="button" @click="addStat(sIdx)" class="inline-flex items-center gap-1.5 rounded-lg border border-uco-orange-200 bg-uco-orange-50 px-3.5 py-1.5 text-xs font-bold text-uco-orange-700 transition-colors hover:bg-uco-orange-100">
-                                        <i class="bi bi-plus-circle"></i> Add Stat
-                                    </button>
-                                </div>
+                                <x-cms.list-heading label="Stat Metric Cards" count="sec.items ? sec.items.length : 0" add="addStat(sIdx)" button="Add Stat" />
 
                                 <div class="grid grid-cols-2 gap-6 md:grid-cols-4">
                                     <template x-for="(st, stIdx) in sec.items" :key="stIdx">
@@ -155,14 +103,8 @@
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </div>
-                                            <div class="space-y-1">
-                                                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Value / Number</label>
-                                                <input type="text" x-model="st.number" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm font-extrabold text-uco-orange-600 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                            </div>
-                                            <div class="space-y-1">
-                                                <label class="block text-[10px] font-bold uppercase tracking-wider text-gray-500">Label</label>
-                                                <input type="text" x-model="st.label" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-800 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                            </div>
+                                            <x-cms.field label="Value / Number" model="st.number" look="item-number" />
+                                            <x-cms.field label="Label" model="st.label" look="item-label" />
                                         </div>
                                     </template>
                                 </div>
@@ -170,42 +112,24 @@
                         </div>
                     </template>
 
-                    {{-- --- Type 4: text / faq block --- --}}
+                    {{-- --- Text / FAQ block --- --}}
                     <template x-if="sec.type === 'text_block'">
                         <div class="space-y-4">
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Block Heading</label>
-                                <input type="text" x-model="sec.heading" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                            </div>
-                            <div class="space-y-1.5">
-                                <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Paragraph Content</label>
-                                <textarea x-model="sec.content" rows="4" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:border-uco-orange-500 focus:ring-uco-orange-500"></textarea>
-                            </div>
+                            <x-cms.field label="Block Heading" model="sec.heading" />
+                            <x-cms.field label="Paragraph Content" model="sec.content" look="body" :rows="4" />
                         </div>
                     </template>
 
-                    {{-- --- Type 5: cta banner --- --}}
+                    {{-- --- CTA banner --- --}}
                     <template x-if="sec.type === 'cta_banner'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">CTA Heading</label>
-                                    <input type="text" x-model="sec.heading" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">CTA Subtitle</label>
-                                    <input type="text" x-model="sec.subtitle" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
+                                <x-cms.field label="CTA Heading" model="sec.heading" />
+                                <x-cms.field label="CTA Subtitle" model="sec.subtitle" look="body" />
                             </div>
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Primary Button Label</label>
-                                    <input type="text" x-model="sec.primary_btn_text" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
-                                <div class="space-y-1.5">
-                                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-700">Secondary Button Label</label>
-                                    <input type="text" x-model="sec.secondary_btn_text" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm font-semibold text-gray-900 focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                                </div>
+                                <x-cms.field label="Primary Button Label" model="sec.primary_btn_text" />
+                                <x-cms.field label="Secondary Button Label" model="sec.secondary_btn_text" />
                             </div>
                         </div>
                     </template>
@@ -226,21 +150,11 @@
             </div>
 
             <div class="flex flex-wrap gap-2">
-                <button type="button" @click="addSection('hero')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
-                    <i class="bi bi-layout-text-window-reverse"></i> Hero Header
-                </button>
-                <button type="button" @click="addSection('feature_cards')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
-                    <i class="bi bi-grid-3x3-gap"></i> Feature Cards Grid
-                </button>
-                <button type="button" @click="addSection('stats_grid')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
-                    <i class="bi bi-bar-chart-line"></i> Impact Stats Grid
-                </button>
-                <button type="button" @click="addSection('text_block')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
-                    <i class="bi bi-chat-square-text"></i> Text / FAQ Block
-                </button>
-                <button type="button" @click="addSection('cta_banner')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
-                    <i class="bi bi-megaphone"></i> CTA Banner
-                </button>
+                @foreach ($sectionTypes as $type => $section)
+                    <button type="button" @click="addSection('{{ $type }}')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
+                        <i class="bi {{ $section['icon'] }}"></i> {{ $section['label'] }}
+                    </button>
+                @endforeach
             </div>
         </div>
 
