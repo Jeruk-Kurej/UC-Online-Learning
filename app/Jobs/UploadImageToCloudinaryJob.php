@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Services\ImageOptimizerService;
 use App\Support\GoogleDrive;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Bus\Queueable;
@@ -55,11 +56,7 @@ class UploadImageToCloudinaryJob implements ShouldQueue
     public function handle(): void
     {
         $url = $this->cleanUrl($this->url);
-        if (! $url) {
-            return;
-        }
-
-        if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
+        if (! $url || str_contains($url, 'cloudinary.com')) {
             return;
         }
 
@@ -70,53 +67,7 @@ class UploadImageToCloudinaryJob implements ShouldQueue
             // --- Rate limit so concurrent imports do not hammer external servers ---
             usleep(random_int(100000, 300000));
 
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, (string) $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-
-            $curlHeaders = [
-                'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-                'Referer: https://employee.uc.ac.id/index.php/login',
-            ];
-
-            $isUniversityPortal = str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
-            if ($isUniversityPortal) {
-                $cookie = config('services.uc.cookie_raw', '');
-                if ($cookie) {
-                    $curlHeaders[] = 'Cookie: '.trim($cookie);
-                }
-            }
-
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
-            $contents = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-            curl_close($ch);
-
-            // --- Fallback for the employee host redirect ---
-            if ($isUniversityPortal && str_contains(strtolower($contentType ?? ''), 'text/html')) {
-                $fallbackUrl = str_replace('employee.uc.ac.id', 'employee.ciputra.ac.id', $url);
-                $ch = curl_init();
-                curl_setopt($ch, CURLOPT_URL, $fallbackUrl);
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
-                curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-                curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
-                $contents = curl_exec($ch);
-                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-                $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-                curl_close($ch);
-            }
-
+            [$contents, $httpCode, $contentType] = $this->download($url);
             if ($contents === false || $httpCode !== 200 || strlen($contents) < 50 || ! str_contains(strtolower($contentType ?? ''), 'image')) {
                 Log::warning("[UploadImageToCloudinaryJob] Download failed or not an image. HTTP: {$httpCode}, Type: {$contentType}");
 
@@ -127,113 +78,107 @@ class UploadImageToCloudinaryJob implements ShouldQueue
             file_put_contents($tmpFile, $contents);
             unset($contents);
 
-            $tmpFile = $this->compressToWebp($tmpFile);
-
-            $sanitizedId = Str::slug($this->identifier ?? 'unknown');
-            $urlHash = substr(md5($url), 0, 8);
-            $publicId = "uco/{$this->folder}/{$sanitizedId}_{$urlHash}";
+            $tmpFile = $this->compress($tmpFile);
 
             $uploadResult = Cloudinary::uploadApi()->upload($tmpFile, [
-                'public_id' => $publicId,
+                'public_id' => $this->publicId($url),
                 'overwrite' => true,
                 'resource_type' => 'image',
             ]);
-
-            if ($tmpFile && file_exists($tmpFile)) {
-                unlink($tmpFile);
-            }
 
             if (isset($uploadResult['secure_url'])) {
                 $this->model->update([$this->column => $uploadResult['secure_url']]);
                 Log::info('[UploadImageToCloudinaryJob] Successfully uploaded to Cloudinary: '.$uploadResult['secure_url']);
             }
         } catch (\Throwable $e) {
+            Log::error('[UploadImageToCloudinaryJob] Failed to process image: '.$e->getMessage());
+        } finally {
             if ($tmpFile && file_exists($tmpFile)) {
                 unlink($tmpFile);
             }
-            Log::error('[UploadImageToCloudinaryJob] Failed to process image: '.$e->getMessage());
         }
     }
 
-    private function compressToWebp(string $filePath, int $quality = 80): string
+    // --- Download ---
+
+    /**
+     * Body, HTTP status and content type of the image; a university portal link that answers with its login page is
+     * retried on the employee.ciputra.ac.id host.
+     *
+     * @return array{0: string|false, 1: int, 2: string|null}
+     */
+    private function download(string $url): array
     {
-        if (! extension_loaded('gd')) {
-            return $filePath;
+        $headers = $this->requestHeaders($url);
+        $response = $this->fetch($url, $headers);
+
+        if ($this->isUniversityPortal($url) && str_contains(strtolower($response[2] ?? ''), 'text/html')) {
+            $response = $this->fetch(str_replace('employee.uc.ac.id', 'employee.ciputra.ac.id', $url), $headers);
         }
 
+        return $response;
+    }
+
+    private function fetch(string $url, array $headers): array
+    {
+        $ch = curl_init();
+        curl_setopt_array($ch, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTPHEADER => $headers,
+        ]);
+
+        return [curl_exec($ch), curl_getinfo($ch, CURLINFO_HTTP_CODE), curl_getinfo($ch, CURLINFO_CONTENT_TYPE)];
+    }
+
+    private function requestHeaders(string $url): array
+    {
+        $headers = [
+            'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+            'Referer: https://employee.uc.ac.id/index.php/login',
+        ];
+
+        $cookie = $this->isUniversityPortal($url) ? config('services.uc.cookie_raw', '') : '';
+        if ($cookie) {
+            $headers[] = 'Cookie: '.trim($cookie);
+        }
+
+        return $headers;
+    }
+
+    private function isUniversityPortal(string $url): bool
+    {
+        return str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
+    }
+
+    // --- Upload ---
+
+    private function compress(string $path): string
+    {
         try {
-            $imageInfo = @getimagesize($filePath);
-            if (! $imageInfo) {
-                return $filePath;
-            }
-
-            $mime = $imageInfo['mime'];
-            switch ($mime) {
-                case 'image/jpeg':
-                case 'image/jpg':
-                    $image = @imagecreatefromjpeg($filePath);
-                    break;
-                case 'image/png':
-                    $image = @imagecreatefrompng($filePath);
-                    break;
-                case 'image/gif':
-                    $image = @imagecreatefromgif($filePath);
-                    break;
-                case 'image/webp':
-                    $image = @imagecreatefromwebp($filePath);
-                    break;
-                default:
-                    $data = file_get_contents($filePath);
-                    $image = @imagecreatefromstring($data);
-                    break;
-            }
-
-            if (! $image) {
-                return $filePath;
-            }
-
-            if (! imageistruecolor($image)) {
-                $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
-                imagealphablending($trueColorImage, false);
-                imagesavealpha($trueColorImage, true);
-                imagecopy($trueColorImage, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
-                imagedestroy($image);
-                $image = $trueColorImage;
-            }
-
-            $width = imagesx($image);
-            $height = imagesy($image);
-            $maxDim = 1200;
-            if ($width > $maxDim || $height > $maxDim) {
-                if ($width > $height) {
-                    $newWidth = $maxDim;
-                    $newHeight = (int) ($height * ($maxDim / $width));
-                } else {
-                    $newHeight = $maxDim;
-                    $newWidth = (int) ($width * ($maxDim / $height));
-                }
-                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
-                imagealphablending($resizedImage, false);
-                imagesavealpha($resizedImage, true);
-                imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagedestroy($image);
-                $image = $resizedImage;
-            }
-
-            $outputPath = $filePath.'.webp';
-            if (imagewebp($image, $outputPath, $quality)) {
-                imagedestroy($image);
-                unlink($filePath);
-
-                return $outputPath;
-            }
-            imagedestroy($image);
+            return app(ImageOptimizerService::class)->convertToWebp($path);
         } catch (\Throwable $e) {
             Log::warning('[UploadImageToCloudinaryJob] WebP compression failed: '.$e->getMessage());
-        }
 
-        return $filePath;
+            return $path;
+        }
     }
+
+    private function publicId(string $url): string
+    {
+        $sanitizedId = Str::slug($this->identifier ?? 'unknown');
+        $urlHash = substr(md5($url), 0, 8);
+
+        return "uco/{$this->folder}/{$sanitizedId}_{$urlHash}";
+    }
+
+    // --- Link cleaning: text around the link removed, Google Drive links turned into direct downloads ---
 
     private function cleanUrl(?string $url): ?string
     {

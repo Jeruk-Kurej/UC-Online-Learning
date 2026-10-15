@@ -20,6 +20,9 @@ use Spatie\ImageOptimizer\OptimizerChainFactory;
  *
  * The file is modified in-place on the PHP temp disk, so there is zero
  * change to existing Storage::store() / storeAs() call sites.
+ *
+ * Images downloaded for Cloudinary (UploadImageToCloudinaryJob) go through
+ * convertToWebp() instead: same resize, re-encoded as WebP.
  */
 class ImageOptimizerService
 {
@@ -76,6 +79,39 @@ class ImageOptimizerService
         $this->cliOptimize($path);
     }
 
+    /**
+     * Re-encode a downloaded image as WebP, shrunk to fit MAX_DIMENSION, and return the new path (the original file
+     * is removed). Any format GD can read is accepted; the original path comes back when GD cannot read the file.
+     */
+    public function convertToWebp(string $path, int $quality = 80): string
+    {
+        if (! extension_loaded('gd')) {
+            return $path;
+        }
+
+        $info = @getimagesize($path);
+        if (! $info) {
+            return $path;
+        }
+
+        [$image] = $this->gdLoad($path, $info['mime'], anyFormat: true);
+        if (! $image) {
+            return $path;
+        }
+
+        $image = $this->scaleDown($this->toTrueColor($image), keepAlpha: true);
+
+        $outputPath = $path.'.webp';
+        $converted = imagewebp($image, $outputPath, $quality);
+        imagedestroy($image);
+        if (! $converted) {
+            return $path;
+        }
+        unlink($path);
+
+        return $outputPath;
+    }
+
     // --- Pass 1: GD-based compression ---
 
     /**
@@ -103,38 +139,7 @@ class ImageOptimizerService
                 return;
             }
 
-            $width = imagesx($image);
-            $height = imagesy($image);
-
-            if ($width > self::MAX_DIMENSION || $height > self::MAX_DIMENSION) {
-                if ($width > $height) {
-                    $newWidth = self::MAX_DIMENSION;
-                    $newHeight = (int) ($height * (self::MAX_DIMENSION / $width));
-                } else {
-                    $newHeight = self::MAX_DIMENSION;
-                    $newWidth = (int) ($width * (self::MAX_DIMENSION / $height));
-                }
-
-                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
-
-                if ($hasAlpha) {
-                    imagealphablending($resizedImage, false);
-                    imagesavealpha($resizedImage, true);
-                }
-
-                imagecopyresampled(
-                    $resizedImage,
-                    $image,
-                    0, 0, 0, 0,
-                    $newWidth,
-                    $newHeight,
-                    $width,
-                    $height
-                );
-
-                imagedestroy($image);
-                $image = $resizedImage;
-            }
+            $image = $this->scaleDown($image, $hasAlpha);
 
             $this->gdSave($image, $path, $mimeType, $hasAlpha);
             imagedestroy($image);
@@ -145,11 +150,12 @@ class ImageOptimizerService
     }
 
     /**
-     * Load an image resource from the given file path.
+     * Load an image resource from the given file path. JPEG, PNG, GIF and WebP are read by type; with $anyFormat,
+     * other types (BMP, ...) are tried through imagecreatefromstring.
      *
      * @return array{0: \GdImage|false, 1: bool} [image, hasAlpha]
      */
-    private function gdLoad(string $path, string $mimeType): array
+    private function gdLoad(string $path, string $mimeType, bool $anyFormat = false): array
     {
         $hasAlpha = false;
 
@@ -174,10 +180,60 @@ class ImageOptimizerService
 
                 return $img;
             })(),
-            default => false,
+            default => $anyFormat ? @imagecreatefromstring(file_get_contents($path)) : false,
         };
 
         return [$image, $hasAlpha];
+    }
+
+    /**
+     * Shrink the image to fit within MAX_DIMENSION (the original is destroyed); smaller images come back unchanged.
+     */
+    private function scaleDown(\GdImage $image, bool $keepAlpha): \GdImage
+    {
+        $width = imagesx($image);
+        $height = imagesy($image);
+        if ($width <= self::MAX_DIMENSION && $height <= self::MAX_DIMENSION) {
+            return $image;
+        }
+
+        if ($width > $height) {
+            $newWidth = self::MAX_DIMENSION;
+            $newHeight = (int) ($height * (self::MAX_DIMENSION / $width));
+        } else {
+            $newHeight = self::MAX_DIMENSION;
+            $newWidth = (int) ($width * (self::MAX_DIMENSION / $height));
+        }
+
+        $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        if ($keepAlpha) {
+            imagealphablending($resizedImage, false);
+            imagesavealpha($resizedImage, true);
+        }
+
+        imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+        imagedestroy($image);
+
+        return $resizedImage;
+    }
+
+    /**
+     * Palette images (GIF, 8-bit PNG) copied onto a true-colour canvas with alpha, as WebP needs.
+     */
+    private function toTrueColor(\GdImage $image): \GdImage
+    {
+        if (imageistruecolor($image)) {
+            return $image;
+        }
+
+        $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
+        imagealphablending($trueColorImage, false);
+        imagesavealpha($trueColorImage, true);
+        imagecopy($trueColorImage, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
+        imagedestroy($image);
+
+        return $trueColorImage;
     }
 
     /**
