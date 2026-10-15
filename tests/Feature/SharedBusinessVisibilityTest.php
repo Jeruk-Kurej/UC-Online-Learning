@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Business;
+use App\Models\Company;
 use App\Models\User;
 
 // --- World ---
@@ -58,7 +59,7 @@ test('directory and cards show the public owner', function () {
 
 test('work profile cards in the directory keep showing their person', function () {
     $person = User::factory()->create(['name' => 'Employee Person', 'is_visible' => true]);
-    $company = \App\Models\Company::create(['user_id' => $person->id, 'name' => 'Some Employer', 'is_visible' => true, 'approval_status' => 'approved']);
+    $company = Company::create(['user_id' => $person->id, 'name' => 'Some Employer', 'is_visible' => true, 'approval_status' => 'approved']);
 
     expect($company->public_owner->is($person))->toBeTrue();
     $this->get('/business?view=intrapreneur')->assertOk()->assertSee('Employee Person');

@@ -4,6 +4,7 @@ use App\Models\Business;
 use App\Models\Category;
 use App\Models\Collab;
 use App\Models\Company;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +17,8 @@ use Maatwebsite\Excel\Facades\Excel;
 function businessWorld(): array
 {
     Storage::fake('public');
-    // The IndoRegion migrations index `id` instead of making it a primary key, which SQLite
-    // refuses as a foreign-key target. Recreate the two tables with primary keys for this test.
+    // --- The IndoRegion migrations index `id` instead of making it a primary key, which SQLite ---
+    // --- Refuses as a foreign-key target. Recreate the two tables with primary keys for this test ---
     foreach (['villages', 'districts', 'regencies', 'provinces'] as $table) {
         Schema::dropIfExists($table);
     }
@@ -406,8 +407,8 @@ test('business page data: offering mode, instagram handles and whatsapp links', 
     ['category' => $category, 'owner' => $owner, 'stranger' => $stranger] = businessWorld();
     $owner->update(['whatsapp' => '+62 812-0000-1111']);
     $business = approvedBusiness($owner, $category, ['instagram' => '@first, second;@ ; 0', 'offering_type' => null]);
-    $product = \App\Models\Product::create(['business_id' => $business->id, 'type' => 'product', 'name' => 'Kopi Susu']);
-    $service = \App\Models\Product::create(['business_id' => $business->id, 'type' => 'service', 'name' => 'Catering']);
+    $product = Product::create(['business_id' => $business->id, 'type' => 'product', 'name' => 'Kopi Susu']);
+    $service = Product::create(['business_id' => $business->id, 'type' => 'service', 'name' => 'Catering']);
 
     expect($business->offering_mode)->toBe('product')
         ->and($business->instagram_handles)->toBe(['first', 'second'])

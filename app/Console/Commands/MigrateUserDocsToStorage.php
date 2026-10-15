@@ -2,17 +2,18 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class MigrateUserDocsToStorage extends Command
 {
     protected $signature = 'migrate:user-docs {--limit=0} {--user=} {--dry-run}';
+
     protected $description = 'Migrate Google Drive/local links in user activities and certifications to self-hosted WEBP/PDFs on Cloudinary.';
 
     public function handle()
@@ -24,7 +25,7 @@ class MigrateUserDocsToStorage extends Command
 
         $query = User::where(function ($q) {
             $q->whereNotNull('activities_doc_url')
-              ->orWhereNotNull('expertise_certification_url');
+                ->orWhereNotNull('expertise_certification_url');
         });
 
         if ($userId) {
@@ -38,14 +39,14 @@ class MigrateUserDocsToStorage extends Command
         $users = $query->get();
         $this->info("Found {$users->count()} users to process.");
 
-        $manager = new ImageManager(new Driver());
+        $manager = new ImageManager(new Driver);
 
         foreach ($users as $user) {
             $this->info("Processing User ID: {$user->id} ({$user->name})");
 
             $updated = false;
 
-            if (!empty($user->activities_doc_url)) {
+            if (! empty($user->activities_doc_url)) {
                 $newUrls = $this->processUrls($user->activities_doc_url, "users/{$user->id}/activities", $manager, $dryRun);
                 if ($newUrls !== (is_array($user->activities_doc_url) ? implode(';', $user->activities_doc_url) : $user->activities_doc_url)) {
                     $user->activities_doc_url = $newUrls;
@@ -53,7 +54,7 @@ class MigrateUserDocsToStorage extends Command
                 }
             }
 
-            if (!empty($user->expertise_certification_url)) {
+            if (! empty($user->expertise_certification_url)) {
                 $newUrls = $this->processUrls($user->expertise_certification_url, "users/{$user->id}/certs", $manager, $dryRun);
                 if ($newUrls !== (is_array($user->expertise_certification_url) ? implode(';', $user->expertise_certification_url) : $user->expertise_certification_url)) {
                     $user->expertise_certification_url = $newUrls;
@@ -61,7 +62,7 @@ class MigrateUserDocsToStorage extends Command
                 }
             }
 
-            if ($updated && !$dryRun) {
+            if ($updated && ! $dryRun) {
                 $user->save();
                 $this->info("  [✓] Updated database for User ID {$user->id}");
             }
@@ -83,6 +84,7 @@ class MigrateUserDocsToStorage extends Command
             if (str_contains($url, 'cloudinary.com')) {
                 $this->line("  [Skip] Already on Cloudinary: {$url}");
                 $processedUrls[] = $url;
+
                 continue;
             }
 
@@ -95,26 +97,26 @@ class MigrateUserDocsToStorage extends Command
                 $isLocalHost = true;
                 $path = parse_url($url, PHP_URL_PATH);
                 $localPath = str_replace('/storage/', '', $path);
-                $fullLocalPath = storage_path('app/public/' . $localPath);
-                
+                $fullLocalPath = storage_path('app/public/'.$localPath);
+
                 if (file_exists($fullLocalPath)) {
                     $this->line("  [Local] Reading local file: {$fullLocalPath}");
                     $contents = file_get_contents($fullLocalPath);
                     $extension = pathinfo($fullLocalPath, PATHINFO_EXTENSION);
                     $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'webp', 'gif']);
                     $isPdf = strtolower($extension) === 'pdf';
-                    
+
                     $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
                     file_put_contents($tempFile, $contents);
                     $resourceType = $isImage || $isPdf ? 'image' : 'raw';
-                    
+
                     goto upload_step;
                 }
             }
 
             if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
                 if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
-                    $downloadUrl = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
+                    $downloadUrl = 'https://drive.google.com/uc?export=download&confirm=t&id='.$matches[1];
                     $isGoogleDrive = true;
                 }
             }
@@ -122,15 +124,16 @@ class MigrateUserDocsToStorage extends Command
             $this->line("  [Download] Fetching: {$downloadUrl}");
             $response = Http::timeout(60)->get($downloadUrl);
 
-            if (!$response->ok() || strlen($response->body()) < 100) {
+            if (! $response->ok() || strlen($response->body()) < 100) {
                 $this->error("  [Error] Failed to download or file too small: {$downloadUrl}");
                 $processedUrls[] = $url;
+
                 continue;
             }
 
             $contents = $response->body();
             $contentType = $response->header('Content-Type') ?? 'application/octet-stream';
-            
+
             if ($isGoogleDrive && str_contains(strtolower($contentType), 'application/octet-stream')) {
                 $finfo = new \finfo(FILEINFO_MIME_TYPE);
                 $detectedType = $finfo->buffer($contents);
@@ -152,10 +155,10 @@ class MigrateUserDocsToStorage extends Command
                     $webp = $image->encodeUsingFileExtension('webp', 80);
                     $finalContents = $webp->toString();
                     $extension = 'webp';
-                    $this->line("  [Process] Converted to WEBP");
+                    $this->line('  [Process] Converted to WEBP');
                 } catch (\Exception $e) {
                     $this->error("  [Error] Failed to process image: {$e->getMessage()}");
-                    $extension = 'jpg'; 
+                    $extension = 'jpg';
                 }
             } else {
                 if ($isPdf) {
@@ -173,7 +176,10 @@ class MigrateUserDocsToStorage extends Command
             if ($dryRun) {
                 $this->info("  [Dry-Run] Would upload to Cloudinary {$folder}");
                 $processedUrls[] = $url;
-                if (isset($tempFile) && file_exists($tempFile)) unlink($tempFile);
+                if (isset($tempFile) && file_exists($tempFile)) {
+                    unlink($tempFile);
+                }
+
                 continue;
             }
 
@@ -183,9 +189,9 @@ class MigrateUserDocsToStorage extends Command
                     'folder' => $folder,
                     'public_id' => "doc_{$uniqueId}",
                     'overwrite' => true,
-                    'resource_type' => $resourceType
+                    'resource_type' => $resourceType,
                 ]);
-                
+
                 $newUrl = $uploadResult['secure_url'];
                 $processedUrls[] = $newUrl;
                 $this->info("  [Uploaded] {$newUrl}");
@@ -193,7 +199,9 @@ class MigrateUserDocsToStorage extends Command
                 $this->error("  [Error] Cloudinary upload failed: {$e->getMessage()}");
                 $processedUrls[] = $url;
             } finally {
-                if (isset($tempFile) && file_exists($tempFile)) unlink($tempFile);
+                if (isset($tempFile) && file_exists($tempFile)) {
+                    unlink($tempFile);
+                }
             }
         }
 

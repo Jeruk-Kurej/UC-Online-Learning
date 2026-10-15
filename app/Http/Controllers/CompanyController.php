@@ -35,7 +35,7 @@ class CompanyController extends Controller
         $isUserVisible = $company->user?->is_visible ?? true;
         $isCompanyVisible = $company->is_visible && $isUserVisible;
 
-        if (!$isCompanyVisible && !$isOwner && !$isCollabPartner && !$isAdmin) {
+        if (! $isCompanyVisible && ! $isOwner && ! $isCollabPartner && ! $isAdmin) {
             abort(404);
         }
 
@@ -53,6 +53,7 @@ class CompanyController extends Controller
     {
         $categories = Category::all();
         $provinces = Province::orderBy('name')->get();
+
         return view('businesses.create_intrapreneur', [
             'company' => null,
             'categories' => $categories,
@@ -89,7 +90,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company): View
     {
-        if (Auth::id() !== $company->user_id && !$this->currentUserIsAdmin()) {
+        if (Auth::id() !== $company->user_id && ! $this->currentUserIsAdmin()) {
             abort(403);
         }
 

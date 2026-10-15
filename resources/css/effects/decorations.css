@@ -24,9 +24,16 @@
 }
 
 @keyframes ucoFloatSlow {
-    0%, 100% { transform: translate(0, 0) rotate(0deg) scale(1); }
-    33% { transform: translate(50px, -30px) rotate(120deg) scale(1.08); }
-    66% { transform: translate(-30px, 50px) rotate(240deg) scale(0.95); }
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+    33% {
+        transform: translate(50px, -30px) rotate(120deg) scale(1.08);
+    }
+    66% {
+        transform: translate(-30px, 50px) rotate(240deg) scale(0.95);
+    }
 }
 
 .uco-section-title {
@@ -103,18 +110,35 @@
 }
 
 @keyframes floatShapePlus {
-    0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-    50% { transform: translate3d(25px, -25px, 0) rotate(180deg); }
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) rotate(0deg);
+    }
+    50% {
+        transform: translate3d(25px, -25px, 0) rotate(180deg);
+    }
 }
 
 @keyframes floatShapeRing {
-    0%, 100% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
-    50% { transform: translate3d(-30px, 15px, 0) scale(1.1) rotate(-120deg); }
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    }
+    50% {
+        transform: translate3d(-30px, 15px, 0) scale(1.1) rotate(-120deg);
+    }
 }
 
 @keyframes floatShapeDot {
-    0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.1; }
-    50% { transform: translate3d(15px, 25px, 0); opacity: 0.35; }
+    0%,
+    100% {
+        transform: translate3d(0, 0, 0);
+        opacity: 0.1;
+    }
+    50% {
+        transform: translate3d(15px, 25px, 0);
+        opacity: 0.35;
+    }
 }
 
 /* Magnetic Buttons */
@@ -124,7 +148,6 @@
     position: relative;
     z-index: 10;
 }
-
 
 .uco-text-gradient-blue {
     background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
@@ -178,8 +201,12 @@
 
 /* Custom Shimmer Animations for Tactile Glass Cards */
 @keyframes ucoShimmer {
-    0% { transform: translateX(-150%) skewX(12deg); }
-    100% { transform: translateX(250%) skewX(12deg); }
+    0% {
+        transform: translateX(-150%) skewX(12deg);
+    }
+    100% {
+        transform: translateX(250%) skewX(12deg);
+    }
 }
 .animate-uco-shimmer {
     animation: ucoShimmer 4s cubic-bezier(0.25, 1, 0.5, 1) infinite;

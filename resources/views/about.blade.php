@@ -1,84 +1,83 @@
 <x-app-layout>
     @section('title', 'About Us')
 
-
-    <div class="relative overflow-hidden font-sans bg-white pb-16">
-        @if(auth()->check() && auth()->user()->isAdmin())
-            <div class="flex justify-end max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 relative z-20">
-                <a href="{{ route('pages.edit', 'about') }}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-900 text-white hover:bg-gray-800 text-xs font-extrabold shadow-sm transition-all">
+    <div class="relative overflow-hidden bg-white pb-16 font-sans">
+        @if (auth()->check() && auth()->user()->isAdmin())
+            <div class="relative z-20 mx-auto flex max-w-[1600px] justify-end px-4 pt-4 sm:px-6 lg:px-8">
+                <a href="{{ route('pages.edit', 'about') }}"
+                   class="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-xs font-extrabold text-white shadow-sm transition-all hover:bg-gray-800">
                     <i class="bi bi-pencil-square"></i> Edit About Page (CMS)
                 </a>
             </div>
         @endif
 
         {{-- --- Dynamic Renderer for Sections --- --}}
-        @foreach($sections as $sec)
+        @foreach ($sections as $sec)
             {{-- --- Section type: hero --- --}}
-            @if(($sec['type'] ?? '') === 'hero')
-                <section class="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-amber-50/70 via-white to-orange-50/40 border-b border-orange-100/60">
-                    <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
-                        @if(!empty($sec['badge']))
+            @if (($sec['type'] ?? '') === 'hero')
+                <section class="relative overflow-hidden border-b border-orange-100/60 bg-gradient-to-b from-amber-50/70 via-white to-orange-50/40 px-4 py-16 sm:px-6 lg:px-8">
+                    <div class="reveal-on-scroll relative z-10 mx-auto max-w-[1600px] text-center">
+                        @if (!empty($sec['badge']))
                             <div class="mb-4">
-                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-xs font-extrabold uppercase tracking-widest text-orange-700 shadow-sm">
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-widest text-orange-700 shadow-sm">
                                     <i class="bi bi-info-circle-fill text-orange-500"></i> {{ $sec['badge'] }}
                                 </span>
                             </div>
                         @endif
-                        <h1 class="text-4xl md:text-6xl font-black text-gray-950 tracking-tight leading-tight mb-6 max-w-4xl mx-auto">
+                        <h1 class="mx-auto mb-6 max-w-4xl text-4xl font-black leading-tight tracking-tight text-gray-950 md:text-6xl">
                             {!! e($sec['title'] ?? '') !!}
                         </h1>
-                        <p class="max-w-2xl mx-auto text-base md:text-lg text-gray-600 leading-relaxed font-medium">
+                        <p class="mx-auto max-w-2xl text-base font-medium leading-relaxed text-gray-600 md:text-lg">
                             {{ $sec['subtitle'] ?? '' }}
                         </p>
                     </div>
                 </section>
 
-            {{-- --- Section type: feature cards grid --- --}}
+                {{-- --- Section type: feature cards grid --- --}}
             @elseif(($sec['type'] ?? '') === 'feature_cards')
-                <section class="py-16 md:py-20 bg-white px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-                    <div class="max-w-[1600px] mx-auto relative z-10">
-                        <div class="text-center max-w-3xl mx-auto mb-14 space-y-3 reveal-on-scroll">
-                            @if(!empty($sec['badge']))
-                                <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-orange-200 bg-orange-50 text-xs font-extrabold uppercase tracking-widest text-orange-700">
+                <section class="relative overflow-hidden bg-white px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+                    <div class="relative z-10 mx-auto max-w-[1600px]">
+                        <div class="reveal-on-scroll mx-auto mb-14 max-w-3xl space-y-3 text-center">
+                            @if (!empty($sec['badge']))
+                                <span class="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-widest text-orange-700">
                                     {{ $sec['badge'] }}
                                 </span>
                             @endif
-                            <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
+                            <h2 class="text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
                                 {{ $sec['title'] ?? '' }}
                             </h2>
-                            <p class="text-base text-gray-500 font-medium leading-relaxed">
+                            <p class="text-base font-medium leading-relaxed text-gray-500">
                                 {{ $sec['subtitle'] ?? '' }}
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            @foreach(($sec['cards'] ?? []) as $card)
-                                <div class="space-y-5 reveal-on-scroll p-8 rounded-2xl border border-gray-200 bg-white shadow-sm hover:border-orange-200 hover:shadow-md transition-all duration-300">
-                                    <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-xl flex items-center justify-center text-2xl shadow-sm border border-orange-100">
+                        <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+                            @foreach ($sec['cards'] ?? [] as $card)
+                                <div class="reveal-on-scroll space-y-5 rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 hover:border-orange-200 hover:shadow-md">
+                                    <div class="flex h-14 w-14 items-center justify-center rounded-xl border border-orange-100 bg-orange-50 text-2xl text-orange-600 shadow-sm">
                                         <i class="bi {{ $card['icon'] ?? 'bi-rocket-takeoff' }}"></i>
                                     </div>
-                                    <h3 class="text-xl font-extrabold text-gray-900 leading-snug">{{ $card['title'] ?? '' }}</h3>
-                                    <p class="text-sm text-gray-500 leading-relaxed font-normal">{{ $card['description'] ?? '' }}</p>
+                                    <h3 class="text-xl font-extrabold leading-snug text-gray-900">{{ $card['title'] ?? '' }}</h3>
+                                    <p class="text-sm font-normal leading-relaxed text-gray-500">{{ $card['description'] ?? '' }}</p>
                                 </div>
                             @endforeach
                         </div>
                     </div>
                 </section>
 
-            {{-- --- Section type: stats grid --- --}}
+                {{-- --- Section type: stats grid --- --}}
             @elseif(($sec['type'] ?? '') === 'stats_grid')
-                <section class="py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto">
-                    <div class="bg-slate-900 rounded-3xl border border-slate-800 p-10 md:p-16 text-white relative overflow-hidden shadow-sm">
-                        <div class="text-center relative z-10 reveal-on-scroll">
-                            <div class="relative inline-block mb-12">
-                                <h2 class="text-2xl md:text-4xl font-black text-white tracking-tight">{{ $sec['title'] ?? '' }}</h2>
+                <section class="mx-auto max-w-[1600px] px-4 py-16 sm:px-6 md:py-20 lg:px-8">
+                    <div class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-10 text-white shadow-sm md:p-16">
+                        <div class="reveal-on-scroll relative z-10 text-center">
+                            <div class="relative mb-12 inline-block">
+                                <h2 class="text-2xl font-black tracking-tight text-white md:text-4xl">{{ $sec['title'] ?? '' }}</h2>
                             </div>
-                            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
-                                @foreach(($sec['items'] ?? []) as $st)
+                            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
+                                @foreach ($sec['items'] ?? [] as $st)
                                     <div class="space-y-1">
-                                        <p class="text-3xl md:text-5xl font-black text-[#f7931e] tracking-tight">{{ $st['number'] ?? '' }}</p>
-                                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">{{ $st['label'] ?? '' }}</p>
+                                        <p class="text-3xl font-black tracking-tight text-[#f7931e] md:text-5xl">{{ $st['number'] ?? '' }}</p>
+                                        <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{ $st['label'] ?? '' }}</p>
                                     </div>
                                 @endforeach
                             </div>
@@ -86,32 +85,32 @@
                     </div>
                 </section>
 
-            {{-- --- Section type: text / faq block --- --}}
+                {{-- --- Section type: text / faq block --- --}}
             @elseif(($sec['type'] ?? '') === 'text_block')
-                <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
-                    <h2 class="text-2xl md:text-3xl font-black text-gray-900 mb-4 tracking-tight">{{ $sec['heading'] ?? '' }}</h2>
-                    <p class="text-base text-gray-600 font-normal leading-relaxed whitespace-pre-line">{{ $sec['content'] ?? '' }}</p>
+                <section class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+                    <h2 class="mb-4 text-2xl font-black tracking-tight text-gray-900 md:text-3xl">{{ $sec['heading'] ?? '' }}</h2>
+                    <p class="whitespace-pre-line text-base font-normal leading-relaxed text-gray-600">{{ $sec['content'] ?? '' }}</p>
                 </section>
 
-            {{-- --- Section type: cta banner --- --}}
+                {{-- --- Section type: cta banner --- --}}
             @elseif(($sec['type'] ?? '') === 'cta_banner')
-                <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto">
-                    <div class="bg-slate-900 rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden border border-slate-800 shadow-sm reveal-on-scroll">
-                        <div class="relative z-10 max-w-3xl mx-auto space-y-6">
-                            <h2 class="text-3xl md:text-4xl font-black leading-tight tracking-tight">
+                <section class="mx-auto max-w-[1600px] px-4 py-16 sm:px-6 lg:px-8">
+                    <div class="reveal-on-scroll relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-10 text-center text-white shadow-sm md:p-16">
+                        <div class="relative z-10 mx-auto max-w-3xl space-y-6">
+                            <h2 class="text-3xl font-black leading-tight tracking-tight md:text-4xl">
                                 {!! e($sec['heading'] ?? '') !!}
                             </h2>
-                            <p class="text-base text-slate-300 max-w-2xl mx-auto font-normal leading-relaxed">
+                            <p class="mx-auto max-w-2xl text-base font-normal leading-relaxed text-slate-300">
                                 {{ $sec['subtitle'] ?? '' }}
                             </p>
                             <div class="flex flex-wrap justify-center gap-4 pt-2">
-                                @if(!empty($sec['primary_btn_text']))
-                                    <a href="{{ route('login') }}" class="px-7 py-3.5 bg-gradient-to-r from-[#f7931e] to-[#fdb913] hover:from-[#e0831a] hover:to-[#e6a600] text-white font-extrabold rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                                @if (!empty($sec['primary_btn_text']))
+                                    <a href="{{ route('login') }}" class="rounded-xl bg-gradient-to-r from-[#f7931e] to-[#fdb913] px-7 py-3.5 font-extrabold text-white shadow-sm transition-all duration-200 hover:from-[#e0831a] hover:to-[#e6a600] hover:shadow-md">
                                         {{ $sec['primary_btn_text'] }}
                                     </a>
                                 @endif
-                                @if(!empty($sec['secondary_btn_text']))
-                                    <a href="{{ route('businesses.index') }}" class="px-7 py-3.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl border border-white/20 transition-all duration-200">
+                                @if (!empty($sec['secondary_btn_text']))
+                                    <a href="{{ route('businesses.index') }}" class="rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 font-bold text-white transition-all duration-200 hover:bg-white/20">
                                         {{ $sec['secondary_btn_text'] }}
                                     </a>
                                 @endif

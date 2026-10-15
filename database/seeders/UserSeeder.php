@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     {
         $this->command->info('🔄 Seeding Users...');
 
-        // Admin User
+        // --- Admin User ---
         User::firstOrCreate([
             'email' => 'admin@uco.com',
         ], [
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Student User
+        // --- Student User ---
         User::firstOrCreate([
             'email' => 'student@uco.com',
         ], [
@@ -38,7 +38,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Alumni User
+        // --- Alumni User ---
         User::firstOrCreate([
             'email' => 'alumni@uco.com',
         ], [
@@ -50,7 +50,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Additional varied users
+        // --- Additional varied users ---
         User::firstOrCreate([
             'email' => 'budi@uco.com',
         ], [

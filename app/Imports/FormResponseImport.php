@@ -2,38 +2,46 @@
 
 namespace App\Imports;
 
-use App\Models\User;
+use App\Jobs\UploadImageToCloudinaryJob;
 use App\Models\Business;
-use App\Models\Company;
 use App\Models\Category;
+use App\Models\Certification;
+use App\Models\Company;
+use App\Models\LegalDocument;
 use App\Models\Product;
 use App\Models\Skill;
-use App\Models\LegalDocument;
-use App\Models\Certification;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Events\AfterImport;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Cache;
-use Carbon\Carbon;
+use Maatwebsite\Excel\Events\BeforeImport;
 
-class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents, ShouldQueue
+class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithChunkReading, WithEvents, WithHeadingRow
 {
     use Concerns\TracksImportProgress, Concerns\ParsesImportDates;
 
     public $importId;
+
     public $fileName;
+
     protected $importType = null;
+
     protected $errors = [];
+
     protected $successCount = 0;
+
     protected $skippedCount = 0;
+
     private static bool $debugKeysDumped = false;
 
     public function __construct($importId = null, $fileName = null)
@@ -68,6 +76,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return trim((string) $val);
             }
         }
+
         return null;
     }
 
@@ -78,7 +87,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
      */
     private function parseSelectedFeatured(array $row): ?bool
     {
-        if (!array_key_exists('selected', $row)) {
+        if (! array_key_exists('selected', $row)) {
             return null;
         }
 
@@ -116,46 +125,48 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     {
         try {
             // --- Debug: raw column keys of the first row ---
-            if (!self::$debugKeysDumped) {
+            if (! self::$debugKeysDumped) {
                 self::$debugKeysDumped = true;
                 $keysAndSamples = [];
                 foreach ($row as $k => $v) {
-                    $keysAndSamples[$k] = (string)($v ?? '');
+                    $keysAndSamples[$k] = (string) ($v ?? '');
                 }
                 Log::info('[FormResponseImport] DEBUG - Raw column keys from CSV (Maatwebsite snake_case):', $keysAndSamples);
             }
 
             // --- 1. Email (required) ---
             $email = $this->col($row, 'email_address');
-            if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $this->skip("Missing/invalid Email Address");
+            if (! $email || ! filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $this->skip('Missing/invalid Email Address');
+
                 return null;
             }
 
             if ($this->importType === null) {
-                $hasEntrepreneur = !empty($this->col($row, 'business_name'));
-                $hasIntrapreneur = !empty($this->col($row, 'company_name_', 'company_name'));
-                
-                if ($hasEntrepreneur && !$hasIntrapreneur) {
+                $hasEntrepreneur = ! empty($this->col($row, 'business_name'));
+                $hasIntrapreneur = ! empty($this->col($row, 'company_name_', 'company_name'));
+
+                if ($hasEntrepreneur && ! $hasIntrapreneur) {
                     $this->importType = 'entrepreneur';
-                    Log::info("[FormResponseImport] Dynamically detected Entrepreneur sheet from column content.");
-                } elseif ($hasIntrapreneur && !$hasEntrepreneur) {
+                    Log::info('[FormResponseImport] Dynamically detected Entrepreneur sheet from column content.');
+                } elseif ($hasIntrapreneur && ! $hasEntrepreneur) {
                     $this->importType = 'intrapreneur';
-                    Log::info("[FormResponseImport] Dynamically detected Intrapreneur sheet from column content.");
+                    Log::info('[FormResponseImport] Dynamically detected Intrapreneur sheet from column content.');
                 }
             }
 
             $fullName = $this->col($row, 'full_name');
-            if (!$fullName) {
+            if (! $fullName) {
                 $this->skip("Missing Full Name for {$email}");
+
                 return null;
             }
 
             // --- 2. User ---
             $graduateYearRaw = $this->col($row, 'graduate_year');
             // --- graduate_year holds a 4-digit year or text such as "Active Student"; only a real year means alumni ---
-            $graduateYear = (is_numeric($graduateYearRaw) && strlen(trim((string)$graduateYearRaw)) === 4)
-                            ? trim((string)$graduateYearRaw)
+            $graduateYear = (is_numeric($graduateYearRaw) && strlen(trim((string) $graduateYearRaw)) === 4)
+                            ? trim((string) $graduateYearRaw)
                             : null;
 
             $enrollmentStatus = strtolower($this->col($row, 'current_status') ?? '');
@@ -183,39 +194,39 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
             // --- Debug: critical field values ---
             Log::debug('[FormResponseImport] Row debug', [
-                'email'                  => $email,
-                'category_raw'           => $row['category']      ?? '<<KEY MISSING>>',
-                'current_status_raw'     => $row['current_status'] ?? '<<KEY MISSING>>',
-                'graduate_year_raw'      => $graduateYearRaw,
+                'email' => $email,
+                'category_raw' => $row['category'] ?? '<<KEY MISSING>>',
+                'current_status_raw' => $row['current_status'] ?? '<<KEY MISSING>>',
+                'graduate_year_raw' => $graduateYearRaw,
                 'graduate_year_resolved' => $graduateYear,
-                'student_status'         => $studentStatus,
-                'career_category'        => $careerCategory,
-                'is_featured'            => $isFeatured,
-                'selected_raw'           => $row['selected'] ?? '<<KEY MISSING>>',
-                'business_name'          => $row['business_name']  ?? '<<KEY MISSING>>',
-                'company_name'           => $row['company_name_']  ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
+                'student_status' => $studentStatus,
+                'career_category' => $careerCategory,
+                'is_featured' => $isFeatured,
+                'selected_raw' => $row['selected'] ?? '<<KEY MISSING>>',
+                'business_name' => $row['business_name'] ?? '<<KEY MISSING>>',
+                'company_name' => $row['company_name_'] ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
             ]);
 
             $userData = [
-                'submitted_at'      => $this->parseTimestamp($this->col($row, 'timestamp')),
-                'prefix_title'      => $this->col($row, 'prefix_title'),
-                'name'              => $fullName,
-                'suffix_title'      => $this->col($row, 'suffix_title'),
-                'personal_email'    => $this->col($row, 'personal_email_address'),
-                'phone_number'      => $this->col($row, 'personal_phone_number'),
-                'mobile_number'     => $this->col($row, 'personal_mobile_number'),
-                'whatsapp'          => $this->col($row, 'personal_whatsapp'),
-                'linkedin'          => $this->col($row, 'linkedin'),
-                'current_status'    => $careerCategory,
-                'nis'               => $this->col($row, 'nis_student_id'),
-                'year_of_enrollment'=> $this->col($row, 'year_of_enrollment'),
-                'graduate_year'     => $graduateYear,
-                'major'             => $this->col($row, 'major'),
-                'testimony'         => $this->col($row, 'testimony'),
+                'submitted_at' => $this->parseTimestamp($this->col($row, 'timestamp')),
+                'prefix_title' => $this->col($row, 'prefix_title'),
+                'name' => $fullName,
+                'suffix_title' => $this->col($row, 'suffix_title'),
+                'personal_email' => $this->col($row, 'personal_email_address'),
+                'phone_number' => $this->col($row, 'personal_phone_number'),
+                'mobile_number' => $this->col($row, 'personal_mobile_number'),
+                'whatsapp' => $this->col($row, 'personal_whatsapp'),
+                'linkedin' => $this->col($row, 'linkedin'),
+                'current_status' => $careerCategory,
+                'nis' => $this->col($row, 'nis_student_id'),
+                'year_of_enrollment' => $this->col($row, 'year_of_enrollment'),
+                'graduate_year' => $graduateYear,
+                'major' => $this->col($row, 'major'),
+                'testimony' => $this->col($row, 'testimony'),
                 'profile_photo_url' => $this->col($row, 'professional_profile_photo'),
-                'activities_doc_url'=> $this->col($row, 'professional_activities_documentation'),
+                'activities_doc_url' => $this->col($row, 'professional_activities_documentation'),
                 'expertise_certification_url' => $this->col($row, 'expertise_certification'),
-                'student_status'    => $studentStatus,
+                'student_status' => $studentStatus,
                 'email_verified_at' => now(),
             ];
 
@@ -229,19 +240,19 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 $user = $existingUser;
             } else {
                 $user = User::create(array_merge($userData, [
-                    'email'    => $email,
+                    'email' => $email,
                     'password' => Hash::make('password123'),
                 ]));
             }
 
             $rawProfilePhoto = $this->col($row, 'professional_profile_photo');
-            if ($rawProfilePhoto && !str_contains($rawProfilePhoto, 'cloudinary.com')) {
-                \App\Jobs\UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhoto, 'users', $fullName);
+            if ($rawProfilePhoto && ! str_contains($rawProfilePhoto, 'cloudinary.com')) {
+                UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhoto, 'users', $fullName);
             }
 
             // --- Imported testimonies are auto-approved (skips Gemini to avoid rate limits) ---
-            if (!empty($user->testimony) && is_null($user->ai_score)) {
-                \Illuminate\Support\Facades\Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
+            if (! empty($user->testimony) && is_null($user->ai_score)) {
+                Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
                 $user->update([
                     'ai_score' => 100,
                     'ai_sentiment' => 'Positive',
@@ -259,7 +270,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                         $skill = $this->getOrCreateSkill($skillName);
                         $skillIds[] = $skill->id;
                     } catch (\Exception $e) {
-                        Log::warning("[FormResponseImport] Failed to get or create skill: " . $e->getMessage());
+                        Log::warning('[FormResponseImport] Failed to get or create skill: '.$e->getMessage());
                     }
                 }
                 $user->skills()->syncWithoutDetaching($skillIds);
@@ -277,41 +288,41 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                         $cat = $this->getOrCreateCategory($catName);
                         $categoryId = $cat->id;
                     } catch (\Exception $e) {
-                        Log::warning("[FormResponseImport] Failed to get or create category: " . $e->getMessage());
+                        Log::warning('[FormResponseImport] Failed to get or create category: '.$e->getMessage());
                     }
                 }
 
                 $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
 
                 $businessData = [
-                    'category_id'             => $categoryId,
-                    'position'                => $this->col($row, 'entrepreneur_position'),
-                    'established_date'        => $this->parseDate($this->col($row, 'established_date')),
-                    'description'             => $this->col($row, 'description'),
-                    'province'                => $this->col($row, 'province'),
-                    'city'                    => $this->col($row, 'city_regency', 'city_slash_regency'),
-                    'address'                 => $this->col($row, 'full_address'),
-                    'phone_number'            => $this->col($row, 'business_phone_number'),
-                    'whatsapp'                => $this->col($row, 'business_whatsapp'),
-                    'email'                   => $this->col($row, 'business_email_address'),
-                    'website'                 => $this->col($row, 'website'),
-                    'instagram'               => $this->col($row, 'instagram'),
-                    'operational_status'      => $this->col($row, 'operational_status'),
-                    'offering_type'           => $this->normalizeOfferingType($this->col($row, 'offering_type')),
-                    'unique_value_proposition'=> $this->col($row, 'unique_value_proposition'),
-                    'target_market'           => $this->col($row, 'target_market'),
-                    'customer_base_size'      => $this->col($row, 'customer_base_size'),
-                    'employee_count'          => $this->col($row, 'employee_count'),
-                    'revenue_range'           => $this->col($row, 'revenue_range_per_year'),
-                    'academic_heritage'       => $this->col($row, 'academic_heritage'),
-                    'company_profile_url'     => $this->col($row, 'company_profile'),
-                    'logo_url'                => $rawLogoUrl,
-                    'business_scale'          => $this->col($row, 'business_scale'),
-                    'business_legality'       => $this->col($row, 'business_legality'),
-                    'product_legality'        => $this->col($row, 'product_legality'),
-                    'type'                    => 'entrepreneur',
-                    'approval_status'         => 'approved',
-                    'is_visible'              => true,
+                    'category_id' => $categoryId,
+                    'position' => $this->col($row, 'entrepreneur_position'),
+                    'established_date' => $this->parseDate($this->col($row, 'established_date')),
+                    'description' => $this->col($row, 'description'),
+                    'province' => $this->col($row, 'province'),
+                    'city' => $this->col($row, 'city_regency', 'city_slash_regency'),
+                    'address' => $this->col($row, 'full_address'),
+                    'phone_number' => $this->col($row, 'business_phone_number'),
+                    'whatsapp' => $this->col($row, 'business_whatsapp'),
+                    'email' => $this->col($row, 'business_email_address'),
+                    'website' => $this->col($row, 'website'),
+                    'instagram' => $this->col($row, 'instagram'),
+                    'operational_status' => $this->col($row, 'operational_status'),
+                    'offering_type' => $this->normalizeOfferingType($this->col($row, 'offering_type')),
+                    'unique_value_proposition' => $this->col($row, 'unique_value_proposition'),
+                    'target_market' => $this->col($row, 'target_market'),
+                    'customer_base_size' => $this->col($row, 'customer_base_size'),
+                    'employee_count' => $this->col($row, 'employee_count'),
+                    'revenue_range' => $this->col($row, 'revenue_range_per_year'),
+                    'academic_heritage' => $this->col($row, 'academic_heritage'),
+                    'company_profile_url' => $this->col($row, 'company_profile'),
+                    'logo_url' => $rawLogoUrl,
+                    'business_scale' => $this->col($row, 'business_scale'),
+                    'business_legality' => $this->col($row, 'business_legality'),
+                    'product_legality' => $this->col($row, 'product_legality'),
+                    'type' => 'entrepreneur',
+                    'approval_status' => 'approved',
+                    'is_visible' => true,
                 ];
 
                 if ($isFeatured !== null) {
@@ -327,12 +338,12 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 } else {
                     $business = Business::create(array_merge($businessData, [
                         'user_id' => $user->id,
-                        'name'    => $businessName,
+                        'name' => $businessName,
                     ]));
                 }
 
-                if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
-                    \App\Jobs\UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
+                if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
+                    UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
                 }
 
                 $business->members()->syncWithoutDetaching([
@@ -351,7 +362,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                             $doc = $this->getOrCreateLegalDocument($docName);
                             $ids[] = $doc->id;
                         } catch (\Exception $e) {
-                            Log::warning("[FormResponseImport] Failed to get or create legal doc: " . $e->getMessage());
+                            Log::warning('[FormResponseImport] Failed to get or create legal doc: '.$e->getMessage());
                         }
                     }
                     $business->legalDocuments()->syncWithoutDetaching($ids);
@@ -366,7 +377,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                             $cert = $this->getOrCreateCertification($certName);
                             $ids[] = $cert->id;
                         } catch (\Exception $e) {
-                            Log::warning("[FormResponseImport] Failed to get or create certification: " . $e->getMessage());
+                            Log::warning('[FormResponseImport] Failed to get or create certification: '.$e->getMessage());
                         }
                     }
                     $business->certifications()->syncWithoutDetaching($ids);
@@ -386,22 +397,22 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                         $indCat = $this->getOrCreateCategory($indCatName);
                         $industryCatId = $indCat->id;
                     } catch (\Exception $e) {
-                        Log::warning("[FormResponseImport] Failed to get or create industry category: " . $e->getMessage());
+                        Log::warning('[FormResponseImport] Failed to get or create industry category: '.$e->getMessage());
                     }
                 }
 
                 $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
 
                 $companyData = [
-                    'category_id'          => $industryCatId,
-                    'position'             => $this->col($row, 'intrapreneur_position'),
-                    'level_position'       => $this->col($row, 'level_position'),
-                    'job_description'      => $this->col($row, 'job_description'),
+                    'category_id' => $industryCatId,
+                    'position' => $this->col($row, 'intrapreneur_position'),
+                    'level_position' => $this->col($row, 'level_position'),
+                    'job_description' => $this->col($row, 'job_description'),
                     'year_started_working' => $this->col($row, 'year_started_working'),
-                    'achievement'          => $this->col($row, 'achievement'),
-                    'company_scale'        => $this->col($row, 'company_scale'),
-                    'logo_url'             => $rawLogoUrl,
-                    'is_visible'           => true,
+                    'achievement' => $this->col($row, 'achievement'),
+                    'company_scale' => $this->col($row, 'company_scale'),
+                    'logo_url' => $rawLogoUrl,
+                    'is_visible' => true,
                 ];
 
                 $company = Company::where('user_id', $user->id)->where('name', $companyName)->first()
@@ -412,21 +423,23 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 } else {
                     $company = Company::create(array_merge($companyData, [
                         'user_id' => $user->id,
-                        'name'    => $companyName,
+                        'name' => $companyName,
                     ]));
                 }
 
-                if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
-                    \App\Jobs\UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
+                if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
+                    UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
                 }
             }
 
             $this->successCount++;
             $this->updateProgress('success');
+
             return $user;
         } catch (\Exception $e) {
             $this->skip("Error: {$e->getMessage()}");
             Log::error("FormResponseImport error: {$e->getMessage()}", ['row' => $row]);
+
             return null;
         }
     }
@@ -441,20 +454,20 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
         $productSlots = [
             1 => [
-                'name'  => $this->col($row, 'productservice_name_1', 'product_service_name_1'),
-                'desc'  => $this->col($row, 'productservice_description_1', 'product_service_description_1'),
+                'name' => $this->col($row, 'productservice_name_1', 'product_service_name_1'),
+                'desc' => $this->col($row, 'productservice_description_1', 'product_service_description_1'),
                 'price' => $this->col($row, 'productservice_price_1', 'product_service_price_1'),
                 'photo' => $this->col($row, 'productservice_photo_1', 'product_service_photo_1'),
             ],
             2 => [
-                'name'  => $this->col($row, 'productservice_name_2', 'product_service_name_2'),
-                'desc'  => $this->col($row, 'productservice_description_2', 'product_service_description_2'),
+                'name' => $this->col($row, 'productservice_name_2', 'product_service_name_2'),
+                'desc' => $this->col($row, 'productservice_description_2', 'product_service_description_2'),
                 'price' => $this->col($row, 'productservice_price_2', 'product_service_price_2'),
                 'photo' => $this->col($row, 'productservice_photo_2', 'product_service_photo_2'),
             ],
             3 => [
-                'name'  => $this->col($row, 'productservice_name_3', 'product_service_name_3'),
-                'desc'  => $this->col($row, 'productservice_description_3', 'product_service_description_3'),
+                'name' => $this->col($row, 'productservice_name_3', 'product_service_name_3'),
+                'desc' => $this->col($row, 'productservice_description_3', 'product_service_description_3'),
                 'price' => $this->col($row, 'productservice_price_3', 'product_service_price_3'),
                 'photo' => $this->col($row, 'productservice_photo_3', 'product_service_photo_3'),
             ],
@@ -463,22 +476,24 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         $productType = ($business->offering_type === 'service') ? 'service' : 'product';
 
         foreach ($productSlots as $order => $slot) {
-            if (empty($slot['name'])) continue;
+            if (empty($slot['name'])) {
+                continue;
+            }
 
             $rawPhotoUrl = $slot['photo'];
 
             $product = Product::create([
                 'business_id' => $business->id,
-                'type'        => $productType,
-                'name'        => $slot['name'],
+                'type' => $productType,
+                'name' => $slot['name'],
                 'description' => $slot['desc'],
-                'price'       => $slot['price'],
-                'photo_url'   => $rawPhotoUrl,
-                'sort_order'  => $order,
+                'price' => $slot['price'],
+                'photo_url' => $rawPhotoUrl,
+                'sort_order' => $order,
             ]);
 
-            if ($rawPhotoUrl && !str_contains($rawPhotoUrl, 'cloudinary.com')) {
-                \App\Jobs\UploadImageToCloudinaryJob::dispatch($product, 'photo_url', $rawPhotoUrl, 'products', $slot['name']);
+            if ($rawPhotoUrl && ! str_contains($rawPhotoUrl, 'cloudinary.com')) {
+                UploadImageToCloudinaryJob::dispatch($product, 'photo_url', $rawPhotoUrl, 'products', $slot['name']);
             }
         }
     }
@@ -487,7 +502,9 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
     private function normalizeOfferingType(?string $val): string
     {
-        if (!$val) return 'product';
+        if (! $val) {
+            return 'product';
+        }
         $lower = strtolower(trim($val));
         if (str_contains($lower, 'both') || str_contains($lower, '&') || str_contains($lower, 'and')) {
             return 'both';
@@ -498,6 +515,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         if (str_contains($lower, 'product')) {
             return 'product';
         }
+
         return 'product';
     }
 
@@ -508,7 +526,9 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
     private function parseTimestamp(?string $val): ?string
     {
-        if (!$val) return null;
+        if (! $val) {
+            return null;
+        }
         try {
             return Carbon::parse($val)->toDateTimeString();
         } catch (\Exception $e) {
@@ -520,20 +540,20 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     {
         $this->skippedCount++;
         $this->errors[] = $msg;
-        \Illuminate\Support\Facades\Log::warning("Skipped row: " . $msg);
+        Log::warning('Skipped row: '.$msg);
         $this->updateProgress('skipped');
 
         if ($this->importId) {
             $prefix = "import_{$this->importId}";
-            $progress = \Illuminate\Support\Facades\Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
-            if (!is_array($progress)) {
+            $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
+            if (! is_array($progress)) {
                 $progress = ['status' => 'processing', 'errors' => []];
             }
-            if (!isset($progress['errors']) || !is_array($progress['errors'])) {
+            if (! isset($progress['errors']) || ! is_array($progress['errors'])) {
                 $progress['errors'] = [];
             }
             $progress['errors'][] = $msg;
-            \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
+            Cache::put($prefix, $progress, now()->addMinutes(60));
         }
     }
 
@@ -543,7 +563,9 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     {
         return [
             BeforeImport::class => function (BeforeImport $event) {
-                if (!$this->importId) return;
+                if (! $this->importId) {
+                    return;
+                }
                 $totalRows = $event->getReader()->getTotalRows();
                 $total = max(0, max($totalRows) - 1);
                 $prefix = "import_{$this->importId}";
@@ -557,12 +579,14 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 Log::info("[FormResponseImport] Started: {$total} rows");
             },
             AfterImport::class => function () {
-                if (!$this->importId) return;
+                if (! $this->importId) {
+                    return;
+                }
                 $prefix = "import_{$this->importId}";
                 $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
                 $progress['status'] = 'completed';
                 Cache::put($prefix, $progress, now()->addMinutes(60));
-                Log::info("[FormResponseImport] Completed");
+                Log::info('[FormResponseImport] Completed');
             },
         ];
     }
@@ -570,29 +594,29 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     private function getOrCreateSkill(string $skillName): Skill
     {
         $slug = Str::slug($skillName);
-        if (!$slug) {
+        if (! $slug) {
             throw new \Exception("Invalid skill name: {$skillName}");
         }
-        
+
         $skill = Skill::where('slug', $slug)->first();
         if ($skill) {
             return $skill;
         }
-        
+
         $skill = Skill::where('name', trim($skillName))->first();
         if ($skill) {
             return $skill;
         }
-        
+
         try {
             return Skill::create([
                 'slug' => $slug,
-                'name' => trim($skillName)
+                'name' => trim($skillName),
             ]);
-        } catch (\Illuminate\Database\QueryException $e) {
-            $skill = Skill::where('slug', $slug)->first() 
+        } catch (QueryException $e) {
+            $skill = Skill::where('slug', $slug)->first()
                 ?? Skill::where('name', trim($skillName))->first();
-                
+
             if ($skill) {
                 return $skill;
             }
@@ -603,26 +627,26 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     private function getOrCreateCategory(string $categoryName): Category
     {
         $slug = Str::slug($categoryName);
-        if (!$slug) {
+        if (! $slug) {
             throw new \Exception("Invalid category name: {$categoryName}");
         }
-        
+
         $cat = Category::where('slug', $slug)->first()
             ?? Category::where('name', trim($categoryName))->first();
-            
+
         if ($cat) {
             return $cat;
         }
-        
+
         try {
             return Category::create([
                 'slug' => $slug,
-                'name' => trim($categoryName)
+                'name' => trim($categoryName),
             ]);
-        } catch (\Illuminate\Database\QueryException $e) {
-            $cat = Category::where('slug', $slug)->first() 
+        } catch (QueryException $e) {
+            $cat = Category::where('slug', $slug)->first()
                 ?? Category::where('name', trim($categoryName))->first();
-                
+
             if ($cat) {
                 return $cat;
             }
@@ -637,10 +661,10 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         if ($doc) {
             return $doc;
         }
-        
+
         try {
             return LegalDocument::create(['name' => $name]);
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             $doc = LegalDocument::where('name', $name)->first();
             if ($doc) {
                 return $doc;
@@ -656,10 +680,10 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         if ($cert) {
             return $cert;
         }
-        
+
         try {
             return Certification::create(['name' => $name]);
-        } catch (\Illuminate\Database\QueryException $e) {
+        } catch (QueryException $e) {
             $cert = Certification::where('name', $name)->first();
             if ($cert) {
                 return $cert;

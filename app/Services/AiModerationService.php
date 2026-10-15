@@ -42,15 +42,15 @@ class AiModerationService
                 'rating' => $rating,
                 'result' => $result,
             ]);
-            
+
             return $result;
-            
+
         } catch (\Exception $e) {
             Log::error('Gemini AI Error', [
                 'error' => $e->getMessage(),
-                'content' => substr($content, 0, 100)
+                'content' => substr($content, 0, 100),
             ]);
-            
+
             return $this->fallbackAnalysis($content, $rating);
         }
     }
@@ -104,28 +104,29 @@ PROMPT;
     {
         $text = str_replace(['```json', '```'], '', $text);
         $text = trim($text);
-        
+
         $json = json_decode($text, true);
-        
-        if (!is_array($json)) {
+
+        if (! is_array($json)) {
             Log::warning('Failed to parse Gemini JSON', ['response' => $text]);
+
             return $this->fallbackAnalysis('', $rating);
         }
-        
-        $sentimentScore = isset($json['sentiment_score']) 
-            ? (float) max(0, min(100, $json['sentiment_score'])) 
+
+        $sentimentScore = isset($json['sentiment_score'])
+            ? (float) max(0, min(100, $json['sentiment_score']))
             : 0.0;
-            
+
         $sentimentLabel = $json['sentiment'] ?? ($sentimentScore >= 60 ? 'Positive' : 'Negative');
-            
-        $isApproved = isset($json['is_approved']) 
-            ? (bool) $json['is_approved'] 
+
+        $isApproved = isset($json['is_approved'])
+            ? (bool) $json['is_approved']
             : false;
-            
-        $rejectionReason = $isApproved 
-            ? null 
+
+        $rejectionReason = $isApproved
+            ? null
             : ($json['rejection_reason'] ?? 'Content requires review by administrators');
-        
+
         return [
             'sentiment_score' => $sentimentScore,
             'sentiment' => $sentimentLabel,
@@ -144,26 +145,30 @@ PROMPT;
     {
         $negativeKeywords = ['buruk', 'jelek', 'mengecewakan', 'bad', 'terrible', 'worst', 'horrible', 'scam', 'palsu'];
         $positiveKeywords = ['bagus', 'baik', 'memuaskan', 'recommended', 'good', 'great', 'excellent', 'amazing'];
-        
+
         $lowerContent = strtolower($content);
         $negativeCount = 0;
         $positiveCount = 0;
-        
+
         foreach ($negativeKeywords as $word) {
-            if (stripos($lowerContent, $word) !== false) $negativeCount++;
+            if (stripos($lowerContent, $word) !== false) {
+                $negativeCount++;
+            }
         }
-        
+
         foreach ($positiveKeywords as $word) {
-            if (stripos($lowerContent, $word) !== false) $positiveCount++;
+            if (stripos($lowerContent, $word) !== false) {
+                $positiveCount++;
+            }
         }
-        
+
         $baseScore = $rating * 20;
         $keywordAdjustment = ($positiveCount - $negativeCount) * 10;
         $sentimentScore = max(0, min(100, $baseScore + $keywordAdjustment));
-        
+
         $isApproved = $sentimentScore >= 60;
         $sentimentLabel = $sentimentScore >= 60 ? 'Positive' : 'Negative';
-        
+
         return [
             'sentiment_score' => round($sentimentScore, 2),
             'sentiment' => $sentimentLabel,
@@ -172,4 +177,3 @@ PROMPT;
         ];
     }
 }
-

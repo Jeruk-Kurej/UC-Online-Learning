@@ -33,7 +33,7 @@ export default function sharedImportManager() {
                         this.startPolling();
                         return;
                     }
-                } catch(e) {}
+                } catch (e) {}
             }
 
             this.checkActiveImport().then(() => {
@@ -49,9 +49,9 @@ export default function sharedImportManager() {
             try {
                 const res = await fetch('/import-progress/check', {
                     headers: {
-                        'Accept': 'application/json',
+                        Accept: 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    }
+                    },
                 });
                 const data = await res.json();
                 if (data.importId) {
@@ -107,11 +107,14 @@ export default function sharedImportManager() {
                             this.importId = data.importId;
                             this.format = data.format || 'Excel Importer';
                             this.status = 'processing';
-                            localStorage.setItem('uco_active_import', JSON.stringify({
-                                importId: this.importId,
-                                fileName: this.fileName,
-                                format: this.format,
-                            }));
+                            localStorage.setItem(
+                                'uco_active_import',
+                                JSON.stringify({
+                                    importId: this.importId,
+                                    fileName: this.fileName,
+                                    format: this.format,
+                                }),
+                            );
                             this.startPolling();
                         } else {
                             this.status = 'failed';
@@ -153,8 +156,8 @@ export default function sharedImportManager() {
             try {
                 const res = await fetch(`/import-progress/${this.importId}`, {
                     headers: {
-                        'Accept': 'application/json'
-                    }
+                        Accept: 'application/json',
+                    },
                 });
                 const data = await res.json();
 
@@ -181,10 +184,10 @@ export default function sharedImportManager() {
                     fetch('/clear-active-import', {
                         method: 'POST',
                         headers: {
-                            'Accept': 'application/json',
+                            Accept: 'application/json',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                             'Content-Type': 'application/json',
-                        }
+                        },
                     });
                 }
             } catch (e) {
@@ -230,15 +233,15 @@ export default function sharedImportManager() {
             fetch('/clear-active-import', {
                 method: 'POST',
                 headers: {
-                    'Accept': 'application/json',
+                    Accept: 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Content-Type': 'application/json',
-                }
+                },
             });
 
             if (wasCompleted) {
                 window.location.reload();
             }
-        }
-    }
+        },
+    };
 }

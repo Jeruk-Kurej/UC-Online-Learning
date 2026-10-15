@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Casts\CleanText;
+use App\Casts\CompanyName;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 /**
- * @mixin \Illuminate\Database\Eloquent\Model
- * @mixin \Illuminate\Database\Eloquent\Builder
+ * @mixin Model
+ * @mixin Builder
  */
 class Business extends Model
 {
@@ -55,8 +59,8 @@ class Business extends Model
     {
         return [
             'established_date' => 'date',
-            'name' => \App\Casts\CompanyName::class,
-            'description' => \App\Casts\CleanText::class,
+            'name' => CompanyName::class,
+            'description' => CleanText::class,
             'is_visible' => 'boolean',
             'is_featured' => 'boolean',
         ];
@@ -136,7 +140,7 @@ class Business extends Model
         return $this->visibleMembers()->first() ?? $this->user;
     }
 
-    public function getPublicCoOwnersAttribute(): \Illuminate\Support\Collection
+    public function getPublicCoOwnersAttribute(): Collection
     {
         $shownOwnerId = $this->public_owner?->id;
 
@@ -145,7 +149,7 @@ class Business extends Model
             ->values();
     }
 
-    private function visibleMembers(): \Illuminate\Support\Collection
+    private function visibleMembers(): Collection
     {
         return $this->members
             ->where('is_visible', true)

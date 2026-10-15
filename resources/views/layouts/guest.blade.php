@@ -18,22 +18,22 @@
 
 </head>
 
-<body class="font-sans antialiased bg-soft-white overflow-x-hidden">
-    <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 relative overflow-hidden">
+<body class="overflow-x-hidden bg-soft-white font-sans antialiased">
+    <div class="relative flex min-h-screen flex-col items-center overflow-hidden pt-6 sm:justify-center sm:pt-0">
         <div class="relative z-10">
             <a href="/" class="flex flex-col items-center gap-3">
-                <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-20 h-20 object-contain shadow-lg">
+                <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="h-20 w-20 object-contain shadow-lg">
                 <h1 class="text-2xl font-bold text-soft-gray-900">UCO Platform</h1>
                 <p class="text-sm text-soft-gray-600">Student & Alumni Community</p>
             </a>
         </div>
 
         <div
-            class="relative z-10 w-full sm:max-w-md mt-6 px-6 py-8 bg-white shadow-xl rounded-lg border border-soft-gray-100">
+             class="relative z-10 mt-6 w-full rounded-lg border border-soft-gray-100 bg-white px-6 py-8 shadow-xl sm:max-w-md">
             {{ $slot }}
         </div>
 
-        <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
+        <div class="pointer-events-none fixed right-6 top-6 z-50 flex flex-col items-end gap-3">
             {{-- --- Handled by dynamic script below --- --}}
         </div>
 
@@ -47,8 +47,7 @@
     </div>
     <!-- instant.page untuk prefetching instan -->
     <script src="https://instant.page/5.2.0" type="module"
-        integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous">
-    </script>
+            integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous"></script>
 </body>
 
 </html>

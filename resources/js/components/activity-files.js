@@ -15,7 +15,7 @@ export default function activityFiles(existingFiles = []) {
         },
 
         undoDeleteFile(url) {
-            this.deletedFiles = this.deletedFiles.filter(item => item !== url);
+            this.deletedFiles = this.deletedFiles.filter((item) => item !== url);
         },
 
         isDeleted(url) {
@@ -34,12 +34,12 @@ export default function activityFiles(existingFiles = []) {
         handleNewFiles(event) {
             const files = Array.from(event.target.files);
             this.newFiles = [];
-            files.forEach(file => {
+            files.forEach((file) => {
                 const fileObj = {
                     name: file.name,
                     size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
                     type: file.type,
-                    preview: null
+                    preview: null,
                 };
                 if (file.type.startsWith('image/')) {
                     const reader = new FileReader();

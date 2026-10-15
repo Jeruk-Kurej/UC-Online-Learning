@@ -3,7 +3,12 @@ import TomSelect from 'tom-select/dist/js/tom-select.complete.js';
 // --- Role-dependent sections ---
 // Admin accounts have no student status, contact details, academic extras or business assignments.
 
-const roleSections = ['student_status_container', 'identity_contact_section', 'academic_extra_section', 'business_assignment_section'];
+const roleSections = [
+    'student_status_container',
+    'identity_contact_section',
+    'academic_extra_section',
+    'business_assignment_section',
+];
 
 function toggleStudentFields(role) {
     const isAdmin = role === 'admin';
@@ -23,7 +28,7 @@ function toggleStudentFields(role) {
 export default function initUserForm() {
     const roleSelect = document.getElementById('role');
 
-    if (! roleSelect) {
+    if (!roleSelect) {
         return;
     }
 

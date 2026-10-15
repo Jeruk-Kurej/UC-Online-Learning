@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Models\Collab;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -49,8 +49,8 @@ class CollabController extends Controller
         Message::create([
             'sender_id' => $sender->id,
             'recipient_id' => $user->id,
-            'subject' => 'Collab Request from ' . $sender->name,
-            'body' => $sender->name . ' would like to connect and collab with you on UC Online Learning.',
+            'subject' => 'Collab Request from '.$sender->name,
+            'body' => $sender->name.' would like to connect and collab with you on UC Online Learning.',
             'type' => 'collab_invite',
         ]);
 
@@ -78,11 +78,11 @@ class CollabController extends Controller
             'sender_id' => $user->id,
             'recipient_id' => $collab->sender_id,
             'subject' => 'Collab Request Accepted',
-            'body' => $user->name . ' has accepted your collab request! You are now connected.',
+            'body' => $user->name.' has accepted your collab request! You are now connected.',
             'type' => 'collab_accepted',
         ]);
 
-        return back()->with('success', 'You are now connected with ' . $collab->sender->name . '!');
+        return back()->with('success', 'You are now connected with '.$collab->sender->name.'!');
     }
 
     /**

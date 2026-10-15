@@ -1,30 +1,61 @@
 /* --- Login page (welcome): font and the floating background shapes --- */
 
-body { font-family: 'Inter', system-ui, sans-serif; }
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+}
 
 @keyframes float-slow {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(-20px) translateX(10px); }
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+    50% {
+        transform: translateY(-20px) translateX(10px);
+    }
 }
 
 @keyframes float-slower {
-    0%, 100% { transform: translateY(0px) translateX(0px) rotate(45deg); }
-    50% { transform: translateY(-25px) translateX(-10px) rotate(50deg); }
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px) rotate(45deg);
+    }
+    50% {
+        transform: translateY(-25px) translateX(-10px) rotate(50deg);
+    }
 }
 
 @keyframes float-medium {
-    0%, 100% { transform: translateY(0px) translateX(0px); }
-    50% { transform: translateY(-15px) translateX(-15px); }
+    0%,
+    100% {
+        transform: translateY(0px) translateX(0px);
+    }
+    50% {
+        transform: translateY(-15px) translateX(-15px);
+    }
 }
 
 @keyframes pulse-slow {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 0.2; transform: scale(1.2); }
+    0%,
+    100% {
+        opacity: 0.4;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.2;
+        transform: scale(1.2);
+    }
 }
 
 @keyframes pulse-slower {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.15; transform: scale(1.3); }
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.15;
+        transform: scale(1.3);
+    }
 }
 
 .animate-float-slow {

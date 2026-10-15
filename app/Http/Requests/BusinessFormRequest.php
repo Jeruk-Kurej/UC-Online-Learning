@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\User;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
@@ -28,9 +29,7 @@ abstract class BusinessFormRequest extends FormRequest
     }
 
     /** Checks that run before the shared ones (editing checks the mode change). */
-    protected function checkBeforeSharedRules($validator): void
-    {
-    }
+    protected function checkBeforeSharedRules($validator): void {}
 
     // --- Form field names that differ from the column names (an empty field keeps its form name, which fill() ignores) ---
 
@@ -68,7 +67,7 @@ abstract class BusinessFormRequest extends FormRequest
     }
 
     /**
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -147,7 +146,7 @@ abstract class BusinessFormRequest extends FormRequest
                         ->values()
                         ->all();
 
-                    if (!empty($selectedOwnerIds)) {
+                    if (! empty($selectedOwnerIds)) {
                         $adminOwnerExists = User::whereIn('id', $selectedOwnerIds)
                             ->where('role', 'admin')
                             ->exists();
@@ -175,17 +174,17 @@ abstract class BusinessFormRequest extends FormRequest
                     $this->validateInlineRows($serviceRows, 'service')
                 );
 
-                if ($mode === 'service' && !empty($productRows)) {
+                if ($mode === 'service' && ! empty($productRows)) {
                     $inlineErrors['products'] = 'Business mode Service Only tidak boleh memiliki produk.';
                 }
-                if ($mode === 'product' && !empty($serviceRows)) {
+                if ($mode === 'product' && ! empty($serviceRows)) {
                     $inlineErrors['services'] = 'Business mode Product Only tidak boleh memiliki layanan.';
                 }
 
                 foreach ($inlineErrors as $key => $message) {
                     $validator->errors()->add($key, $message);
                 }
-            }
+            },
         ];
     }
 
@@ -194,14 +193,14 @@ abstract class BusinessFormRequest extends FormRequest
      */
     private function normalizeInlineRows($rows, string $type): array
     {
-        if (!is_array($rows)) {
+        if (! is_array($rows)) {
             return [];
         }
 
         $normalized = [];
 
         foreach ($rows as $row) {
-            if (!is_array($row)) {
+            if (! is_array($row)) {
                 continue;
             }
 
@@ -217,7 +216,7 @@ abstract class BusinessFormRequest extends FormRequest
                 $isFilled = $isFilled || $priceType !== '';
             }
 
-            if (!$isFilled) {
+            if (! $isFilled) {
                 continue;
             }
 
@@ -247,19 +246,19 @@ abstract class BusinessFormRequest extends FormRequest
 
         foreach ($rows as $index => $row) {
             if (empty($row['name'])) {
-                $errors["{$type}s.{$index}.name"] = ucfirst($type) . ' #' . ($index + 1) . ': nama wajib diisi.';
+                $errors["{$type}s.{$index}.name"] = ucfirst($type).' #'.($index + 1).': nama wajib diisi.';
             }
 
             if (empty($row['description'])) {
-                $errors["{$type}s.{$index}.description"] = ucfirst($type) . ' #' . ($index + 1) . ': deskripsi wajib diisi.';
+                $errors["{$type}s.{$index}.description"] = ucfirst($type).' #'.($index + 1).': deskripsi wajib diisi.';
             }
 
             if ($row['price'] === null || $row['price'] === '') {
-                $errors["{$type}s.{$index}.price"] = ucfirst($type) . ' #' . ($index + 1) . ': harga wajib diisi.';
+                $errors["{$type}s.{$index}.price"] = ucfirst($type).' #'.($index + 1).': harga wajib diisi.';
             }
 
             if ($type === 'service' && empty($row['price_type'])) {
-                $errors["services.{$index}.price_type"] = 'Service #' . ($index + 1) . ': tipe harga wajib diisi.';
+                $errors["services.{$index}.price_type"] = 'Service #'.($index + 1).': tipe harga wajib diisi.';
             }
         }
 

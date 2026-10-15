@@ -9,9 +9,9 @@ function userAdminList() {
         showImportModal: false,
 
         refreshStats() {
-            fetch('/users/stats', { headers: {'X-Requested-With':'XMLHttpRequest'} })
-                .then(r => r.json())
-                .then(d => {
+            fetch('/users/stats', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then((r) => r.json())
+                .then((d) => {
                     document.getElementById('stat-total').textContent = d.total;
                     document.getElementById('stat-entrepreneurs').textContent = d.entrepreneurs;
                     document.getElementById('stat-intrapreneurs').textContent = d.intrapreneurs;

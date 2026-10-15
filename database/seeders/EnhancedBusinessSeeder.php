@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Business;
-use App\Models\User;
 use App\Models\Category;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
 class EnhancedBusinessSeeder extends Seeder
@@ -44,7 +44,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'province' => 'DKI Jakarta',
             ]);
 
-            // Create some products
+            // --- Create some products ---
             $biz1->products()->firstOrCreate([
                 'name' => 'Signature T-Shirt',
             ], [
@@ -61,7 +61,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'sort_order' => 2,
             ]);
 
-            // Add additional owners / members in the pivot table
+            // --- Add additional owners / members in the pivot table ---
             if ($studentUser) {
                 $biz1->members()->syncWithoutDetaching([
                     $studentUser->id => ['position' => 'Co-Owner'],
@@ -88,7 +88,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'province' => 'Jawa Timur',
             ]);
 
-            // Create some services
+            // --- Create some services ---
             $biz2->products()->firstOrCreate([
                 'name' => 'Daily Student Meal Box',
             ], [
@@ -105,7 +105,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'sort_order' => 2,
             ]);
 
-            // Add additional owners / members in the pivot table
+            // --- Add additional owners / members in the pivot table ---
             if ($budiUser) {
                 $biz2->members()->syncWithoutDetaching([
                     $budiUser->id => ['position' => 'Partner & Head of Operations'],
@@ -132,7 +132,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'province' => 'Jawa Tengah',
             ]);
 
-            // Create some services
+            // --- Create some services ---
             $biz3->products()->firstOrCreate([
                 'name' => 'SEO Audit & Optimization',
             ], [
@@ -149,7 +149,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'sort_order' => 2,
             ]);
 
-            // Add additional owners / members in the pivot table
+            // --- Add additional owners / members in the pivot table ---
             if ($sitiUser) {
                 $biz3->members()->syncWithoutDetaching([
                     $sitiUser->id => ['position' => 'Lead Marketing Specialist'],
@@ -176,7 +176,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'province' => 'Jawa Barat',
             ]);
 
-            // Create some products
+            // --- Create some products ---
             $biz4->products()->firstOrCreate([
                 'name' => 'Brand Identity Package',
             ], [
@@ -193,7 +193,7 @@ class EnhancedBusinessSeeder extends Seeder
                 'sort_order' => 2,
             ]);
 
-            // Add additional owners / members in the pivot table
+            // --- Add additional owners / members in the pivot table ---
             if ($agusUser) {
                 $biz4->members()->syncWithoutDetaching([
                     $agusUser->id => ['position' => 'Creative Director'],

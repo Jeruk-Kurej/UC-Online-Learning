@@ -18,6 +18,7 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -159,7 +160,7 @@ class BusinessController extends Controller
             ->map(function ($regency) {
                 return [
                     'id' => $regency->id,
-                    'name' => \Illuminate\Support\Str::title(strtolower($regency->name)),
+                    'name' => Str::title(strtolower($regency->name)),
                 ];
             });
 
@@ -180,7 +181,7 @@ class BusinessController extends Controller
 
         $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $business->hasVisiblePeople();
 
-        if (!$isBusinessVisible && !$isOwner && !$isCoOwner && !$isCollabPartner && !$isAdmin) {
+        if (! $isBusinessVisible && ! $isOwner && ! $isCoOwner && ! $isCollabPartner && ! $isAdmin) {
             abort(404);
         }
 

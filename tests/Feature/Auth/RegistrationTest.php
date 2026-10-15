@@ -20,4 +20,3 @@ test('new users can register', function () {
     $this->assertAuthenticated();
     $response->assertRedirect(route('featured', absolute: false));
 });
-

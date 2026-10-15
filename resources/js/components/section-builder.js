@@ -7,11 +7,11 @@ export default function sectionBuilder(initialSections) {
 
         getSectionTypeName(type) {
             const names = {
-                'hero': '🎯 Hero Header Banner',
-                'feature_cards': '🚀 Feature Cards Grid',
-                'stats_grid': '📊 Impact Stats Grid',
-                'text_block': '📝 Text / FAQ Content Block',
-                'cta_banner': '📣 Call-To-Action Banner',
+                hero: '🎯 Hero Header Banner',
+                feature_cards: '🚀 Feature Cards Grid',
+                stats_grid: '📊 Impact Stats Grid',
+                text_block: '📝 Text / FAQ Content Block',
+                cta_banner: '📣 Call-To-Action Banner',
             };
             return names[type] || 'Section Block';
         },
@@ -28,13 +28,13 @@ export default function sectionBuilder(initialSections) {
                 newSec.subtitle = 'Supporting explanation text for cards.';
                 newSec.cards = [
                     { title: 'Feature 1', description: 'Description for feature card 1.', icon: 'bi-rocket-takeoff' },
-                    { title: 'Feature 2', description: 'Description for feature card 2.', icon: 'bi-people' }
+                    { title: 'Feature 2', description: 'Description for feature card 2.', icon: 'bi-people' },
                 ];
             } else if (type === 'stats_grid') {
                 newSec.title = 'Our Key Achievements';
                 newSec.items = [
                     { number: '100+', label: 'Metric 1' },
-                    { number: '50+', label: 'Metric 2' }
+                    { number: '50+', label: 'Metric 2' },
                 ];
             } else if (type === 'text_block') {
                 newSec.heading = 'New Article Section';
@@ -75,7 +75,7 @@ export default function sectionBuilder(initialSections) {
             this.sections[secIdx].cards.push({
                 title: 'New Card Title',
                 description: 'Card description content...',
-                icon: 'bi-rocket-takeoff'
+                icon: 'bi-rocket-takeoff',
             });
         },
 
@@ -87,7 +87,7 @@ export default function sectionBuilder(initialSections) {
             if (!this.sections[secIdx].items) this.sections[secIdx].items = [];
             this.sections[secIdx].items.push({
                 number: '10+',
-                label: 'New Metric Label'
+                label: 'New Metric Label',
             });
         },
 
@@ -101,21 +101,21 @@ export default function sectionBuilder(initialSections) {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    'Accept': 'application/json'
+                    Accept: 'application/json',
                 },
                 body: JSON.stringify({
                     title: 'About Us',
-                    content_json: { sections: this.sections }
+                    content_json: { sections: this.sections },
+                }),
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    alert('All section changes saved successfully!');
                 })
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert('All section changes saved successfully!');
-            })
-            .catch(err => {
-                console.error(err);
-                alert('Error saving section data.');
-            });
-        }
+                .catch((err) => {
+                    console.error(err);
+                    alert('Error saving section data.');
+                });
+        },
     };
 }

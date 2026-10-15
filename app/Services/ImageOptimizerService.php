@@ -147,7 +147,7 @@ class ImageOptimizerService
     /**
      * Load an image resource from the given file path.
      *
-     * @return array{0: \GdImage|false, 1: bool}  [image, hasAlpha]
+     * @return array{0: \GdImage|false, 1: bool} [image, hasAlpha]
      */
     private function gdLoad(string $path, string $mimeType): array
     {
@@ -155,24 +155,26 @@ class ImageOptimizerService
 
         $image = match ($mimeType) {
             'image/jpeg' => @imagecreatefromjpeg($path),
-            'image/png'  => (function () use ($path, &$hasAlpha) {
+            'image/png' => (function () use ($path, &$hasAlpha) {
                 $img = @imagecreatefrompng($path);
                 if ($img) {
                     $hasAlpha = true;
                     imagesavealpha($img, true);
                 }
+
                 return $img;
             })(),
-            'image/gif'  => @imagecreatefromgif($path),
+            'image/gif' => @imagecreatefromgif($path),
             'image/webp' => (function () use ($path, &$hasAlpha) {
                 $img = @imagecreatefromwebp($path);
                 if ($img) {
                     $hasAlpha = true;
                     imagesavealpha($img, true);
                 }
+
                 return $img;
             })(),
-            default      => false,
+            default => false,
         };
 
         return [$image, $hasAlpha];

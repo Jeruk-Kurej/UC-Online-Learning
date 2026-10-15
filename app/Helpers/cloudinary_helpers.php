@@ -1,19 +1,18 @@
 <?php
 
 use Cloudinary\Cloudinary;
+use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('cloudinary_url')) {
     /**
      * Generate a Cloudinary transformed URL for a stored public id.
      * If the input already looks like a URL, return it unchanged.
      *
-     * @param string|null $publicId
-     * @param array $options  Transformation options (width, height, crop, fetch_format, quality, etc.)
-     * @return string|null
+     * @param  array  $options  Transformation options (width, height, crop, fetch_format, quality, etc.)
      */
     function cloudinary_url(?string $publicId, array $options = []): ?string
     {
-        if (!$publicId) {
+        if (! $publicId) {
             return null;
         }
 
@@ -36,8 +35,12 @@ if (! function_exists('cloudinary_url')) {
                     $options['quality'] = 'auto';
                 }
 
-                if (isset($options['width'])) $options['width'] = (int) $options['width'];
-                if (isset($options['height'])) $options['height'] = (int) $options['height'];
+                if (isset($options['width'])) {
+                    $options['width'] = (int) $options['width'];
+                }
+                if (isset($options['height'])) {
+                    $options['height'] = (int) $options['height'];
+                }
 
                 return (string) $image->toUrl($options);
             }
@@ -54,14 +57,10 @@ if (! function_exists('storage_image_url')) {
      * Return a storage-backed image URL. If the app uses Cloudinary as the filesystem disk,
      * generate a Cloudinary transformed URL. Otherwise, fall back to Storage::url().
      *
-     * @param string|null $path
-     * @param array $options
-     * @return string|null
+     * @param  array  $options
      */
     /**
-     * @param string|null $path
-     * @param array|string|null $options  Either an options array or a preset name string
-     * @return string|null
+     * @param  array|string|null  $options  Either an options array or a preset name string
      */
     function storage_image_url(?string $path, $options = []): ?string
     {
@@ -95,7 +94,7 @@ if (! function_exists('storage_image_url')) {
 
         try {
             $disk = config('filesystems.default');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $disk = null;
         }
 
@@ -105,13 +104,13 @@ if (! function_exists('storage_image_url')) {
                 if ($url) {
                     return $url;
                 }
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
             }
         }
 
         try {
-            return Illuminate\Support\Facades\Storage::url($path);
-        } catch (\Throwable $e) {
+            return Storage::url($path);
+        } catch (Throwable $e) {
             return null;
         }
     }

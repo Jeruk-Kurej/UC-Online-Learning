@@ -7,7 +7,9 @@ function businessShowPage() {
         detailItem: {},
 
         init() {
-            this.$watch('detailModalOpen', val => { document.body.style.overflow = val ? 'hidden' : ''; });
+            this.$watch('detailModalOpen', (val) => {
+                document.body.style.overflow = val ? 'hidden' : '';
+            });
         },
 
         openDetailModal(item) {
@@ -25,7 +27,7 @@ function restoreScrollPosition() {
         setTimeout(() => {
             window.scrollTo({
                 top: parseInt(scrollPos),
-                behavior: 'instant'
+                behavior: 'instant',
             });
             sessionStorage.removeItem('uco_business_scroll_pos');
         }, 50);
@@ -35,7 +37,7 @@ function restoreScrollPosition() {
         sessionStorage.setItem('uco_business_scroll_pos', window.scrollY);
     };
 
-    document.querySelectorAll('form, .btn-save-scroll').forEach(el => {
+    document.querySelectorAll('form, .btn-save-scroll').forEach((el) => {
         el.addEventListener('submit', saveScrollPos);
         el.addEventListener('click', (e) => {
             if (e.currentTarget.tagName === 'A' || e.currentTarget.tagName === 'BUTTON') {

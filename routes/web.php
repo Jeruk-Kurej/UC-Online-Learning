@@ -1,22 +1,21 @@
 <?php
 
-use App\Http\Controllers\BusinessController;
-use App\Http\Controllers\UcTestimonyController;
-use App\Http\Controllers\ImportController;
-use App\Http\Controllers\FeaturedController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\AboutController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\InboxController;
-use App\Http\Controllers\CollabController;
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\BusinessController;
+use App\Http\Controllers\CollabController;
 use App\Http\Controllers\CompanyAchievementController;
 use App\Http\Controllers\CompanyController;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\FeaturedController;
+use App\Http\Controllers\ImportController;
+use App\Http\Controllers\InboxController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\UcTestimonyController;
+use App\Http\Controllers\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 // --- Public routes ---
@@ -86,7 +85,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('/users/stats', [AdminUserController::class, 'stats'])->name('users.stats');
     Route::post('/users/{user}/toggle-featured', [AdminUserController::class, 'toggleFeatured'])->name('users.toggle-featured');
     Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
-    
+
     Route::post('/business/import', [AdminBusinessController::class, 'import'])->name('businesses.import');
     Route::delete('/business/{business}', [AdminBusinessController::class, 'destroy'])->name('businesses.destroy');
     Route::post('/business/{business}/toggle-featured', [AdminBusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
@@ -94,7 +93,7 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/business/{business}/status', [AdminBusinessController::class, 'updateStatus'])->name('businesses.update-status');
     Route::post('/intrapreneurs/{company}/status', [AdminBusinessController::class, 'updateCompanyStatus'])->name('intrapreneurs.update-status');
     Route::post('/business/{business}/approve', [AdminBusinessController::class, 'approve'])->name('businesses.approve');
-    
+
     Route::get('/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
     Route::post('/testimonies/{user:id}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');
 

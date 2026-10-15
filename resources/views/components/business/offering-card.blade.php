@@ -14,26 +14,26 @@
         whatsapp_link: {{ Js::from($business->whatsappLinkFor($offering)) }},
         type: '{{ $offering->type }}'
      })"
-    class="group relative flex flex-col h-full border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:border-orange-200 transition-all duration-300 cursor-pointer bg-white">
+     class="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-orange-200 hover:shadow-xl">
 
     {{-- --- Edit / delete for people who manage the business --- --}}
     @auth
         @if ($canManage)
-            <div class="absolute top-3 right-3 flex items-center gap-1.5 z-10" @click.stop>
-                <a href="{{ route('businesses.'.$offering->type.'s.edit', [$business, $offering]) }}"
-                    class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-white text-gray-700 hover:text-uco-orange-600 rounded-full shadow-md transition-all duration-300 border border-gray-100"
-                    title="Edit {{ ucfirst($offering->type) }}">
+            <div class="absolute right-3 top-3 z-10 flex items-center gap-1.5" @click.stop>
+                <a href="{{ route('businesses.' . $offering->type . 's.edit', [$business, $offering]) }}"
+                   class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white/95 text-gray-700 shadow-md transition-all duration-300 hover:bg-white hover:text-uco-orange-600"
+                   title="Edit {{ ucfirst($offering->type) }}">
                     <i class="bi bi-pencil-square"></i>
                 </a>
-                <form action="{{ route('businesses.'.$offering->type.'s.destroy', [$business, $offering]) }}"
-                    method="POST"
-                    data-confirm="Are you sure you want to delete this {{ $offering->type }}?"
-                    class="inline">
+                <form action="{{ route('businesses.' . $offering->type . 's.destroy', [$business, $offering]) }}"
+                      method="POST"
+                      data-confirm="Are you sure you want to delete this {{ $offering->type }}?"
+                      class="inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit"
-                        class="inline-flex items-center justify-center w-8 h-8 bg-white/95 hover:bg-red-50 text-red-600 hover:text-red-700 rounded-full shadow-md transition-all duration-300 border border-gray-100"
-                        title="Delete {{ ucfirst($offering->type) }}">
+                            class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-100 bg-white/95 text-red-600 shadow-md transition-all duration-300 hover:bg-red-50 hover:text-red-700"
+                            title="Delete {{ ucfirst($offering->type) }}">
                         <i class="bi bi-trash"></i>
                     </button>
                 </form>
@@ -42,12 +42,12 @@
     @endauth
 
     {{-- --- Photo --- --}}
-    <div class="relative aspect-square w-full flex items-center justify-center overflow-hidden flex-shrink-0">
+    <div class="relative flex aspect-square w-full flex-shrink-0 items-center justify-center overflow-hidden">
         @if ($offering->has_photo)
-            <x-premium-image :src="$offering->photo_url" :alt="$offering->name" class="w-full h-full group-hover:scale-105 transition-transform duration-500" />
-            @if($offering->photo_caption)
-                <div class="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                    <p class="text-[10px] text-white font-medium text-center line-clamp-1">{{ $offering->photo_caption }}</p>
+            <x-premium-image :src="$offering->photo_url" :alt="$offering->name" class="h-full w-full transition-transform duration-500 group-hover:scale-105" />
+            @if ($offering->photo_caption)
+                <div class="absolute bottom-0 left-0 right-0 translate-y-full transform bg-black/60 p-2 backdrop-blur-sm transition-transform duration-300 group-hover:translate-y-0">
+                    <p class="line-clamp-1 text-center text-[10px] font-medium text-white">{{ $offering->photo_caption }}</p>
                 </div>
             @endif
         @else
@@ -56,29 +56,29 @@
     </div>
 
     {{-- --- Name, description and price --- --}}
-    <div class="pt-4 px-4 pb-3 flex flex-col flex-grow">
-        <h4 class="font-bold text-gray-800 text-sm line-clamp-2 leading-snug mb-1.5 group-hover:text-uco-orange-600 transition-colors" title="{{ $offering->name }}">
+    <div class="flex flex-grow flex-col px-4 pb-3 pt-4">
+        <h4 class="mb-1.5 line-clamp-2 text-sm font-bold leading-snug text-gray-800 transition-colors group-hover:text-uco-orange-600" title="{{ $offering->name }}">
             {{ $offering->name }}
         </h4>
 
-        <p class="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+        <p class="mb-3 line-clamp-2 text-xs leading-relaxed text-gray-500">
             {{ $offering->description }}
         </p>
 
         <div class="mt-auto flex flex-col items-start gap-1">
             <div>
-                @if($offering->shows_price)
+                @if ($offering->shows_price)
                     <span class="text-base font-extrabold text-[#f7931e]">
                         Rp {{ $offering->formatted_price }}
                     </span>
                 @else
-                    <span class="inline-flex items-center text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                    <span class="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
                         {{ $offering->price_text }}
                     </span>
                 @endif
             </div>
-            @if(is_numeric($offering->price) && $offering->price_type_label)
-                <span class="inline-flex items-center text-[10px] font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded uppercase tracking-wider">
+            @if (is_numeric($offering->price) && $offering->price_type_label)
+                <span class="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-500">
                     {{ $offering->price_type_label }}
                 </span>
             @endif

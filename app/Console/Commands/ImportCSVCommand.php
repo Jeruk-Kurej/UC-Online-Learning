@@ -2,12 +2,12 @@
 
 namespace App\Console\Commands;
 
+use App\Imports\FormResponseImport;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\FormResponseImport;
-use Illuminate\Support\Facades\File;
 
 class ImportCSVCommand extends Command
 {
@@ -33,8 +33,9 @@ class ImportCSVCommand extends Command
         $this->info('Starting CSV import process...');
 
         $dir = base_path('Data_to_import');
-        if (!File::exists($dir)) {
+        if (! File::exists($dir)) {
             $this->error("Directory {$dir} does not exist.");
+
             return Command::FAILURE;
         }
 
@@ -48,22 +49,24 @@ class ImportCSVCommand extends Command
 
         if (empty($csvFiles)) {
             $this->warn('No CSV files found in Data_to_import folder.');
+
             return Command::SUCCESS;
         }
 
         foreach ($csvFiles as $file) {
-            $this->info("Importing file: " . $file->getFilename());
+            $this->info('Importing file: '.$file->getFilename());
             try {
                 $importId = (string) Str::uuid();
                 Excel::import(new FormResponseImport($importId, $file->getFilename()), $file->getRealPath());
-                $this->info("Successfully imported " . $file->getFilename());
+                $this->info('Successfully imported '.$file->getFilename());
             } catch (\Exception $e) {
-                $this->error("Failed to import " . $file->getFilename() . ": " . $e->getMessage());
-                Log::error("CLI Import failed for {$file->getFilename()}: " . $e->getMessage());
+                $this->error('Failed to import '.$file->getFilename().': '.$e->getMessage());
+                Log::error("CLI Import failed for {$file->getFilename()}: ".$e->getMessage());
             }
         }
 
         $this->info('CSV import process completed.');
+
         return Command::SUCCESS;
     }
 }

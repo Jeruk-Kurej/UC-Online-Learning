@@ -23,18 +23,21 @@
                 <div class="profile-sidebar">
                     <div class="profile-card">
                         <div x-data="removablePhoto(@js($user->profile_photo_url))" class="flex flex-col items-center">
-                            <div class="photo-box w-[140px] h-[180px] mb-3">
+                            <div class="photo-box mb-3 h-[180px] w-[140px]">
                                 <img :src="previewUrl" class="photo-box__image" x-show="hasPhoto && !photoDeleted">
 
                                 <div class="photo-box__initials uco-initials-bg-deep" x-show="!hasPhoto || photoDeleted">
                                     <span class="profile-initials">{{ $user->initials }}</span>
                                 </div>
 
-                                <label for="profile_photo" class="absolute inset-0 cursor-pointer z-20">
+                                <label for="profile_photo" class="absolute inset-0 z-20 cursor-pointer">
                                     <input type="file" name="profile_photo" id="profile_photo" class="hidden" accept="image/*" x-ref="photoInput" @change="pick($event)">
                                 </label>
                                 <div class="photo-box__overlay">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                                        <circle cx="12" cy="13" r="4" />
+                                    </svg>
                                     <span class="profile-photo-hint">Update</span>
                                 </div>
                             </div>
@@ -42,24 +45,24 @@
                             <input type="hidden" name="delete_profile_photo" :value="photoDeleted ? '1' : '0'">
 
                             <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
-                                <button type="button" @click="photoDeleted = true" 
-                                        class="text-xs text-red-500 hover:text-red-700 font-bold transition-all flex items-center gap-1 mb-2">
+                                <button type="button" @click="photoDeleted = true"
+                                        class="mb-2 flex items-center gap-1 text-xs font-bold text-red-500 transition-all hover:text-red-700">
                                     <i class="bi bi-trash3 text-sm"></i>
                                     <span>Remove Photo</span>
                                 </button>
                             </template>
-                            
+
                             <template x-if="photoDeleted">
-                                <button type="button" @click="photoDeleted = false" 
-                                        class="text-xs text-blue-500 hover:text-blue-700 font-bold transition-all flex items-center gap-1 mb-2">
+                                <button type="button" @click="photoDeleted = false"
+                                        class="mb-2 flex items-center gap-1 text-xs font-bold text-blue-500 transition-all hover:text-blue-700">
                                     <i class="bi bi-arrow-counterclockwise text-sm"></i>
                                     <span>Undo Delete</span>
                                 </button>
                             </template>
 
                             <template x-if="newPhotoSelected">
-                                <button type="button" @click="cancelNew()" 
-                                        class="text-xs text-amber-600 hover:text-amber-700 font-bold transition-all flex items-center gap-1 mb-2">
+                                <button type="button" @click="cancelNew()"
+                                        class="mb-2 flex items-center gap-1 text-xs font-bold text-amber-600 transition-all hover:text-amber-700">
                                     <i class="bi bi-x-circle text-sm"></i>
                                     <span>Cancel New Photo</span>
                                 </button>
@@ -79,7 +82,7 @@
                 <div class="profile-sections">
 
                     <x-profile.section title="Identity Information">
-                        <div class="profile-row items-start mb-[25px]">
+                        <div class="profile-row mb-[25px] items-start">
                             <label class="profile-row-label mt-[15px]">Full Name</label>
                             <div class="profile-stack gap-3">
                                 <x-profile.field compact label="Prefix Title (e.g. Prof. Dr.)" name="prefix_title" :value="$user->prefix_title" placeholder="Prefix" />
@@ -95,10 +98,10 @@
 
                     <x-profile.section title="Contact Details">
                         <x-slot:actions>
-                            <label class="relative inline-flex items-center cursor-pointer group">
-                                <input type="checkbox" name="show_contact_details" value="1" class="sr-only peer" {{ old('show_contact_details', $user->show_contact_details) ? 'checked' : '' }}>
-                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                <span class="ml-3 text-xs font-bold text-slate-600 uppercase tracking-wider group-hover:text-slate-900 transition-colors">Show contacts publicly</span>
+                            <label class="group relative inline-flex cursor-pointer items-center">
+                                <input type="checkbox" name="show_contact_details" value="1" class="peer sr-only" {{ old('show_contact_details', $user->show_contact_details) ? 'checked' : '' }}>
+                                <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
+                                <span class="ml-3 text-xs font-bold uppercase tracking-wider text-slate-600 transition-colors group-hover:text-slate-900">Show contacts publicly</span>
                             </label>
                         </x-slot:actions>
                         <div class="profile-grid">
@@ -118,7 +121,9 @@
                                     <option value="Entrepreneur" {{ old('current_status', $user->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
                                     <option value="Intrapreneur" {{ old('current_status', $user->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
                                 </select>
-                                <div class="profile-select-icon"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                                <div class="profile-select-icon"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M2.5 4.5L6 8L9.5 4.5" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                    </svg></div>
                             </div>
                             <x-profile.field label="Enrollment Year" name="year_of_enrollment" :value="$user->year_of_enrollment" />
                             <x-profile.field label="Graduate Year" name="graduate_year" :value="$user->graduate_year" />
@@ -129,14 +134,14 @@
                     <x-profile.section title="Additional Documents">
                         <div class="flex flex-col gap-5" x-data="activityFiles(@js($user->activity_files))">
                             <div class="profile-row items-start">
-                                <div class="w-[140px] flex flex-col gap-2 shrink-0">
+                                <div class="flex w-[140px] shrink-0 flex-col gap-2">
                                     <label class="profile-row-label mt-1">Activities Docs</label>
                                     <div class="relative self-start">
                                         <input type="file" name="activities_files[]" id="activities_files" multiple accept="image/*,application/pdf"
                                                class="hidden" x-ref="activityInput"
                                                @change="handleNewFiles($event)">
                                         <button type="button" @click="pickFiles()"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 text-[10px] font-extrabold rounded-lg transition shadow-sm select-none cursor-pointer">
+                                                class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold text-blue-600 shadow-sm transition hover:bg-blue-100 hover:text-blue-700">
                                             <i class="bi bi-plus-lg text-[9px]"></i>
                                             <span>Add Files</span>
                                         </button>

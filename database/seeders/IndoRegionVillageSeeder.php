@@ -9,8 +9,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use AzisHapidin\IndoRegion\RawDataGetter;
+use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class IndoRegionVillageSeeder extends Seeder
@@ -24,11 +24,11 @@ class IndoRegionVillageSeeder extends Seeder
      */
     public function run()
     {
-        // Get Data
+        // --- Get Data ---
         $villages = RawDataGetter::getVillages();
 
-        // Insert Data with Chunk
-        DB::transaction(function() use($villages) {
+        // --- Insert Data with Chunk ---
+        DB::transaction(function () use ($villages) {
             $collection = collect($villages);
             $parts = $collection->chunk(1000);
             foreach ($parts as $subset) {

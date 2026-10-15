@@ -11,10 +11,12 @@ trait ParsesImportDates
 {
     private function parseDate(?string $val): ?string
     {
-        if (!$val) return null;
+        if (! $val) {
+            return null;
+        }
 
         if (preg_match('/^\d{4}$/', trim($val))) {
-            return trim($val) . '-01-01';
+            return trim($val).'-01-01';
         }
 
         try {

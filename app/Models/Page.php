@@ -47,7 +47,7 @@ class Page extends Model
                     ['title' => 'Rapid Launch', 'description' => 'We provide the tools and network needed to transform academic theories into viable market products within weeks, not years.', 'icon' => 'bi-rocket-takeoff'],
                     ['title' => 'Global Network', 'description' => 'Connect with a diverse community of alumni mentors, industry experts, and fellow entrepreneurs across all major industries.', 'icon' => 'bi-people'],
                     ['title' => 'Scalable Growth', 'description' => 'From local startups to multinational enterprises, our platform supports scaling businesses at every stage of their lifecycle.', 'icon' => 'bi-graph-up-arrow'],
-                ]
+                ],
             ],
             [
                 'type' => 'stats_grid',
@@ -57,7 +57,7 @@ class Page extends Model
                     ['number' => '1200+', 'label' => 'Graduated Founders'],
                     ['number' => '24', 'label' => 'Industry Categories'],
                     ['number' => '15+', 'label' => 'Years of Heritage'],
-                ]
+                ],
             ],
             [
                 'type' => 'cta_banner',
@@ -65,7 +65,7 @@ class Page extends Model
                 'subtitle' => $content['cta']['subtitle'] ?? 'Join the UCO community today and gain access to a world of entrepreneurial opportunities.',
                 'primary_btn_text' => $content['cta']['primary_btn_text'] ?? 'Get Started Now',
                 'secondary_btn_text' => $content['cta']['secondary_btn_text'] ?? 'Explore Directory',
-            ]
+            ],
         ];
     }
 }

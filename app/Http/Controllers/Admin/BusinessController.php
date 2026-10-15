@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Factories\ImporterFactory;
+use App\Http\Controllers\Controller;
+use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Company;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -16,7 +20,7 @@ use Maatwebsite\Excel\Facades\Excel;
 /**
  * Admin moderation of businesses and work profiles: lists, approval, featuring, deletion and import.
  */
-class BusinessController extends \App\Http\Controllers\Controller
+class BusinessController extends Controller
 {
     /**
      * Display a listing of businesses for administrative management.
@@ -45,10 +49,10 @@ class BusinessController extends \App\Http\Controllers\Controller
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
-                      ->orWhere('position', 'LIKE', "%{$search}%")
-                      ->orWhereHas('user', function ($uq) use ($search) {
-                          $uq->where('name', 'LIKE', "%{$search}%");
-                      });
+                        ->orWhere('position', 'LIKE', "%{$search}%")
+                        ->orWhereHas('user', function ($uq) use ($search) {
+                            $uq->where('name', 'LIKE', "%{$search}%");
+                        });
                 });
             }
         } else {
@@ -75,9 +79,9 @@ class BusinessController extends \App\Http\Controllers\Controller
             if ($search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'LIKE', "%{$search}%")
-                      ->orWhereHas('user', function ($uq) use ($search) {
-                          $uq->where('name', 'LIKE', "%{$search}%");
-                      });
+                        ->orWhereHas('user', function ($uq) use ($search) {
+                            $uq->where('name', 'LIKE', "%{$search}%");
+                        });
                 });
             }
         }
@@ -176,16 +180,16 @@ class BusinessController extends \App\Http\Controllers\Controller
 
         try {
             $importId = (string) Str::uuid();
-            /** @var \Illuminate\Http\UploadedFile $file */
+            /** @var UploadedFile $file */
             $file = $request->file('file');
 
             $path = $file->store('imports', 'local');
 
-            $importer = \App\Factories\ImporterFactory::make($file->getRealPath(), $importId, $file->getClientOriginalName());
+            $importer = ImporterFactory::make($file->getRealPath(), $importId, $file->getClientOriginalName());
 
             Excel::queueImport($importer, $path, 'local');
 
-            $format = $importer instanceof \App\Imports\UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
+            $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
 
             session(['active_import' => $importId]);
 

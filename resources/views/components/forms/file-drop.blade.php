@@ -8,16 +8,16 @@
 
     <div x-show="!selected" class="form-file-container-custom group relative">
         <div class="flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-white border border-gray-100 flex items-center justify-center text-gray-400 group-hover:text-blue-500 transition-all">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-100 bg-white text-gray-400 transition-all group-hover:text-blue-500">
                 <i class="bi {{ $icon }} text-base"></i>
             </div>
             <div>
-                <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition-colors block leading-tight">{{ $prompt }}</span>
-                <span class="text-[10px] text-gray-400 uppercase font-bold tracking-tight">{{ $formats }}</span>
+                <span class="block text-sm font-semibold leading-tight text-gray-600 transition-colors group-hover:text-gray-900">{{ $prompt }}</span>
+                <span class="text-[10px] font-bold uppercase tracking-tight text-gray-400">{{ $formats }}</span>
             </div>
         </div>
         <input type="file" name="{{ $name }}" id="{{ $name }}" accept="{{ $accept }}"
-               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+               class="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                x-ref="fileInput" @change="pick($event)">
     </div>
     {{ $slot }}

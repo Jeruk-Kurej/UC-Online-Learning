@@ -42,7 +42,8 @@ class UserProfileController extends Controller
      */
     public function proxyGoogleDriveImage($id)
     {
-        $url = 'https://drive.google.com/uc?export=view&id=' . $id;
+        $url = 'https://drive.google.com/uc?export=view&id='.$id;
+
         return redirect($url);
     }
 }

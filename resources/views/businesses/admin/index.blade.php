@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div data-business-admin class="w-full max-w-[1600px] mx-auto py-8 px-4" 
+    <div data-business-admin class="mx-auto w-full max-w-[1600px] px-4 py-8"
          @start-import.window="showImportModal = false"
          @close-import-modal.window="showImportModal = false"
          data-view-type="{{ $viewType ?? 'entrepreneur' }}"
@@ -8,16 +8,16 @@
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <x-ui.page-header badge="Admin Portal" title="Business Management" subtitle="Review and manage business submissions from students.">
             <x-slot:actions>
-                <span class="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md flex-grow sm:flex-initial">
+                <span class="inline-flex flex-grow items-center justify-center gap-1.5 rounded-md border border-uco-yellow-200 bg-uco-yellow-50 px-3 py-2 text-xs font-semibold text-uco-yellow-700 sm:flex-initial">
                     <i class="bi bi-star-fill text-uco-yellow-500"></i>
                     <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
                 </span>
-                <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
+                <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                     <i class="bi bi-cloud-upload mr-2"></i>
                     Import CSV
                 </button>
 
-                <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
+                <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                     <i class="bi bi-plus-lg mr-2"></i>
                     Create Business
                 </a>
@@ -25,7 +25,7 @@
         </x-ui.page-header>
 
         {{-- --- Statistics --- --}}
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
+        <div class="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
             <x-admin.stat-card class="delay-100">
                 <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Total Businesses</span>
@@ -57,42 +57,41 @@
         </div>
 
         {{-- --- Filters & Search --- --}}
-        <div class="mb-8 reveal-on-scroll delay-300">
+        <div class="reveal-on-scroll mb-8 delay-300">
             <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
                 {{-- --- Hidden type input (kept in sync by switchType()) --- --}}
                 <input type="hidden" name="type" :value="viewType">
 
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                     {{-- --- Search Input --- --}}
-                    <div class="relative flex-1 w-full">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div class="relative w-full flex-1">
+                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <i class="bi bi-search text-gray-400"></i>
                         </div>
                         <input
-                            type="text"
-                            name="search"
-                            value="{{ $search }}"
-                            :placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'"
-                            @input="submitDebounced()"
-                            @keydown.enter.prevent="updateList()"
-                            class="w-full border-gray-300 bg-white rounded-md pl-10 pr-4 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm"
-                        >
+                               type="text"
+                               name="search"
+                               value="{{ $search }}"
+                               :placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'"
+                               @input="submitDebounced()"
+                               @keydown.enter.prevent="updateList()"
+                               class="w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
                     </div>
 
                     {{-- --- Filters & Reset Button --- --}}
-                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
 
                         {{-- --- Type dropdown --- --}}
                         <select x-model="viewType"
                                 @change="switchType($event.target.value)"
-                                class="flex-1 sm:flex-initial min-w-[175px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                                class="min-w-[175px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
                             <option value="entrepreneur">Type: Entrepreneur</option>
                             <option value="intrapreneur">Type: Intrapreneur</option>
                         </select>
 
                         {{-- --- Status filter --- --}}
                         <select name="status" @change="updateList()"
-                                class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                                class="min-w-[145px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
                             <option value="">Status: All</option>
                             <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
@@ -103,7 +102,7 @@
                         {{-- --- Featured filter (entrepreneur only) --- --}}
                         <template x-if="viewType === 'entrepreneur'">
                             <select name="featured" @change="updateList()"
-                                    class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
+                                    class="min-w-[145px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
                                 <option value="">Featured: All</option>
                                 <option value="yes" {{ ($featured ?? '') === 'yes' ? 'selected' : '' }}>Featured</option>
                                 <option value="no" {{ ($featured ?? '') === 'no' ? 'selected' : '' }}>Not Featured</option>
@@ -112,14 +111,14 @@
 
                         {{-- --- Reset --- --}}
                         <button type="button" @click="resetFilters()" x-show="!isSubmitting" title="Reset Filters"
-                                class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
+                                class="inline-flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
 
                         {{-- --- Loading spinner --- --}}
-                        <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
+                        <div x-show="isSubmitting" x-cloak class="inline-flex h-[38px] items-center justify-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 text-uco-orange-700 shadow-sm">
                             <x-ui.spinner />
-                            <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
+                            <span class="ml-2 hidden text-xs font-medium sm:inline">Updating...</span>
                         </div>
                     </div>
                 </div>
@@ -130,62 +129,61 @@
             @include('businesses.admin.partials.list')
         </div>
 
-    {{-- --- Status Modal --- --}}
-    <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" data-status-modal-close></div>
+        {{-- --- Status Modal --- --}}
+        <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
+                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" data-status-modal-close></div>
 
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
 
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <form id="statusForm" method="POST">
-                    @csrf
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                        <div class="sm:flex sm:items-start">
-                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                                <i class="bi bi-gear-fill text-blue-600"></i>
-                            </div>
-                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-bold text-gray-900" id="modal-title">
-                                    Update Business Status
-                                </h3>
-                                <div class="mt-2">
-                                    <p class="text-sm text-gray-500 mb-4" id="businessNameDisplay"></p>
-                                    
-                                    <div class="mb-4">
-                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">New Status</label>
-                                        <select name="status" id="statusSelect" data-status-select
-                                                class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                                            <option value="pending">Pending Approval</option>
-                                            <option value="approved">Approved</option>
-                                            <option value="need_revision">Need Revision</option>
-                                            <option value="rejected">Rejected</option>
-                                        </select>
-                                    </div>
+                <div class="inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
+                    <form id="statusForm" method="POST">
+                        @csrf
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <i class="bi bi-gear-fill text-blue-600"></i>
+                                </div>
+                                <div class="mt-3 w-full text-center sm:ml-4 sm:mt-0 sm:text-left">
+                                    <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">
+                                        Update Business Status
+                                    </h3>
+                                    <div class="mt-2">
+                                        <p class="mb-4 text-sm text-gray-500" id="businessNameDisplay"></p>
 
-                                    <div id="reasonField" class="hidden">
-                                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-wider mb-2">Feedback / Reason</label>
-                                        <textarea name="rejection_reason" id="rejection_reason" rows="3" 
-                                                  class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
-                                                  placeholder="Provide specific feedback or reason for rejection..."></textarea>
+                                        <div class="mb-4">
+                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">New Status</label>
+                                            <select name="status" id="statusSelect" data-status-select
+                                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
+                                                <option value="pending">Pending Approval</option>
+                                                <option value="approved">Approved</option>
+                                                <option value="need_revision">Need Revision</option>
+                                                <option value="rejected">Rejected</option>
+                                            </select>
+                                        </div>
+
+                                        <div id="reasonField" class="hidden">
+                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">Feedback / Reason</label>
+                                            <textarea name="rejection_reason" id="rejection_reason" rows="3"
+                                                      class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
+                                                      placeholder="Provide specific feedback or reason for rejection..."></textarea>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse sm:items-center sm:gap-2">
-                        <button type="submit" class="w-full sm:w-auto btn-uco btn-uco-primary">
-                            Save Changes
-                        </button>
-                        <button type="button" data-status-modal-close class="mt-3 sm:mt-0 w-full sm:w-auto btn-uco btn-uco-neutral">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:items-center sm:gap-2 sm:px-6">
+                            <button type="submit" class="btn-uco btn-uco-primary w-full sm:w-auto">
+                                Save Changes
+                            </button>
+                            <button type="button" data-status-modal-close class="btn-uco btn-uco-neutral mt-3 w-full sm:mt-0 sm:w-auto">
+                                Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-
 
         {{-- --- Import Modal --- --}}
         @if (auth()->user()?->isAdmin())

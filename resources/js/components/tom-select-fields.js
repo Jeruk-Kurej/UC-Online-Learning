@@ -26,7 +26,7 @@ function initRegionPairs() {
             labelField: 'name',
         });
 
-        if ('regionCityStartsDisabled' in cityElement.dataset || ! provinceElement.value) {
+        if ('regionCityStartsDisabled' in cityElement.dataset || !provinceElement.value) {
             citySelect.disable();
         }
 
@@ -38,7 +38,7 @@ function initRegionPairs() {
                 citySelect.clear();
                 citySelect.clearOptions();
 
-                if (! value) {
+                if (!value) {
                     citySelect.disable();
                     citySelect.settings.placeholder = 'Select Province First';
                     citySelect.inputState();

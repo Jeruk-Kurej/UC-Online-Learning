@@ -5,7 +5,7 @@ export default function registerConfirmForm() {
     document.addEventListener('submit', (event) => {
         const message = event.target.dataset?.confirm;
 
-        if (message && ! confirm(message)) {
+        if (message && !confirm(message)) {
             event.preventDefault();
         }
     });

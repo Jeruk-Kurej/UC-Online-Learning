@@ -126,11 +126,11 @@ function testimonyCarousel() {
 
             track.scrollTo({
                 left: targetScroll,
-                behavior: 'smooth'
+                behavior: 'smooth',
             });
             this.activeSlide = index;
-        }
-    }
+        },
+    };
 }
 
 function initFeaturedAnimations() {
@@ -139,68 +139,68 @@ function initFeaturedAnimations() {
 
     // --- Default transitions are turned off only for animated items (avoids a flash of unstyled content) ---
     const animatedElements = document.querySelectorAll(
-        'section:nth-of-type(2) .reveal-on-scroll, section:nth-of-type(3) .reveal-on-scroll, section:nth-of-type(4) .reveal-on-scroll, section:nth-of-type(5) .reveal-on-scroll'
+        'section:nth-of-type(2) .reveal-on-scroll, section:nth-of-type(3) .reveal-on-scroll, section:nth-of-type(4) .reveal-on-scroll, section:nth-of-type(5) .reveal-on-scroll',
     );
-    animatedElements.forEach(el => {
+    animatedElements.forEach((el) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(40px)';
         el.style.transition = 'none';
     });
 
     // --- Featured Intrapreneur Students ---
-    gsap.to("section:nth-of-type(2) .reveal-on-scroll", {
+    gsap.to('section:nth-of-type(2) .reveal-on-scroll', {
         opacity: 1,
         y: 0,
         duration: 0.6,
         stagger: 0.05,
-        ease: "power2.out",
+        ease: 'power2.out',
         scrollTrigger: {
-            trigger: "section:nth-of-type(2)",
-            start: "top 90%",
-            toggleActions: "play none none none"
-        }
+            trigger: 'section:nth-of-type(2)',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+        },
     });
 
     // --- Featured Entrepreneur Students ---
-    gsap.to("section:nth-of-type(3) .reveal-on-scroll", {
+    gsap.to('section:nth-of-type(3) .reveal-on-scroll', {
         opacity: 1,
         y: 0,
         duration: 0.6,
         stagger: 0.05,
-        ease: "power2.out",
+        ease: 'power2.out',
         scrollTrigger: {
-            trigger: "section:nth-of-type(3)",
-            start: "top 90%",
-            toggleActions: "play none none none"
-        }
+            trigger: 'section:nth-of-type(3)',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+        },
     });
 
     // --- Featured Ventures ---
-    gsap.to("section:nth-of-type(4) .reveal-on-scroll", {
+    gsap.to('section:nth-of-type(4) .reveal-on-scroll', {
         opacity: 1,
         y: 0,
         duration: 0.6,
         stagger: 0.05,
-        ease: "power2.out",
+        ease: 'power2.out',
         scrollTrigger: {
-            trigger: "section:nth-of-type(4)",
-            start: "top 90%",
-            toggleActions: "play none none none"
-        }
+            trigger: 'section:nth-of-type(4)',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+        },
     });
 
     // --- Community Voices / Testimonies ---
-    gsap.to("section:nth-of-type(5) .reveal-on-scroll", {
+    gsap.to('section:nth-of-type(5) .reveal-on-scroll', {
         opacity: 1,
         y: 0,
         duration: 0.6,
         stagger: 0.05,
-        ease: "power2.out",
+        ease: 'power2.out',
         scrollTrigger: {
-            trigger: "section:nth-of-type(5)",
-            start: "top 90%",
-            toggleActions: "play none none none"
-        }
+            trigger: 'section:nth-of-type(5)',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+        },
     });
 
     // --- Scroll-driven heading parallax (alternating horizontal movement) ---
@@ -210,16 +210,16 @@ function initFeaturedAnimations() {
             x: movementX,
             scrollTrigger: {
                 trigger: text,
-                start: "top bottom",
-                end: "bottom top",
-                scrub: 1.2
-            }
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 1.2,
+            },
         });
     });
 
     // --- Spotlight hover coordinates ---
-    document.querySelectorAll('.uco-premium-card').forEach(card => {
-        card.addEventListener('mousemove', e => {
+    document.querySelectorAll('.uco-premium-card').forEach((card) => {
+        card.addEventListener('mousemove', (e) => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -229,17 +229,17 @@ function initFeaturedAnimations() {
     });
 
     // --- Magnetic buttons ---
-    document.querySelectorAll('.uco-magnetic-btn').forEach(btn => {
-        btn.addEventListener('mousemove', e => {
+    document.querySelectorAll('.uco-magnetic-btn').forEach((btn) => {
+        btn.addEventListener('mousemove', (e) => {
             const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - (rect.width / 2);
-            const y = e.clientY - rect.top - (rect.height / 2);
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
 
             gsap.to(btn, {
                 x: x * 0.35,
                 y: y * 0.35,
                 duration: 0.3,
-                ease: "power2.out"
+                ease: 'power2.out',
             });
         });
 
@@ -248,13 +248,13 @@ function initFeaturedAnimations() {
                 x: 0,
                 y: 0,
                 duration: 0.65,
-                ease: "elastic.out(1.1, 0.4)"
+                ease: 'elastic.out(1.1, 0.4)',
             });
         });
     });
 
     // --- Background parallax on mouse move ---
-    window.addEventListener('mousemove', e => {
+    window.addEventListener('mousemove', (e) => {
         const mouseX = (e.clientX / window.innerWidth - 0.5) * 25;
         const mouseY = (e.clientY / window.innerHeight - 0.5) * 25;
 
@@ -262,8 +262,8 @@ function initFeaturedAnimations() {
             x: -mouseX,
             y: -mouseY,
             duration: 1.5,
-            ease: "power1.out",
-            overwrite: "auto"
+            ease: 'power1.out',
+            overwrite: 'auto',
         });
 
         const orbs = document.querySelectorAll('.uco-float-orb');
@@ -272,15 +272,15 @@ function initFeaturedAnimations() {
                 x: mouseX,
                 y: mouseY,
                 duration: 1.5,
-                ease: "power1.out",
-                overwrite: "auto"
+                ease: 'power1.out',
+                overwrite: 'auto',
             });
             gsap.to(orbs[1], {
                 x: -mouseX,
                 y: -mouseY,
                 duration: 1.5,
-                ease: "power1.out",
-                overwrite: "auto"
+                ease: 'power1.out',
+                overwrite: 'auto',
             });
         }
     });

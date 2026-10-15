@@ -2,21 +2,22 @@
 
 namespace App\Imports;
 
-use App\Models\User;
+use App\Jobs\UploadImageToCloudinaryJob;
 use App\Models\Business;
-use App\Models\Company;
 use App\Models\Category;
+use App\Models\Company;
+use App\Models\User;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToArray;
-use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Concerns\WithStartRow;
 use Maatwebsite\Excel\Events\AfterImport;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Cache;
+use Maatwebsite\Excel\Events\BeforeImport;
 
 /**
  * Importer for "UCO Student Profile - With Data.csv"
@@ -84,13 +85,16 @@ use Illuminate\Support\Facades\Cache;
  *   48 Website/Social Media terkait aktivitas
  *   49 Foto Pribadi
  */
-class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithEvents, ShouldQueue
+class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEvents, WithStartRow
 {
     use Concerns\TracksImportProgress, Concerns\ParsesImportDates;
 
     public $importId;
+
     protected $successCount = 0;
+
     protected $skippedCount = 0;
+
     protected $errors = [];
 
     public function __construct($importId = null)
@@ -123,24 +127,27 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         try {
             $cell = function (int $i) use ($row): ?string {
                 $val = $row[$i] ?? null;
-                if ($val === null) return null;
+                if ($val === null) {
+                    return null;
+                }
                 $str = trim((string) $val);
+
                 return ($str === '' || $str === '-') ? null : $str;
             };
 
             // --- Left side: student data ---
-            $nis           = $cell(0);
-            $studentName   = $cell(3);
+            $nis = $cell(0);
+            $studentName = $cell(3);
             $personalEmail = $cell(5);
-            $phone1        = $cell(6);
-            $mobile1       = $cell(7);
-            $whatsapp      = $cell(8);
-            $instagram     = $cell(9);
-            $studentYear   = $cell(10);
+            $phone1 = $cell(6);
+            $mobile1 = $cell(7);
+            $whatsapp = $cell(8);
+            $instagram = $cell(9);
+            $studentYear = $cell(10);
             $officialEmail = $cell(11);
             $currentStatus = strtolower($cell(12) ?? '');
             $legacyBizName = $cell(13);
-            $major         = $cell(16);
+            $major = $cell(16);
 
             // --- Email: official, then personal, then synthesized from the NIS ---
             $loginEmail = null;
@@ -149,23 +156,25 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             } elseif ($personalEmail && filter_var($personalEmail, FILTER_VALIDATE_EMAIL)) {
                 $loginEmail = strtolower($personalEmail);
             } elseif ($nis) {
-                $loginEmail = strtolower($nis) . '@student.ciputra.ac.id';
+                $loginEmail = strtolower($nis).'@student.ciputra.ac.id';
             }
 
-            if (!$loginEmail) {
-                $this->skip("Row has no email and no NIS: " . implode('|', array_slice($row, 0, 5)));
+            if (! $loginEmail) {
+                $this->skip('Row has no email and no NIS: '.implode('|', array_slice($row, 0, 5)));
+
                 return;
             }
 
-            if (!$studentName) {
+            if (! $studentName) {
                 $this->skip("No student name for {$loginEmail}");
+
                 return;
             }
 
             // --- Student status ---
-            $studentStatus = match(true) {
+            $studentStatus = match (true) {
                 str_contains($currentStatus, 'alumni') || str_contains($currentStatus, 'lulus') => 'alumni',
-                str_contains($currentStatus, 'drop') || str_contains($currentStatus, 'putus')   => 'inactive',
+                str_contains($currentStatus, 'drop') || str_contains($currentStatus, 'putus') => 'inactive',
                 str_contains($currentStatus, 'non-aktif') || str_contains($currentStatus, 'cuti') => 'inactive',
                 default => 'active',
             };
@@ -174,32 +183,32 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             $rawProfilePhotoUrl = $cell(49);
 
             $userData = array_filter([
-                'name'               => $studentName,
-                'nis'                => $nis,
-                'phone_number'       => $this->cleanPhone($phone1),
-                'mobile_number'      => $this->cleanPhone($mobile1),
-                'whatsapp'           => $this->cleanPhone($whatsapp),
-                'personal_email'     => $personalEmail,
-                'major'              => $major,
-                'student_status'     => $studentStatus,
+                'name' => $studentName,
+                'nis' => $nis,
+                'phone_number' => $this->cleanPhone($phone1),
+                'mobile_number' => $this->cleanPhone($mobile1),
+                'whatsapp' => $this->cleanPhone($whatsapp),
+                'personal_email' => $personalEmail,
+                'major' => $major,
+                'student_status' => $studentStatus,
                 'year_of_enrollment' => $studentYear,
-                'profile_photo_url'  => $rawProfilePhotoUrl,
-                'email_verified_at'  => now(),
-                'is_visible'         => true,
-            ], fn($v) => $v !== null);
+                'profile_photo_url' => $rawProfilePhotoUrl,
+                'email_verified_at' => now(),
+                'is_visible' => true,
+            ], fn ($v) => $v !== null);
 
             $user = User::where('email', $loginEmail)->first();
             if ($user) {
                 $user->update($userData);
             } else {
                 $user = User::create(array_merge($userData, [
-                    'email'    => $loginEmail,
+                    'email' => $loginEmail,
                     'password' => Hash::make('password123'),
                 ]));
             }
 
-            if ($rawProfilePhotoUrl && !str_contains($rawProfilePhotoUrl, 'cloudinary.com')) {
-                \App\Jobs\UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhotoUrl, 'users', $nis ?? $loginEmail);
+            if ($rawProfilePhotoUrl && ! str_contains($rawProfilePhotoUrl, 'cloudinary.com')) {
+                UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhotoUrl, 'users', $nis ?? $loginEmail);
             }
 
             // --- Right side: business or company data ---
@@ -247,13 +256,13 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         $rawLogoUrl = $cell(43);
 
         $data = array_filter([
-            'category_id'          => $categoryId,
-            'position'             => $cell(23),
-            'job_description'      => $cell(25),
+            'category_id' => $categoryId,
+            'position' => $cell(23),
+            'job_description' => $cell(25),
             'year_started_working' => $cell(24),
-            'logo_url'             => $rawLogoUrl,
-            'is_visible'           => true,
-        ], fn($v) => $v !== null);
+            'logo_url' => $rawLogoUrl,
+            'is_visible' => true,
+        ], fn ($v) => $v !== null);
 
         $company = Company::where('user_id', $user->id)->where('name', $companyName)->first()
             ?? Company::where('user_id', $user->id)->first();
@@ -264,8 +273,8 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             $company = Company::create(array_merge($data, ['user_id' => $user->id, 'name' => $companyName]));
         }
 
-        if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
-            \App\Jobs\UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
+        if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
+            UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
         }
     }
 
@@ -286,22 +295,22 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         $rawLogoUrl = $cell(43);
 
         $data = array_filter([
-            'category_id'       => $categoryId,
-            'position'          => $cell(38),
-            'established_date'  => $this->parseDate($cell(37)),
-            'description'       => $cell(42),
-            'address'           => $cell(40),
-            'website'           => $cell(39),
-            'employee_count'    => $cell(41),
-            'revenue_range'     => $cell(32),
+            'category_id' => $categoryId,
+            'position' => $cell(38),
+            'established_date' => $this->parseDate($cell(37)),
+            'description' => $cell(42),
+            'address' => $cell(40),
+            'website' => $cell(39),
+            'employee_count' => $cell(41),
+            'revenue_range' => $cell(32),
             'business_legality' => $cell(35),
-            'product_legality'  => $cell(36),
-            'academic_heritage' => $cell(10) ? 'Join UC Online ' . $cell(10) : null,
-            'logo_url'          => $rawLogoUrl,
-            'type'              => 'entrepreneur',
-            'approval_status'   => 'approved',
-            'is_visible'        => true,
-        ], fn($v) => $v !== null);
+            'product_legality' => $cell(36),
+            'academic_heritage' => $cell(10) ? 'Join UC Online '.$cell(10) : null,
+            'logo_url' => $rawLogoUrl,
+            'type' => 'entrepreneur',
+            'approval_status' => 'approved',
+            'is_visible' => true,
+        ], fn ($v) => $v !== null);
 
         $business = Business::where('user_id', $user->id)->where('name', $bizName)->first()
             ?? Business::where('user_id', $user->id)->where('type', 'entrepreneur')->first();
@@ -311,12 +320,12 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         } else {
             $business = Business::create(array_merge($data, [
                 'user_id' => $user->id,
-                'name'    => $bizName,
+                'name' => $bizName,
             ]));
         }
 
-        if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
-            \App\Jobs\UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $bizName);
+        if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
+            UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $bizName);
         }
 
         $business->members()->syncWithoutDetaching([
@@ -328,8 +337,11 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
 
     private function cleanPhone(?string $val): ?string
     {
-        if (!$val) return null;
+        if (! $val) {
+            return null;
+        }
         $val = preg_replace('/[^0-9+]/', '', $val);
+
         return strlen($val) >= 6 ? $val : null;
     }
 
@@ -338,12 +350,15 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
      */
     private function cleanName(?string $val): ?string
     {
-        if (!$val) return null;
+        if (! $val) {
+            return null;
+        }
         $val = str_replace(["\r", "\n"], ' ', $val);
         $parts = preg_split('/\s*<br\s*\/?\s*>\s*/i', $val);
-        $parts = array_filter(array_map('trim', $parts), fn($p) => $p !== '');
+        $parts = array_filter(array_map('trim', $parts), fn ($p) => $p !== '');
         $first = reset($parts) ?: $val;
         $first = trim(strip_tags($first));
+
         return Str::limit($first, 250, '');
     }
 
@@ -356,15 +371,15 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
 
         if ($this->importId) {
             $prefix = "import_{$this->importId}";
-            $progress = \Illuminate\Support\Facades\Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
-            if (!is_array($progress)) {
+            $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
+            if (! is_array($progress)) {
                 $progress = ['status' => 'processing', 'errors' => []];
             }
-            if (!isset($progress['errors']) || !is_array($progress['errors'])) {
+            if (! isset($progress['errors']) || ! is_array($progress['errors'])) {
                 $progress['errors'] = [];
             }
             $progress['errors'][] = $msg;
-            \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
+            Cache::put($prefix, $progress, now()->addMinutes(60));
         }
     }
 
@@ -374,7 +389,9 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
     {
         return [
             BeforeImport::class => function (BeforeImport $event) {
-                if (!$this->importId) return;
+                if (! $this->importId) {
+                    return;
+                }
                 $totalRows = $event->getReader()->getTotalRows();
                 $total = max(0, max($totalRows) - 3);
                 $prefix = "import_{$this->importId}";
@@ -386,7 +403,9 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
                 Log::info("[UCOStudentImport] Started: ~{$total} rows");
             },
             AfterImport::class => function () {
-                if (!$this->importId) return;
+                if (! $this->importId) {
+                    return;
+                }
                 $prefix = "import_{$this->importId}";
                 $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
                 $progress['status'] = 'completed';

@@ -7,7 +7,7 @@ export default function initOfferingForm() {
     const priceInput = document.getElementById('price');
     const star = document.getElementById('price-required-star');
 
-    if (! priceTypeSelect || ! priceInput) {
+    if (!priceTypeSelect || !priceInput) {
         return;
     }
 

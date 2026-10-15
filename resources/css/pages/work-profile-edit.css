@@ -1,7 +1,8 @@
 /* --- Work profile edit form: Tom Select theme, then single-line options (same order as before) --- */
 @import '../vendor/tom-select.css';
 
-.ts-control > .item, .ts-dropdown .option {
+.ts-control > .item,
+.ts-dropdown .option {
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;

@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\User;
 use App\Models\Message;
+use App\Models\User;
+use Illuminate\Console\Command;
 
 class SendTestCollabInvite extends Command
 {
@@ -31,16 +31,18 @@ class SendTestCollabInvite extends Command
         $senderEmail = $this->option('sender_email');
 
         $recipient = User::where('email', $recipientEmail)->first();
-        if (!$recipient) {
+        if (! $recipient) {
             $this->error("Recipient not found: {$recipientEmail}");
+
             return;
         }
 
         $sender = null;
         if ($senderEmail) {
             $sender = User::where('email', $senderEmail)->first();
-            if (!$sender) {
+            if (! $sender) {
                 $this->error("Sender not found: {$senderEmail}");
+
                 return;
             }
         } else {
@@ -52,10 +54,10 @@ class SendTestCollabInvite extends Command
             'sender_id' => $sender ? $sender->id : null,
             'recipient_id' => $recipient->id,
             'subject' => 'Collaboration Request',
-            'body' => "Hi {$recipient->name},\n\nI would love to collaborate with you on a new project. Let me know if you are interested!\n\nBest,\n" . ($sender ? $sender->name : 'System'),
+            'body' => "Hi {$recipient->name},\n\nI would love to collaborate with you on a new project. Let me know if you are interested!\n\nBest,\n".($sender ? $sender->name : 'System'),
             'type' => 'collab_invite',
         ]);
 
-        $this->info("Collaboration invite sent to {$recipient->email}" . ($sender ? " from {$sender->email}" : ""));
+        $this->info("Collaboration invite sent to {$recipient->email}".($sender ? " from {$sender->email}" : ''));
     }
 }

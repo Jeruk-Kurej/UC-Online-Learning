@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
+use App\Services\ImageOptimizerService;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use App\Services\ImageOptimizerService;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 /**
  * Class ProfileController
@@ -27,7 +30,7 @@ class ProfileController extends Controller
      *
      * @param  Request  $request  Current request instance
      *
-     * @throws \Symfony\Component\HttpKernel\Exception\HttpException If unauthenticated
+     * @throws HttpException If unauthenticated
      */
     private function getUser(Request $request): User
     {
@@ -77,9 +80,9 @@ class ProfileController extends Controller
             $user->deleteFileFromStorage($user->profile_photo_url);
 
             $file = $request->file('profile_photo');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
+            if ($file instanceof UploadedFile) {
                 app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+                /** @var FilesystemAdapter $publicDisk */
                 $publicDisk = Storage::disk('public');
                 $slug = Str::slug($user->name, '_');
                 $path = $file->storeAs('profile-photos', $slug.'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
@@ -107,12 +110,12 @@ class ProfileController extends Controller
 
         $newUrls = [];
         if ($request->hasFile('activities_files')) {
-            /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
+            /** @var FilesystemAdapter $publicDisk */
             $publicDisk = Storage::disk('public');
             $files = $request->file('activities_files');
             $files = is_array($files) ? $files : [$files];
             foreach ($files as $file) {
-                if ($file instanceof \Illuminate\Http\UploadedFile) {
+                if ($file instanceof UploadedFile) {
                     $path = $file->storeAs('student-activities', 'act_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
                     if (is_string($path)) {
                         $newUrls[] = $publicDisk->url($path);

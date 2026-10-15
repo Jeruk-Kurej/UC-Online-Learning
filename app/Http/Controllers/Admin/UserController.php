@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\UserImportTemplate;
+use App\Factories\ImporterFactory;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Imports\UCOStudentImport;
@@ -21,7 +23,7 @@ use Maatwebsite\Excel\Facades\Excel;
 /**
  * Admin management of student and alumni accounts: list, create, edit, featuring, activation and import.
  */
-class UserController extends \App\Http\Controllers\Controller
+class UserController extends Controller
 {
     /**
      * Featured user counts (total + by career focus).
@@ -359,13 +361,13 @@ class UserController extends \App\Http\Controllers\Controller
             $importId = (string) Str::uuid();
             $file = $request->file('file');
 
-            if (! $file instanceof \Illuminate\Http\UploadedFile) {
+            if (! $file instanceof UploadedFile) {
                 throw new \RuntimeException('No valid file was uploaded.');
             }
 
             $path = $file->store('imports', 'local');
 
-            $importer = \App\Factories\ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
+            $importer = ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
 
             Excel::queueImport($importer, (string) $path, 'local');
 

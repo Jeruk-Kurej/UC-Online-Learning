@@ -1,8 +1,7 @@
 <?php
 
-use App\Models\User;
 use App\Models\Collab;
-use App\Models\Message;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Casts\CleanText;
+use App\Casts\CompanyName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,8 +36,8 @@ class Company extends Model
     {
         return [
             'is_visible' => 'boolean',
-            'name' => \App\Casts\CompanyName::class,
-            'job_description' => \App\Casts\CleanText::class,
+            'name' => CompanyName::class,
+            'job_description' => CleanText::class,
         ];
     }
 
@@ -53,15 +55,18 @@ class Company extends Model
             $parts = preg_split('/\s+-\s+/', $line);
             foreach ($parts as $part) {
                 $part = trim($part);
-                if (empty($part)) continue;
+                if (empty($part)) {
+                    continue;
+                }
                 if (str_starts_with($part, '-')) {
                     $part = trim(substr($part, 1));
                 }
-                if (!empty($part)) {
+                if (! empty($part)) {
                     $items[] = $part;
                 }
             }
         }
+
         return $items;
     }
 

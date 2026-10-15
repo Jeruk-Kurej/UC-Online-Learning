@@ -2,13 +2,13 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Models\Business;
-use App\Models\Company;
 use App\Models\Category;
-use App\Models\Skill;
-use App\Models\LegalDocument;
 use App\Models\Certification;
+use App\Models\Company;
+use App\Models\LegalDocument;
+use App\Models\Skill;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,9 +30,10 @@ class ResetDatabase extends Command
      */
     public function handle()
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('⚠️  This will delete ALL businesses and non-admin users. Continue?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('⚠️  This will delete ALL businesses and non-admin users. Continue?')) {
                 $this->info('Operation cancelled.');
+
                 return 0;
             }
         }
@@ -96,7 +97,7 @@ class ResetDatabase extends Command
         $this->newLine();
         $this->info('✅ Database reset complete!');
         $this->info('📧 Admin login: admin@uco.com / password: password');
-        
+
         return 0;
     }
 }

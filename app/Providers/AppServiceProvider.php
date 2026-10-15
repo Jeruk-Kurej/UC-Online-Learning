@@ -8,11 +8,11 @@ use App\Models\User;
 use App\Policies\BusinessPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        foreach (glob(app_path('Helpers') . '/*.php') as $filename) {
+        foreach (glob(app_path('Helpers').'/*.php') as $filename) {
             require_once $filename;
         }
     }

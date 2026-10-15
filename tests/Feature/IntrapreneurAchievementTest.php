@@ -6,9 +6,9 @@ use App\Models\User;
 test('company owner can add an achievement', function () {
     $owner = User::factory()->create();
     $company = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp',
-        'slug'      => 'test-corp',
+        'user_id' => $owner->id,
+        'name' => 'Test Corp',
+        'slug' => 'test-corp',
         'is_visible' => true,
         'achievement' => null,
     ]);
@@ -19,7 +19,7 @@ test('company owner can add an achievement', function () {
         ]);
 
     $response->assertOk()
-             ->assertJson(['success' => true]);
+        ->assertJson(['success' => true]);
 
     $this->assertDatabaseHas('companies', [
         'id' => $company->id,
@@ -32,9 +32,9 @@ test('company owner can add an achievement', function () {
 test('company owner can view add achievement form page', function () {
     $owner = User::factory()->create();
     $company = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp Form',
-        'slug'      => 'test-corp-form',
+        'user_id' => $owner->id,
+        'name' => 'Test Corp Form',
+        'slug' => 'test-corp-form',
         'is_visible' => true,
         'achievement' => null,
     ]);
@@ -43,17 +43,17 @@ test('company owner can view add achievement form page', function () {
         ->get(route('intrapreneurs.create_achievement', $company));
 
     $response->assertStatus(200)
-             ->assertSee('Add New Achievement')
-             ->assertSee('Test Corp Form');
+        ->assertSee('Add New Achievement')
+        ->assertSee('Test Corp Form');
 });
 
 test('non-owner cannot view add achievement form page', function () {
     $owner = User::factory()->create();
     $nonOwner = User::factory()->create();
     $company = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp Form',
-        'slug'      => 'test-corp-form',
+        'user_id' => $owner->id,
+        'name' => 'Test Corp Form',
+        'slug' => 'test-corp-form',
         'is_visible' => true,
         'achievement' => null,
     ]);
@@ -67,9 +67,9 @@ test('non-owner cannot view add achievement form page', function () {
 test('company owner can add an achievement via form redirect', function () {
     $owner = User::factory()->create();
     $company = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp Redirect',
-        'slug'      => 'test-corp-redirect',
+        'user_id' => $owner->id,
+        'name' => 'Test Corp Redirect',
+        'slug' => 'test-corp-redirect',
         'is_visible' => true,
         'achievement' => null,
     ]);
@@ -88,9 +88,9 @@ test('company owner can add an achievement via form redirect', function () {
 test('company owner can delete an achievement', function () {
     $owner = User::factory()->create();
     $company = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp Two',
-        'slug'      => 'test-corp-two',
+        'user_id' => $owner->id,
+        'name' => 'Test Corp Two',
+        'slug' => 'test-corp-two',
         'is_visible' => true,
         'achievement' => "- First Achievement\n- Second Achievement",
     ]);
@@ -101,7 +101,7 @@ test('company owner can delete an achievement', function () {
         ]);
 
     $response->assertOk()
-             ->assertJson(['success' => true]);
+        ->assertJson(['success' => true]);
 
     $company->refresh();
     $this->assertStringNotContainsString('First Achievement', $company->achievement ?? '');
@@ -109,12 +109,12 @@ test('company owner can delete an achievement', function () {
 });
 
 test('non-owner cannot add or delete achievements', function () {
-    $owner    = User::factory()->create();
+    $owner = User::factory()->create();
     $nonOwner = User::factory()->create();
-    $company  = Company::create([
-        'user_id'   => $owner->id,
-        'name'      => 'Test Corp Three',
-        'slug'      => 'test-corp-three',
+    $company = Company::create([
+        'user_id' => $owner->id,
+        'name' => 'Test Corp Three',
+        'slug' => 'test-corp-three',
         'is_visible' => true,
         'achievement' => '- Some Achievement',
     ]);
@@ -133,21 +133,21 @@ test('non-owner cannot add or delete achievements', function () {
 });
 
 test('achievement parser strips bullet prefixes correctly', function () {
-    $company = new Company();
+    $company = new Company;
     $company->achievement = "- First Item\n- Second Item\n- Third Item";
 
     $list = $company->achievements_list;
 
     expect($list)->toHaveCount(3)
-                 ->sequence(
-                     fn ($item) => $item->toBe('First Item'),
-                     fn ($item) => $item->toBe('Second Item'),
-                     fn ($item) => $item->toBe('Third Item'),
-                 );
+        ->sequence(
+            fn ($item) => $item->toBe('First Item'),
+            fn ($item) => $item->toBe('Second Item'),
+            fn ($item) => $item->toBe('Third Item'),
+        );
 });
 
 test('achievement parser handles empty achievement gracefully', function () {
-    $company = new Company();
+    $company = new Company;
     $company->achievement = null;
 
     expect($company->achievements_list)->toBe([]);

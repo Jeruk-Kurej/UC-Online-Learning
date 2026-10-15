@@ -2,11 +2,12 @@
 
 namespace App\Console\Commands;
 
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
-use Exception;
+use Illuminate\Support\Facades\Storage;
 
 class MigrateImagesToCloudinary extends Command
 {
@@ -34,14 +35,15 @@ class MigrateImagesToCloudinary extends Command
 
         $this->info("Using disk: {$disk}");
         if ($ucCookieRaw) {
-            $this->info("UC cookies loaded for employee.uc.ac.id auth.");
+            $this->info('UC cookies loaded for employee.uc.ac.id auth.');
         }
 
         $stats = ['uploaded' => 0, 'skipped' => 0, 'failed' => 0];
 
         foreach ($tables as $pair) {
-            if (!str_contains($pair, '.')) {
+            if (! str_contains($pair, '.')) {
                 $this->error("Invalid table.column format: {$pair}");
+
                 continue;
             }
 
@@ -69,21 +71,23 @@ class MigrateImagesToCloudinary extends Command
             foreach ($rows as $row) {
                 $id = $row->id ?? null;
                 $url = $row->{$column} ?? null;
-                if (!$url) {
+                if (! $url) {
                     $stats['skipped']++;
+
                     continue;
                 }
 
                 if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
                     $this->line("  ⏩ id={$id} already on Cloudinary");
                     $stats['skipped']++;
+
                     continue;
                 }
 
                 // --- Google Drive viewer links become direct downloads ---
                 if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
                     if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
-                        $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
+                        $url = 'https://drive.google.com/uc?export=download&confirm=t&id='.$matches[1];
                     }
                 }
 
@@ -93,10 +97,11 @@ class MigrateImagesToCloudinary extends Command
 
                     // --- Case 1: local file from extracted_images/ ---
                     if (str_starts_with($url, 'extracted_images/')) {
-                        $localPath = storage_path('app/public/' . $url);
-                        if (!file_exists($localPath)) {
+                        $localPath = storage_path('app/public/'.$url);
+                        if (! file_exists($localPath)) {
                             $this->error("  ❌ id={$id} local file missing: {$localPath}");
                             $stats['failed']++;
+
                             continue;
                         }
                         $contents = file_get_contents($localPath);
@@ -106,21 +111,21 @@ class MigrateImagesToCloudinary extends Command
                     // --- Case 2: employee.uc.ac.id or employee.ciputra.ac.id (needs cookies) ---
                     elseif ((str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id')) && $ucCookieRaw) {
                         $this->line("  🔐 id={$id} downloading with cookies: {$url}");
-                        
+
                         $ch = curl_init();
-                        curl_setopt($ch, CURLOPT_URL, (string)$url);
+                        curl_setopt($ch, CURLOPT_URL, (string) $url);
                         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
                         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
                         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
                         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
                         curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                            "Cookie: " . trim($ucCookieRaw),
-                            "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                            "Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-                            "Referer: https://employee.uc.ac.id/index.php/login",
-                            "Connection: keep-alive"
+                            'Cookie: '.trim($ucCookieRaw),
+                            'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                            'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
+                            'Referer: https://employee.uc.ac.id/index.php/login',
+                            'Connection: keep-alive',
                         ]);
-                        
+
                         $contents = curl_exec($ch);
                         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
@@ -128,8 +133,8 @@ class MigrateImagesToCloudinary extends Command
                         // --- HTML from employee.uc.ac.id: retry on employee.ciputra.ac.id ---
                         if (str_contains($url, 'employee.uc.ac.id') && str_contains(strtolower($contentType ?? ''), 'text/html')) {
                             $fallbackUrl = str_replace('employee.uc.ac.id', 'employee.ciputra.ac.id', $url);
-                            $this->line("    🔄 HTML detected on uc.ac.id. Trying fallback to ciputra.ac.id...");
-                            
+                            $this->line('    🔄 HTML detected on uc.ac.id. Trying fallback to ciputra.ac.id...');
+
                             curl_setopt($ch, CURLOPT_URL, $fallbackUrl);
                             $contents = curl_exec($ch);
                             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -138,15 +143,17 @@ class MigrateImagesToCloudinary extends Command
 
                         curl_close($ch);
 
-                        if ($httpCode !== 200 || !$contents) {
+                        if ($httpCode !== 200 || ! $contents) {
                             $this->error("  ❌ id={$id} HTTP {$httpCode}");
                             $stats['failed']++;
+
                             continue;
                         }
 
-                        if (!str_contains(strtolower($contentType ?? ''), 'image')) {
+                        if (! str_contains(strtolower($contentType ?? ''), 'image')) {
                             $this->error("  ❌ id={$id} Not an image (Type: {$contentType})");
                             $stats['failed']++;
+
                             continue;
                         }
 
@@ -156,26 +163,29 @@ class MigrateImagesToCloudinary extends Command
                     else {
                         $this->line("  🌐 id={$id} downloading: {$url}");
                         $response = Http::timeout(30)->get($url);
-                        if (!$response->ok()) {
+                        if (! $response->ok()) {
                             $this->error("  ❌ id={$id} HTTP {$response->status()}");
                             $stats['failed']++;
+
                             continue;
                         }
-                        
+
                         $contentType = $response->header('Content-Type');
-                        if (!str_contains(strtolower($contentType ?? ''), 'image')) {
+                        if (! str_contains(strtolower($contentType ?? ''), 'image')) {
                             $this->error("  ❌ id={$id} Not an image (Type: {$contentType}). File is likely private / requires Google login.");
                             $stats['failed']++;
+
                             continue;
                         }
-                        
+
                         $contents = $response->body();
                         $basename = basename(parse_url($url, PHP_URL_PATH) ?? 'image.jpg');
                     }
 
-                    if (!$contents || strlen($contents) < 100) {
+                    if (! $contents || strlen($contents) < 100) {
                         $this->error("  ❌ id={$id} empty or too small response");
                         $stats['failed']++;
+
                         continue;
                     }
 
@@ -184,6 +194,7 @@ class MigrateImagesToCloudinary extends Command
 
                     if ($dry) {
                         $this->info("  [dry-run] would store → {$disk}:{$targetPath}");
+
                         continue;
                     }
 
@@ -191,32 +202,35 @@ class MigrateImagesToCloudinary extends Command
                     if ($disk === 'cloudinary') {
                         $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
                         file_put_contents($tempFile, $contents);
-                        
+
                         $tempFile = $this->compressToWebp($tempFile);
-                        
+
                         try {
-                            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->upload($tempFile, [
+                            $uploadResult = Cloudinary::uploadApi()->upload($tempFile, [
                                 'folder' => "uco/{$table}/{$id}",
                                 'public_id' => pathinfo($sanitized, PATHINFO_FILENAME),
                                 'overwrite' => true,
-                                'resource_type' => 'image'
+                                'resource_type' => 'image',
                             ]);
                             $newUrl = $uploadResult['secure_url'];
                             $stored = isset($newUrl);
-                        } catch (\Exception $e) {
-                            $this->error("  ❌ id={$id} Cloudinary Error: " . $e->getMessage());
+                        } catch (Exception $e) {
+                            $this->error("  ❌ id={$id} Cloudinary Error: ".$e->getMessage());
                             $stored = false;
                         } finally {
-                            if ($tempFile && file_exists($tempFile)) unlink($tempFile);
+                            if ($tempFile && file_exists($tempFile)) {
+                                unlink($tempFile);
+                            }
                         }
                     } else {
                         $stored = Storage::disk($disk)->put($targetPath, $contents);
                         $newUrl = Storage::disk($disk)->url($targetPath);
                     }
 
-                    if (!$stored) {
+                    if (! $stored) {
                         $this->error("  ❌ id={$id} failed to store on {$disk}");
                         $stats['failed']++;
+
                         continue;
                     }
 
@@ -224,7 +238,7 @@ class MigrateImagesToCloudinary extends Command
                     $this->info("  ✅ id={$id} → {$newUrl}");
                     $stats['uploaded']++;
                 } catch (Exception $e) {
-                    $this->error("  ❌ id={$id}: " . $e->getMessage());
+                    $this->error("  ❌ id={$id}: ".$e->getMessage());
                     $stats['failed']++;
                 }
             }
@@ -232,6 +246,7 @@ class MigrateImagesToCloudinary extends Command
 
         $this->newLine();
         $this->info("Done! Uploaded: {$stats['uploaded']} | Skipped: {$stats['skipped']} | Failed: {$stats['failed']}");
+
         return 0;
     }
 
@@ -241,18 +256,18 @@ class MigrateImagesToCloudinary extends Command
     private function compressToWebp(string $filePath, int $quality = 80): string
     {
         ini_set('memory_limit', '512M');
-        if (!extension_loaded('gd')) {
+        if (! extension_loaded('gd')) {
             return $filePath;
         }
 
         try {
             $imageInfo = @getimagesize($filePath);
-            if (!$imageInfo) {
+            if (! $imageInfo) {
                 return $filePath;
             }
 
             $mime = $imageInfo['mime'];
-            
+
             switch ($mime) {
                 case 'image/jpeg':
                 case 'image/jpg':
@@ -273,12 +288,12 @@ class MigrateImagesToCloudinary extends Command
                     break;
             }
 
-            if (!$image) {
+            if (! $image) {
                 return $filePath;
             }
 
             // --- Palette images become truecolor (WebP does not support palettes) ---
-            if (!imageistruecolor($image)) {
+            if (! imageistruecolor($image)) {
                 $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
                 imagealphablending($trueColorImage, false);
                 imagesavealpha($trueColorImage, true);
@@ -293,10 +308,10 @@ class MigrateImagesToCloudinary extends Command
             if ($width > $maxDim || $height > $maxDim) {
                 if ($width > $height) {
                     $newWidth = $maxDim;
-                    $newHeight = (int)($height * ($maxDim / $width));
+                    $newHeight = (int) ($height * ($maxDim / $width));
                 } else {
                     $newHeight = $maxDim;
-                    $newWidth = (int)($width * ($maxDim / $height));
+                    $newWidth = (int) ($width * ($maxDim / $height));
                 }
                 $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
                 imagealphablending($resizedImage, false);
@@ -306,16 +321,17 @@ class MigrateImagesToCloudinary extends Command
                 $image = $resizedImage;
             }
 
-            $outputPath = $filePath . '.webp';
+            $outputPath = $filePath.'.webp';
             if (imagewebp($image, $outputPath, $quality)) {
                 imagedestroy($image);
                 unlink($filePath);
+
                 return $outputPath;
             }
-            
+
             imagedestroy($image);
         } catch (\Throwable $e) {
-            $this->warn("Image compression to webp failed: " . $e->getMessage());
+            $this->warn('Image compression to webp failed: '.$e->getMessage());
         }
 
         return $filePath;

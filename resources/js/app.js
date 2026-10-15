@@ -67,62 +67,66 @@ if (document.readyState === 'loading') {
 }
 
 function initRevealOnScroll() {
-	const targets = document.querySelectorAll('.reveal-on-scroll:not([data-reveal-bound="1"])');
+    const targets = document.querySelectorAll('.reveal-on-scroll:not([data-reveal-bound="1"])');
 
-	if (!targets.length) {
-		return;
-	}
+    if (!targets.length) {
+        return;
+    }
 
-	if (!('IntersectionObserver' in window)) {
-		targets.forEach((target) => {
-			target.classList.add('is-visible');
-			target.dataset.revealBound = '1';
-		});
-		return;
-	}
+    if (!('IntersectionObserver' in window)) {
+        targets.forEach((target) => {
+            target.classList.add('is-visible');
+            target.dataset.revealBound = '1';
+        });
+        return;
+    }
 
-	if (!window.__ucoRevealObserver) {
-		window.__ucoRevealObserver = new IntersectionObserver((entries) => {
-			entries.forEach((entry) => {
-				if (entry.isIntersecting) {
-					entry.target.classList.add('is-visible');
-					window.__ucoRevealObserver.unobserve(entry.target);
-				}
-			});
-		}, { threshold: 0.02 });
-	}
+    if (!window.__ucoRevealObserver) {
+        window.__ucoRevealObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        window.__ucoRevealObserver.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.02 },
+        );
+    }
 
-	targets.forEach((target) => {
-		target.dataset.revealBound = '1';
-		window.__ucoRevealObserver.observe(target);
-	});
+    targets.forEach((target) => {
+        target.dataset.revealBound = '1';
+        window.__ucoRevealObserver.observe(target);
+    });
 }
 
 // --- Global toast helper ---
-window.showToast = function(message, type = 'success') {
-    window.dispatchEvent(new CustomEvent('notify', {
-        detail: { message, type }
-    }));
+window.showToast = function (message, type = 'success') {
+    window.dispatchEvent(
+        new CustomEvent('notify', {
+            detail: { message, type },
+        }),
+    );
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-	initRevealOnScroll();
+    initRevealOnScroll();
 
     // --- Price inputs: arrow keys step by 1000, any value is allowed ---
     document.addEventListener('keydown', (e) => {
         const target = e.target;
         if (target.tagName === 'INPUT' && target.type === 'number') {
-            const isPrice = target.name.includes('price') || 
-                           target.id === 'price';
-            
+            const isPrice = target.name.includes('price') || target.id === 'price';
+
             if (isPrice && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
                 e.preventDefault();
                 const step = 1000;
                 const currentVal = parseFloat(target.value) || 0;
                 const newVal = e.key === 'ArrowUp' ? currentVal + step : currentVal - step;
-                
+
                 target.value = Math.max(0, newVal);
-                
+
                 target.dispatchEvent(new Event('input', { bubbles: true }));
                 target.dispatchEvent(new Event('change', { bubbles: true }));
             }

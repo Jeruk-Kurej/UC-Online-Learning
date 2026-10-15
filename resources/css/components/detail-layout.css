@@ -2,7 +2,7 @@
 /* Kept outside @layer on purpose: it was an inline <style> after app.css, so it must still win over utilities. */
 
 @media (min-width: 768px) {
-	#biz-layout-grid {
-		grid-template-columns: 65fr 35fr;
-	}
+    #biz-layout-grid {
+        grid-template-columns: 65fr 35fr;
+    }
 }

@@ -11,7 +11,7 @@ function businessAdminList() {
         resetFilters() {
             const currentType = this.viewType;
             this.$refs.filterForm.reset();
-            this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+            this.$refs.filterForm.querySelectorAll('input, select').forEach((el) => (el.value = ''));
             const typeInput = this.$refs.filterForm.querySelector('[name=type]');
             if (typeInput) typeInput.value = currentType;
             this.updateList();
@@ -62,7 +62,7 @@ function toggleReasonField() {
 }
 
 // --- Featured toggle over AJAX ---
-document.addEventListener('submit', function(e) {
+document.addEventListener('submit', function (e) {
     const form = e.target;
     if (form && form.classList.contains('toggle-featured-form')) {
         e.preventDefault();
@@ -74,40 +74,46 @@ document.addEventListener('submit', function(e) {
             method: 'POST',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRF-TOKEN': tokenInput.value
-            }
+                'X-CSRF-TOKEN': tokenInput.value,
+            },
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const isFeaturedNow = data.message.includes('now featured');
-                const tooltipEl = button.querySelector('.tooltip-text');
-                if (isFeaturedNow) {
-                    button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500";
-                    if (tooltipEl) tooltipEl.textContent = 'Remove featured';
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.success) {
+                    const isFeaturedNow = data.message.includes('now featured');
+                    const tooltipEl = button.querySelector('.tooltip-text');
+                    if (isFeaturedNow) {
+                        button.className =
+                            'relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500';
+                        if (tooltipEl) tooltipEl.textContent = 'Remove featured';
+                    } else {
+                        button.className =
+                            'relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300';
+                        if (tooltipEl) tooltipEl.textContent = 'Make featured';
+                    }
+
+                    const countEl = document.querySelector('.featured-count');
+                    if (countEl) {
+                        let currentCount = parseInt(countEl.textContent, 10) || 0;
+                        countEl.textContent = isFeaturedNow ? currentCount + 1 : Math.max(0, currentCount - 1);
+                    }
+
+                    window.dispatchEvent(
+                        new CustomEvent('notify', {
+                            detail: { message: data.message, type: 'success' },
+                        }),
+                    );
                 } else {
-                    button.className = "relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300";
-                    if (tooltipEl) tooltipEl.textContent = 'Make featured';
+                    window.dispatchEvent(
+                        new CustomEvent('notify', {
+                            detail: { message: data.message || 'Error occurred', type: 'error' },
+                        }),
+                    );
                 }
-
-                const countEl = document.querySelector('.featured-count');
-                if (countEl) {
-                    let currentCount = parseInt(countEl.textContent, 10) || 0;
-                    countEl.textContent = isFeaturedNow ? currentCount + 1 : Math.max(0, currentCount - 1);
-                }
-
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { message: data.message, type: 'success' }
-                }));
-            } else {
-                window.dispatchEvent(new CustomEvent('notify', {
-                    detail: { message: data.message || 'Error occurred', type: 'error' }
-                }));
-            }
-        })
-        .catch(err => {
-            console.error('Featured toggle failed:', err);
-        });
+            })
+            .catch((err) => {
+                console.error('Featured toggle failed:', err);
+            });
     }
 });
 

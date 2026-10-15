@@ -1,73 +1,73 @@
-<div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll">
+<div class="reveal-on-scroll overflow-x-auto rounded-xl border bg-white shadow-sm">
     <table class="w-full text-left">
-        <thead class="bg-gray-50 border-b">
+        <thead class="border-b bg-gray-50">
             <tr>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
                     {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Company' : 'Business' }}
                 </th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Owner</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Owner</th>
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
                     {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Position' : 'Location' }}
                 </th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] whitespace-nowrap">Status</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Visible</th>
-                @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
-                    <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Featured</th>
+                <th class="whitespace-nowrap px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Status</th>
+                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Visible</th>
+                @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
+                    <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Featured</th>
                 @endif
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right whitespace-nowrap w-px">Actions</th>
+                <th class="w-px whitespace-nowrap px-4 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">
             @forelse($businesses as $b)
-                <tr class="hover:bg-orange-50/30 transition">
+                <tr class="transition hover:bg-orange-50/30">
                     {{-- --- Business / Company name + logo --- --}}
-                    <td class="px-4 py-3 max-w-[220px]">
+                    <td class="max-w-[220px] px-4 py-3">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                @if($b->logo_url)
-                                    <img src="{{ $b->logo_url }}" class="w-full h-full object-contain">
+                            <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
+                                @if ($b->logo_url)
+                                    <img src="{{ $b->logo_url }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black uco-initials-bg">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
                                         {{ strtoupper(substr($b->name, 0, 1)) }}
                                     </div>
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ $b->name }}</p>
-                                @if(($viewType ?? 'entrepreneur') === 'intrapreneur' && $b->company_scale)
-                                    <p class="text-[10px] text-gray-400 truncate">{{ $b->company_scale }}</p>
+                                <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $b->name }}</p>
+                                @if (($viewType ?? 'entrepreneur') === 'intrapreneur' && $b->company_scale)
+                                    <p class="truncate text-[10px] text-gray-400">{{ $b->company_scale }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
 
                     {{-- --- Owner --- --}}
-                    <td class="px-4 py-3 max-w-[180px]">
+                    <td class="max-w-[180px] px-4 py-3">
                         <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded-sm overflow-hidden flex-shrink-0">
-                                @if($b->user?->has_profile_photo)
-                                    <img src="{{ $b->user->profile_photo_url }}" class="w-full h-full object-contain">
+                            <div class="h-6 w-6 flex-shrink-0 overflow-hidden rounded-sm">
+                                @if ($b->user?->has_profile_photo)
+                                    <img src="{{ $b->user->profile_photo_url }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black uco-initials-bg">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-[10px] font-black text-white">
                                         {{ strtoupper(substr($b->user?->name ?? 'Unknown', 0, 1)) }}
                                     </div>
                                 @endif
                             </div>
-                            <span class="font-bold text-gray-700 text-xs truncate">{{ $b->user?->name ?? 'Unknown' }}</span>
+                            <span class="truncate text-xs font-bold text-gray-700">{{ $b->user?->name ?? 'Unknown' }}</span>
                         </div>
                     </td>
 
                     {{-- --- Location (entrepreneur) / Position (intrapreneur) --- --}}
-                    <td class="px-4 py-3 max-w-[160px]">
-                        @if(($viewType ?? 'entrepreneur') === 'intrapreneur')
+                    <td class="max-w-[160px] px-4 py-3">
+                        @if (($viewType ?? 'entrepreneur') === 'intrapreneur')
                             <div class="min-w-0">
-                                <p class="text-sm text-gray-700 font-semibold truncate">{{ $b->position }}</p>
-                                @if($b->level_position)
-                                    <p class="text-[10px] text-gray-400 truncate">{{ $b->level_position }}</p>
+                                <p class="truncate text-sm font-semibold text-gray-700">{{ $b->position }}</p>
+                                @if ($b->level_position)
+                                    <p class="truncate text-[10px] text-gray-400">{{ $b->level_position }}</p>
                                 @endif
                             </div>
                         @else
-                            <span class="block text-sm text-gray-500 truncate" title="{{ $b->city }}, {{ $b->province }}">{{ $b->city }}, {{ $b->province }}</span>
+                            <span class="block truncate text-sm text-gray-500" title="{{ $b->city }}, {{ $b->province }}">{{ $b->city }}, {{ $b->province }}</span>
                         @endif
                     </td>
 
@@ -78,55 +78,50 @@
 
                     {{-- --- Visible dot --- --}}
                     <td class="px-4 py-3 text-center">
-                        <div class="relative group flex-shrink-0 inline-block">
-                            <span class="w-2.5 h-2.5 rounded-full inline-block {{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">{{ $b->is_visible ? 'Visible' : 'Hidden' }}</div>
-                                <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                        <div class="group relative inline-block flex-shrink-0">
+                            <span class="{{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }} inline-block h-2.5 w-2.5 rounded-full"></span>
+                            <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black text-white shadow-md">{{ $b->is_visible ? 'Visible' : 'Hidden' }}</div>
+                                <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
                             </div>
                         </div>
                     </td>
 
                     {{-- --- Featured (entrepreneur only) --- --}}
-                    @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
+                    @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
                         <td class="px-4 py-3 text-center">
-                            <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block toggle-featured-form">
-                                 @csrf
-                                 <button type="submit"
-                                         {{ !$b->is_visible ? 'disabled' : '' }}
-                                         class="relative group w-6 h-6 rounded-full inline-flex items-center justify-center transition-all border
-                                             {{ !$b->is_visible 
-                                                 ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
-                                                 : ($b->is_featured
-                                                     ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                     : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
-                                     <i class="bi bi-star-fill text-[9px]"></i>
-                                     <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                         <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider tooltip-text">
-                                             {{ !$b->is_visible ? 'Need visible' : ($b->is_featured ? 'Unfeature' : 'Feature') }}
-                                         </div>
-                                         <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
-                                     </div>
-                                 </button>
-                             </form>
+                            <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="toggle-featured-form inline-block">
+                                @csrf
+                                <button type="submit"
+                                        {{ !$b->is_visible ? 'disabled' : '' }}
+                                        class="{{ !$b->is_visible ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed' : ($b->is_featured ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500' : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }} group relative inline-flex h-6 w-6 items-center justify-center rounded-full border transition-all">
+                                    <i class="bi bi-star-fill text-[9px]"></i>
+                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                        <div class="tooltip-text whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-md">
+                                            {{ !$b->is_visible ? 'Need visible' : ($b->is_featured ? 'Unfeature' : 'Feature') }}
+                                        </div>
+                                        <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
+                                    </div>
+                                </button>
+                            </form>
                         </td>
                     @endif
 
                     {{-- --- Actions --- --}}
-                    <td class="px-4 py-3 whitespace-nowrap w-px">
+                    <td class="w-px whitespace-nowrap px-4 py-3">
                         <div class="flex items-center justify-end gap-1.5">
-                            @if(($viewType ?? 'entrepreneur') === 'intrapreneur')
+                            @if (($viewType ?? 'entrepreneur') === 'intrapreneur')
                                 {{-- --- View intrapreneur profile --- --}}
                                 <x-admin.icon-action :href="route('intrapreneurs.show', $b)" icon="bi-eye-fill" tip="View Profile" />
                                 {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                    data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}" />
+                                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}" />
                             @else
                                 {{-- --- View entrepreneur business --- --}}
                                 <x-admin.icon-action :href="route('businesses.show', $b)" icon="bi-eye-fill" tip="View Details" />
                                 {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                    data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}" />
+                                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}" />
                             @endif
                         </div>
                     </td>
@@ -134,7 +129,7 @@
             @empty
                 <tr>
                     <td colspan="8" class="px-6 py-16 text-center">
-                        <p class="text-gray-400 italic">
+                        <p class="italic text-gray-400">
                             No {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'career profiles' : 'businesses' }} found matching the criteria.
                         </p>
                     </td>
@@ -142,12 +137,11 @@
             @endforelse
         </tbody>
     </table>
-    
+
 </div>
 
-@if($businesses->hasPages())
-    <div class="mt-8 pagination-ajax">
+@if ($businesses->hasPages())
+    <div class="pagination-ajax mt-8">
         {{ $businesses->links() }}
     </div>
 @endif
-

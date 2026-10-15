@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
 use App\Services\AiModerationService;
+use Illuminate\Console\Command;
 
 class AnalyzeTestimoniesCommand extends Command
 {
@@ -34,10 +34,11 @@ class AnalyzeTestimoniesCommand extends Command
 
         if ($users->isEmpty()) {
             $this->info('No testimonies to analyze.');
+
             return;
         }
 
-        $this->info('Analyzing ' . $users->count() . ' testimonies...');
+        $this->info('Analyzing '.$users->count().' testimonies...');
         $bar = $this->output->createProgressBar($users->count());
 
         foreach ($users as $user) {

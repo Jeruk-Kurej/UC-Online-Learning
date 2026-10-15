@@ -1,42 +1,42 @@
 @layer components {
-	.uco-noise-overlay {
-		position: absolute;
-		inset: 0;
-		opacity: 0.015;
-		pointer-events: none;
-		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3E");
-	}
+    .uco-noise-overlay {
+        position: absolute;
+        inset: 0;
+        opacity: 0.015;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3%3E");
+    }
 
-	/* --- Orange fallback behind initials when there is no photo or logo --- */
-	.uco-initials-bg {
-		background: linear-gradient(135deg, #f7931e, #fdb913);
-	}
+    /* --- Orange fallback behind initials when there is no photo or logo --- */
+    .uco-initials-bg {
+        background: linear-gradient(135deg, #f7931e, #fdb913);
+    }
 
-	.uco-initials-bg-deep {
-		background: linear-gradient(135deg, #f97316, #ea580c);
-	}
+    .uco-initials-bg-deep {
+        background: linear-gradient(135deg, #f97316, #ea580c);
+    }
 
-	.uco-text-gradient-orange {
-		background: linear-gradient(135deg, #f7931e 0%, #ffc088 100%);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-	}
+    .uco-text-gradient-orange {
+        background: linear-gradient(135deg, #f7931e 0%, #ffc088 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
 
-	.uco-placeholder-mesh {
-		position: relative;
-		overflow: hidden;
-		background: #f8fafc;
-	}
+    .uco-placeholder-mesh {
+        position: relative;
+        overflow: hidden;
+        background: #f8fafc;
+    }
 
-	.uco-placeholder-mesh::before {
-		content: '';
-		position: absolute;
-		inset: 0;
-		background: 
-			radial-gradient(circle at 30% 30%, rgba(247, 147, 30, 0.08), transparent 40%),
-			radial-gradient(circle at 70% 60%, rgba(255, 214, 51, 0.08), transparent 40%),
-			radial-gradient(circle at 50% 40%, rgba(247, 147, 30, 0.04), transparent 60%);
-		filter: blur(20px);
-		animation: ucoGradientShift 8s ease-in-out infinite;
-	}
+    .uco-placeholder-mesh::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 30% 30%, rgba(247, 147, 30, 0.08), transparent 40%),
+            radial-gradient(circle at 70% 60%, rgba(255, 214, 51, 0.08), transparent 40%),
+            radial-gradient(circle at 50% 40%, rgba(247, 147, 30, 0.04), transparent 60%);
+        filter: blur(20px);
+        animation: ucoGradientShift 8s ease-in-out infinite;
+    }
 }

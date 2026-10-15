@@ -7,6 +7,7 @@ class UpdateBusinessRequest extends BusinessFormRequest
     public function authorize(): bool
     {
         $business = $this->route('business');
+
         return $this->user()->can('update', $business);
     }
 

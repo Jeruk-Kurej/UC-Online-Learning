@@ -1,68 +1,68 @@
 {{-- --- Users Table --- --}}
-<div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll delay-[350ms]">
+<div class="reveal-on-scroll overflow-x-auto rounded-xl border bg-white shadow-sm delay-[350ms]">
     <table class="w-full text-left">
-        <thead class="bg-gray-50 border-b">
+        <thead class="border-b bg-gray-50">
             <tr>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Name</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Email</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] whitespace-nowrap">Status</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em]">Major</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Flags</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-center whitespace-nowrap">Biz</th>
-                <th class="px-4 py-3 text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] text-right whitespace-nowrap w-px">Actions</th>
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Name</th>
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Email</th>
+                <th class="whitespace-nowrap px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Status</th>
+                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Major</th>
+                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Flags</th>
+                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Biz</th>
+                <th class="w-px whitespace-nowrap px-4 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y">
             @forelse($users as $user)
-                <tr class="hover:bg-orange-50/30 transition">
+                <tr class="transition hover:bg-orange-50/30">
 
                     {{-- --- Name + Avatar --- --}}
-                    <td class="px-4 py-3 max-w-[180px]">
+                    <td class="max-w-[180px] px-4 py-3">
                         <div class="flex items-center gap-2.5">
-                            <div class="w-8 h-8 rounded-sm overflow-hidden flex-shrink-0">
-                                @if($user->has_profile_photo)
-                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-full h-full object-contain">
+                            <div class="h-8 w-8 flex-shrink-0 overflow-hidden rounded-sm">
+                                @if ($user->has_profile_photo)
+                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="w-full h-full flex items-center justify-center text-white text-xs font-black uco-initials-bg">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </div>
                                 @endif
                             </div>
                             <div class="min-w-0">
-                                <p class="font-bold text-gray-900 text-sm leading-tight truncate">{{ $user->name }}</p>
-                                @if($user->nis)
-                                    <p class="text-[10px] text-gray-400 font-medium">{{ $user->nis }}</p>
+                                <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $user->name }}</p>
+                                @if ($user->nis)
+                                    <p class="text-[10px] font-medium text-gray-400">{{ $user->nis }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
 
                     {{-- --- Email (truncated) --- --}}
-                    <td class="px-4 py-3 max-w-[180px]">
-                        <span class="block text-sm text-gray-500 truncate" title="{{ $user->email }}">{{ $user->email }}</span>
+                    <td class="max-w-[180px] px-4 py-3">
+                        <span class="block truncate text-sm text-gray-500" title="{{ $user->email }}">{{ $user->email }}</span>
                     </td>
 
                     {{-- --- Student Status Badge --- --}}
                     <td class="px-4 py-3">
-                        <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
+                        <span class="{{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }} rounded-md px-2 py-1 text-[10px] font-bold uppercase">
                             {{ $user->student_status }}
                         </span>
                     </td>
 
                     {{-- --- Major (truncated) --- --}}
-                    <td class="px-4 py-3 max-w-[120px]">
-                        <span class="block text-sm text-gray-500 truncate" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
+                    <td class="max-w-[120px] px-4 py-3">
+                        <span class="block truncate text-sm text-gray-500" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
                     </td>
 
                     {{-- --- Flags: Visible dot + Featured star (combined column) --- --}}
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-center gap-2">
                             {{-- --- Visible dot --- --}}
-                            <div class="relative group flex-shrink-0">
-                                <span class="w-2.5 h-2.5 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
-                                <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                    <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap">{{ $user->is_visible ? 'Visible' : 'Hidden' }}</div>
-                                    <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                            <div class="group relative flex-shrink-0">
+                                <span class="{{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }} inline-block h-2.5 w-2.5 rounded-full"></span>
+                                <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                    <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black text-white shadow-md">{{ $user->is_visible ? 'Visible' : 'Hidden' }}</div>
+                                    <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
                                 </div>
                             </div>
 
@@ -70,19 +70,14 @@
                             <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
                                 @csrf
                                 <button type="submit"
-                                    {{ !$user->is_visible ? 'disabled' : '' }}
-                                    class="relative group w-6 h-6 rounded-full inline-flex items-center justify-center transition-all border
-                                        {{ !$user->is_visible
-                                            ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed'
-                                            : ($user->is_featured
-                                                ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500'
-                                                : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }}">
+                                        {{ !$user->is_visible ? 'disabled' : '' }}
+                                        class="{{ !$user->is_visible ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed' : ($user->is_featured ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500' : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }} group relative inline-flex h-6 w-6 items-center justify-center rounded-full border transition-all">
                                     <i class="bi bi-star-fill text-[9px]"></i>
-                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
-                                        <div class="bg-gray-900 text-white text-[9px] font-black px-2 py-0.5 rounded shadow-md whitespace-nowrap uppercase tracking-wider">
+                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                                        <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-md">
                                             {{ !$user->is_visible ? 'Need visible' : ($user->is_featured ? 'Unfeature' : 'Feature') }}
                                         </div>
-                                        <div class="w-1.5 h-1.5 bg-gray-900 rotate-45 -mt-0.5"></div>
+                                        <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
                                     </div>
                                 </button>
                             </form>
@@ -95,22 +90,22 @@
                     </td>
 
                     {{-- --- Actions: icon-only buttons with tooltips --- --}}
-                    <td class="px-4 py-3 whitespace-nowrap w-px">
+                    <td class="w-px whitespace-nowrap px-4 py-3">
                         <div class="flex items-center justify-end gap-1.5">
                             {{-- --- View --- --}}
                             <x-admin.icon-action :href="route('users.show', $user)" icon="bi-eye-fill" tip="View" />
 
-                            @if(auth()->user()?->isAdmin())
+                            @if (auth()->user()?->isAdmin())
                                 {{-- --- Edit --- --}}
                                 <x-admin.icon-action :href="route('users.edit', $user)" variant="secondary" icon="bi-pencil-fill" tip="Edit" />
 
-                                @if(auth()->id() !== $user->id)
+                                @if (auth()->id() !== $user->id)
                                     {{-- --- Disable / Enable --- --}}
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
                                         <x-admin.icon-action type="submit" :variant="$user->is_visible ? 'danger' : 'success'"
-                                            :icon="$user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill'"
-                                            :tip="$user->is_visible ? 'Disable' : 'Enable'" tip-align="right" arrow-class="mr-2" />
+                                                             :icon="$user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill'"
+                                                             :tip="$user->is_visible ? 'Disable' : 'Enable'" tip-align="right" arrow-class="mr-2" />
                                     </form>
                                 @endif
                             @endif
@@ -122,12 +117,12 @@
                 <tr>
                     <td colspan="7" class="px-6 py-16 text-center">
                         <div class="space-y-3">
-                            <p class="text-gray-400 italic">
+                            <p class="italic text-gray-400">
                                 {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
                             </p>
 
-                            @if($hasActiveFilters)
-                                <button type="button" @click="resetFilters()" class="inline-flex items-center px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition">
+                            @if ($hasActiveFilters)
+                                <button type="button" @click="resetFilters()" class="inline-flex items-center rounded-xl bg-gray-100 px-4 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-200">
                                     Clear all filters
                                 </button>
                             @endif
@@ -139,7 +134,6 @@
     </table>
 </div>
 
-<div class="mt-8 pagination-ajax">
+<div class="pagination-ajax mt-8">
     {{ $users->appends(request()->query())->links() }}
 </div>
-

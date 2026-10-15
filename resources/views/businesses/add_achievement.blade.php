@@ -1,14 +1,14 @@
 <x-app-layout>
-    <div class="max-w-5xl mx-auto">
+    <div class="mx-auto max-w-5xl">
         {{-- --- Page Header - Elegant Design --- --}}
         <div class="mb-8 flex flex-row items-center gap-3">
             <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary flex-shrink-0">
                 <i class="bi bi-arrow-left"></i>
                 Back
             </a>
-            <div class="flex-grow min-w-0">
-                <h1 class="text-xl sm:text-3xl font-bold text-soft-gray-900 tracking-tight leading-snug">Add New Achievement</h1>
-                <p class="text-xs sm:text-sm text-soft-gray-600 mt-1">{{ $company->name }}</p>
+            <div class="min-w-0 flex-grow">
+                <h1 class="text-xl font-bold leading-snug tracking-tight text-soft-gray-900 sm:text-3xl">Add New Achievement</h1>
+                <p class="mt-1 text-xs text-soft-gray-600 sm:text-sm">{{ $company->name }}</p>
             </div>
         </div>
 
@@ -19,14 +19,14 @@
 
                     {{-- --- Achievement Textarea --- --}}
                     <div>
-                        <label for="achievement" class="block text-sm font-medium text-gray-700 mb-2">
+                        <label for="achievement" class="mb-2 block text-sm font-medium text-gray-700">
                             Achievement Details <span class="text-red-500">*</span>
                         </label>
-                        <textarea name="achievement" 
-                                  id="achievement" 
-                                  rows="4" 
+                        <textarea name="achievement"
+                                  id="achievement"
+                                  rows="4"
                                   required
-                                  class="block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm @error('achievement') border-red-500 @enderror"
+                                  class="@error('achievement') border-red-500 @enderror block w-full rounded-xl border-gray-200 shadow-sm focus:border-soft-gray-900 focus:ring-soft-gray-900 sm:text-sm"
                                   placeholder="e.g. Winner of National Business Plan Competition 2026...">{{ old('achievement') }}</textarea>
                         @error('achievement')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -34,7 +34,7 @@
                     </div>
 
                     {{-- --- Submit Buttons --- --}}
-                    <div class="flex items-center justify-between pt-6 border-t-2 border-soft-gray-100">
+                    <div class="flex items-center justify-between border-t-2 border-soft-gray-100 pt-6">
                         <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
                             Cancel
                         </a>

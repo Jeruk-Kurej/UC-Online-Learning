@@ -11,19 +11,19 @@ test('ai moderation service returns approved sentiment on positive content', fun
                 'content' => [
                     'parts' => [
                         [
-                            'text' => '{"sentiment_score": 90, "sentiment": "Positive", "is_approved": true, "rejection_reason": null}'
-                        ]
-                    ]
-                ]
-            ]
-        ]
+                            'text' => '{"sentiment_score": 90, "sentiment": "Positive", "is_approved": true, "rejection_reason": null}',
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     Gemini::fake([
-        $fakeResponse
+        $fakeResponse,
     ]);
 
-    $service = new AiModerationService();
+    $service = new AiModerationService;
     $result = $service->analyze('Amazing product!', 5, 'Alice');
 
     expect($result['is_approved'])->toBeTrue();
@@ -33,18 +33,18 @@ test('ai moderation service returns approved sentiment on positive content', fun
 
 test('ai moderation service falls back to local rules when gemini api fails', function () {
     Gemini::fake([
-        new \Exception('Gemini service connection timed out')
+        new Exception('Gemini service connection timed out'),
     ]);
 
-    $service = new AiModerationService();
-    // Rating 5/5 should produce approved (sentiment score 100) on positive keywords
+    $service = new AiModerationService;
+    // --- Rating 5/5 should produce approved (sentiment score 100) on positive keywords ---
     $result = $service->analyze('Bagus sekali dan memuaskan.', 5, 'Bob');
 
     expect($result['is_approved'])->toBeTrue();
     expect($result['sentiment_score'])->toBeGreaterThanOrEqual(60);
     expect($result['rejection_reason'])->toBeNull();
 
-    // Rating 1/5 with negative keywords should be rejected
+    // --- Rating 1/5 with negative keywords should be rejected ---
     $resultNegative = $service->analyze('Buruk dan jelek sekali.', 1, 'Charlie');
     expect($resultNegative['is_approved'])->toBeFalse();
     expect($resultNegative['sentiment_score'])->toBeLessThan(60);

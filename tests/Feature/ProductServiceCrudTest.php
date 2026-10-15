@@ -3,6 +3,7 @@
 use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
 
 test('business owner can create, edit and delete products', function () {
     $owner = User::factory()->create();
@@ -15,7 +16,7 @@ test('business owner can create, edit and delete products', function () {
         'type' => 'entrepreneur',
     ]);
 
-    // 1. Create product
+    // --- 1. Create product ---
     $response = $this->actingAs($owner)
         ->post(route('businesses.products.store', $business), [
             'name' => 'Choco Milkshake',
@@ -37,7 +38,7 @@ test('business owner can create, edit and delete products', function () {
 
     $product = Product::where('name', 'Choco Milkshake')->first();
 
-    // 2. Edit product
+    // --- 2. Edit product ---
     $response = $this->actingAs($owner)
         ->put(route('businesses.products.update', [$business, $product]), [
             'name' => 'Sweet Choco Milkshake',
@@ -55,7 +56,7 @@ test('business owner can create, edit and delete products', function () {
         'price' => 27000,
     ]);
 
-    // 3. Delete product
+    // --- 3. Delete product ---
     $response = $this->actingAs($owner)
         ->delete(route('businesses.products.destroy', [$business, $product]));
 
@@ -78,14 +79,14 @@ test('business owner can create, edit and delete services', function () {
         'type' => 'entrepreneur',
     ]);
 
-    // 1. Create service
+    // --- 1. Create service ---
     $response = $this->actingAs($owner)
         ->post(route('businesses.services.store', $business), [
             'name' => 'Logo Design',
             'description' => 'Professional logo design',
             'price' => 500000,
             'price_type' => 'fixed',
-            'photo' => \Illuminate\Http\UploadedFile::fake()->image('service.jpg'),
+            'photo' => UploadedFile::fake()->image('service.jpg'),
         ]);
 
     $response->assertSessionHasNoErrors();
@@ -101,7 +102,7 @@ test('business owner can create, edit and delete services', function () {
 
     $service = Product::where('name', 'Logo Design')->first();
 
-    // 2. Edit service
+    // --- 2. Edit service ---
     $response = $this->actingAs($owner)
         ->put(route('businesses.services.update', [$business, $service]), [
             'name' => 'Elite Logo Design',
@@ -120,7 +121,7 @@ test('business owner can create, edit and delete services', function () {
         'price_type' => 'fixed',
     ]);
 
-    // 3. Delete service
+    // --- 3. Delete service ---
     $response = $this->actingAs($owner)
         ->delete(route('businesses.services.destroy', [$business, $service]));
 
@@ -161,7 +162,7 @@ test('non-owners cannot manage products or services', function () {
         'type' => 'service',
     ]);
 
-    // Try to create product as non-owner
+    // --- Try to create product as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->post(route('businesses.products.store', $business), [
             'name' => 'Coffee',
@@ -171,7 +172,7 @@ test('non-owners cannot manage products or services', function () {
         ]);
     $response->assertStatus(403);
 
-    // Try to edit product as non-owner
+    // --- Try to edit product as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->put(route('businesses.products.update', [$business, $product]), [
             'name' => 'Elixir Tea',
@@ -180,23 +181,23 @@ test('non-owners cannot manage products or services', function () {
         ]);
     $response->assertStatus(403);
 
-    // Try to delete product as non-owner
+    // --- Try to delete product as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->delete(route('businesses.products.destroy', [$business, $product]));
     $response->assertStatus(403);
 
-    // Try to create service as non-owner
+    // --- Try to create service as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->post(route('businesses.services.store', $business), [
             'name' => 'Laundry',
             'description' => 'Clean clothes',
             'price' => 30000,
             'price_type' => 'fixed',
-            'photo' => \Illuminate\Http\UploadedFile::fake()->image('service.jpg'),
+            'photo' => UploadedFile::fake()->image('service.jpg'),
         ]);
     $response->assertStatus(403);
 
-    // Try to edit service as non-owner
+    // --- Try to edit service as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->put(route('businesses.services.update', [$business, $service]), [
             'name' => 'Elite Clean Room',
@@ -206,7 +207,7 @@ test('non-owners cannot manage products or services', function () {
         ]);
     $response->assertStatus(403);
 
-    // Try to delete service as non-owner
+    // --- Try to delete service as non-owner ---
     $response = $this->actingAs($nonOwner)
         ->delete(route('businesses.services.destroy', [$business, $service]));
     $response->assertStatus(403);

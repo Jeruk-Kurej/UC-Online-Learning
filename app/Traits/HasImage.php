@@ -2,9 +2,10 @@
 
 namespace App\Traits;
 
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 
 trait HasImage
 {
@@ -32,18 +33,18 @@ trait HasImage
      */
     public static function deleteCloudinaryImage(?string $url)
     {
-        if (!$url || !str_contains($url, 'cloudinary.com')) {
+        if (! $url || ! str_contains($url, 'cloudinary.com')) {
             return;
         }
 
         try {
             $publicId = self::getCloudinaryPublicId($url);
             if ($publicId) {
-                \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->destroy($publicId);
+                Cloudinary::uploadApi()->destroy($publicId);
                 Log::info("[HasImage] Successfully deleted Cloudinary asset: {$publicId}");
             }
         } catch (\Throwable $e) {
-            Log::warning("[HasImage] Failed to delete Cloudinary asset: " . $e->getMessage());
+            Log::warning('[HasImage] Failed to delete Cloudinary asset: '.$e->getMessage());
         }
     }
 
@@ -52,12 +53,14 @@ trait HasImage
      */
     public static function getCloudinaryPublicId(?string $url): ?string
     {
-        if (!$url || !str_contains($url, 'cloudinary.com')) {
+        if (! $url || ! str_contains($url, 'cloudinary.com')) {
             return null;
         }
 
         $path = parse_url($url, PHP_URL_PATH);
-        if (!$path) return null;
+        if (! $path) {
+            return null;
+        }
 
         $parts = explode('/', trim($path, '/'));
         $uploadIndex = array_search('upload', $parts);
@@ -71,6 +74,7 @@ trait HasImage
         }
 
         $publicIdWithExt = implode('/', array_slice($parts, $startIndex));
+
         return preg_replace('/\.[^.]+$/', '', $publicIdWithExt);
     }
 
@@ -79,7 +83,7 @@ trait HasImage
      */
     protected function isRealImage(?string $url): bool
     {
-        return $url && !str_contains($url, 'ui-avatars.com');
+        return $url && ! str_contains($url, 'ui-avatars.com');
     }
 
     /**
@@ -89,16 +93,16 @@ trait HasImage
     protected function resolveImage(?string $path, string $type = 'business'): string
     {
         $name = $this->name ?? 'UCO';
-        $fallback = "https://ui-avatars.com/api/?name=" . urlencode($name) . "&color=FFFFFF&background=F97316";
+        $fallback = 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=F97316';
 
-        if (!$path) {
+        if (! $path) {
             return $fallback;
         }
 
         $path = preg_replace('/<br\s*\/?>/i', ' ', $path);
         $path = trim(strip_tags($path));
 
-        if (!$path) {
+        if (! $path) {
             return $fallback;
         }
 
@@ -164,6 +168,7 @@ trait HasImage
                 self::deleteCloudinaryImage($pathOrUrl);
             } catch (\Throwable $e) {
             }
+
             return;
         }
 

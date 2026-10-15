@@ -6,14 +6,14 @@ use App\Models\User;
 test('admin can feature more than 4 users', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
-    // Create 4 already featured users
+    // --- Create 4 already featured users ---
     User::factory()->count(4)->create([
         'is_featured' => true,
         'is_visible' => true,
         'role' => 'user',
     ]);
 
-    // Create a 5th user to toggle
+    // --- Create a 5th user to toggle ---
     $targetUser = User::factory()->create([
         'is_featured' => false,
         'is_visible' => true,
@@ -31,7 +31,7 @@ test('admin can feature more than 4 users', function () {
 test('admin can feature more than 8 businesses', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
-    // Create 8 already featured businesses
+    // --- Create 8 already featured businesses ---
     for ($i = 0; $i < 8; $i++) {
         $owner = User::factory()->create();
         Business::create([
@@ -46,12 +46,12 @@ test('admin can feature more than 8 businesses', function () {
         ]);
     }
 
-    // Create a 9th business to toggle
+    // --- Create a 9th business to toggle ---
     $targetOwner = User::factory()->create();
     $targetBusiness = Business::create([
         'user_id' => $targetOwner->id,
-        'name' => "Target Business",
-        'slug' => "target-business",
+        'name' => 'Target Business',
+        'slug' => 'target-business',
         'offering_type' => 'product',
         'is_visible' => true,
         'is_featured' => false,
@@ -70,12 +70,12 @@ test('admin can feature more than 8 businesses', function () {
 test('non-admin cannot toggle featured status of users or businesses', function () {
     $nonAdmin = User::factory()->create(['role' => 'user']);
     $targetUser = User::factory()->create(['is_featured' => false, 'is_visible' => true]);
-    
+
     $owner = User::factory()->create();
     $targetBusiness = Business::create([
         'user_id' => $owner->id,
-        'name' => "Some Business",
-        'slug' => "some-business",
+        'name' => 'Some Business',
+        'slug' => 'some-business',
         'offering_type' => 'product',
         'is_visible' => true,
         'is_featured' => false,
@@ -83,13 +83,13 @@ test('non-admin cannot toggle featured status of users or businesses', function 
         'approval_status' => 'approved',
     ]);
 
-    // Try user
+    // --- Try user ---
     $response = $this->actingAs($nonAdmin)
         ->post(route('users.toggle-featured', $targetUser));
     $response->assertStatus(403);
     $this->assertFalse($targetUser->fresh()->is_featured);
 
-    // Try business
+    // --- Try business ---
     $response = $this->actingAs($nonAdmin)
         ->post(route('businesses.toggle-featured', $targetBusiness));
     $response->assertStatus(403);

@@ -3,13 +3,11 @@
 use App\Imports\FormResponseImport;
 use App\Models\Business;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 test('importer processes selected true and false rows without skipping', function () {
     $import = new FormResponseImport('test-import-id');
 
-    // Row 1: selected = TRUE
+    // --- Row 1: selected = TRUE ---
     $row1 = [
         'email_address' => 'featured@example.com',
         'full_name' => 'Featured Student',
@@ -20,7 +18,7 @@ test('importer processes selected true and false rows without skipping', functio
         'timestamp' => '2026-05-23 22:00:00',
     ];
 
-    // Row 2: selected = FALSE
+    // --- Row 2: selected = FALSE ---
     $row2 = [
         'email_address' => 'regular@example.com',
         'full_name' => 'Regular Student',
@@ -31,7 +29,7 @@ test('importer processes selected true and false rows without skipping', functio
         'timestamp' => '2026-05-23 22:00:00',
     ];
 
-    // Import row 1
+    // --- Import row 1 ---
     $user1 = $import->model($row1);
     $this->assertNotNull($user1);
     $this->assertEquals('featured@example.com', $user1->email);
@@ -41,7 +39,7 @@ test('importer processes selected true and false rows without skipping', functio
     $this->assertNotNull($business1);
     $this->assertTrue($business1->is_featured);
 
-    // Import row 2
+    // --- Import row 2 ---
     $user2 = $import->model($row2);
     $this->assertNotNull($user2);
     $this->assertEquals('regular@example.com', $user2->email);
@@ -101,8 +99,8 @@ test('smart import cross-over featured preservation works correctly', function (
         'current_status' => 'Intrapreneur',
     ]);
 
-    // Scenario: We import the Entrepreneur CSV sheet.
-    // The sheet lists our Intrapreneur user with selected = FALSE because they are not featured as an Entrepreneur.
+    // --- Scenario: We import the Entrepreneur CSV sheet ---
+    // --- The sheet lists our Intrapreneur user with selected = FALSE because they are not featured as an Entrepreneur ---
     $entrepreneurImport = new FormResponseImport('test-entrepreneur-import', 'Responses - Copy of Entrepreneur.csv');
     $row = [
         'email_address' => $user->email,
@@ -116,16 +114,16 @@ test('smart import cross-over featured preservation works correctly', function (
 
     $entrepreneurImport->model($row);
 
-    // Their featured flag should still be TRUE because the Entrepreneur sheet is not the source of truth for Intrapreneurs!
+    // --- Their featured flag should still be TRUE because the Entrepreneur sheet is not the source of truth for Intrapreneurs! ---
     expect($user->fresh()->is_featured)->toBeTrue();
 
-    // Scenario 2: We import the Intrapreneur CSV sheet.
-    // The sheet lists our Intrapreneur user with selected = FALSE because they are no longer featured.
+    // --- Scenario 2: We import the Intrapreneur CSV sheet ---
+    // --- The sheet lists our Intrapreneur user with selected = FALSE because they are no longer featured ---
     $intrapreneurImport = new FormResponseImport('test-intrapreneur-import', 'Responses - Copy of Intrapreneur.csv');
     $row['selected'] = 'FALSE';
 
     $intrapreneurImport->model($row);
 
-    // Their featured flag should now be FALSE because the Intrapreneur sheet IS the source of truth for Intrapreneurs!
+    // --- Their featured flag should now be FALSE because the Intrapreneur sheet IS the source of truth for Intrapreneurs! ---
     expect($user->fresh()->is_featured)->toBeFalse();
 });

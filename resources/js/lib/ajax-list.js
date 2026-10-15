@@ -19,37 +19,43 @@ export default function ajaxList({ container, loadingKey = 'isSubmitting', revea
             this[loadingKey] = true;
             if (!url) {
                 const form = this.$refs.filterForm;
-                if (!form) { console.error('filterForm ref not found!'); this[loadingKey] = false; return; }
+                if (!form) {
+                    console.error('filterForm ref not found!');
+                    this[loadingKey] = false;
+                    return;
+                }
                 const params = new URLSearchParams(new FormData(form));
                 url = `${form.action}?${params.toString()}`;
             }
 
             fetch(url, {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                credentials: 'same-origin'
+                credentials: 'same-origin',
             })
-            .then(res => {
-                if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                return res.text();
-            })
-            .then(html => {
-                const list = document.getElementById(container);
-                if (list) {
-                    list.innerHTML = html;
-                    if (revealItems) {
-                        list.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
+                .then((res) => {
+                    if (!res.ok) {
+                        console.error('AJAX error:', res.status, res.url);
                     }
-                }
-                if (pushState) window.history.pushState({}, '', url);
-                this[loadingKey] = false;
-                if (shouldScroll) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            })
-            .catch(err => {
-                console.error('Fetch failed:', err);
-                this[loadingKey] = false;
-            });
+                    return res.text();
+                })
+                .then((html) => {
+                    const list = document.getElementById(container);
+                    if (list) {
+                        list.innerHTML = html;
+                        if (revealItems) {
+                            list.querySelectorAll('.reveal-on-scroll').forEach((el) => el.classList.add('is-visible'));
+                        }
+                    }
+                    if (pushState) window.history.pushState({}, '', url);
+                    this[loadingKey] = false;
+                    if (shouldScroll) {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                })
+                .catch((err) => {
+                    console.error('Fetch failed:', err);
+                    this[loadingKey] = false;
+                });
         },
 
         submitDebounced() {
@@ -59,7 +65,7 @@ export default function ajaxList({ container, loadingKey = 'isSubmitting', revea
 
         resetFilters() {
             this.$refs.filterForm.reset();
-            this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
+            this.$refs.filterForm.querySelectorAll('input, select').forEach((el) => (el.value = ''));
             this.updateList();
         },
     };

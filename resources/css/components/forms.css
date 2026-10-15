@@ -11,7 +11,7 @@
     .ts-wrapper .ts-control {
         border: 1.5px solid #e2e8f0 !important;
         border-radius: 7px !important;
-        padding: 0 15px !important; 
+        padding: 0 15px !important;
         min-height: 44px !important;
         width: 100% !important;
         box-sizing: border-box !important;
@@ -40,7 +40,9 @@
         background-color: white !important;
         border: 1px solid #e2e8f0 !important;
         border-radius: 1rem !important;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+        box-shadow:
+            0 10px 15px -3px rgba(0, 0, 0, 0.1),
+            0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
         margin-top: 6px !important;
         padding: 6px !important;
         z-index: 1000 !important;
@@ -61,7 +63,7 @@
         font-weight: 600 !important;
     }
 
-    .ts-wrapper .ts-control>input {
+    .ts-wrapper .ts-control > input {
         font-size: 14px !important;
     }
 
@@ -127,7 +129,7 @@
         box-sizing: border-box !important;
     }
 
-    input.form-input-custom, 
+    input.form-input-custom,
     select.form-input-custom {
         height: 44px !important;
         padding: 0 15px !important;

@@ -11,6 +11,7 @@ namespace App\Models;
 
 use AzisHapidin\IndoRegion\Traits\ProvinceTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Province Model.
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 class Province extends Model
 {
     use ProvinceTrait;
+
     /**
      * Table name.
      *
@@ -28,7 +30,7 @@ class Province extends Model
     /**
      * Province has many regencies.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * @return HasMany
      */
     public function regencies()
     {

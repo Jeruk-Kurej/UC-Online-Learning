@@ -16,15 +16,15 @@
 
     <form data-user-form data-enter-blurs method="POST" action="{{ $userToEdit ? route('users.update', $userToEdit) : route('users.store') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
-        @if($userToEdit)
+        @if ($userToEdit)
             @method('PUT')
         @endif
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
+        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
                 Account & Auth Info
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {{-- --- Full Name --- --}}
                 <div>
                     <label for="name" class="form-label-custom">
@@ -32,7 +32,9 @@
                     </label>
                     <input type="text" name="name" id="name" value="{{ old('name', $userToEdit?->name) }}" required
                            class="form-input-custom @error('name') border-red-500 @enderror">
-                    @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('name')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Email Address --- --}}
@@ -42,7 +44,9 @@
                     </label>
                     <input type="email" name="email" id="email" value="{{ old('email', $userToEdit?->email) }}" required
                            class="form-input-custom @error('email') border-red-500 @enderror">
-                    @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('email')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Role --- --}}
@@ -54,7 +58,9 @@
                         <option value="user" {{ old('role', $userToEdit?->role) === 'user' ? 'selected' : '' }}>User</option>
                         <option value="admin" {{ old('role', $userToEdit?->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
-                    @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('role')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Student Status --- --}}
@@ -70,39 +76,45 @@
                         <option value="alumni non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni non aktif' ? 'selected' : '' }}>Alumni Non Aktif</option>
                         <option value="alumni cuti" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni cuti' ? 'selected' : '' }}>Alumni Cuti</option>
                     </select>
-                    @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('student_status')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Password --- --}}
                 <div>
                     <label for="password" class="form-label-custom">
-                        @if($userToEdit)
+                        @if ($userToEdit)
                             Password (leave blank to keep existing)
                         @else
                             Password <span class="text-red-500">*</span>
                         @endif
                     </label>
-                    <input type="password" name="password" id="password" @unless($userToEdit) required @endunless
+                    <input type="password" name="password" id="password" @unless ($userToEdit) required @endunless
                            class="form-input-custom @error('password') border-red-500 @enderror">
-                    @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('password')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Password Confirmation --- --}}
                 <div>
                     <label for="password_confirmation" class="form-label-custom">
-                        Confirm Password @unless($userToEdit) <span class="text-red-500">*</span> @endunless
+                        Confirm Password @unless ($userToEdit)
+                            <span class="text-red-500">*</span>
+                        @endunless
                     </label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" @unless($userToEdit) required @endunless
+                    <input type="password" name="password_confirmation" id="password_confirmation" @unless ($userToEdit) required @endunless
                            class="form-input-custom">
                 </div>
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="identity_contact_section">
-            <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
+        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="identity_contact_section">
+            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
                 Identity & Contact
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {{-- --- Prefix Title --- --}}
                 <div>
                     <label for="prefix_title" class="form-label-custom">Prefix Title</label>
@@ -122,7 +134,9 @@
                     <label for="personal_email" class="form-label-custom">Personal Email</label>
                     <input type="email" name="personal_email" id="personal_email" value="{{ old('personal_email', $userToEdit?->personal_email) }}"
                            class="form-input-custom @error('personal_email') border-red-500 @enderror">
-                    @error('personal_email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    @error('personal_email')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 {{-- --- Phone Number --- --}}
@@ -154,41 +168,45 @@
                 </div>
 
                 {{-- --- Profile Photo --- --}}
-                @if($userToEdit)
+                @if ($userToEdit)
                     <x-forms.removable-image label="Profile Photo" name="profile_photo_url" delete-name="delete_profile_photo_url"
-                        :url="$userToEdit->profile_photo_url" :initial="strtoupper(substr($userToEdit->name, 0, 1))" noun="Photo"
-                        hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[110px] h-[140px] group" actions-class="h-[140px]">
-                        @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                                             :url="$userToEdit->profile_photo_url" :initial="strtoupper(substr($userToEdit->name, 0, 1))" noun="Photo"
+                                             hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[110px] h-[140px] group" actions-class="h-[140px]">
+                        @error('profile_photo_url')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </x-forms.removable-image>
                 @else
                     <x-forms.file-drop label="Profile Photo" name="profile_photo_url" accept="image/*"
-                        prompt="Upload or drop a photo" formats="JPG, PNG, WEBP">
+                                       prompt="Upload or drop a photo" formats="JPG, PNG, WEBP">
                         <x-slot:selection>
-                            <div x-show="selected" class="flex items-center gap-4 mb-3">
-                                <div class="w-16 h-20 rounded-sm overflow-hidden flex-shrink-0">
-                                    <img :src="fileUrl" class="w-full h-full object-contain">
+                            <div x-show="selected" class="mb-3 flex items-center gap-4">
+                                <div class="h-20 w-16 flex-shrink-0 overflow-hidden rounded-sm">
+                                    <img :src="fileUrl" class="h-full w-full object-contain">
                                 </div>
                                 <div class="flex flex-col gap-1.5">
-                                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wider" x-text="fileName">Selected Photo</span>
+                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500" x-text="fileName">Selected Photo</span>
                                     <button type="button" @click="clear()"
-                                            class="inline-flex items-center gap-1.5 text-xs text-red-500 hover:text-red-700 font-bold transition-all">
+                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 transition-all hover:text-red-700">
                                         <i class="bi bi-x-circle text-sm"></i>
                                         <span>Clear Selection</span>
                                     </button>
                                 </div>
                             </div>
                         </x-slot:selection>
-                        @error('profile_photo_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                        @error('profile_photo_url')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
                     </x-forms.file-drop>
                 @endif
             </div>
         </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="academic_extra_section">
-            <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
+        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="academic_extra_section">
+            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
                 Academic & Extra
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 {{-- --- Nis --- --}}
                 <div>
                     <label for="nis" class="form-label-custom">NIS (Student ID)</label>
@@ -228,70 +246,74 @@
                 </div>
 
                 {{-- --- Activities Documentation Files --- --}}
-                @if($userToEdit)
-                <div class="md:col-span-2 relative" x-data="activityFiles(@js($userToEdit->activity_files))">
-                    <div class="flex items-center justify-between mb-3">
-                        <label class="form-label-custom mb-0">Activities Documentation Files</label>
-                        <div class="relative">
-                            <input type="file" name="activities_docs[]" id="activities_docs" multiple accept="image/*,application/pdf" x-ref="activityInput"
-                                   class="hidden"
-                                   @change="handleNewFiles($event)">
-                            <button type="button" @click="pickFiles()"
-                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 hover:text-blue-700 text-[10px] font-extrabold rounded-lg transition shadow-sm select-none cursor-pointer">
-                                <i class="bi bi-plus-lg text-[9px]"></i>
-                                <span>Add Files</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <x-files.activity-previews />
-                    </div>
-                    @error('activities_docs')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                </div>
-                @else
-                    <x-forms.file-drop label="Activities Documentation File" name="activities_doc_url" accept=".pdf"
-                        prompt="Upload or drop a file" formats="PDF ONLY" icon="bi-folder2-open">
-                        <x-slot:selection>
-                            <div x-show="selected"
-                                 class="flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-xl shadow-sm mb-3">
-                                <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center flex-shrink-0 text-red-500">
-                                        <i class="bi bi-file-earmark-pdf-fill text-xl"></i>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="text-xs font-bold text-slate-700 truncate max-w-[240px]" x-text="fileName">Selected File</p>
-                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">PDF document selected</p>
-                                    </div>
-                                </div>
-                                <button type="button" @click="clear()"
-                                        class="flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-red-500 hover:text-red-700 transition-colors shadow-sm"
-                                        title="Clear Selection">
-                                    <i class="bi bi-x-lg"></i>
+                @if ($userToEdit)
+                    <div class="relative md:col-span-2" x-data="activityFiles(@js($userToEdit->activity_files))">
+                        <div class="mb-3 flex items-center justify-between">
+                            <label class="form-label-custom mb-0">Activities Documentation Files</label>
+                            <div class="relative">
+                                <input type="file" name="activities_docs[]" id="activities_docs" multiple accept="image/*,application/pdf" x-ref="activityInput"
+                                       class="hidden"
+                                       @change="handleNewFiles($event)">
+                                <button type="button" @click="pickFiles()"
+                                        class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold text-blue-600 shadow-sm transition hover:bg-blue-100 hover:text-blue-700">
+                                    <i class="bi bi-plus-lg text-[9px]"></i>
+                                    <span>Add Files</span>
                                 </button>
                             </div>
-                        </x-slot:selection>
-                        @error('activities_doc_url')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                    </x-forms.file-drop>
-                @endif
+                        </div>
 
-                {{-- --- Testimony --- --}}
-                <div class="md:col-span-2">
-                    <label for="testimony" class="form-label-custom">Student Testimony</label>
-                    <textarea name="testimony" id="testimony" rows="3"
-                               class="form-textarea-custom">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
-                </div>
+                        <x-files.activity-previews />
+                    </div>
+                    @error('activities_docs')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+            </div>
+        @else
+            <x-forms.file-drop label="Activities Documentation File" name="activities_doc_url" accept=".pdf"
+                               prompt="Upload or drop a file" formats="PDF ONLY" icon="bi-folder2-open">
+                <x-slot:selection>
+                    <div x-show="selected"
+                         class="mb-3 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3.5 shadow-sm">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500">
+                                <i class="bi bi-file-earmark-pdf-fill text-xl"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="max-w-[240px] truncate text-xs font-bold text-slate-700" x-text="fileName">Selected File</p>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PDF document selected</p>
+                            </div>
+                        </div>
+                        <button type="button" @click="clear()"
+                                class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-red-500 shadow-sm transition-colors hover:text-red-700"
+                                title="Clear Selection">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    </div>
+                </x-slot:selection>
+                @error('activities_doc_url')
+                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+            </x-forms.file-drop>
+            @endif
 
-                {{-- --- Activities Caption --- --}}
-                <div class="md:col-span-2">
-                    <label for="activities_caption" class="form-label-custom">Activities Caption</label>
-                    <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit?->activities_caption) }}"
-                           class="form-input-custom" placeholder="e.g. Brief caption describing student activities">
-                </div>
+            {{-- --- Testimony --- --}}
+            <div class="md:col-span-2">
+                <label for="testimony" class="form-label-custom">Student Testimony</label>
+                <textarea name="testimony" id="testimony" rows="3"
+                          class="form-textarea-custom">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
+            </div>
+
+            {{-- --- Activities Caption --- --}}
+            <div class="md:col-span-2">
+                <label for="activities_caption" class="form-label-custom">Activities Caption</label>
+                <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit?->activities_caption) }}"
+                       class="form-input-custom" placeholder="e.g. Brief caption describing student activities">
             </div>
         </div>
+        </div>
 
-        <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100" id="business_assignment_section">
-            <h2 class="text-lg font-bold text-gray-900 mb-6 pb-3 border-b-2 border-gray-100">
+        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="business_assignment_section">
+            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
                 Business Transfers & Assignments
             </h2>
             <div class="grid grid-cols-1 gap-6">

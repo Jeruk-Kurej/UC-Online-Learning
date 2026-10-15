@@ -1,10 +1,11 @@
 @layer base {
-	html, body {
-		overflow-x: hidden;
-		max-width: 100%;
-	}
+    html,
+    body {
+        overflow-x: hidden;
+        max-width: 100%;
+    }
 
-	[x-cloak] {
-		display: none !important;
-	}
+    [x-cloak] {
+        display: none !important;
+    }
 }

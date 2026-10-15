@@ -11,7 +11,9 @@ trait TracksImportProgress
 {
     private function updateProgress(string $status): void
     {
-        if (!$this->importId) return;
+        if (! $this->importId) {
+            return;
+        }
 
         $prefix = "import_{$this->importId}";
         Cache::increment("{$prefix}_current");

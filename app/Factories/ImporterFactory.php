@@ -2,8 +2,8 @@
 
 namespace App\Factories;
 
-use App\Imports\UCOStudentImport;
 use App\Imports\FormResponseImport;
+use App\Imports\UCOStudentImport;
 use Illuminate\Support\Facades\Log;
 
 class ImporterFactory
@@ -22,7 +22,7 @@ class ImporterFactory
             if ($handle) {
                 $headers = fgetcsv($handle);
                 if ($headers) {
-                    $normHeaders = array_map(function($h) {
+                    $normHeaders = array_map(function ($h) {
                         return strtolower(trim(str_replace([' ', '_', '?'], '', $h)));
                     }, $headers);
 
@@ -46,7 +46,7 @@ class ImporterFactory
         }
 
         // --- Fall back to the file name ---
-        if (!$detectedType) {
+        if (! $detectedType) {
             $lowerName = strtolower($originalName ?: basename($path));
             if (str_contains($lowerName, 'intrapreneur')) {
                 $detectedType = 'intrapreneur';
@@ -60,18 +60,21 @@ class ImporterFactory
         if (in_array($ext, ['xlsx', 'xls'])) {
             if (stripos($originalName, 'UCO') !== false || stripos($originalName, 'Student') !== false) {
                 Log::info('Import: XLSX filename heuristic → UCOStudentImport');
+
                 return new UCOStudentImport($importId);
             }
-            Log::info('Import: XLSX default → FormResponseImport (' . $detectedType . ')');
+            Log::info('Import: XLSX default → FormResponseImport ('.$detectedType.')');
             $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.xlsx' : 'entrepreneur.xlsx';
+
             return new FormResponseImport($importId, $constructedName);
         }
 
         // --- CSV: search the first 2 KB for markers ---
         $handle = fopen($path, 'r');
         if (! $handle) {
-            Log::info('Import: falling back to Form Response format (' . $detectedType . ')');
+            Log::info('Import: falling back to Form Response format ('.$detectedType.')');
             $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.csv' : 'entrepreneur.csv';
+
             return new FormResponseImport($importId, $constructedName);
         }
         $peek = fread($handle, 2048);
@@ -79,11 +82,13 @@ class ImporterFactory
 
         if (stripos($peek, 'NIS') !== false && stripos($peek, 'Sub Prodi') !== false) {
             Log::info('Import: detected UCO Student Profile format via content markers');
+
             return new UCOStudentImport($importId);
         }
 
-        Log::info('Import: falling back to Form Response format (' . $detectedType . ')');
+        Log::info('Import: falling back to Form Response format ('.$detectedType.')');
         $constructedName = $detectedType === 'intrapreneur' ? 'intrapreneur.csv' : 'entrepreneur.csv';
+
         return new FormResponseImport($importId, $constructedName);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\CleanText;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,8 +25,8 @@ class Product extends Model
     protected function casts(): array
     {
         return [
-            'name' => \App\Casts\CleanText::class,
-            'description' => \App\Casts\CleanText::class,
+            'name' => CleanText::class,
+            'description' => CleanText::class,
         ];
     }
 
