@@ -139,7 +139,7 @@
                 </div>
             </div>
 
-            <!-- Floating Decorative Elements -->
+            {{-- --- Floating Decorative Elements --- --}}
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
                 <div class="animate-float-slow absolute left-[10%] top-20 h-16 w-16 rounded-full border-2 border-uco-orange-300 opacity-40"></div>
                 <div class="animate-float-slower absolute right-[15%] top-40 h-12 w-12 rotate-45 border-2 border-uco-yellow-300 opacity-30"></div>

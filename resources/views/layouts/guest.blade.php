@@ -9,11 +9,11 @@
     <title>Universitas Ciputra Online</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo-uco.png') }}">
 
-    <!-- Fonts -->
+    {{-- --- Fonts --- --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Scripts -->
+    {{-- --- Scripts --- --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
@@ -40,12 +40,12 @@
         {{-- --- Dynamic JS Toast Trigger --- --}}
         <x-flash.guest-toasts />
 
-        <!-- Footer -->
+        {{-- --- Footer --- --}}
         <div class="relative z-10 mt-6 text-center text-sm text-soft-gray-500">
             <p>&copy; {{ date('Y') }} UCO. All rights reserved.</p>
         </div>
     </div>
-    <!-- instant.page untuk prefetching instan -->
+    {{-- --- instant.page prefetching --- --}}
     <script src="https://instant.page/5.2.0" type="module"
             integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous"></script>
 </body>

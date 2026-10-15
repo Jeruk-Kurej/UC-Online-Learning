@@ -37,6 +37,10 @@ test('views have no @php blocks', function () {
     expect(viewsMatching('/@php\b/'))->toBe([]);
 });
 
+test('views have no HTML comments', function () {
+    expect(viewsMatching('/<!--/'))->toBe([]);
+});
+
 test('view comments are section headers only', function () {
     expect(viewsMatching('/\{\{--(?! --- [^\n]+ --- --\}\})/'))->toBe([]);
 });

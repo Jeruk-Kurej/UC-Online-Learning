@@ -2,7 +2,7 @@
 
 <div class="{{ $class }} relative flex items-center justify-center">
     @if ($src)
-        <!-- Clean Fit Layer (aspect ratio preserved, no crop, no stretch, no bg, rounded-sm) -->
+        {{-- --- Clean Fit Layer (aspect ratio preserved, no crop, no stretch, no bg, rounded-sm) --- --}}
         <img src="{{ $src }}" alt="{{ $alt }}" {{ $attributes->merge(['class' => 'max-w-full max-h-full object-contain rounded-sm ' . $imgClass]) }} referrerpolicy="no-referrer">
     @elseif ($fallback)
         {{ $fallback }}

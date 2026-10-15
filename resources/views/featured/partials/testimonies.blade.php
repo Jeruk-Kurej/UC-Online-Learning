@@ -95,18 +95,18 @@
 
         <x-featured.carousel-dots />
 
-        <!-- Premium Glassmorphic Testimony Modal -->
+        {{-- --- Premium Glassmorphic Testimony Modal --- --}}
         <div x-show="showModal"
              class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto p-4 sm:p-6"
              x-cloak>
-            <!-- Backdrop with blur -->
+            {{-- --- Backdrop with blur --- --}}
             <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
                  x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100"
                  x-transition:leave-end="opacity-0" @click="closeModal()"
                  class="fixed inset-0 bg-slate-950/65 backdrop-blur-md"></div>
 
-            <!-- Modal Body Container -->
+            {{-- --- Modal Body Container --- --}}
             <div x-show="showModal" x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95 translate-y-4"
                  x-transition:enter-end="opacity-100 scale-100 translate-y-0"
@@ -115,15 +115,15 @@
                  x-transition:leave-end="opacity-0 scale-95 translate-y-4"
                  class="relative z-50 flex h-auto max-h-[85vh] w-full max-w-3xl flex-col overflow-hidden rounded-[2.5rem] border border-slate-100/80 bg-white shadow-[0_30px_70px_rgba(0,0,0,0.25)] md:h-[450px] md:flex-row">
 
-                <!-- Left Column: Portrait and Info -->
+                {{-- --- Left Column: Portrait and Info --- --}}
                 <div class="relative min-h-[220px] flex-shrink-0 bg-slate-900 md:min-h-full md:w-5/12">
-                    <!-- Image -->
+                    {{-- --- Image --- --}}
                     <template x-if="modalPhoto">
                         <div class="absolute inset-0 flex h-full w-full items-center justify-center">
                             <img :src="modalPhoto" :alt="modalName" class="max-h-full max-w-full rounded-sm object-contain" referrerpolicy="no-referrer">
                         </div>
                     </template>
-                    <!-- Image Fallback Gradient -->
+                    {{-- --- Image Fallback Gradient --- --}}
                     <template x-if="!modalPhoto">
                         <div
                              class="absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f7931e] to-[#fdb913] text-7xl font-black text-white">
@@ -131,12 +131,12 @@
                         </div>
                     </template>
 
-                    <!-- Premium Dark Bottom Overlay Gradient -->
+                    {{-- --- Premium Dark Bottom Overlay Gradient --- --}}
                     <div
                          class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent">
                     </div>
 
-                    <!-- Student identity at the bottom -->
+                    {{-- --- Student identity at the bottom --- --}}
                     <div class="absolute bottom-6 left-6 right-6 z-10 text-white">
                         <h3 class="mb-1 text-xl font-black leading-tight tracking-tight" x-text="modalName">
                         </h3>
@@ -145,22 +145,22 @@
                     </div>
                 </div>
 
-                <!-- Right Column: Scrollable Quote content -->
+                {{-- --- Right Column: Scrollable Quote content --- --}}
                 <div
                      class="relative flex flex-col justify-between overflow-hidden bg-white p-8 md:w-7/12 md:p-10">
-                    <!-- Close button -->
+                    {{-- --- Close button --- --}}
                     <button @click="closeModal()"
                             class="absolute right-5 top-5 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 shadow-sm transition-colors duration-200 hover:bg-slate-200 hover:text-slate-800">
                         <i class="bi bi-x-lg text-[10px]"></i>
                     </button>
 
-                    <!-- Background Quote Icon -->
+                    {{-- --- Background Quote Icon --- --}}
                     <div
                          class="pointer-events-none absolute -right-4 -top-4 select-none text-orange-500 opacity-[0.06]">
                         <i class="bi bi-quote text-[150px]"></i>
                     </div>
 
-                    <!-- Scrollable quote body -->
+                    {{-- --- Scrollable quote body --- --}}
                     <div class="mt-4 max-h-[250px] flex-grow overflow-y-auto pr-2 md:max-h-[320px]">
                         <div class="flex items-start gap-3">
                             <span

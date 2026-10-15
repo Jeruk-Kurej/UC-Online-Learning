@@ -1,5 +1,5 @@
 <section class="space-y-6">
-    <!-- Warning Message -->
+    {{-- --- Warning Message --- --}}
     <div class="rounded-xl border-l-4 border-red-500 bg-red-50 p-5">
         <div class="flex gap-4">
             <div class="flex-shrink-0">
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <!-- Delete Button -->
+    {{-- --- Delete Button --- --}}
     <div class="flex justify-start">
         <button
                 x-data=""
@@ -31,13 +31,13 @@
         </button>
     </div>
 
-    <!-- Confirmation Modal -->
+    {{-- --- Confirmation Modal --- --}}
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
         <form method="post" action="{{ route('profile.destroy') }}" class="p-8">
             @csrf
             @method('delete')
 
-            <!-- Modal Header -->
+            {{-- --- Modal Header --- --}}
             <div class="mb-6 text-center">
                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
                     <svg class="h-8 w-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,14 +52,14 @@
                 </p>
             </div>
 
-            <!-- Warning Box -->
+            {{-- --- Warning Box --- --}}
             <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
                 <p class="text-sm text-gray-700">
                     <span class="font-semibold">⚠️ Please be aware:</span> Once deleted, you will lose access to all your businesses, products, services, and other associated data.
                 </p>
             </div>
 
-            <!-- Password Confirmation -->
+            {{-- --- Password Confirmation --- --}}
             <div class="mb-6 space-y-2">
                 <label for="password" class="block text-sm font-semibold text-gray-700">
                     Enter your password to confirm
@@ -81,7 +81,7 @@
                 <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
             </div>
 
-            <!-- Action Buttons -->
+            {{-- --- Action Buttons --- --}}
             <div class="flex justify-end gap-3">
                 <button
                         type="button"

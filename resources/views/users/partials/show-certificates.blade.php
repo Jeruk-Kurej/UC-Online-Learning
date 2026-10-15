@@ -6,7 +6,7 @@
             total: {{ count($user->certification_files) }}
         }" class="group relative h-[250px] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] md:h-[300px]">
 
-            <!-- Slides -->
+            {{-- --- Slides --- --}}
             <div class="relative flex h-full w-full items-center justify-center bg-slate-100">
                 @foreach ($user->certification_files as $index => $cert)
                     <div x-show="activeIndex === {{ $index }}"
@@ -36,7 +36,7 @@
                 @endforeach
             </div>
 
-            <!-- Navigation Arrows -->
+            {{-- --- Navigation Arrows --- --}}
             <template x-if="total > 1">
                 <div>
                     <button @click="activeIndex = (activeIndex - 1 + total) % total"
@@ -50,7 +50,7 @@
                 </div>
             </template>
 
-            <!-- Dots Indicators -->
+            {{-- --- Dots Indicators --- --}}
             <template x-if="total > 1">
                 <div class="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
                     <template x-for="(item, index) in total" :key="index">
@@ -61,7 +61,7 @@
                 </div>
             </template>
 
-            <!-- Label -->
+            {{-- --- Label --- --}}
             <div class="absolute left-3 top-3 z-20 flex items-center gap-1.5 rounded-md border border-slate-200/60 bg-white/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm backdrop-blur-md">
                 <i class="bi bi-patch-check-fill text-[#f7931e]"></i>
                 <span>Certifications</span>

@@ -1,8 +1,8 @@
 {{-- --- Profile page left column: photo, name, edit / collab buttons, academics, contacts, certificates and activities --- --}}
 <div class="space-y-6 lg:sticky lg:top-6 lg:col-span-4">
-    <!-- Profile details card -->
+    {{-- --- Profile details card --- --}}
     <div class="flex flex-col space-y-6 overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_8px_30px_rgb(0,0,0,0.02)] md:p-8">
-        <!-- Profile Photo & Meta Side-by-Side -->
+        {{-- --- Profile Photo & Meta Side-by-Side --- --}}
         <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-start">
             <div class="relative flex h-28 w-28 flex-shrink-0 items-center justify-center overflow-hidden md:h-32 md:w-32">
                 <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="size-full">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        <!-- Academic Details Block -->
+        {{-- --- Academic Details Block --- --}}
         <div class="space-y-1.5 border-t border-slate-100 pt-4">
             <div class="-mx-2 flex items-center justify-between rounded-xl border border-transparent p-2 text-xs">
                 <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Major</span>
@@ -68,7 +68,7 @@
             </div>
         </div>
 
-        <!-- Contact Details Block -->
+        {{-- --- Contact Details Block --- --}}
         @if (($user->whatsapp || $user->email || $user->linkedin) && ($user->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
             <div class="space-y-1.5 border-t border-slate-100 pt-4">
                 @if ($user->whatsapp)
@@ -118,7 +118,7 @@
             </div>
         @endif
 
-        <!-- Core Competencies Block -->
+        {{-- --- Core Competencies Block --- --}}
         @if ($user->skills->count() > 0)
             <div class="space-y-2 border-t border-slate-100 pt-4">
                 <div class="text-[9px] font-black uppercase tracking-widest text-slate-400">Core Competencies</div>
@@ -134,7 +134,7 @@
 
         @include('users.partials.show-certificates')
 
-        <!-- Activities / Testimony Section -->
+        {{-- --- Activities / Testimony Section --- --}}
         @include('users.partials.show-activities')
 
     </div>

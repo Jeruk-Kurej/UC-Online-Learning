@@ -3,7 +3,7 @@
     @if (count($user->activity_gallery_urls) > 0)
         {{-- --- Sleek Carousel --- --}}
         <div x-data="autoplayCarousel({{ count($user->activity_gallery_urls) }})" class="group relative h-[200px] w-full overflow-hidden rounded-2xl bg-slate-50 md:h-[240px]">
-            <!-- Slides -->
+            {{-- --- Slides --- --}}
             <div class="relative flex h-full w-full items-center justify-center">
                 @foreach ($user->activity_gallery_urls as $index => $url)
                     <div x-show="activeIndex === {{ $index }}"
@@ -17,7 +17,7 @@
                 @endforeach
             </div>
 
-            <!-- Navigation Arrows -->
+            {{-- --- Navigation Arrows --- --}}
             <template x-if="total > 1">
                 <div>
                     <button @click="activeIndex = (activeIndex - 1 + total) % total; resetAutoplay()"
@@ -31,7 +31,7 @@
                 </div>
             </template>
 
-            <!-- Dots Indicators -->
+            {{-- --- Dots Indicators --- --}}
             <template x-if="total > 1">
                 <div class="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
                     <template x-for="(item, index) in total" :key="index">
@@ -42,7 +42,7 @@
                 </div>
             </template>
 
-            <!-- Label -->
+            {{-- --- Label --- --}}
             <div class="absolute left-3 top-3 z-10 flex items-center gap-1.5 rounded-md border border-slate-200/60 bg-white/90 px-2.5 py-1 text-[9px] font-black uppercase tracking-widest text-slate-700 shadow-sm backdrop-blur-md">
                 <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-[#f7931e]"></span>
                 Activities
