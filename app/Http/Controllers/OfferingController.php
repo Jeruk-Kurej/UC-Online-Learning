@@ -49,7 +49,7 @@ abstract class OfferingController extends Controller
                 ->withErrors(['business_mode' => 'This business is not in '.ucfirst($this->type()).' mode.']);
         }
 
-        return view($this->folder().'.create', compact('business'));
+        return view('offerings.form', ['business' => $business, 'type' => $this->type(), 'offering' => null, 'photoRequired' => $this->photoRequiredOnCreate()]);
     }
 
     public function store(Request $request, Business $business): RedirectResponse
@@ -73,7 +73,7 @@ abstract class OfferingController extends Controller
     {
         $offering = $this->authorizeOffering($business);
 
-        return view($this->folder().'.edit', ['business' => $business, $this->type() => $offering]);
+        return view('offerings.form', ['business' => $business, 'type' => $this->type(), 'offering' => $offering, 'photoRequired' => false]);
     }
 
     public function update(Request $request, Business $business): RedirectResponse

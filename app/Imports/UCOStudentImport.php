@@ -18,7 +18,6 @@ use Maatwebsite\Excel\Events\AfterImport;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use Carbon\Carbon;
 
 /**
  * Importer for "UCO Student Profile - With Data.csv"
@@ -88,6 +87,8 @@ use Carbon\Carbon;
  */
 class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithEvents, ShouldQueue
 {
+    use Concerns\TracksImportProgress, Concerns\ParsesImportDates;
+
     public $importId;
     protected $successCount = 0;
     protected $skippedCount = 0;
@@ -617,22 +618,6 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         return $url;
     }
 
-    private function parseDate(?string $val): ?string
-    {
-        if (!$val) return null;
-        
-        // If it's just a year (4 digits), convert to YYYY-01-01 to avoid Carbon guessing current day/month
-        if (preg_match('/^\d{4}$/', trim($val))) {
-            return trim($val) . '-01-01';
-        }
-
-        try {
-            return Carbon::parse($val)->format('Y-m-d');
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
     private function skip(string $msg): void
     {
         $this->skippedCount++;
@@ -652,14 +637,6 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
             $progress['errors'][] = $msg;
             \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
         }
-    }
-
-    private function updateProgress(string $status): void
-    {
-        if (!$this->importId) return;
-        $prefix = "import_{$this->importId}";
-        Cache::increment("{$prefix}_current");
-        Cache::increment($status === 'success' ? "{$prefix}_success" : "{$prefix}_skipped");
     }
 
     // ─── Events ───────────────────────────────────────────────────────────────
@@ -692,12 +669,4 @@ class UCOStudentImport implements ToArray, WithStartRow, WithChunkReading, WithE
         ];
     }
 
-    public function getResults(): array
-    {
-        return [
-            'success' => $this->successCount,
-            'skipped' => $this->skippedCount,
-            'errors'  => $this->errors,
-        ];
-    }
 }

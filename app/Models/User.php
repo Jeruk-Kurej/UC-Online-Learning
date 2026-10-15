@@ -55,6 +55,13 @@ use Illuminate\Notifications\Notifiable;
  * @property-read string                     $display_status
  * @property-read array                      $activity_files
  * @property-read string                     $initials
+ * @property-read bool                       $has_profile_photo
+ * @property-read string|null                $profile_photo_thumb_url
+ * @property-read string|null                $profile_photo_mini_url
+ * @property-read string                     $role_label
+ * @property-read string                     $directory_view
+ * @property-read array                      $activity_gallery_urls
+ * @property-read array                      $certification_files
  *
  * ── Relationships ──────────────────────────────────────────────
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Business>  $businesses
@@ -180,6 +187,101 @@ class User extends Authenticatable
     public function getInitialsAttribute(): string
     {
         return strtoupper(substr($this->name, 0, 1)).strtoupper(substr(explode(' ', $this->name)[1] ?? '', 0, 1));
+    }
+
+    public function getHasProfilePhotoAttribute(): bool
+    {
+        return $this->isRealImage($this->profile_photo_url);
+    }
+
+    public function getProfilePhotoThumbUrlAttribute(): ?string
+    {
+        return storage_image_url($this->profile_photo_url, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']);
+    }
+
+    public function getProfilePhotoMiniUrlAttribute(): ?string
+    {
+        return storage_image_url($this->profile_photo_url, ['width' => 150, 'height' => 150, 'crop' => 'thumb']);
+    }
+
+    public function getRoleLabelAttribute(): string
+    {
+        return match ($this->role ?? '') {
+            'admin' => 'Administrator',
+            'alumni' => 'UCO Alumni',
+            'student' => 'UCO Student',
+            default => ucfirst($this->role ?? 'Member'),
+        };
+    }
+
+    public function getDirectoryViewAttribute(): string
+    {
+        return match (true) {
+            $this->isIntrapreneur() => 'intrapreneur',
+            $this->isEntrepreneur() => 'entrepreneur',
+            $this->companies->isNotEmpty() => 'intrapreneur',
+            default => 'entrepreneur',
+        };
+    }
+
+    public function getActivityGalleryUrlsAttribute(): array
+    {
+        return collect($this->activities_doc_url)->map(function ($url) {
+            if ((str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com'))
+                && preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
+                return 'https://drive.google.com/uc?export=view&id='.$matches[1];
+            }
+
+            return $url;
+        })->values()->all();
+    }
+
+    public function getCertificationFilesAttribute(): array
+    {
+        if (! $this->expertise_certification_url) {
+            return [];
+        }
+
+        $urls = array_filter(array_map('trim', preg_split('/[;,]+/', $this->expertise_certification_url)));
+
+        return array_values(array_map(fn (string $url) => $this->describeCertificationFile($url), $urls));
+    }
+
+    // --- How a certification link is previewed: Drive and PDF files as documents, Cloudinary PDFs as their JPG rendering ---
+
+    private function describeCertificationFile(string $url): array
+    {
+        $file = ['originalUrl' => $url, 'previewUrl' => $url, 'isPdf' => false, 'isImage' => false, 'isGoogleDrive' => false, 'driveId' => null];
+
+        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+            $file['isGoogleDrive'] = true;
+            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
+                $file['driveId'] = $matches[1];
+                $file['previewUrl'] = "https://drive.google.com/file/d/{$matches[1]}/preview";
+            }
+            $file['isPdf'] = true;
+
+            return $file;
+        }
+
+        $extension = strtolower(pathinfo(parse_url($url, PHP_URL_PATH), PATHINFO_EXTENSION));
+        if ($extension === 'pdf') {
+            $file['isPdf'] = true;
+        } elseif (in_array($extension, ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg'])) {
+            $file['isImage'] = true;
+        } elseif (str_contains(strtolower($url), '.pdf')) {
+            $file['isPdf'] = true;
+        } else {
+            $file['isImage'] = true;
+        }
+
+        if ($file['isPdf'] && str_contains($url, 'cloudinary.com')) {
+            $file['isPdf'] = false;
+            $file['isImage'] = true;
+            $file['previewUrl'] = preg_replace('/\.pdf$/i', '.jpg', $url);
+        }
+
+        return $file;
     }
 
     // ─── Relationships ───

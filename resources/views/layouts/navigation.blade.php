@@ -17,9 +17,6 @@
                 
                 @auth
                     {{-- Inbox Notification Bell --}}
-                    @php
-                        $unreadInboxCount = \App\Models\Message::where('recipient_id', auth()->id())->whereNull('read_at')->count();
-                    @endphp
                     <a href="{{ route('inbox.index') }}" class="relative p-2 text-soft-gray-600 hover:text-soft-gray-900 transition-colors duration-200 mr-2 flex items-center justify-center rounded-full hover:bg-soft-gray-50" title="Inbox">
                         <i class="bi bi-bell-fill text-lg"></i>
                         @if($unreadInboxCount > 0)
@@ -34,7 +31,7 @@
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
                             @if(auth()->user()->isAdmin())
                                 <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-7 h-7 object-contain rounded-md">
-                            @elseif(auth()->user()->profile_photo_url && !str_contains(auth()->user()->profile_photo_url, 'ui-avatars.com'))
+                            @elseif(auth()->user()->has_profile_photo)
                                 <img src="{{ auth()->user()->profile_photo_url }}" alt="{{ auth()->user()->name }}" class="w-7 h-7 object-contain rounded-sm">
                             @else
                                 <div class="w-7 h-7 bg-uco-orange-500 rounded-sm flex items-center justify-center text-white text-xs font-bold">{{ substr(auth()->user()->name, 0, 1) }}</div>

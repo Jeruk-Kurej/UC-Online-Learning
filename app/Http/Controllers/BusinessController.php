@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
 
 /**
@@ -129,12 +130,16 @@ class BusinessController extends Controller
      */
     public function create(): View
     {
-        $categories = Category::all();
-        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
-        $availableCities = Regency::pluck('name')->sort();
-        $provinces = Province::orderBy('name')->get();
-
-        return view('businesses.create', compact('categories', 'users', 'availableCities', 'provinces'));
+        return view('businesses.form', [
+            'business' => null,
+            'categories' => Category::all(),
+            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(),
+            'provinces' => Province::orderBy('name')->get(),
+            'selectedProvinceId' => null,
+            'availableCities' => collect(),
+            'memberIds' => [],
+            'cancelUrl' => $this->formCancelUrl(),
+        ]);
     }
 
     /**
@@ -179,7 +184,16 @@ class BusinessController extends Controller
             abort(404);
         }
 
-        return view('businesses.show', compact('business'));
+        return view('businesses.show', [
+            'business' => $business,
+            'canManageBusiness' => auth()->check() && $business->canBeManagedBy(auth()->user()),
+            'collabStatus' => auth()->check() && $business->user_id && auth()->id() !== $business->user_id ? auth()->user()->collabStatusWith($business->public_owner) : null,
+            'showRevenue' => Gate::allows('update', $business),
+            'offersProducts' => in_array($business->offering_mode, ['product', 'both']),
+            'offersServices' => in_array($business->offering_mode, ['service', 'both']),
+            'products' => $business->products->where('type', 'product'),
+            'services' => $business->products->where('type', 'service'),
+        ]);
     }
 
     /**
@@ -220,19 +234,24 @@ class BusinessController extends Controller
             ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
             : collect();
 
-        $existingServices = [];
-        $legalDocs = $business->legalDocuments;
+        return view('businesses.form', [
+            'business' => $business,
+            'categories' => $categories,
+            'users' => $users,
+            'provinces' => $provinces,
+            'selectedProvinceId' => $selectedProvinceId,
+            'availableCities' => $availableCities,
+            'memberIds' => $business->members()->pluck('users.id')->toArray(),
+            'cancelUrl' => $this->formCancelUrl(),
+        ]);
+    }
 
-        return view('businesses.edit', compact(
-            'business',
-            'categories',
-            'users',
-            'existingServices',
-            'legalDocs',
-            'availableCities',
-            'provinces',
-            'selectedProvinceId'
-        ));
+    /**
+     * Where Back / Cancel on the business form leads: the admin list for admins, "my businesses" for everyone else.
+     */
+    private function formCancelUrl(): string
+    {
+        return auth()->check() && auth()->user()->isAdmin() ? route('businesses.index') : route('businesses.my');
     }
 
     /**

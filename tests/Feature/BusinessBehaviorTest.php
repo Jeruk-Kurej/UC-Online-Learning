@@ -399,3 +399,25 @@ test('renaming a work profile regenerates its slug; strangers are refused', func
 
     expect($company->fresh()->slug)->toBe('new-employer-1');
 });
+
+// --- Business page data ---
+
+test('business page data: offering mode, instagram handles and whatsapp links', function () {
+    ['category' => $category, 'owner' => $owner, 'stranger' => $stranger] = businessWorld();
+    $owner->update(['whatsapp' => '+62 812-0000-1111']);
+    $business = approvedBusiness($owner, $category, ['instagram' => '@first, second;@ ; 0', 'offering_type' => null]);
+    $product = \App\Models\Product::create(['business_id' => $business->id, 'type' => 'product', 'name' => 'Kopi Susu']);
+    $service = \App\Models\Product::create(['business_id' => $business->id, 'type' => 'service', 'name' => 'Catering']);
+
+    expect($business->offering_mode)->toBe('product')
+        ->and($business->instagram_handles)->toBe(['first', 'second'])
+        ->and($business->whatsappLinkFor($product))->toBe('https://wa.me/6281200001111?text='.urlencode('Hi, I am interested in your product: "Kopi Susu" listed on UC Online Learning.'));
+
+    $business->update(['whatsapp' => '0899', 'offering_type' => 'both']);
+    expect($business->fresh()->offering_mode)->toBe('both')
+        ->and($business->fresh()->whatsappLinkFor($service))->toStartWith('https://wa.me/0899?text=Hi%2C+I+am+interested+in+your+service');
+
+    $collab = Collab::create(['sender_id' => $owner->id, 'recipient_id' => $stranger->id, 'status' => 'accepted']);
+    expect($collab->partnerFor($owner)->id)->toBe($stranger->id)
+        ->and($collab->partnerFor($stranger)->id)->toBe($owner->id);
+});

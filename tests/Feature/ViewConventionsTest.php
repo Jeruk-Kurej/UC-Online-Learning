@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\File;
 
-// --- Blade is markup only: CSS lives in resources/css, JS in resources/js ---
+// --- Blade is markup only: CSS lives in resources/css, JS in resources/js, logic in PHP classes ---
 
 function bladeSources(): array
 {
@@ -31,4 +31,8 @@ test('views only load scripts by src or carry JSON data', function () {
 
 test('views have no inline event handlers', function () {
     expect(viewsMatching('/\son[a-z]+\s*=\s*["\']/i'))->toBe([]);
+});
+
+test('views have no @php blocks', function () {
+    expect(viewsMatching('/@php\b/'))->toBe([]);
 });

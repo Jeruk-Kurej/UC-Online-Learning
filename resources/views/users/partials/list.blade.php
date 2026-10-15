@@ -14,18 +14,14 @@
         </thead>
         <tbody class="divide-y">
             @forelse($users as $user)
-                @php
-                    $resolvedPhoto = $user->profile_photo_url;
-                    $hasRealPhoto  = $resolvedPhoto && !str_contains($resolvedPhoto, 'ui-avatars.com');
-                @endphp
                 <tr class="hover:bg-orange-50/30 transition">
 
                     {{-- Name + Avatar --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-sm overflow-hidden flex-shrink-0">
-                                @if($hasRealPhoto)
-                                    <img src="{{ $resolvedPhoto }}" alt="{{ $user->name }}" class="w-full h-full object-contain">
+                                @if($user->has_profile_photo)
+                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="w-full h-full object-contain">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-xs font-black uco-initials-bg">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
@@ -126,15 +122,6 @@
                 <tr>
                     <td colspan="7" class="px-6 py-16 text-center">
                         <div class="space-y-3">
-                            @php
-                                $hasActiveFilters = request()->filled('search')
-                                    || request()->filled('sort_name')
-                                    || request()->filled('sort_year')
-                                    || request()->filled('student_status')
-                                    || request()->filled('major')
-                                    || request()->filled('year_of_enrollment');
-                            @endphp
-
                             <p class="text-gray-400 italic">
                                 {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
                             </p>

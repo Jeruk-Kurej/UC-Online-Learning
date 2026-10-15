@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    use HasFactory, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
 
     protected $fillable = [
         'user_id',
@@ -40,16 +40,6 @@ class Company extends Model
     }
 
     // ─── Accessors ───
-
-    public function getLogoUrlAttribute($value)
-    {
-        return $this->resolveImage($value, 'company');
-    }
-
-    public function getHasLogoAttribute(): bool
-    {
-        return $this->isRealImage($this->logo_url);
-    }
 
     public function getAchievementsListAttribute(): array
     {

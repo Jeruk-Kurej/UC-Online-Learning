@@ -6,33 +6,23 @@
          x-data="businessAdminList"
          x-init="viewType = $el.dataset.viewType || 'entrepreneur'"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
-        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div class="space-y-1">
-                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
-                        Admin Portal
-                    </span>
-                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Business Management</h1>
-                    <p class="text-sm text-soft-gray-600 mt-1">Review and manage business submissions from students.</p>
-                </div>
+        <x-ui.page-header badge="Admin Portal" title="Business Management" subtitle="Review and manage business submissions from students.">
+            <x-slot:actions>
+                <span class="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md flex-grow sm:flex-initial">
+                    <i class="bi bi-star-fill text-uco-yellow-500"></i>
+                    <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
+                </span>
+                <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
+                    <i class="bi bi-cloud-upload mr-2"></i>
+                    Import CSV
+                </button>
 
-                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
-                    <span class="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 text-uco-yellow-700 text-xs font-semibold rounded-md flex-grow sm:flex-initial">
-                        <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                        <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
-                    </span>
-                    <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
-                        <i class="bi bi-cloud-upload mr-2"></i>
-                        Import CSV
-                    </button>
-
-                    <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
-                        <i class="bi bi-plus-lg mr-2"></i>
-                        Create Business
-                    </a>
-                </div>
-            </div>
-        </section>
+                <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary px-4 py-2 text-sm flex-grow sm:flex-initial justify-center">
+                    <i class="bi bi-plus-lg mr-2"></i>
+                    Create Business
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Statistics --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
@@ -128,10 +118,7 @@
 
                         {{-- Loading spinner --}}
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
-                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
-                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            </svg>
+                            <x-ui.spinner />
                             <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
                         </div>
                     </div>
@@ -202,54 +189,7 @@
 
         {{-- Import Modal --}}
         @if (auth()->user()?->isAdmin())
-        <div x-show="showImportModal"
-             x-cloak
-             x-transition:enter="transition ease-out duration-200"
-             x-transition:enter-start="opacity-0"
-             x-transition:enter-end="opacity-100"
-             x-transition:leave="transition ease-in duration-150"
-             x-transition:leave-start="opacity-100"
-             x-transition:leave-end="opacity-0"
-             @click.self="showImportModal = false"
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
-            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8"
-                 x-transition:enter="transition ease-out duration-200 transform"
-                 x-transition:enter-start="opacity-0 scale-95 translate-y-2"
-                 x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-150 transform"
-                 x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                 x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-                 x-data="importDropzone('biz_csv_file', 'biz_file_name')"
-                 @click.stop>
-                <div class="flex items-center justify-between mb-2">
-                    <h3 class="text-2xl font-black text-gray-900">Import Businesses</h3>
-                    <button type="button" @click="$dispatch('close-import-modal')" class="p-1.5 rounded-md hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition">
-                        <i class="bi bi-x-lg text-lg"></i>
-                    </button>
-                </div>
-                <p class="text-sm text-gray-500 mb-6">Upload the UC Online Form Responses CSV file to sync profiles.</p>
-
-                <form action="{{ route('businesses.import') }}" method="POST" enctype="multipart/form-data" @submit.prevent="$dispatch('start-import', $el)" class="space-y-6">
-                    @csrf
-                    <div class="border-2 border-dashed rounded-lg p-10 text-center transition group"
-                         :class="isDragging ? 'border-uco-orange-500 bg-orange-50' : 'border-gray-200 hover:border-uco-orange-300'"
-                         @dragover="handleDragOver"
-                         @dragleave="handleDragLeave"
-                         @drop="handleDrop">
-                        <input type="file" name="file" required class="hidden" id="biz_csv_file" @change="showChosenFile">
-                        <label for="biz_csv_file" class="cursor-pointer">
-                            <i class="bi bi-file-earmark-spreadsheet text-4xl text-gray-300 group-hover:text-uco-orange-500 transition"></i>
-                            <p class="mt-4 text-sm font-bold text-gray-600" id="biz_file_name">Click to select or drag CSV/Excel file here</p>
-                        </label>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button type="button" @click="$dispatch('close-import-modal')" class="btn-uco btn-uco-neutral flex-1 py-3">Cancel</button>
-                        <button type="submit" class="btn-uco btn-uco-primary flex-1 py-3">Start Import</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            <x-admin.import-modal title="Import Businesses" :action="route('businesses.import')" input-id="biz_csv_file" name-id="biz_file_name" />
         @endif
 
         @include('partials.import-progress')

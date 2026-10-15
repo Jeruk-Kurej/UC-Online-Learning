@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\UserImportTemplate;
+use App\Http\Requests\Admin\StoreUserRequest;
+use App\Http\Requests\Admin\UpdateUserRequest;
 use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Province;
@@ -9,10 +12,10 @@ use App\Models\User;
 use App\Services\ImageOptimizerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules;
 use Maatwebsite\Excel\Facades\Excel;
 
 /**
@@ -47,11 +50,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request)
     {
-        // ✅ CHANGED: Use Gate instead of authorize for better error handling
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can view user list.');
-        }
-
         $search = trim((string) $request->get('search', ''));
         $sortName = $request->get('sort_name');
         $sortYear = $request->get('sort_year');
@@ -126,18 +124,22 @@ class UserController extends \App\Http\Controllers\Controller
             ->pluck('year_of_enrollment');
 
         // Get accurate counts from database (not from paginated collection)
-        $totalUsers = User::where('role', '!=', 'admin')->count();
-        $totalEntrepreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count();
-        $totalIntrapreneurs = User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count();
-        $totalAlumni = User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count();
+        ['total' => $totalUsers, 'entrepreneurs' => $totalEntrepreneurs, 'intrapreneurs' => $totalIntrapreneurs, 'alumni' => $totalAlumni] = $this->userCounts();
         $featuredStats = $this->getFeaturedUserStats();
         $featuredUserCount = $featuredStats['total'];
         $featuredIntrapreneurCount = $featuredStats['intrapreneurs'];
         $featuredEntrepreneurCount = $featuredStats['entrepreneurs'];
 
+        $hasActiveFilters = $request->filled('search')
+            || $request->filled('sort_name')
+            || $request->filled('sort_year')
+            || $request->filled('student_status')
+            || $request->filled('major')
+            || $request->filled('year_of_enrollment');
+
         if ($request->ajax()) {
             return response()
-                ->view('users.partials.list', compact('users'))
+                ->view('users.partials.list', compact('users', 'hasActiveFilters'))
                 ->header('Vary', 'X-Requested-With');
         }
 
@@ -151,7 +153,8 @@ class UserController extends \App\Http\Controllers\Controller
             'featuredIntrapreneurCount',
             'featuredEntrepreneurCount',
             'availableMajors',
-            'availableEnrollmentYears'
+            'availableEnrollmentYears',
+            'hasActiveFilters'
         ));
     }
 
@@ -162,11 +165,7 @@ class UserController extends \App\Http\Controllers\Controller
     {
         $featuredStats = $this->getFeaturedUserStats();
 
-        return new JsonResponse([
-            'total' => User::where('role', '!=', 'admin')->count(),
-            'entrepreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
-            'intrapreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
-            'alumni' => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
+        return new JsonResponse($this->userCounts() + [
             'featured' => $featuredStats['total'],
             'featured_intrapreneurs' => $featuredStats['intrapreneurs'],
             'featured_entrepreneurs' => $featuredStats['entrepreneurs'],
@@ -178,112 +177,43 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can create users.');
-        }
-
         // Get available businesses for ownership transfer
         $availableBusinesses = Business::with('user', 'category')->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
-        return view('users.create', compact('availableBusinesses', 'provinces'));
+        return view('users.form', [
+            'userToEdit' => null,
+            'availableBusinesses' => $availableBusinesses,
+            'ownedBusinessIds' => [],
+            'provinces' => $provinces,
+        ]);
     }
 
     /**
      * Store a newly created user in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can create users.');
-        }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin',
-            'student_status' => 'required_if:role,user|nullable|string',
-
-            // Identity & Contact
-            'prefix_title' => 'nullable|string|max:255',
-            'suffix_title' => 'nullable|string|max:255',
-            'personal_email' => 'nullable|email|max:255',
-            'phone_number' => 'nullable|string|max:50',
-            'mobile_number' => 'nullable|string|max:50',
-            'whatsapp' => 'nullable|string|max:50',
-            'linkedin' => 'nullable|string|max:255',
-
-            // Academic & Career
-            'nis' => 'nullable|string|max:255',
-            'year_of_enrollment' => 'nullable|string|max:50',
-            'graduate_year' => 'nullable|string|max:50',
-            'major' => 'nullable|string|max:255',
-            'current_status' => 'nullable|string|max:255',
-            'testimony' => 'nullable|string',
-            'activities_caption' => 'nullable|string',
-            'show_contact_details' => 'nullable|boolean',
-
-            'profile_photo_url' => 'nullable|image|max:5120',
-            'activities_doc_url' => 'nullable|mimes:pdf|max:10240',
-
-            'is_visible' => 'nullable|boolean',
-            'owned_businesses' => 'nullable|array',
-            'owned_businesses.*' => 'exists:businesses,id',
-        ]);
-
-        $userData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role' => $validated['role'],
-            'student_status' => $validated['role'] === 'admin' ? 'student aktif' : ($validated['student_status'] ?? 'student aktif'),
-            'prefix_title' => $validated['prefix_title'] ?? null,
-            'suffix_title' => $validated['suffix_title'] ?? null,
-            'personal_email' => $validated['personal_email'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'mobile_number' => $validated['mobile_number'] ?? null,
-            'whatsapp' => $validated['whatsapp'] ?? null,
-            'linkedin' => $validated['linkedin'] ?? null,
-            'nis' => $validated['nis'] ?? null,
-            'year_of_enrollment' => $validated['year_of_enrollment'] ?? null,
-            'graduate_year' => $validated['graduate_year'] ?? null,
-            'major' => $validated['major'] ?? null,
-            'current_status' => $validated['current_status'] ?? null,
-            'testimony' => $validated['testimony'] ?? null,
-            'activities_caption' => $validated['activities_caption'] ?? null,
+        $userData = $request->profileData() + [
+            'password' => Hash::make($request->validated('password')),
             'show_contact_details' => $request->boolean('show_contact_details'),
             'is_visible' => $request->boolean('is_visible', true),
             'email_verified_at' => now(),
         ];
 
-        // Handle File Uploads
-        if ($request->hasFile('profile_photo_url')) {
-            $file = $request->file('profile_photo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $userData['profile_photo_url'] = '/storage/'.$path;
-            }
+        $photo = $request->file('profile_photo_url');
+        if ($photo instanceof UploadedFile) {
+            $userData['profile_photo_url'] = $this->storeProfilePhoto($photo, $userData['name']);
         }
 
-        if ($request->hasFile('activities_doc_url')) {
-            $file = $request->file('activities_doc_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                $path = $file->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $userData['activities_doc_url'] = '/storage/'.$path;
-            }
+        $document = $request->file('activities_doc_url');
+        if ($document instanceof UploadedFile) {
+            $path = $document->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'.'.$document->getClientOriginalExtension(), 'public');
+            $userData['activities_doc_url'] = '/storage/'.$path;
         }
 
-        // Create the user
         $newUser = User::create($userData);
-
-        // Assign businesses if selected
-        $ownedBusinesses = (array) $request->input('owned_businesses');
-        if (! empty($ownedBusinesses)) {
-            Business::whereIn('id', $ownedBusinesses)
-                ->update(['user_id' => $newUser->id]);
-        }
+        $this->assignBusinesses($request, $newUser);
 
         return redirect()
             ->route('users.index')
@@ -295,24 +225,18 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function edit(User $user)
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can edit users.');
-        }
-
         // Get available businesses for ownership transfer (excluding businesses owned by this user)
         $availableBusinesses = Business::with('user', 'category')
             ->where('user_id', '!=', $user->id)
             ->get();
 
         // Get businesses currently owned by this user
-        $ownedBusinesses = $user->businesses()->pluck('id')->toArray();
-
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
-        return view('users.edit', [
+        return view('users.form', [
             'userToEdit' => $user,
             'availableBusinesses' => $availableBusinesses,
-            'ownedBusinesses' => $ownedBusinesses,
+            'ownedBusinessIds' => $user->businesses()->pluck('id')->toArray(),
             'provinces' => $provinces,
         ]);
     }
@@ -320,71 +244,9 @@ class UserController extends \App\Http\Controllers\Controller
     /**
      * Update the specified user in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can update users.');
-        }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$user->id,
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            'role' => 'required|in:user,admin',
-            'student_status' => 'required_if:role,user|nullable|string',
-
-            // Identity & Contact
-            'prefix_title' => 'nullable|string|max:255',
-            'suffix_title' => 'nullable|string|max:255',
-            'personal_email' => 'nullable|email|max:255',
-            'phone_number' => 'nullable|string|max:50',
-            'mobile_number' => 'nullable|string|max:50',
-            'whatsapp' => 'nullable|string|max:50',
-            'linkedin' => 'nullable|string|max:255',
-
-            // Academic & Career
-            'nis' => 'nullable|string|max:255',
-            'year_of_enrollment' => 'nullable|string|max:50',
-            'graduate_year' => 'nullable|string|max:50',
-            'major' => 'nullable|string|max:255',
-            'current_status' => 'nullable|string|max:255',
-            'testimony' => 'nullable|string',
-            'activities_caption' => 'nullable|string',
-            'show_contact_details' => 'nullable|boolean',
-
-            // Files & Deletion flags
-            'profile_photo_url' => 'nullable|image|max:5120',
-            'delete_profile_photo_url' => 'nullable|boolean',
-            'activities_docs' => ['nullable', 'array'],
-            'activities_docs.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:10240'],
-            'delete_activities_files' => ['nullable', 'array'],
-            'delete_activities_files.*' => ['string'],
-
-            'is_visible' => 'nullable|boolean',
-            'owned_businesses' => 'nullable|array',
-            'owned_businesses.*' => 'exists:businesses,id',
-        ]);
-
-        $userData = [
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'role' => $validated['role'],
-            'student_status' => $validated['role'] === 'admin' ? 'student aktif' : ($validated['student_status'] ?? 'student aktif'),
-            'prefix_title' => $validated['prefix_title'] ?? null,
-            'suffix_title' => $validated['suffix_title'] ?? null,
-            'personal_email' => $validated['personal_email'] ?? null,
-            'phone_number' => $validated['phone_number'] ?? null,
-            'mobile_number' => $validated['mobile_number'] ?? null,
-            'whatsapp' => $validated['whatsapp'] ?? null,
-            'linkedin' => $validated['linkedin'] ?? null,
-            'nis' => $validated['nis'] ?? null,
-            'year_of_enrollment' => $validated['year_of_enrollment'] ?? null,
-            'graduate_year' => $validated['graduate_year'] ?? null,
-            'major' => $validated['major'] ?? null,
-            'current_status' => $validated['current_status'] ?? null,
-            'testimony' => $validated['testimony'] ?? null,
-            'activities_caption' => $validated['activities_caption'] ?? null,
-        ];
+        $userData = $request->profileData();
 
         foreach (['is_visible', 'show_contact_details'] as $flag) {
             if ($request->has($flag)) {
@@ -392,69 +254,30 @@ class UserController extends \App\Http\Controllers\Controller
             }
         }
 
-        if (! empty($validated['password'])) {
-            $userData['password'] = Hash::make($validated['password']);
+        if (! empty($request->validated('password'))) {
+            $userData['password'] = Hash::make($request->validated('password'));
         }
 
-        // Handle profile photo deletion
         if ($request->boolean('delete_profile_photo_url')) {
             $user->deleteFileFromStorage($user->profile_photo_url);
             $userData['profile_photo_url'] = null;
         }
 
-        // Handle File Uploads
         if ($request->hasFile('profile_photo_url')) {
-            // Delete old file if exists
             $user->deleteFileFromStorage($user->profile_photo_url);
 
-            $file = $request->file('profile_photo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('profile-photos', Str::slug($userData['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $userData['profile_photo_url'] = '/storage/'.$path;
+            $photo = $request->file('profile_photo_url');
+            if ($photo instanceof UploadedFile) {
+                $userData['profile_photo_url'] = $this->storeProfilePhoto($photo, $userData['name']);
             }
         }
 
-        // Handle activities files deletion and uploading
-        $existingUrls = $user->activities_doc_url ?? [];
+        $userData['activities_doc_url'] = $this->syncActivityDocuments($request, $user, $userData['name']);
 
-        // Delete flagged URLs
-        if ($request->has('delete_activities_files')) {
-            $toDelete = (array) $request->input('delete_activities_files');
-            foreach ($toDelete as $urlToDelete) {
-                if (($key = array_search($urlToDelete, $existingUrls)) !== false) {
-                    $user->deleteFileFromStorage($urlToDelete);
-                    unset($existingUrls[$key]);
-                }
-            }
-            $existingUrls = array_values($existingUrls);
-        }
-
-        // Upload new files
-        $newUrls = [];
-        if ($request->hasFile('activities_docs')) {
-            $files = $request->file('activities_docs');
-            $files = is_array($files) ? $files : [$files];
-            foreach ($files as $file) {
-                if ($file instanceof \Illuminate\Http\UploadedFile) {
-                    $path = $file->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
-                    $newUrls[] = '/storage/'.$path;
-                }
-            }
-        }
-
-        $userData['activities_doc_url'] = array_merge($existingUrls, $newUrls);
-
-        // Update the user
         $user->fill($userData);
         $user->save();
 
-        // Update business ownership if selected
-        $ownedBusinesses = (array) $request->input('owned_businesses');
-        if (! empty($ownedBusinesses)) {
-            Business::whereIn('id', $ownedBusinesses)
-                ->update(['user_id' => $user->id]);
-        }
+        $this->assignBusinesses($request, $user);
 
         return redirect()
             ->route('users.show', $user)
@@ -466,13 +289,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function toggleFeatured(Request $request, User $user)
     {
-        if (! $this->currentUserIsAdmin()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle featured status.'], 403);
-            }
-            abort(403, 'Only administrators can toggle featured status.');
-        }
-
         // Cannot feature an inactive user
         if (! $user->is_visible && ! $user->is_featured) {
             if ($request->ajax() || $request->wantsJson()) {
@@ -503,13 +319,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function toggleStatus(Request $request, User $user)
     {
-        if (! $this->currentUserIsAdmin()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => 'Only administrators can toggle user status.'], 403);
-            }
-            abort(403, 'Only administrators can toggle user status.');
-        }
-
         $newVisibility = ! $user->is_visible;
         $updateData = ['is_visible' => $newVisibility];
 
@@ -557,10 +366,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function import(Request $request)
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can import users.');
-        }
-
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv,txt|max:10240', // Max 10MB
         ]);
@@ -621,342 +426,77 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function downloadTemplate()
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403, 'Only administrators can download import template.');
-        }
+        return (new UserImportTemplate)->download();
+    }
 
-        $headers = [
-            // Core Fields
-            'name',
-            'email',
-            'username',
-            'password',
-            'role',
-            'is_active',
+    // --- Form helpers ---
 
-            // Student Info
-            'nis',
-            'nisn',
-            'prodi',
-            'sub_prodi',
-            'student_year',
-            'major',
-            'is_graduate',
-            'cgpa',
-            'edu_level',
-
-            // Personal Data
-            'gender',
-            'birth_date',
-            'birth_city',
-            'religion',
-            'citizenship',
-            'citizenship_no',
-
-            // Contact Info - Primary
-            'address',
-            'address_city',
-            'province',
-            'country',
-            'zip_code',
-            'phone_number',
-            'mobile_number',
-
-            // Contact Info - Secondary
-            'address2',
-            'address_city2',
-            'province2',
-            'country2',
-            'zip_code2',
-            'phone_number2',
-            'mobile_number2',
-
-            // Social Media
-            'whatsapp',
-            'bbm',
-            'line',
-            'facebook',
-            'twitter',
-            'instagram',
-
-            // Academic History
-            'academic_advisor',
-            'previous_school_name',
-            'school_city',
-            'previous_edu_level',
-            'start_year',
-            'end_year',
-            'score',
-
-            // Certificates
-            'certificate_no_1',
-            'certificate_date_1',
-            'certificate_no_2',
-            'certificate_date_2',
-
-            // Father Data - Basic
-            'father_name',
-            'father_birth_city',
-            'father_birthday',
-            'father_citizenship',
-            'father_citizenship_no',
-            'father_passport_no',
-            'father_npwp_no',
-            'father_religion',
-            'father_bpjs_no',
-
-            // Father Data - Contact
-            'father_address',
-            'father_address_city',
-            'father_phone',
-            'father_mobile',
-            'father_email',
-            'father_bbm',
-
-            // Father Data - Education & Work
-            'father_education',
-            'father_education_major',
-            'father_profession',
-            'father_business_name',
-            'father_business_address',
-            'father_business_phone',
-            'father_business_line',
-            'father_business_title',
-            'father_business_revenue',
-            'father_special_need',
-
-            // Mother Data - Basic
-            'mother_name',
-            'mother_birth_city',
-            'mother_birthday',
-            'mother_citizenship',
-            'mother_citizenship_no',
-            'mother_passport_no',
-            'mother_npwp_no',
-            'mother_religion',
-            'mother_bpjs_no',
-
-            // Mother Data - Contact
-            'mother_address',
-            'mother_address_city',
-            'mother_phone',
-            'mother_mobile',
-            'mother_email',
-            'mother_bbm',
-
-            // Mother Data - Education & Work
-            'mother_education',
-            'mother_education_major',
-            'mother_profession',
-            'mother_business_name',
-            'mother_business_address',
-            'mother_business_phone',
-            'mother_business_line',
-            'mother_business_title',
-            'mother_business_revenue',
-            'mother_special_need',
-
-            // Graduation Data
-            'final_project_indonesia',
-            'final_project_english',
-            'cum_credits',
-            'predicate',
-            'judicium_date',
-            'document_no',
-            'document_date',
-            'graduate_period',
-            'class_semester',
-            'form_no',
-            'official_email',
-            'current_status',
-            'start_date',
-            'end_date',
-            'business_name',
-            'business_line',
-            'business_title',
+    /**
+     * Counts shown on the list page (everyone except admins).
+     *
+     * @return array{total: int, entrepreneurs: int, intrapreneurs: int, alumni: int}
+     */
+    private function userCounts(): array
+    {
+        return [
+            'total' => User::where('role', '!=', 'admin')->count(),
+            'entrepreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
+            'intrapreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
+            'alumni' => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
         ];
+    }
 
-        $sampleData = [
-            // Core Fields
-            'John Doe',                    // name
-            'john.doe@example.com',        // email
-            'johndoe',                     // username
-            'password123',                 // password
-            'student',                     // role
-            '1',                          // is_active
+    /**
+     * Compress and store a profile photo on the public disk; returns its /storage URL.
+     */
+    private function storeProfilePhoto(UploadedFile $file, string $name): string
+    {
+        app(ImageOptimizerService::class)->optimizeUploadedFile($file);
+        $path = $file->storeAs('profile-photos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
 
-            // Student Info
-            '12345678',                    // nis
-            '1234567890',                  // nisn
-            'Computer Science',            // prodi
-            'Software Engineering',        // sub_prodi
-            '2023',                        // student_year
-            'Computer Science',            // major
-            '0',                          // is_graduate
-            '3.85',                        // cgpa
-            'Bachelor',                    // edu_level
+        return '/storage/'.$path;
+    }
 
-            // Personal Data
-            'Male',                        // gender
-            '2000-01-01',                  // birth_date
-            'Jakarta',                     // birth_city
-            'Islam',                       // religion
-            'Indonesian',                  // citizenship
-            '3201010101000001',           // citizenship_no
+    /**
+     * Activity documents after the edit form: flagged ones deleted, new uploads added.
+     */
+    private function syncActivityDocuments(Request $request, User $user, string $name): array
+    {
+        $existingUrls = $user->activities_doc_url ?? [];
 
-            // Contact Info - Primary
-            'Jl. Example No. 123',        // address
-            'Jakarta',                     // address_city
-            'DKI Jakarta',                // province
-            'Indonesia',                   // country
-            '12345',                       // zip_code
-            '021-1234567',                // phone_number
-            '0812-3456-7890',             // mobile_number
-
-            // Contact Info - Secondary
-            '',                           // address2
-            '',                           // address_city2
-            '',                           // province2
-            '',                           // country2
-            '',                           // zip_code2
-            '',                           // phone_number2
-            '',                           // mobile_number2
-
-            // Social Media
-            '0812-3456-7890',             // whatsapp
-            '',                           // bbm
-            '',                           // line
-            '',                           // facebook
-            '',                           // twitter
-            '',                           // instagram
-
-            // Academic History
-            'Dr. Jane Smith',             // academic_advisor
-            'SMA Example',                // previous_school_name
-            'Jakarta',                     // school_city
-            'High School',                // previous_edu_level
-            '2018',                        // start_year
-            '2021',                        // end_year
-            '85.5',                        // score
-
-            // Certificates
-            '',                           // certificate_no_1
-            '',                           // certificate_date_1
-            '',                           // certificate_no_2
-            '',                           // certificate_date_2
-
-            // Father Data - Basic
-            'John Doe Sr.',               // father_name
-            'Jakarta',                     // father_birth_city
-            '1970-01-01',                 // father_birthday
-            'Indonesian',                  // father_citizenship
-            '3201010170000001',           // father_citizenship_no
-            '',                           // father_passport_no
-            '',                           // father_npwp_no
-            'Islam',                       // father_religion
-            '',                           // father_bpjs_no
-
-            // Father Data - Contact
-            'Jl. Example No. 123',        // father_address
-            'Jakarta',                     // father_address_city
-            '021-1111111',                // father_phone
-            '0811-1111-1111',             // father_mobile
-            'father@example.com',         // father_email
-            '',                           // father_bbm
-
-            // Father Data - Education & Work
-            'Bachelor',                    // father_education
-            'Business',                    // father_education_major
-            'Entrepreneur',                // father_profession
-            'ABC Company',                 // father_business_name
-            'Jl. Business St.',           // father_business_address
-            '021-9999999',                // father_business_phone
-            'Trading',                     // father_business_line
-            'CEO',                         // father_business_title
-            '> 1B',                        // father_business_revenue
-            '',                           // father_special_need
-
-            // Mother Data - Basic
-            'Jane Doe',                    // mother_name
-            'Jakarta',                     // mother_birth_city
-            '1972-01-01',                 // mother_birthday
-            'Indonesian',                  // mother_citizenship
-            '3201010172000002',           // mother_citizenship_no
-            '',                           // mother_passport_no
-            '',                           // mother_npwp_no
-            'Islam',                       // mother_religion
-            '',                           // mother_bpjs_no
-
-            // Mother Data - Contact
-            'Jl. Example No. 123',        // mother_address
-            'Jakarta',                     // mother_address_city
-            '021-2222222',                // mother_phone
-            '0822-2222-2222',             // mother_mobile
-            'mother@example.com',         // mother_email
-            '',                           // mother_bbm
-
-            // Mother Data - Education & Work
-            'Bachelor',                    // mother_education
-            'Education',                   // mother_education_major
-            'Teacher',                     // mother_profession
-            'XYZ School',                  // mother_business_name
-            'Jl. School St.',             // mother_business_address
-            '021-8888888',                // mother_business_phone
-            'Education',                   // mother_business_line
-            'Principal',                   // mother_business_title
-            '500M - 1B',                   // mother_business_revenue
-            '',                           // mother_special_need
-
-            // Graduation Data
-            '',                           // final_project_indonesia
-            '',                           // final_project_english
-            '',                           // cum_credits
-            '',                           // predicate
-            '',                           // judicium_date
-            '',                           // document_no
-            '',                           // document_date
-            '',                           // graduate_period
-            'Semester 1',                  // class_semester
-            '',                           // form_no
-            'john.doe@student.university.edu', // official_email
-            'Active Student',              // current_status
-            '2023-09-01',                 // start_date
-            '2027-06-30',                 // end_date
-            '',                           // business_name
-            '',                           // business_line
-            '',                           // business_title
-        ];
-
-        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet;
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // Add headers
-        $col = 'A';
-        foreach ($headers as $header) {
-            $sheet->setCellValue($col.'1', $header);
-            $sheet->getStyle($col.'1')->getFont()->setBold(true);
-            $col++;
+        if ($request->has('delete_activities_files')) {
+            foreach ((array) $request->input('delete_activities_files') as $urlToDelete) {
+                if (($key = array_search($urlToDelete, $existingUrls)) !== false) {
+                    $user->deleteFileFromStorage($urlToDelete);
+                    unset($existingUrls[$key]);
+                }
+            }
+            $existingUrls = array_values($existingUrls);
         }
 
-        // Add sample data
-        $col = 'A';
-        foreach ($sampleData as $value) {
-            $sheet->setCellValue($col.'2', $value);
-            $col++;
+        $newUrls = [];
+        if ($request->hasFile('activities_docs')) {
+            $files = $request->file('activities_docs');
+            foreach (is_array($files) ? $files : [$files] as $file) {
+                if ($file instanceof UploadedFile) {
+                    $path = $file->storeAs('student-activities', 'act_'.Str::slug($name).'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
+                    $newUrls[] = '/storage/'.$path;
+                }
+            }
         }
 
-        // Auto-size columns (using column index instead of range)
-        for ($i = 1; $i <= count($headers); $i++) {
-            $sheet->getColumnDimensionByColumn($i)->setAutoSize(true);
+        return array_merge($existingUrls, $newUrls);
+    }
+
+    /**
+     * Give the businesses picked in the form to this user (it only adds, it never takes businesses away).
+     */
+    private function assignBusinesses(Request $request, User $user): void
+    {
+        $ownedBusinesses = (array) $request->input('owned_businesses');
+        if (! empty($ownedBusinesses)) {
+            Business::whereIn('id', $ownedBusinesses)
+                ->update(['user_id' => $user->id]);
         }
-
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-
-        $fileName = 'users_import_template_'.date('Y-m-d').'.xlsx';
-        $tempFile = tempnam(sys_get_temp_dir(), $fileName);
-
-        $writer->save($tempFile);
-
-        return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
     }
 }

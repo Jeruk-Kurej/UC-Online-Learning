@@ -47,8 +47,8 @@ test('create form redirects with an error when the business does not offer that 
 test('create forms open when the business offers that type', function () {
     ['owner' => $owner, 'business' => $business] = offeringWorld('both');
 
-    $this->actingAs($owner)->get(route('businesses.products.create', $business))->assertOk()->assertViewIs('products.create');
-    $this->actingAs($owner)->get(route('businesses.services.create', $business))->assertOk()->assertViewIs('services.create');
+    $this->actingAs($owner)->get(route('businesses.products.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'product')->assertSee('Add New Product');
+    $this->actingAs($owner)->get(route('businesses.services.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'service')->assertSee('Add New Service');
 });
 
 // --- Edit views ---
@@ -57,9 +57,9 @@ test('edit forms receive the offering under its own variable name', function () 
     ['owner' => $owner, 'business' => $business, 'product' => $product, 'service' => $service] = offeringWorld();
 
     $this->actingAs($owner)->get(route('businesses.products.edit', [$business, $product]))
-        ->assertOk()->assertViewIs('products.edit')->assertViewHas('product', fn ($p) => $p->is($product));
+        ->assertOk()->assertViewIs('offerings.form')->assertViewHas('offering', fn ($p) => $p->is($product));
     $this->actingAs($owner)->get(route('businesses.services.edit', [$business, $service]))
-        ->assertOk()->assertViewIs('services.edit')->assertViewHas('service', fn ($s) => $s->is($service));
+        ->assertOk()->assertViewIs('offerings.form')->assertViewHas('offering', fn ($s) => $s->is($service));
 });
 
 // --- Type and ownership guards ---
@@ -183,3 +183,26 @@ test('a new photo replaces the stored path on update', function (string $kind, s
 
     expect($world[$kind]->fresh()->getRawOriginal('photo_url'))->toStartWith($folder.'/');
 })->with([['product', 'products'], ['service', 'services']]);
+
+// --- Price shown on the business page ---
+
+test('an offering shows a number only for fixed or negotiable prices', function () {
+    $price = fn (array $attributes) => new Product($attributes);
+
+    expect($price(['price' => '15000', 'price_type' => 'fixed']))
+        ->shows_price->toBeTrue()
+        ->formatted_price->toBe('15.000')
+        ->price_type_label->toBe('Fixed Price');
+    expect($price(['price' => '2500000', 'price_type' => 'negotiable']))
+        ->formatted_price->toBe('2.500.000')
+        ->price_type_label->toBe('Negotiable');
+    expect($price(['price' => '15000', 'price_type' => 'customize']))
+        ->shows_price->toBeFalse()
+        ->formatted_price->toBeNull()
+        ->price_text->toBe('Customize by Order')
+        ->price_type_label->toBeNull();
+    expect($price(['price' => null, 'price_type' => 'unspecified']))
+        ->shows_price->toBeFalse()
+        ->price_text->toBe('Price Unspecified')
+        ->has_photo->toBeFalse();
+});

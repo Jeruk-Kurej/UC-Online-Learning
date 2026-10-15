@@ -6,17 +6,7 @@
         @ajax-pagination.window="updateList($event.detail.url, true, true)">
 
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-                <div class="space-y-1">
-                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
-                        Admin Portal
-                    </span>
-                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Manage Testimonies</h1>
-                    <p class="text-sm text-soft-gray-600 mt-1">Review user testimonies and select which ones are featured on the homepage.</p>
-                </div>
-            </div>
-        </section>
+        <x-ui.page-header badge="Admin Portal" title="Manage Testimonies" subtitle="Review user testimonies and select which ones are featured on the homepage." stack-until="md" />
 
         {{-- Statistics --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
@@ -65,10 +55,7 @@
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
-                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
-                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            </svg>
+                            <x-ui.spinner />
                             <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
                         </div>
                     </div>

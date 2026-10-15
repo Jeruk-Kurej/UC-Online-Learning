@@ -8,24 +8,14 @@
         x-data="sectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
 
         {{-- Page Header --}}
-        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div class="space-y-1">
-                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
-                        Dynamic Section Builder (CMS)
-                    </span>
-                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Edit {{ $page->title }}</h1>
-                    <p class="text-sm text-soft-gray-600 mt-1">Add, remove, reorder, or edit any section visually. No code required!</p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
-                    <a href="{{ route($page->slug) }}" target="_blank" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-all">
-                        <i class="bi bi-box-arrow-up-right"></i>
-                        <span>View Public Page</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+        <x-ui.page-header badge="Dynamic Section Builder (CMS)" :title="'Edit ' . $page->title" subtitle="Add, remove, reorder, or edit any section visually. No code required!">
+            <x-slot:actions>
+                <a href="{{ route($page->slug) }}" target="_blank" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-all">
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    <span>View Public Page</span>
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Sections Builder List --}}
         <div class="space-y-6">

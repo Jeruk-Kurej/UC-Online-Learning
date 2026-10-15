@@ -44,21 +44,16 @@
                     {{-- Owner --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <div class="flex items-center gap-2">
-                            @php
-                                $ownerName = optional($b->user)->name ?? 'Unknown';
-                                $ownerPhoto = optional($b->user)->profile_photo_url;
-                                $hasRealPhoto = $ownerPhoto && !str_contains($ownerPhoto, 'ui-avatars.com');
-                            @endphp
                             <div class="w-6 h-6 rounded-sm overflow-hidden flex-shrink-0">
-                                @if($hasRealPhoto)
-                                    <img src="{{ $ownerPhoto }}" class="w-full h-full object-contain">
+                                @if($b->user?->has_profile_photo)
+                                    <img src="{{ $b->user->profile_photo_url }}" class="w-full h-full object-contain">
                                 @else
                                     <div class="w-full h-full flex items-center justify-center text-white text-[10px] font-black uco-initials-bg">
-                                        {{ strtoupper(substr($ownerName, 0, 1)) }}
+                                        {{ strtoupper(substr($b->user?->name ?? 'Unknown', 0, 1)) }}
                                     </div>
                                 @endif
                             </div>
-                            <span class="font-bold text-gray-700 text-xs truncate">{{ $ownerName }}</span>
+                            <span class="font-bold text-gray-700 text-xs truncate">{{ $b->user?->name ?? 'Unknown' }}</span>
                         </div>
                     </td>
 
@@ -78,18 +73,7 @@
 
                     {{-- Approval Status --}}
                     <td class="px-4 py-3">
-                        @php
-                            $statusClasses = match($b->status) {
-                                'approved' => 'bg-green-100 text-green-700',
-                                'pending' => 'bg-amber-100 text-amber-700',
-                                'rejected' => 'bg-red-100 text-red-700',
-                                'need_revision' => 'bg-blue-100 text-blue-700',
-                                default => 'bg-gray-100 text-gray-700',
-                            };
-                        @endphp
-                        <span class="whitespace-nowrap px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $statusClasses }}">
-                            {{ $b->status_label }}
-                        </span>
+                        <x-admin.status-badge :item="$b" />
                     </td>
 
                     {{-- Visible dot --}}

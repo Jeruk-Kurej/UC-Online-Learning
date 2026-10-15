@@ -35,6 +35,7 @@ class UserProfileController extends Controller
 
         return view('users.show', [
             'user' => $user,
+            'collabStatus' => auth()->check() && auth()->id() !== $user->id ? auth()->user()->collabStatusWith($user) : null,
         ]);
     }
 

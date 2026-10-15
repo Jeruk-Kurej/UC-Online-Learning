@@ -3,12 +3,14 @@
 namespace App\Providers;
 
 use App\Models\Business;
+use App\Models\Message;
 use App\Models\User;
 use App\Policies\BusinessPolicy;
 use App\Policies\UserPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
 
@@ -42,6 +44,13 @@ class AppServiceProvider extends ServiceProvider
         // ✅ Register background image uploads rate limiter
         RateLimiter::for('image-uploads', function (object $job) {
             return Limit::perMinute(30);
+        });
+
+        // Unread inbox count for the navigation bell
+        View::composer('layouts.navigation', function ($view) {
+            $view->with('unreadInboxCount', auth()->check()
+                ? Message::where('recipient_id', auth()->id())->whereNull('read_at')->count()
+                : 0);
         });
     }
 }

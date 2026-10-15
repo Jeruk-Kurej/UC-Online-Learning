@@ -14,10 +14,8 @@
 
         {{-- Dynamic Renderer for Sections --}}
         @foreach($sections as $sec)
-            @php $type = $sec['type'] ?? ''; @endphp
-
             {{-- SECTION TYPE: HERO --}}
-            @if($type === 'hero')
+            @if(($sec['type'] ?? '') === 'hero')
                 <section class="relative py-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-amber-50/70 via-white to-orange-50/40 border-b border-orange-100/60">
                     <div class="max-w-[1600px] mx-auto text-center relative z-10 reveal-on-scroll">
                         @if(!empty($sec['badge']))
@@ -37,7 +35,7 @@
                 </section>
 
             {{-- SECTION TYPE: FEATURE CARDS GRID --}}
-            @elseif($type === 'feature_cards')
+            @elseif(($sec['type'] ?? '') === 'feature_cards')
                 <section class="py-16 md:py-20 bg-white px-4 sm:px-6 lg:px-8 relative overflow-hidden">
                     <div class="max-w-[1600px] mx-auto relative z-10">
                         <div class="text-center max-w-3xl mx-auto mb-14 space-y-3 reveal-on-scroll">
@@ -69,7 +67,7 @@
                 </section>
 
             {{-- SECTION TYPE: STATS GRID --}}
-            @elseif($type === 'stats_grid')
+            @elseif(($sec['type'] ?? '') === 'stats_grid')
                 <section class="py-16 md:py-20 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto">
                     <div class="bg-slate-900 rounded-3xl border border-slate-800 p-10 md:p-16 text-white relative overflow-hidden shadow-sm">
                         <div class="text-center relative z-10 reveal-on-scroll">
@@ -89,14 +87,14 @@
                 </section>
 
             {{-- SECTION TYPE: TEXT / FAQ BLOCK --}}
-            @elseif($type === 'text_block')
+            @elseif(($sec['type'] ?? '') === 'text_block')
                 <section class="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
                     <h2 class="text-2xl md:text-3xl font-black text-gray-900 mb-4 tracking-tight">{{ $sec['heading'] ?? '' }}</h2>
                     <p class="text-base text-gray-600 font-normal leading-relaxed whitespace-pre-line">{{ $sec['content'] ?? '' }}</p>
                 </section>
 
             {{-- SECTION TYPE: CTA BANNER --}}
-            @elseif($type === 'cta_banner')
+            @elseif(($sec['type'] ?? '') === 'cta_banner')
                 <section class="py-16 px-4 sm:px-6 lg:px-8 max-w-[1600px] mx-auto">
                     <div class="bg-slate-900 rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden border border-slate-800 shadow-sm reveal-on-scroll">
                         <div class="relative z-10 max-w-3xl mx-auto space-y-6">

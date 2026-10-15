@@ -121,7 +121,7 @@ test('update keeps the password unless given and moves business ownership', func
 
     $this->actingAs($w['admin'])->get(route('users.edit', $target))->assertOk()
         ->assertViewHas('userToEdit', fn ($u) => $u->is($target))
-        ->assertViewHas('ownedBusinesses', [$kept->id, $dropped->id]);
+        ->assertViewHas('ownedBusinessIds', [$kept->id, $dropped->id]);
 
     $this->actingAs($w['admin'])->put(route('users.update', $target), userPayload([
         'name' => 'Target Renamed', 'email' => 'target@example.com', 'password' => null, 'password_confirmation' => null,
@@ -289,4 +289,24 @@ test('activity files describe each stored document with a preview when one exist
     ])
         ->and($user->initials)->toBe('BS')
         ->and(User::factory()->create(['activities_doc_url' => null])->activity_files)->toBe([]);
+});
+
+test('profile page data: gallery links, certificate previews, role label and photo checks', function () {
+    $user = User::factory()->create([
+        'role' => 'user',
+        'activities_doc_url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view;/storage/a.png',
+        'expertise_certification_url' => 'https://drive.google.com/open?id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345, https://res.cloudinary.com/x/cert.pdf; /storage/c.png; /files/d.PDF; https://example.com/e',
+    ]);
+
+    expect($user->activity_gallery_urls)->toBe(['https://drive.google.com/uc?export=view&id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345', '/storage/a.png'])
+        ->and(array_map(fn ($file) => [$file['previewUrl'], $file['isPdf'], $file['isImage'], $file['isGoogleDrive']], $user->certification_files))->toBe([
+            ['https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/preview', true, false, true],
+            ['https://res.cloudinary.com/x/cert.jpg', false, true, false],
+            ['/storage/c.png', false, true, false],
+            ['/files/d.PDF', true, false, false],
+            ['https://example.com/e', false, true, false],
+        ])
+        ->and($user->role_label)->toBe('User')
+        ->and($user->has_profile_photo)->toBeFalse()
+        ->and(User::factory()->create(['profile_photo_url' => 'https://example.com/p.png'])->has_profile_photo)->toBeTrue();
 });

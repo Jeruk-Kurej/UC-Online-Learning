@@ -30,4 +30,12 @@ class Collab extends Model
     {
         return $this->belongsTo(User::class, 'recipient_id');
     }
+
+    /**
+     * The other person in this connection, seen from the given user.
+     */
+    public function partnerFor(User $user): ?User
+    {
+        return $this->sender_id === $user->id ? $this->recipient : $this->sender;
+    }
 }

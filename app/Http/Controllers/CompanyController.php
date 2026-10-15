@@ -37,7 +37,11 @@ class CompanyController extends Controller
             abort(404);
         }
 
-        return view('businesses.show_intrapreneur', compact('company'));
+        return view('businesses.show_intrapreneur', [
+            'company' => $company,
+            'student' => $company->user,
+            'canManage' => auth()->check() && (auth()->user()->id === $company->user_id || auth()->user()->isAdmin()),
+        ]);
     }
 
     /**
@@ -47,7 +51,13 @@ class CompanyController extends Controller
     {
         $categories = Category::all();
         $provinces = Province::orderBy('name')->get();
-        return view('businesses.create_intrapreneur', compact('categories', 'provinces'));
+        return view('businesses.create_intrapreneur', [
+            'company' => null,
+            'categories' => $categories,
+            'provinces' => $provinces,
+            'selectedProvinceId' => null,
+            'availableCities' => collect(),
+        ]);
     }
 
     /**

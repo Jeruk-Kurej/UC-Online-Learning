@@ -1,13 +1,6 @@
 <x-app-layout>
     @section('title', $company->name . ' - ' . ($company->category->name ?? 'Company'))
     
-    @php
-        $student = $company->user;
-        $studentPhotoUrl = $student && $student->profile_photo_url
-            ? storage_image_url($student->profile_photo_url, ['width' => 300, 'height' => 300, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto'])
-            : null;
-        $canManage = auth()->check() && (auth()->user()->id === $company->user_id || auth()->user()->isAdmin());
-    @endphp
 
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {{-- Breadcrumbs --}}
@@ -194,129 +187,23 @@
             <div class="space-y-6 min-w-0">
                 {{-- Employee Profile Section --}}
                 @if($student)
-                    {{-- ✨ Elegant Employee Card --}}
-                    <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden transition hover:shadow-md duration-300 group/card hover:border-orange-200 cursor-pointer">
-                        {{-- Invisible link that stretches over the whole card --}}
-                        <a href="{{ route('users.show', $student) }}" class="absolute inset-0 z-10" aria-label="View {{ $student->name }} Profile"></a>
-
-                        {{-- Arrow Icon --}}
-                        <div class="absolute top-4 right-4 text-gray-300 group-hover/card:text-orange-500 transition-colors z-10">
-                            <i class="bi bi-box-arrow-up-right text-xs"></i>
-                        </div>
-
-                        {{-- Section Title --}}
-                        <div class="flex items-center gap-2 mb-6 relative z-10 pointer-events-none">
-                            <span class="w-1.5 h-6 bg-gradient-to-b from-[#f7931e] to-[#fdb913] rounded-full flex-shrink-0"></span>
-                            <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">Employed <span class="uco-text-gradient-orange">Student</span></h4>
-                        </div>
-
-                        {{-- Header: Avatar & Name --}}
-                        <div class="flex items-center gap-5 relative z-10 pointer-events-none">
-                            <div class="w-16 h-16 md:w-20 md:h-20 rounded-sm overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                @if ($studentPhotoUrl)
-                                    <x-premium-image :src="$studentPhotoUrl" :alt="$student->name" class="w-full h-full" />
-                                @else
-                                    <span class="text-3xl font-black opacity-20 select-none">{{ strtoupper(substr($student->name, 0, 1)) }}</span>
-                                @endif
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <h2 class="text-lg md:text-xl font-extrabold text-gray-900 leading-tight tracking-tight truncate">{{ $student->name }}</h2>
-                                <p class="text-gray-400 font-bold text-[11px] mt-1 tracking-[0.1em] uppercase">{{ $student->display_status ?: 'Active' }}</p>
-                            </div>
-                        </div>
-
-                            <div class="w-full h-px bg-gray-100 my-5"></div>
-
-                            {{-- Academic Details --}}
-                            <div class="space-y-3">
-                                <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Academic Details</h3>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[13px] font-medium text-gray-500">Major</span>
-                                    <span class="text-[13px] font-bold text-gray-900">{{ $student->major ?: '-' }}</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[13px] font-medium text-gray-500">Join UC Online</span>
-                                    <span class="text-[13px] font-bold text-gray-900">{{ $student->year_of_enrollment ?: '-' }}</span>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="text-[13px] font-medium text-gray-500">Focus</span>
-                                    <span class="text-[13px] font-bold text-gray-900">Intrapreneur</span>
+                    <x-people.profile-card :person="$student" title-start="Employed" title-end="Student" :status="$student->display_status"
+                        career="Intrapreneur" with-linkedin>
+                        {{-- Skills --}}
+                        @if($student->skills->count() > 0)
+                            <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
+                            <div>
+                                <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Skills</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    @foreach($student->skills as $skill)
+                                        <span class="px-3 py-1.5 bg-gray-50 border border-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
+                                            {{ $skill->name }}
+                                        </span>
+                                    @endforeach
                                 </div>
                             </div>
-
-                            {{-- Contacts --}}
-                            @if(($student->whatsapp || $student->email || $student->linkedin) && ($student->show_contact_details || (Auth::check() && Auth::user()->isAdmin())))
-                                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
-                                <div class="space-y-4 relative z-20">
-                                    @if($student->whatsapp)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $student->whatsapp) }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-10 h-10 rounded-full bg-green-50 text-green-500 flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                                                    <i class="bi bi-whatsapp text-lg"></i>
-                                                </div>
-                                                <div>
-                                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">WhatsApp</p>
-                                                    <p class="text-sm font-bold text-gray-800 group-hover:text-green-600 transition-colors leading-tight mt-0.5">{{ $student->whatsapp }}</p>
-                                                </div>
-                                            </div>
-                                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-green-500 transition-colors text-sm"></i>
-                                        </a>
-                                    @endif
-
-                                    @if($student->email)
-                                        <a href="mailto:{{ $student->email }}" class="flex items-center justify-between group cursor-pointer">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                                                    <i class="bi bi-envelope text-lg"></i>
-                                                </div>
-                                                <div>
-                                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">Email</p>
-                                                    <p class="text-sm font-bold text-gray-800 group-hover:text-blue-600 transition-colors leading-tight mt-0.5">{{ $student->email }}</p>
-                                                </div>
-                                            </div>
-                                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-blue-500 transition-colors text-sm"></i>
-                                        </a>
-                                    @endif
-
-                                    @if($student->linkedin)
-                                        <a href="{{ str_starts_with($student->linkedin, 'http') ? $student->linkedin : 'https://linkedin.com/in/' . $student->linkedin }}" target="_blank" class="flex items-center justify-between group cursor-pointer">
-                                            <div class="flex items-center gap-4">
-                                                <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-100 transition-colors">
-                                                    <i class="bi bi-linkedin text-lg"></i>
-                                                </div>
-                                                <div>
-                                                    <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-tight">LinkedIn</p>
-                                                    <p class="text-sm font-bold text-gray-800 group-hover:text-indigo-600 transition-colors leading-tight mt-0.5">{{ $student->linkedin }}</p>
-                                                </div>
-                                            </div>
-                                            <i class="bi bi-arrow-up-right text-gray-300 group-hover:text-indigo-500 transition-colors text-sm"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            @elseif($student->whatsapp || $student->email || $student->linkedin)
-                                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
-                                <div class="px-5 py-2 relative z-20 text-center">
-                                    <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-relaxed">
-                                        <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
-                                    </p>
-                                </div>
-                            @endif
-
-                            {{-- Skills --}}
-                            @if($student->skills->count() > 0)
-                                <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
-                                <div>
-                                    <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Skills</h3>
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($student->skills as $skill)
-                                            <span class="px-3 py-1.5 bg-gray-50 border border-gray-100 text-gray-600 rounded-xl text-[10px] font-bold uppercase cursor-default">
-                                                {{ $skill->name }}
-                                            </span>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
-                        </div>
+                        @endif
+                    </x-people.profile-card>
                     @endif
                 </div>
             </div>

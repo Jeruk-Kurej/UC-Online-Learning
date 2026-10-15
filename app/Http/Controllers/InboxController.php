@@ -37,6 +37,10 @@ class InboxController extends Controller
 
         $message->markAsRead();
 
-        return view('inbox.show', compact('message'));
+        $collab = $message->type === 'collab_invite'
+            ? Collab::where('sender_id', $message->sender_id)->where('recipient_id', $request->user()->id)->first()
+            : null;
+
+        return view('inbox.show', compact('message', 'collab'));
     }
 }

@@ -75,12 +75,6 @@
 
             {{-- Collaboration Invitation Actions Box --}}
             @if($message->type === 'collab_invite')
-                @php
-                    $collab = \App\Models\Collab::where('sender_id', $message->sender_id)
-                        ->where('recipient_id', Auth::id())
-                        ->first();
-                @endphp
-
                 <div class="rounded-xl border border-sky-200 bg-sky-50 p-6 space-y-4">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-lg bg-sky-600 text-white flex items-center justify-center text-xl flex-shrink-0">

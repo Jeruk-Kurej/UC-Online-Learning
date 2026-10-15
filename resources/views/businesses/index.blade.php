@@ -145,10 +145,7 @@
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
                         <div x-show="isLoading" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
-                            <svg class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-opacity="0.2" stroke-width="3"></circle>
-                                <path d="M22 12a10 10 0 00-10-10" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
-                            </svg>
+                            <x-ui.spinner />
                             <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
                         </div>
                     </div>

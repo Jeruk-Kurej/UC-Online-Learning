@@ -1,10 +1,3 @@
-@props(['student', 'type' => 'intra'])
-
-@php
-    $isIntra = $type === 'intra';
-    $highlight = $isIntra ? $student->companies->first() : $student->businesses->first();
-@endphp
-
 <a href="{{ route('users.show', $student) }}"
     class="reveal-on-scroll uco-premium-card {{ $isIntra ? 'uco-premium-card--blue hover:border-blue-100/70' : 'uco-premium-card--orange hover:border-orange-100/70' }} group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl w-full flex flex-col justify-between cursor-pointer">
     <div>
@@ -67,9 +60,6 @@
                         {{ $highlight->category->name }}
                     </span>
                 @endif
-                @php
-                    $ventureSummary = $highlight->unique_value_proposition ?? $highlight->description ?? null;
-                @endphp
                 @if($ventureSummary)
                     <p class="mt-3 text-xs text-slate-500 line-clamp-2 leading-relaxed font-medium">{{ $ventureSummary }}</p>
                 @endif

@@ -27,6 +27,8 @@ use Carbon\Carbon;
 
 class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, SkipsEmptyRows, WithEvents, ShouldQueue
 {
+    use Concerns\TracksImportProgress, Concerns\ParsesImportDates;
+
     public $importId;
     public $fileName;
     protected $importType = null; // 'entrepreneur', 'intrapreneur', or null
@@ -144,7 +146,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     Log::info("[FormResponseImport] Dynamically detected Intrapreneur sheet from column content.");
                 }
             }
-
 
             $fullName = $this->col($row, 'full_name');
             if (!$fullName) {
@@ -524,22 +525,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         return array_filter(array_map('trim', preg_split('/[,;]+/', $raw)));
     }
 
-    private function parseDate(?string $val): ?string
-    {
-        if (!$val) return null;
-        
-        // If it's just a year (4 digits), convert to YYYY-01-01 to avoid Carbon guessing current day/month
-        if (preg_match('/^\d{4}$/', trim($val))) {
-            return trim($val) . '-01-01';
-        }
-
-        try {
-            return Carbon::parse($val)->format('Y-m-d');
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
     private function parseTimestamp(?string $val): ?string
     {
         if (!$val) return null;
@@ -568,20 +553,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             }
             $progress['errors'][] = $msg;
             \Illuminate\Support\Facades\Cache::put($prefix, $progress, now()->addMinutes(60));
-        }
-    }
-
-    private function updateProgress(string $status): void
-    {
-        if (!$this->importId) return;
-
-        $prefix = "import_{$this->importId}";
-        Cache::increment("{$prefix}_current");
-
-        if ($status === 'success') {
-            Cache::increment("{$prefix}_success");
-        } else {
-            Cache::increment("{$prefix}_skipped");
         }
     }
 
@@ -916,12 +887,4 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         }
     }
 
-    public function getResults(): array
-    {
-        return [
-            'success' => $this->successCount,
-            'skipped' => $this->skippedCount,
-            'errors'  => $this->errors,
-        ];
-    }
 }

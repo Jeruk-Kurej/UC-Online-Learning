@@ -36,9 +36,8 @@
                             <div class="flex items-start gap-4">
                                 {{-- Logo Thumbnail --}}
                                 <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
-                                    @php $logo = $b->logo_url ? storage_image_url($b->logo_url, 'logo_thumb') : null; @endphp
-                                    @if($logo)
-                                        <img src="{{ $logo }}" class="w-full h-full object-contain">
+                                    @if($b->logo_thumb_url)
+                                        <img src="{{ $b->logo_thumb_url }}" class="w-full h-full object-contain">
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-300">
                                             <span class="text-2xl font-black opacity-30 select-none">{{ substr($b->name, 0, 1) }}</span>
@@ -137,9 +136,8 @@
                             <div class="flex items-start gap-4">
                                 {{-- Logo Thumbnail --}}
                                 <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
-                                    @php $logo = $c->logo_url ? storage_image_url($c->logo_url, 'logo_thumb') : null; @endphp
-                                    @if($logo)
-                                        <img src="{{ $logo }}" class="w-full h-full object-contain">
+                                    @if($c->logo_thumb_url)
+                                        <img src="{{ $c->logo_thumb_url }}" class="w-full h-full object-contain">
                                     @else
                                         <div class="w-full h-full bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-gray-300">
                                             <span class="text-2xl font-black opacity-30 select-none">{{ substr($c->name, 0, 1) }}</span>

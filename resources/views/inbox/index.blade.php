@@ -4,25 +4,15 @@
          x-data="{ activeTab: 'messages' }">
         
         {{-- Page Header Banner --}}
-        <section class="relative overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-sm md:px-8 mb-8 reveal-on-scroll">
-            <div class="relative z-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div class="space-y-1">
-                    <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
-                        UCO Network
-                    </span>
-                    <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">Inbox & Connections</h1>
-                    <p class="text-sm text-soft-gray-600 mt-1">Manage your collaboration invitations and connect with partners.</p>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
-                    <a href="{{ route('featured') }}" 
-                       class="group inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
-                        <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
-                        <span>Back to Featured</span>
-                    </a>
-                </div>
-            </div>
-        </section>
+        <x-ui.page-header badge="UCO Network" title="Inbox & Connections" subtitle="Manage your collaboration invitations and connect with partners.">
+            <x-slot:actions>
+                <a href="{{ route('featured') }}" 
+                   class="group inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
+                    <i class="bi bi-arrow-left text-base group-hover:-translate-x-0.5 transition-transform duration-200"></i>
+                    <span>Back to Featured</span>
+                </a>
+            </x-slot:actions>
+        </x-ui.page-header>
 
         {{-- Standard Navigation Tabbar --}}
         <div class="border-b border-gray-200 mb-8">
@@ -223,72 +213,7 @@
                 @else
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach($connections as $conn)
-                            @php
-                                $partner = ($conn->sender_id === auth()->id()) ? $conn->recipient : $conn->sender;
-                            @endphp
-                            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-                                <div>
-                                    <div class="flex items-start gap-4 mb-4">
-                                        <a href="{{ route('users.show', $partner) }}" class="flex-shrink-0">
-                                            @if($partner->profile_photo_url)
-                                                <img src="{{ $partner->profile_photo_url }}" class="w-14 h-14 rounded-lg object-cover border border-gray-200">
-                                            @else
-                                                <div class="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center text-xl font-extrabold text-gray-500 border border-gray-200">
-                                                    {{ substr($partner->name, 0, 1) }}
-                                                </div>
-                                            @endif
-                                        </a>
-                                        <div>
-                                            <h3 class="text-base font-bold text-gray-900 hover:text-uco-orange-600 transition-colors">
-                                                <a href="{{ route('users.show', $partner) }}">
-                                                    {{ $partner->name }}
-                                                </a>
-                                            </h3>
-                                            <p class="text-xs text-gray-500 font-medium mt-0.5">{{ $partner->major }}</p>
-                                            <span class="inline-block mt-1.5 px-2 py-0.5 bg-orange-50 text-orange-700 rounded text-[10px] font-bold uppercase">
-                                                {{ $partner->current_status }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    
-                                    @if($partner->businesses->first())
-                                        <div class="bg-gray-50 rounded-lg p-3 mb-4 border border-gray-100">
-                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Venture / Business</span>
-                                            <span class="text-sm font-bold text-gray-800 block mt-0.5">{{ $partner->businesses->first()->name }}</span>
-                                            <span class="text-xs text-gray-500 block mt-0.5">{{ $partner->businesses->first()->city }}, {{ $partner->businesses->first()->province }}</span>
-                                        </div>
-                                    @endif
-                                </div>
-
-                                <div class="flex items-center gap-2 pt-4 border-t border-gray-100 mt-2">
-                                    @if($partner->show_contact_details)
-                                        @if($partner->whatsapp)
-                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $partner->whatsapp) }}" target="_blank" 
-                                               class="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg border border-green-300 bg-green-50 hover:bg-green-100 text-green-700 font-bold text-xs transition-all">
-                                                <i class="bi bi-whatsapp"></i> Chat WA
-                                            </a>
-                                        @endif
-                                        @if($partner->personal_email)
-                                            <a href="mailto:{{ $partner->personal_email }}" 
-                                               class="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold text-xs transition-all">
-                                                <i class="bi bi-envelope"></i> Email
-                                            </a>
-                                        @endif
-                                    @else
-                                        <span class="flex-1 inline-flex items-center justify-center gap-1.5 h-9 rounded-lg bg-gray-100 text-gray-500 text-xs font-semibold border border-dashed border-gray-300">
-                                            <i class="bi bi-shield-lock-fill"></i> Details Hidden
-                                        </span>
-                                    @endif
-                                    
-                                    @if($partner->businesses->first())
-                                        <a href="{{ route('businesses.show', $partner->businesses->first()->slug) }}" 
-                                           class="w-9 h-9 rounded-lg border border-gray-200 hover:border-gray-900 bg-white hover:bg-gray-900 text-gray-700 hover:text-white flex items-center justify-center transition-all"
-                                           title="View Business Profile">
-                                            <i class="bi bi-arrow-right"></i>
-                                        </a>
-                                    @endif
-                                </div>
-                            </div>
+                            @include('inbox.partials.connection-card', ['partner' => $conn->partnerFor(auth()->user())])
                         @endforeach
                     </div>
                 @endif

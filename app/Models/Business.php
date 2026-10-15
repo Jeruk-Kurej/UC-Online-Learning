@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Business extends Model
 {
-    use HasFactory, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus;
 
     protected $fillable = [
         'user_id',
@@ -63,16 +63,6 @@ class Business extends Model
     }
 
     // ─── Accessors ───
-
-    public function getLogoUrlAttribute($value)
-    {
-        return $this->resolveImage($value, 'business');
-    }
-
-    public function getHasLogoAttribute(): bool
-    {
-        return $this->isRealImage($this->logo_url);
-    }
 
     public function getProfileQualityScoreAttribute()
     {
@@ -202,6 +192,28 @@ class Business extends Model
         }
 
         return $this->members()->where('users.id', $user->id)->exists();
+    }
+
+    public function getOfferingModeAttribute(): string
+    {
+        return $this->offering_type ?? 'product';
+    }
+
+    public function getInstagramHandlesAttribute(): array
+    {
+        $handles = array_filter(array_map('trim', preg_split('/[,;\s]+/', (string) $this->instagram)));
+
+        return array_values(array_filter(array_map(fn (string $handle) => ltrim($handle, '@'), $handles), fn (string $handle) => ! empty($handle)));
+    }
+
+    public function whatsappLinkFor(Product $offering): ?string
+    {
+        $phone = $this->whatsapp ?: ($this->public_owner->whatsapp ?? null);
+        $digits = $phone ? preg_replace('/[^0-9]/', '', $phone) : null;
+
+        return $digits
+            ? 'https://wa.me/'.$digits.'?text='.urlencode('Hi, I am interested in your '.$offering->type.': "'.$offering->name.'" listed on UC Online Learning.')
+            : null;
     }
 
     public function isProductMode(): bool
