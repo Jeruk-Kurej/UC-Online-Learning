@@ -128,60 +128,39 @@
 
                 {{-- --- Search & Reset Row --- --}}
                 <div class="flex items-center gap-3">
-                    <div class="relative flex-1">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="bi bi-search text-gray-400"></i>
-                        </div>
-                        <input type="text"
-                               name="search"
-                               id="search"
-                               value="{{ request('search') }}"
-                               placeholder="Search business name..."
-                               @input="submitDebounced()"
-                               @keydown.enter.prevent="updateList()"
-                               class="w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500"
-                               autocomplete="off">
-                    </div>
+                    <x-ui.search-field class="flex-1" id="search" value="{{ request('search') }}" placeholder="Search business name..." autocomplete="off" />
 
                     <div class="flex items-center gap-2">
-                        <button type="button" @click="resetFilters()" x-show="!isLoading" title="Reset Filters" class="inline-flex h-[38px] w-[38px] items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
-                            <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </button>
-                        <div x-show="isLoading" x-cloak class="inline-flex h-[38px] items-center justify-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 text-uco-orange-700 shadow-sm">
-                            <x-ui.spinner />
-                            <span class="ml-2 hidden text-xs font-medium sm:inline">Updating...</span>
-                        </div>
+                        <x-ui.filter-reset loading="isLoading" />
                     </div>
                 </div>
 
                 {{-- --- Filters Row --- --}}
                 <div class="flex flex-wrap items-center gap-3">
-                    <select name="category" @change="submitDebounced()" class="min-w-[150px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select name="category" @change="submitDebounced()" class="min-w-[150px] flex-1 cursor-pointer px-3 text-sm">
                         <option value="">All Categories</option>
                         @foreach ($categories as $type)
                             <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                         @endforeach
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select name="province"
-                            x-model="selectedProvince"
-                            @change="selectedCity = ''; submitDebounced()"
-                            class="min-w-[150px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select name="province"
+                                        x-model="selectedProvince"
+                                        @change="selectedCity = ''; submitDebounced()" class="min-w-[150px] flex-1 cursor-pointer px-3 text-sm">
                         <option value="">All Provinces</option>
                         @foreach ($availableProvinces as $p)
                             <option value="{{ $p }}">{{ $p }}</option>
                         @endforeach
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select name="city"
-                            x-model="selectedCity"
-                            @change="submitDebounced()"
-                            class="min-w-[150px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select name="city"
+                                        x-model="selectedCity"
+                                        @change="submitDebounced()" class="min-w-[150px] flex-1 cursor-pointer px-3 text-sm">
                         <option value="">All Cities</option>
                         <template x-for="city in (selectedProvince ? filteredCities : {{ json_encode($availableCities->values()) }})" :key="city">
                             <option :value="city" x-text="city"></option>
                         </template>
-                    </select>
+                    </x-ui.filter-select>
                 </div>
             </form>
         </div>

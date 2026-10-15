@@ -3,13 +3,13 @@
     <table class="w-full text-left">
         <thead class="border-b bg-gray-50">
             <tr>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Name</th>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Email</th>
-                <th class="whitespace-nowrap px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Status</th>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Major</th>
-                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Flags</th>
-                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Biz</th>
-                <th class="w-px whitespace-nowrap px-4 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Actions</th>
+                <x-admin.th>Name</x-admin.th>
+                <x-admin.th>Email</x-admin.th>
+                <x-admin.th class="whitespace-nowrap">Status</x-admin.th>
+                <x-admin.th>Major</x-admin.th>
+                <x-admin.th class="whitespace-nowrap text-center">Flags</x-admin.th>
+                <x-admin.th class="whitespace-nowrap text-center">Biz</x-admin.th>
+                <x-admin.th class="w-px whitespace-nowrap text-right">Actions</x-admin.th>
             </tr>
         </thead>
         <tbody class="divide-y">
@@ -57,30 +57,8 @@
                     {{-- --- Flags: Visible dot + Featured star (combined column) --- --}}
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-center gap-2">
-                            {{-- --- Visible dot --- --}}
-                            <div class="group relative flex-shrink-0">
-                                <span class="{{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }} inline-block h-2.5 w-2.5 rounded-full"></span>
-                                <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                                    <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black text-white shadow-md">{{ $user->is_visible ? 'Visible' : 'Hidden' }}</div>
-                                    <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
-                                </div>
-                            </div>
-
-                            {{-- --- Featured star toggle --- --}}
-                            <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
-                                @csrf
-                                <button type="submit"
-                                        {{ !$user->is_visible ? 'disabled' : '' }}
-                                        class="{{ !$user->is_visible ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed' : ($user->is_featured ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500' : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }} group relative inline-flex h-6 w-6 items-center justify-center rounded-full border transition-all">
-                                    <i class="bi bi-star-fill text-[9px]"></i>
-                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                                        <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-md">
-                                            {{ !$user->is_visible ? 'Need visible' : ($user->is_featured ? 'Unfeature' : 'Feature') }}
-                                        </div>
-                                        <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
-                                    </div>
-                                </button>
-                            </form>
+                            <x-admin.visibility-dot :visible="$user->is_visible" />
+                            <x-admin.featured-toggle :action="route('users.toggle-featured', $user)" :visible="$user->is_visible" :featured="$user->is_featured" />
                         </div>
                     </td>
 

@@ -65,72 +65,54 @@
 
                 {{-- --- Search & Reset Row --- --}}
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <div class="relative w-full flex-1">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="bi bi-search text-gray-400"></i>
-                        </div>
-                        <input
-                               type="text"
-                               name="search"
-                               value="{{ request('search') }}"
-                               placeholder="Search name, email, username, or NIS..."
-                               @input="submitDebounced()"
-                               @keydown.enter.prevent="updateList()"
-                               class="w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                    </div>
+                    <x-ui.search-field class="w-full flex-1" value="{{ request('search') }}" placeholder="Search name, email, username, or NIS..." />
 
                     <div class="flex w-full items-center gap-2 sm:w-auto">
-                        <button type="button" @click="resetFilters()" x-show="!isSubmitting" title="Reset Filters" class="inline-flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
-                            <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </button>
-                        <div x-show="isSubmitting" x-cloak class="inline-flex h-[38px] items-center justify-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 text-uco-orange-700 shadow-sm">
-                            <x-ui.spinner />
-                            <span class="ml-2 hidden text-xs font-medium sm:inline">Updating...</span>
-                        </div>
+                        <x-ui.filter-reset class="flex-shrink-0" />
                     </div>
                 </div>
 
                 {{-- --- Filters Row --- --}}
                 <div class="flex flex-wrap items-center gap-3">
-                    <select id="sort_name" name="sort_name" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="sort_name" name="sort_name" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Sort Name: Default</option>
                         <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
                         <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select id="sort_year" name="sort_year" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="sort_year" name="sort_year" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Student Year: Default</option>
                         <option value="desc" @selected(request('sort_year') === 'desc')>Latest → Earliest</option>
                         <option value="asc" @selected(request('sort_year') === 'asc')>Earliest → Latest</option>
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select id="student_status" name="student_status" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="student_status" name="student_status" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Status: All</option>
                         <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
                         <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
                         <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
                         <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select id="current_status" name="current_status" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="current_status" name="current_status" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Category: All</option>
                         <option value="Entrepreneur" @selected(request('current_status') === 'Entrepreneur')>Entrepreneur</option>
                         <option value="Intrapreneur" @selected(request('current_status') === 'Intrapreneur')>Intrapreneur</option>
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select id="major" name="major" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="major" name="major" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Major: All</option>
                         @foreach ($availableMajors as $majorOption)
                             <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
                         @endforeach
-                    </select>
+                    </x-ui.filter-select>
 
-                    <select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="min-w-[130px] flex-1 rounded-md border-gray-300 bg-white px-3 py-2 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
+                    <x-ui.filter-select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
                         <option value="">Year: All</option>
                         @foreach ($availableEnrollmentYears as $yearOption)
                             <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
                         @endforeach
-                    </select>
+                    </x-ui.filter-select>
                 </div>
             </form>
         </div>

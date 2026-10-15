@@ -27,36 +27,18 @@
 
                 {{-- --- Search & Filters Row --- --}}
                 <div class="flex items-center gap-3">
-                    <div class="relative flex-1">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="bi bi-search text-gray-400"></i>
-                        </div>
-                        <input
-                               type="text"
-                               name="search"
-                               value="{{ request('search') }}"
-                               placeholder="Search user name or testimony content..."
-                               @input="submitDebounced()"
-                               @keydown.enter.prevent="updateList()"
-                               class="w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                    </div>
+                    <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Search user name or testimony content..." />
 
                     <div class="w-[115px] flex-shrink-0 sm:w-48">
-                        <select id="featured" name="featured" @change="updateList()" class="w-full rounded-md border-gray-300 bg-white px-2 py-2 text-xs shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:px-3 sm:text-sm">
+                        <x-ui.filter-select id="featured" name="featured" @change="updateList()" class="w-full px-2 text-xs sm:px-3 sm:text-sm">
                             <option value="">Status: All</option>
                             <option value="1" @selected(request('featured') === '1')>Featured</option>
                             <option value="0" @selected(request('featured') === '0')>Regular</option>
-                        </select>
+                        </x-ui.filter-select>
                     </div>
 
                     <div class="flex items-center gap-2">
-                        <button type="button" @click="resetFilters()" x-show="!isSubmitting" title="Reset Filters" class="inline-flex h-[38px] w-[38px] items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
-                            <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </button>
-                        <div x-show="isSubmitting" x-cloak class="inline-flex h-[38px] items-center justify-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 text-uco-orange-700 shadow-sm">
-                            <x-ui.spinner />
-                            <span class="ml-2 hidden text-xs font-medium sm:inline">Updating...</span>
-                        </div>
+                        <x-ui.filter-reset />
                     </div>
                 </div>
             </form>
@@ -68,8 +50,5 @@
         </div>
 
     </div>
-
-    @push('scripts')
-    @endpush
 
 </x-app-layout>

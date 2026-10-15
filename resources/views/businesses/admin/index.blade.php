@@ -63,63 +63,38 @@
                 <input type="hidden" name="type" :value="viewType">
 
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    {{-- --- Search Input --- --}}
-                    <div class="relative w-full flex-1">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <i class="bi bi-search text-gray-400"></i>
-                        </div>
-                        <input
-                               type="text"
-                               name="search"
-                               value="{{ $search }}"
-                               :placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'"
-                               @input="submitDebounced()"
-                               @keydown.enter.prevent="updateList()"
-                               class="w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500">
-                    </div>
+                    <x-ui.search-field class="w-full flex-1" value="{{ $search }}"
+                                       ::placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'" />
 
                     {{-- --- Filters & Reset Button --- --}}
                     <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
 
                         {{-- --- Type dropdown --- --}}
-                        <select x-model="viewType"
-                                @change="switchType($event.target.value)"
-                                class="min-w-[175px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
+                        <x-ui.filter-select x-model="viewType"
+                                            @change="switchType($event.target.value)" class="min-w-[175px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
                             <option value="entrepreneur">Type: Entrepreneur</option>
                             <option value="intrapreneur">Type: Intrapreneur</option>
-                        </select>
+                        </x-ui.filter-select>
 
                         {{-- --- Status filter --- --}}
-                        <select name="status" @change="updateList()"
-                                class="min-w-[145px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
+                        <x-ui.filter-select name="status" @change="updateList()" class="min-w-[145px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
                             <option value="">Status: All</option>
                             <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
                             <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
                             <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
-                        </select>
+                        </x-ui.filter-select>
 
                         {{-- --- Featured filter (entrepreneur only) --- --}}
                         <template x-if="viewType === 'entrepreneur'">
-                            <select name="featured" @change="updateList()"
-                                    class="min-w-[145px] flex-1 cursor-pointer rounded-md border-gray-300 bg-white py-2 pl-3 pr-8 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500 sm:flex-initial">
+                            <x-ui.filter-select name="featured" @change="updateList()" class="min-w-[145px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
                                 <option value="">Featured: All</option>
                                 <option value="yes" {{ ($featured ?? '') === 'yes' ? 'selected' : '' }}>Featured</option>
                                 <option value="no" {{ ($featured ?? '') === 'no' ? 'selected' : '' }}>Not Featured</option>
-                            </select>
+                            </x-ui.filter-select>
                         </template>
 
-                        {{-- --- Reset --- --}}
-                        <button type="button" @click="resetFilters()" x-show="!isSubmitting" title="Reset Filters"
-                                class="inline-flex h-[38px] w-[38px] flex-shrink-0 items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 shadow-sm transition hover:bg-gray-50 hover:text-gray-900">
-                            <i class="bi bi-arrow-clockwise text-lg"></i>
-                        </button>
-
-                        {{-- --- Loading spinner --- --}}
-                        <div x-show="isSubmitting" x-cloak class="inline-flex h-[38px] items-center justify-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 text-uco-orange-700 shadow-sm">
-                            <x-ui.spinner />
-                            <span class="ml-2 hidden text-xs font-medium sm:inline">Updating...</span>
-                        </div>
+                        <x-ui.filter-reset class="flex-shrink-0" />
                     </div>
                 </div>
             </form>

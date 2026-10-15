@@ -2,19 +2,19 @@
     <table class="w-full text-left">
         <thead class="border-b bg-gray-50">
             <tr>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
+                <x-admin.th>
                     {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Company' : 'Business' }}
-                </th>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Owner</th>
-                <th class="px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">
+                </x-admin.th>
+                <x-admin.th>Owner</x-admin.th>
+                <x-admin.th>
                     {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Position' : 'Location' }}
-                </th>
-                <th class="whitespace-nowrap px-4 py-3 text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Status</th>
-                <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Visible</th>
+                </x-admin.th>
+                <x-admin.th class="whitespace-nowrap">Status</x-admin.th>
+                <x-admin.th class="whitespace-nowrap text-center">Visible</x-admin.th>
                 @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
-                    <th class="whitespace-nowrap px-4 py-3 text-center text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Featured</th>
+                    <x-admin.th class="whitespace-nowrap text-center">Featured</x-admin.th>
                 @endif
-                <th class="w-px whitespace-nowrap px-4 py-3 text-right text-[10px] font-black uppercase tracking-[0.2em] text-gray-600">Actions</th>
+                <x-admin.th class="w-px whitespace-nowrap text-right">Actions</x-admin.th>
             </tr>
         </thead>
         <tbody class="divide-y">
@@ -78,32 +78,14 @@
 
                     {{-- --- Visible dot --- --}}
                     <td class="px-4 py-3 text-center">
-                        <div class="group relative inline-block flex-shrink-0">
-                            <span class="{{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }} inline-block h-2.5 w-2.5 rounded-full"></span>
-                            <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                                <div class="whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black text-white shadow-md">{{ $b->is_visible ? 'Visible' : 'Hidden' }}</div>
-                                <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
-                            </div>
-                        </div>
+                        <x-admin.visibility-dot :visible="$b->is_visible" class="inline-block" />
                     </td>
 
                     {{-- --- Featured (entrepreneur only) --- --}}
                     @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
                         <td class="px-4 py-3 text-center">
-                            <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="toggle-featured-form inline-block">
-                                @csrf
-                                <button type="submit"
-                                        {{ !$b->is_visible ? 'disabled' : '' }}
-                                        class="{{ !$b->is_visible ? 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed' : ($b->is_featured ? 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500' : 'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300') }} group relative inline-flex h-6 w-6 items-center justify-center rounded-full border transition-all">
-                                    <i class="bi bi-star-fill text-[9px]"></i>
-                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-1.5 flex -translate-x-1/2 flex-col items-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                                        <div class="tooltip-text whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white shadow-md">
-                                            {{ !$b->is_visible ? 'Need visible' : ($b->is_featured ? 'Unfeature' : 'Feature') }}
-                                        </div>
-                                        <div class="-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900"></div>
-                                    </div>
-                                </button>
-                            </form>
+                            <x-admin.featured-toggle :action="route('businesses.toggle-featured', $b)" :visible="$b->is_visible" :featured="$b->is_featured"
+                                                     class="toggle-featured-form inline-block" tip-class="tooltip-text" />
                         </td>
                     @endif
 
