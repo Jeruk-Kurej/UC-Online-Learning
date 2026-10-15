@@ -2,13 +2,9 @@
 
 namespace App\Imports;
 
-use App\Jobs\UploadImageToCloudinaryJob;
-use App\Models\Business;
 use App\Models\Category;
-use App\Models\Company;
 use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -16,8 +12,6 @@ use Maatwebsite\Excel\Concerns\ToArray;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithStartRow;
-use Maatwebsite\Excel\Events\AfterImport;
-use Maatwebsite\Excel\Events\BeforeImport;
 
 /**
  * Importer for "UCO Student Profile - With Data.csv"
@@ -87,7 +81,7 @@ use Maatwebsite\Excel\Events\BeforeImport;
  */
 class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEvents, WithStartRow
 {
-    use Concerns\TracksImportProgress, Concerns\ParsesImportDates;
+    use Concerns\ParsesImportDates, Concerns\TracksImportProgress, Concerns\UpsertsVentures;
 
     public $importId;
 
@@ -125,106 +119,30 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
     private function processRow(array $row): void
     {
         try {
-            $cell = function (int $i) use ($row): ?string {
-                $val = $row[$i] ?? null;
-                if ($val === null) {
-                    return null;
-                }
-                $str = trim((string) $val);
-
-                return ($str === '' || $str === '-') ? null : $str;
-            };
-
-            // --- Left side: student data ---
-            $nis = $cell(0);
-            $studentName = $cell(3);
-            $personalEmail = $cell(5);
-            $phone1 = $cell(6);
-            $mobile1 = $cell(7);
-            $whatsapp = $cell(8);
-            $instagram = $cell(9);
-            $studentYear = $cell(10);
-            $officialEmail = $cell(11);
-            $currentStatus = strtolower($cell(12) ?? '');
-            $legacyBizName = $cell(13);
-            $major = $cell(16);
-
-            // --- Email: official, then personal, then synthesized from the NIS ---
-            $loginEmail = null;
-            if ($officialEmail && filter_var($officialEmail, FILTER_VALIDATE_EMAIL)) {
-                $loginEmail = strtolower($officialEmail);
-            } elseif ($personalEmail && filter_var($personalEmail, FILTER_VALIDATE_EMAIL)) {
-                $loginEmail = strtolower($personalEmail);
-            } elseif ($nis) {
-                $loginEmail = strtolower($nis).'@student.ciputra.ac.id';
-            }
-
+            $loginEmail = $this->loginEmail($row);
             if (! $loginEmail) {
                 $this->skip('Row has no email and no NIS: '.implode('|', array_slice($row, 0, 5)));
 
                 return;
             }
 
+            $studentName = $this->cell($row, 3);
             if (! $studentName) {
                 $this->skip("No student name for {$loginEmail}");
 
                 return;
             }
 
-            // --- Student status ---
-            $studentStatus = match (true) {
-                str_contains($currentStatus, 'alumni') || str_contains($currentStatus, 'lulus') => 'alumni',
-                str_contains($currentStatus, 'drop') || str_contains($currentStatus, 'putus') => 'inactive',
-                str_contains($currentStatus, 'non-aktif') || str_contains($currentStatus, 'cuti') => 'inactive',
-                default => 'active',
-            };
-
-            // --- Upsert user ---
-            $rawProfilePhotoUrl = $cell(49);
-
-            $userData = array_filter([
-                'name' => $studentName,
-                'nis' => $nis,
-                'phone_number' => $this->cleanPhone($phone1),
-                'mobile_number' => $this->cleanPhone($mobile1),
-                'whatsapp' => $this->cleanPhone($whatsapp),
-                'personal_email' => $personalEmail,
-                'major' => $major,
-                'student_status' => $studentStatus,
-                'year_of_enrollment' => $studentYear,
-                'profile_photo_url' => $rawProfilePhotoUrl,
-                'email_verified_at' => now(),
-                'is_visible' => true,
-            ], fn ($v) => $v !== null);
-
-            $user = User::where('email', $loginEmail)->first();
-            if ($user) {
-                $user->update($userData);
-            } else {
-                $user = User::create(array_merge($userData, [
-                    'email' => $loginEmail,
-                    'password' => Hash::make('password123'),
-                ]));
-            }
-
-            if ($rawProfilePhotoUrl && ! str_contains($rawProfilePhotoUrl, 'cloudinary.com')) {
-                UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhotoUrl, 'users', $nis ?? $loginEmail);
-            }
-
-            // --- Right side: business or company data ---
+            $user = $this->importUser($row, $loginEmail, $studentName);
 
             // --- Company (intrapreneur): column 22 ---
-            $companyName = $cell(22);
-            if ($companyName) {
-                $companyName = $this->cleanName($companyName);
-                $this->upsertCompany($user, $companyName, $cell, $row);
+            if ($companyName = $this->cell($row, 22)) {
+                $this->importCompany($user, $this->cleanName($companyName), $row);
             }
 
             // --- Business (entrepreneur): column 34 (detailed) or column 13 (legacy) ---
-            $entrepreneurBizName = $cell(34) ?? $legacyBizName;
-            if ($entrepreneurBizName) {
-                $entrepreneurBizName = $this->cleanName($entrepreneurBizName);
-                $this->upsertBusiness($user, $entrepreneurBizName, $cell);
+            if ($businessName = $this->cell($row, 34) ?? $this->cell($row, 13)) {
+                $this->importBusiness($user, $this->cleanName($businessName), $row);
             }
 
             $this->successCount++;
@@ -237,103 +155,153 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
         }
     }
 
-    // --- Company upsert ---
+    // --- Left side: the student ---
 
-    private function upsertCompany(User $user, string $companyName, callable $cell, array $row): void
+    /**
+     * Official email, then personal email, then one made from the NIS.
+     */
+    private function loginEmail(array $row): ?string
     {
-        $companyName = strtoupper(trim($companyName));
+        $officialEmail = $this->cell($row, 11);
+        $personalEmail = $this->cell($row, 5);
+        $nis = $this->cell($row, 0);
 
-        $categoryId = null;
-        $catName = $cell(26) ?? $cell(27);
-        if ($catName) {
-            $slug = Str::slug($catName);
-            if ($slug) {
-                $cat = Category::firstOrCreate(['slug' => $slug], ['name' => trim($catName)]);
-                $categoryId = $cat->id;
-            }
+        if ($officialEmail && filter_var($officialEmail, FILTER_VALIDATE_EMAIL)) {
+            return strtolower($officialEmail);
+        }
+        if ($personalEmail && filter_var($personalEmail, FILTER_VALIDATE_EMAIL)) {
+            return strtolower($personalEmail);
         }
 
-        $rawLogoUrl = $cell(43);
+        return $nis ? strtolower($nis).'@student.ciputra.ac.id' : null;
+    }
 
-        $data = array_filter([
-            'category_id' => $categoryId,
-            'position' => $cell(23),
-            'job_description' => $cell(25),
-            'year_started_working' => $cell(24),
-            'logo_url' => $rawLogoUrl,
+    private function studentStatus(array $row): string
+    {
+        $currentStatus = strtolower($this->cell($row, 12) ?? '');
+
+        return match (true) {
+            str_contains($currentStatus, 'alumni') || str_contains($currentStatus, 'lulus') => 'alumni',
+            str_contains($currentStatus, 'drop') || str_contains($currentStatus, 'putus') => 'inactive',
+            str_contains($currentStatus, 'non-aktif') || str_contains($currentStatus, 'cuti') => 'inactive',
+            default => 'active',
+        };
+    }
+
+    private function importUser(array $row, string $loginEmail, string $studentName): User
+    {
+        $nis = $this->cell($row, 0);
+        $rawProfilePhotoUrl = $this->cell($row, 49);
+
+        $userData = array_filter([
+            'name' => $studentName,
+            'nis' => $nis,
+            'phone_number' => $this->cleanPhone($this->cell($row, 6)),
+            'mobile_number' => $this->cleanPhone($this->cell($row, 7)),
+            'whatsapp' => $this->cleanPhone($this->cell($row, 8)),
+            'personal_email' => $this->cell($row, 5),
+            'major' => $this->cell($row, 16),
+            'student_status' => $this->studentStatus($row),
+            'year_of_enrollment' => $this->cell($row, 10),
+            'profile_photo_url' => $rawProfilePhotoUrl,
+            'email_verified_at' => now(),
             'is_visible' => true,
         ], fn ($v) => $v !== null);
 
-        $company = Company::where('user_id', $user->id)->where('name', $companyName)->first()
-            ?? Company::where('user_id', $user->id)->first();
-
-        if ($company) {
-            $company->update(array_merge($data, ['name' => $companyName]));
+        $user = User::where('email', $loginEmail)->first();
+        if ($user) {
+            $user->update($userData);
         } else {
-            $company = Company::create(array_merge($data, ['user_id' => $user->id, 'name' => $companyName]));
+            $user = User::create(array_merge($userData, [
+                'email' => $loginEmail,
+                'password' => Hash::make('password123'),
+            ]));
         }
 
-        if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
-            UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
-        }
+        $this->queueImageUpload($user, 'profile_photo_url', $rawProfilePhotoUrl, 'users', $nis ?? $loginEmail);
+
+        return $user;
     }
 
-    // --- Business upsert ---
+    // --- Right side: work profile (intrapreneur) ---
 
-    private function upsertBusiness(User $user, string $bizName, callable $cell): void
+    private function importCompany(User $user, string $companyName, array $row): void
     {
-        $categoryId = null;
-        $catName = $cell(30) ?? $cell(31);
-        if ($catName) {
-            $slug = Str::slug($catName);
-            if ($slug) {
-                $cat = Category::firstOrCreate(['slug' => $slug], ['name' => trim($catName)]);
-                $categoryId = $cat->id;
-            }
-        }
+        $companyName = strtoupper(trim($companyName));
+        $rawLogoUrl = $this->cell($row, 43);
 
-        $rawLogoUrl = $cell(43);
+        $company = $this->upsertCompany($user, $companyName, array_filter([
+            'category_id' => $this->categoryId($this->cell($row, 26) ?? $this->cell($row, 27)),
+            'position' => $this->cell($row, 23),
+            'job_description' => $this->cell($row, 25),
+            'year_started_working' => $this->cell($row, 24),
+            'logo_url' => $rawLogoUrl,
+            'is_visible' => true,
+        ], fn ($v) => $v !== null));
 
-        $data = array_filter([
-            'category_id' => $categoryId,
-            'position' => $cell(38),
-            'established_date' => $this->parseDate($cell(37)),
-            'description' => $cell(42),
-            'address' => $cell(40),
-            'website' => $cell(39),
-            'employee_count' => $cell(41),
-            'revenue_range' => $cell(32),
-            'business_legality' => $cell(35),
-            'product_legality' => $cell(36),
-            'academic_heritage' => $cell(10) ? 'Join UC Online '.$cell(10) : null,
+        $this->queueImageUpload($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
+    }
+
+    // --- Right side: business (entrepreneur) ---
+
+    private function importBusiness(User $user, string $businessName, array $row): void
+    {
+        $rawLogoUrl = $this->cell($row, 43);
+        $studentYear = $this->cell($row, 10);
+
+        $business = $this->upsertBusiness($user, $businessName, array_filter([
+            'category_id' => $this->categoryId($this->cell($row, 30) ?? $this->cell($row, 31)),
+            'position' => $this->cell($row, 38),
+            'established_date' => $this->parseDate($this->cell($row, 37)),
+            'description' => $this->cell($row, 42),
+            'address' => $this->cell($row, 40),
+            'website' => $this->cell($row, 39),
+            'employee_count' => $this->cell($row, 41),
+            'revenue_range' => $this->cell($row, 32),
+            'business_legality' => $this->cell($row, 35),
+            'product_legality' => $this->cell($row, 36),
+            'academic_heritage' => $studentYear ? 'Join UC Online '.$studentYear : null,
             'logo_url' => $rawLogoUrl,
             'type' => 'entrepreneur',
             'approval_status' => 'approved',
             'is_visible' => true,
-        ], fn ($v) => $v !== null);
+        ], fn ($v) => $v !== null));
 
-        $business = Business::where('user_id', $user->id)->where('name', $bizName)->first()
-            ?? Business::where('user_id', $user->id)->where('type', 'entrepreneur')->first();
-
-        if ($business) {
-            $business->update($data);
-        } else {
-            $business = Business::create(array_merge($data, [
-                'user_id' => $user->id,
-                'name' => $bizName,
-            ]));
-        }
-
-        if ($rawLogoUrl && ! str_contains($rawLogoUrl, 'cloudinary.com')) {
-            UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $bizName);
-        }
+        $this->queueImageUpload($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
 
         $business->members()->syncWithoutDetaching([
-            $user->id => ['position' => $cell(38)],
+            $user->id => ['position' => $this->cell($row, 38)],
         ]);
     }
 
     // --- Helpers ---
+
+    /**
+     * Trimmed cell value; empty cells and "-" read as null.
+     */
+    private function cell(array $row, int $index): ?string
+    {
+        $val = $row[$index] ?? null;
+        if ($val === null) {
+            return null;
+        }
+        $str = trim((string) $val);
+
+        return ($str === '' || $str === '-') ? null : $str;
+    }
+
+    /**
+     * Category with the slug of this name, created when missing.
+     */
+    private function categoryId(?string $name): ?int
+    {
+        $slug = Str::slug($name ?? '');
+        if (! $name || ! $slug) {
+            return null;
+        }
+
+        return Category::firstOrCreate(['slug' => $slug], ['name' => trim($name)])->id;
+    }
 
     private function cleanPhone(?string $val): ?string
     {
@@ -362,56 +330,25 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
         return Str::limit($first, 250, '');
     }
 
-    private function skip(string $msg): void
-    {
-        $this->skippedCount++;
-        $this->errors[] = $msg;
-        Log::warning("[UCOStudentImport] Skipped: {$msg}");
-        $this->updateProgress('skipped');
+    // --- Progress log lines ---
 
-        if ($this->importId) {
-            $prefix = "import_{$this->importId}";
-            $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
-            if (! is_array($progress)) {
-                $progress = ['status' => 'processing', 'errors' => []];
-            }
-            if (! isset($progress['errors']) || ! is_array($progress['errors'])) {
-                $progress['errors'] = [];
-            }
-            $progress['errors'][] = $msg;
-            Cache::put($prefix, $progress, now()->addMinutes(60));
-        }
+    protected function headerRows(): int
+    {
+        return $this->startRow() - 1;
     }
 
-    // --- Events ---
-
-    public function registerEvents(): array
+    protected function startedLogLine(int $total): string
     {
-        return [
-            BeforeImport::class => function (BeforeImport $event) {
-                if (! $this->importId) {
-                    return;
-                }
-                $totalRows = $event->getReader()->getTotalRows();
-                $total = max(0, max($totalRows) - 3);
-                $prefix = "import_{$this->importId}";
-                Cache::put($prefix, ['status' => 'processing', 'errors' => []], now()->addMinutes(60));
-                Cache::forever("{$prefix}_total", $total);
-                Cache::forever("{$prefix}_current", 0);
-                Cache::forever("{$prefix}_success", 0);
-                Cache::forever("{$prefix}_skipped", 0);
-                Log::info("[UCOStudentImport] Started: ~{$total} rows");
-            },
-            AfterImport::class => function () {
-                if (! $this->importId) {
-                    return;
-                }
-                $prefix = "import_{$this->importId}";
-                $progress = Cache::get($prefix, ['status' => 'processing', 'errors' => []]);
-                $progress['status'] = 'completed';
-                Cache::put($prefix, $progress, now()->addMinutes(60));
-                Log::info("[UCOStudentImport] Done: {$this->successCount} ok, {$this->skippedCount} skipped");
-            },
-        ];
+        return "[UCOStudentImport] Started: ~{$total} rows";
+    }
+
+    protected function completedLogLine(): string
+    {
+        return "[UCOStudentImport] Done: {$this->successCount} ok, {$this->skippedCount} skipped";
+    }
+
+    protected function skippedLogLine(string $reason): string
+    {
+        return "[UCOStudentImport] Skipped: {$reason}";
     }
 }
