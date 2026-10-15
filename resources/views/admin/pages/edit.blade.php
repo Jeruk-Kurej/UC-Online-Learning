@@ -7,7 +7,7 @@
     <div class="cms-builder-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8"
         x-data="sectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
 
-        {{-- Page Header --}}
+        {{-- --- Page Header --- --}}
         <x-ui.page-header badge="Dynamic Section Builder (CMS)" :title="'Edit ' . $page->title" subtitle="Add, remove, reorder, or edit any section visually. No code required!">
             <x-slot:actions>
                 <a href="{{ route($page->slug) }}" target="_blank" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-all">
@@ -17,11 +17,11 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- Sections Builder List --}}
+        {{-- --- Sections Builder List --- --}}
         <div class="space-y-6">
             <template x-for="(sec, sIdx) in sections" :key="sIdx">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 md:p-8 space-y-6 relative transition-all duration-300 hover:border-gray-300">
-                    {{-- Section Header Controls --}}
+                    {{-- --- Section Header Controls --- --}}
                     <div class="border-b border-gray-100 pb-4 flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
                             <span class="w-8 h-8 rounded-lg bg-gray-900 text-white font-bold flex items-center justify-center text-xs" x-text="sIdx + 1"></span>
@@ -44,7 +44,7 @@
                         </div>
                     </div>
 
-                    {{-- TYPE 1: HERO SECTION --}}
+                    {{-- --- Type 1: hero section --- --}}
                     <template x-if="sec.type === 'hero'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -64,7 +64,7 @@
                         </div>
                     </template>
 
-                    {{-- TYPE 2: FEATURE CARDS GRID --}}
+                    {{-- --- Type 2: feature cards grid --- --}}
                     <template x-if="sec.type === 'feature_cards'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -82,7 +82,7 @@
                                 </div>
                             </div>
 
-                            {{-- Cards Container --}}
+                            {{-- --- Cards Container --- --}}
                             <div class="space-y-4 pt-4 border-t border-gray-100">
                                 <div class="flex items-center justify-between">
                                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wider">Feature Cards (<span x-text="sec.cards ? sec.cards.length : 0"></span>)</span>
@@ -131,7 +131,7 @@
                         </div>
                     </template>
 
-                    {{-- TYPE 3: STATS GRID --}}
+                    {{-- --- Type 3: stats grid --- --}}
                     <template x-if="sec.type === 'stats_grid'">
                         <div class="space-y-6">
                             <div class="space-y-1.5">
@@ -171,7 +171,7 @@
                         </div>
                     </template>
 
-                    {{-- TYPE 4: TEXT / FAQ BLOCK --}}
+                    {{-- --- Type 4: text / faq block --- --}}
                     <template x-if="sec.type === 'text_block'">
                         <div class="space-y-4">
                             <div class="space-y-1.5">
@@ -185,7 +185,7 @@
                         </div>
                     </template>
 
-                    {{-- TYPE 5: CTA BANNER --}}
+                    {{-- --- Type 5: cta banner --- --}}
                     <template x-if="sec.type === 'cta_banner'">
                         <div class="space-y-6">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -214,7 +214,7 @@
             </template>
         </div>
 
-        {{-- Add Section Options Bar --}}
+        {{-- --- Add Section Options Bar --- --}}
         <div class="mt-8 bg-gray-900 rounded-xl p-6 text-white shadow-sm flex flex-wrap items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-uco-orange-500/20 text-uco-orange-400 flex items-center justify-center text-xl">
@@ -245,7 +245,7 @@
             </div>
         </div>
 
-        {{-- Save Bar --}}
+        {{-- --- Save Bar --- --}}
         <div class="mt-8 flex justify-end">
             <button type="button" @click="saveSections('{{ route('pages.update', $page->slug) }}')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-uco-orange-600 px-8 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-uco-orange-700 active:scale-95 transition-all">
                 <i class="bi bi-check2-circle"></i>

@@ -13,7 +13,6 @@ use App\Models\Certification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use App\Services\AiModerationService;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
@@ -31,11 +30,11 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
     public $importId;
     public $fileName;
-    protected $importType = null; // 'entrepreneur', 'intrapreneur', or null
+    protected $importType = null;
     protected $errors = [];
     protected $successCount = 0;
     protected $skippedCount = 0;
-    private static bool $debugKeysDumped = false; // one-time column key debug
+    private static bool $debugKeysDumped = false;
 
     public function __construct($importId = null, $fileName = null)
     {
@@ -54,7 +53,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
     public function chunkSize(): int
     {
-        return 1; // 1 row per job: each row can take 15-30s (Cloudinary + Gemini AI)
+        return 1;
     }
 
     /**
@@ -116,7 +115,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
     public function model(array $row)
     {
         try {
-            // ── DEBUG: Log raw column keys on first row only ──
+            // --- Debug: raw column keys of the first row ---
             if (!self::$debugKeysDumped) {
                 self::$debugKeysDumped = true;
                 $keysAndSamples = [];
@@ -126,14 +125,13 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 Log::info('[FormResponseImport] DEBUG - Raw column keys from CSV (Maatwebsite snake_case):', $keysAndSamples);
             }
 
-            // ── 1. Resolve email (required) ──
+            // --- 1. Email (required) ---
             $email = $this->col($row, 'email_address');
             if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $this->skip("Missing/invalid Email Address");
                 return null;
             }
 
-            // Dynamically detect import type if it is null (e.g., if the filename was generic)
             if ($this->importType === null) {
                 $hasEntrepreneur = !empty($this->col($row, 'business_name'));
                 $hasIntrapreneur = !empty($this->col($row, 'company_name_', 'company_name'));
@@ -153,19 +151,16 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 return null;
             }
 
-            // ── 2. Create or update User ──
+            // --- 2. User ---
             $graduateYearRaw = $this->col($row, 'graduate_year');
-            // graduate_year column can be: a 4-digit year ("2025") OR text like "Active Student".
-            // Only treat a real 4-digit numeric year as graduation → alumni.
+            // --- graduate_year holds a 4-digit year or text such as "Active Student"; only a real year means alumni ---
             $graduateYear = (is_numeric($graduateYearRaw) && strlen(trim((string)$graduateYearRaw)) === 4)
                             ? trim((string)$graduateYearRaw)
                             : null;
 
-            // Determine student status: 'alumni' if graduate year is a 4-digit year or enrollment status contains 'alumni'
             $enrollmentStatus = strtolower($this->col($row, 'current_status') ?? '');
             $studentStatus = ($graduateYear || str_contains($enrollmentStatus, 'alumni')) ? 'alumni' : 'active';
 
-            // The "Category" column holds the career category: Entrepreneur / Intrapreneur.
             $careerCategoryRaw = $this->col($row, 'category') ?? '';
             $careerCategory = null;
             if (str_contains(strtolower($careerCategoryRaw), 'intrapreneur')) {
@@ -176,21 +171,17 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
             $isFeatured = $this->parseSelectedFeatured($row);
 
-            // Prevent cross-over wiping of featured states when importing two different files that contain all users
+            // --- Featured flags: each sheet only decides for its own career type ---
             if ($isFeatured !== null && $this->importType !== null && $careerCategory !== null) {
                 $lowerCategory = strtolower($careerCategory);
                 if ($this->importType === 'intrapreneur' && $lowerCategory === 'entrepreneur' && $isFeatured === false) {
-                    // This is the Intrapreneur import file. This row is an Entrepreneur, and is marked FALSE here.
-                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Entrepreneurs.
                     $isFeatured = null;
                 } elseif ($this->importType === 'entrepreneur' && $lowerCategory === 'intrapreneur' && $isFeatured === false) {
-                    // This is the Entrepreneur import file. This row is an Intrapreneur, and is marked FALSE here.
-                    // Do NOT overwrite/wipe their existing featured status because this sheet is not the source of truth for Intrapreneurs.
                     $isFeatured = null;
                 }
             }
 
-            // ── DEBUG: Log critical field values ──
+            // --- Debug: critical field values ---
             Log::debug('[FormResponseImport] Row debug', [
                 'email'                  => $email,
                 'category_raw'           => $row['category']      ?? '<<KEY MISSING>>',
@@ -215,11 +206,9 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 'mobile_number'     => $this->col($row, 'personal_mobile_number'),
                 'whatsapp'          => $this->col($row, 'personal_whatsapp'),
                 'linkedin'          => $this->col($row, 'linkedin'),
-                // "Category" column → Entrepreneur | Intrapreneur (career type)
                 'current_status'    => $careerCategory,
                 'nis'               => $this->col($row, 'nis_student_id'),
                 'year_of_enrollment'=> $this->col($row, 'year_of_enrollment'),
-                // Only store graduate_year if it's a real 4-digit year, not "Active Student"
                 'graduate_year'     => $graduateYear,
                 'major'             => $this->col($row, 'major'),
                 'testimony'         => $this->col($row, 'testimony'),
@@ -236,7 +225,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
 
             $existingUser = User::where('email', $email)->first();
             if ($existingUser) {
-                // Don't overwrite password on re-import
                 $existingUser->update($userData);
                 $user = $existingUser;
             } else {
@@ -246,13 +234,12 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 ]));
             }
 
-            // Dispatch background job for profile photo
             $rawProfilePhoto = $this->col($row, 'professional_profile_photo');
             if ($rawProfilePhoto && !str_contains($rawProfilePhoto, 'cloudinary.com')) {
                 \App\Jobs\UploadImageToCloudinaryJob::dispatch($user, 'profile_photo_url', $rawProfilePhoto, 'users', $fullName);
             }
 
-            // Auto-approve imported testimonies (Bypass Gemini to avoid hitting rate limits on bulk imports)
+            // --- Imported testimonies are auto-approved (skips Gemini to avoid rate limits) ---
             if (!empty($user->testimony) && is_null($user->ai_score)) {
                 \Illuminate\Support\Facades\Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
                 $user->update([
@@ -263,7 +250,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 ]);
             }
 
-            // ── 3. Handle Skills (M:N) ──
+            // --- 3. Skills ---
             $skillsRaw = $this->col($row, 'skills');
             if ($skillsRaw) {
                 $skillIds = [];
@@ -278,7 +265,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 $user->skills()->syncWithoutDetaching($skillIds);
             }
 
-            // ── 4. Determine path: Entrepreneur vs Intrapreneur ──
+            // --- 4. Entrepreneur or intrapreneur ---
             $status = strtolower($this->col($row, 'current_status') ?? '');
 
             $businessName = $this->col($row, 'business_name');
@@ -331,7 +318,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     $businessData['is_featured'] = $isFeatured;
                 }
 
-                // Smart dedup: try exact match first, then fallback to user's first business
+                // --- Dedup: exact name first, then the user's first business ---
                 $business = Business::where('user_id', $user->id)->where('name', $businessName)->first()
                     ?? Business::where('user_id', $user->id)->where('type', 'entrepreneur')->first();
 
@@ -344,20 +331,18 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     ]));
                 }
 
-                // Dispatch background job for logo upload
                 if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
                     \App\Jobs\UploadImageToCloudinaryJob::dispatch($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
                 }
 
-                // Sync pivot: this user is a member of this business
                 $business->members()->syncWithoutDetaching([
                     $user->id => ['position' => $this->col($row, 'entrepreneur_position')],
                 ]);
 
-                // ── Products (up to 3) ──
+                // --- Products (up to 3) ---
                 $this->importProducts($business, $row);
 
-                // ── Legal Documents (M:N) ──
+                // --- Legal documents ---
                 $legalRaw = $this->col($row, 'legal_documents');
                 if ($legalRaw) {
                     $ids = [];
@@ -372,7 +357,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     $business->legalDocuments()->syncWithoutDetaching($ids);
                 }
 
-                // ── Certifications (M:N) ──
+                // --- Certifications ---
                 $certRaw = $this->col($row, 'business_certification', 'certification');
                 if ($certRaw) {
                     $ids = [];
@@ -388,11 +373,10 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                 }
             }
 
-            // ── 4b. Intrapreneur → Company ──
-            // Note: CSV header "Company Name " (with trailing space) → Maatwebsite key = "company_name_"
+            // --- 4b. Intrapreneur → company ---
+            // --- The CSV header "Company Name " (trailing space) arrives as company_name_ ---
             $companyName = $this->col($row, 'company_name_', 'company_name');
             if ($companyName) {
-                // Company names always UPPERCASE
                 $companyName = strtoupper(trim($companyName));
 
                 $industryCatId = null;
@@ -420,7 +404,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     'is_visible'           => true,
                 ];
 
-                // Smart dedup for companies too
                 $company = Company::where('user_id', $user->id)->where('name', $companyName)->first()
                     ?? Company::where('user_id', $user->id)->first();
 
@@ -433,7 +416,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
                     ]));
                 }
 
-                // Dispatch background job for company logo
                 if ($rawLogoUrl && !str_contains($rawLogoUrl, 'cloudinary.com')) {
                     \App\Jobs\UploadImageToCloudinaryJob::dispatch($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
                 }
@@ -442,7 +424,6 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             $this->successCount++;
             $this->updateProgress('success');
             return $user;
-
         } catch (\Exception $e) {
             $this->skip("Error: {$e->getMessage()}");
             Log::error("FormResponseImport error: {$e->getMessage()}", ['row' => $row]);
@@ -455,7 +436,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
      */
     private function importProducts(Business $business, array $row): void
     {
-        // Delete existing products for this business to avoid duplicates on re-import
+        // --- Re-import replaces the business's products ---
         $business->products()->delete();
 
         $productSlots = [
@@ -502,7 +483,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         }
     }
 
-    // ─── Helpers ───
+    // --- Helpers ---
 
     private function normalizeOfferingType(?string $val): string
     {
@@ -556,207 +537,7 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
         }
     }
 
-    /**
-     * Download image from URL (with cookie auth for employee.uc.ac.id) and upload to Cloudinary.
-     */
-    private function uploadToCloudinary(?string $url, string $folder, ?string $identifier): ?string
-    {
-        $url = $this->cleanUrl($url);
-        if (!$url) return null;
-
-        if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
-            return $url;
-        }
-
-        // Cache lookup to prevent duplicate downloads/uploads
-        $cacheKey = 'cloudinary_upload_' . md5($url);
-        if (Cache::has($cacheKey)) {
-            $cachedUrl = Cache::get($cacheKey);
-            if ($cachedUrl) {
-                return $cachedUrl;
-            }
-        }
-
-        $tmpFile = null;
-        try {
-            Log::debug("[FormResponseImport] Attempting download: " . $url);
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, (string)$url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
-            
-            $curlHeaders = [
-                'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-                'Referer: https://employee.uc.ac.id/index.php/login',
-            ];
-            
-            $isUniversityPortal = str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
-            if ($isUniversityPortal) {
-                $cookie = config('services.uc.cookie_raw', '');
-                if ($cookie) $curlHeaders[] = "Cookie: " . trim($cookie);
-            }
-            
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $curlHeaders);
-            $contents = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-            curl_close($ch);
-
-            if ($contents === false || $httpCode !== 200 || !str_contains(strtolower($contentType ?? ''), 'image')) {
-                Log::warning("[FormResponseImport] Download failed or invalid content type for {$url}. HTTP status: {$httpCode}, Content-Type: {$contentType}");
-                return $url;
-            }
-
-            $tmpFile = tempnam(sys_get_temp_dir(), 'uco_img_');
-            file_put_contents($tmpFile, $contents);
-            
-            // Compress to WebP & Resize to max 1200px before uploading
-            $tmpFile = $this->compressToWebp($tmpFile);
-            
-            $sanitizedId = Str::slug($identifier ?? 'unknown');
-            $urlHash = substr(md5($url), 0, 8);
-            $publicId = "uco/{$folder}/{$sanitizedId}_{$urlHash}";
-
-            $uploadResult = \CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary::uploadApi()->upload($tmpFile, [
-                'public_id' => $publicId,
-                'overwrite' => true,
-                'resource_type' => 'image'
-            ]);
-
-            if ($tmpFile && file_exists($tmpFile)) unlink($tmpFile);
-
-            $secureUrl = $uploadResult['secure_url'] ?? $url;
-            if ($secureUrl !== $url) {
-                Log::info("[FormResponseImport] Uploaded to Cloudinary: " . $secureUrl);
-                Cache::put($cacheKey, $secureUrl, now()->addDays(30));
-            } else {
-                Log::warning("[FormResponseImport] Cloudinary upload returned original URL for: " . $url);
-            }
-            return $secureUrl;
-
-        } catch (\Throwable $e) {
-            if ($tmpFile && file_exists($tmpFile)) unlink($tmpFile);
-            Log::error("[FormResponseImport] Image error for {$url}: " . $e->getMessage());
-            return $url;
-        }
-    }
-
-    /**
-     * Compress image to WebP and resize to a maximum of 1200px.
-     */
-    private function compressToWebp(string $filePath, int $quality = 80): string
-    {
-        ini_set('memory_limit', '512M');
-        if (!extension_loaded('gd')) {
-            return $filePath;
-        }
-
-        try {
-            $imageInfo = @getimagesize($filePath);
-            if (!$imageInfo) {
-                return $filePath;
-            }
-
-            $mime = $imageInfo['mime'];
-            
-            switch ($mime) {
-                case 'image/jpeg':
-                case 'image/jpg':
-                    $image = @imagecreatefromjpeg($filePath);
-                    break;
-                case 'image/png':
-                    $image = @imagecreatefrompng($filePath);
-                    break;
-                case 'image/gif':
-                    $image = @imagecreatefromgif($filePath);
-                    break;
-                case 'image/webp':
-                    $image = @imagecreatefromwebp($filePath);
-                    break;
-                default:
-                    $data = file_get_contents($filePath);
-                    $image = @imagecreatefromstring($data);
-                    break;
-            }
-
-            if (!$image) {
-                return $filePath;
-            }
-
-            // Convert palette images to truecolor to prevent "Palette image not supported by webp" error
-            if (!imageistruecolor($image)) {
-                $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
-                imagealphablending($trueColorImage, false);
-                imagesavealpha($trueColorImage, true);
-                imagecopy($trueColorImage, $image, 0, 0, 0, 0, imagesx($image), imagesy($image));
-                imagedestroy($image);
-                $image = $trueColorImage;
-            }
-
-            $width = imagesx($image);
-            $height = imagesy($image);
-            $maxDim = 1200;
-            if ($width > $maxDim || $height > $maxDim) {
-                if ($width > $height) {
-                    $newWidth = $maxDim;
-                    $newHeight = (int)($height * ($maxDim / $width));
-                } else {
-                    $newHeight = $maxDim;
-                    $newWidth = (int)($width * ($maxDim / $height));
-                }
-                $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
-                imagealphablending($resizedImage, false);
-                imagesavealpha($resizedImage, true);
-                imagecopyresampled($resizedImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                imagedestroy($image);
-                $image = $resizedImage;
-            }
-
-            $outputPath = $filePath . '.webp';
-            if (imagewebp($image, $outputPath, $quality)) {
-                imagedestroy($image);
-                unlink($filePath);
-                return $outputPath;
-            }
-            
-            imagedestroy($image);
-        } catch (\Throwable $e) {
-            Log::warning("[FormResponseImport] Image compression to webp failed: " . $e->getMessage());
-        }
-
-        return $filePath;
-    }
-
-    /**
-     * Clean and convert URLs (including Google Drive).
-     */
-    private function cleanUrl(?string $url): ?string
-    {
-        if (!$url) return null;
-        $url = strip_tags($url);
-        $url = preg_replace('/[^\x20-\x7E]/', '', $url);
-        $url = trim($url);
-
-        if (preg_match('/(https?:\/\/.*)$/i', $url, $matches)) {
-            $url = $matches[1];
-        }
-
-        // Google Drive link conversion
-        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
-            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
-                // Use export=download&confirm=t to bypass virus scan warning HTML page so cURL downloads the actual image bytes
-                $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
-            }
-        }
-
-        return (filter_var($url, FILTER_VALIDATE_URL)) ? $url : null;
-    }
-
-    // ─── Events ───
+    // --- Events ---
 
     public function registerEvents(): array
     {
@@ -886,5 +667,4 @@ class FormResponseImport implements ToModel, WithHeadingRow, WithChunkReading, S
             throw $e;
         }
     }
-
 }

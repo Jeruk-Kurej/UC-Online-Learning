@@ -5,10 +5,10 @@
         x-data="testimonyAdminList"
         @ajax-pagination.window="updateList($event.detail.url, true, true)">
 
-        {{-- Page Header --}}
+        {{-- --- Page Header --- --}}
         <x-ui.page-header badge="Admin Portal" title="Manage Testimonies" subtitle="Review user testimonies and select which ones are featured on the homepage." stack-until="md" />
 
-        {{-- Statistics --}}
+        {{-- --- Statistics --- --}}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             <x-admin.stat-card class="delay-100" :compact-on-mobile="false" value-id="stat-total-testimonies">
                 <x-slot:label>Total Testimonies</x-slot:label>
@@ -20,12 +20,12 @@
             </x-admin.stat-card>
         </div>
 
-        {{-- Filters & Search --}}
+        {{-- --- Filters & Search --- --}}
         <div class="mb-8 reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('uc-testimonies.admin') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
                 
-                {{-- Search & Filters Row --}}
+                {{-- --- Search & Filters Row --- --}}
                 <div class="flex items-center gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -63,7 +63,7 @@
             </form>
         </div>
 
-        {{-- Testimonies List Container --}}
+        {{-- --- Testimonies List Container --- --}}
         <div id="testimonies-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
             @include('uc-testimonies.partials.list')
         </div>

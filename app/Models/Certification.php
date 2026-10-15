@@ -11,7 +11,7 @@ class Certification extends Model
 
     protected $fillable = ['name'];
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function businesses()
     {

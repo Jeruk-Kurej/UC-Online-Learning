@@ -17,9 +17,7 @@ class UserProfileController extends Controller
         if (! $user instanceof User) {
             $user = User::where('slug', $user)->orWhere('id', $user)->firstOrFail();
         }
-        // Publicly accessible catalog - removed admin guard
 
-        // Load relationships
         $user->load([
             'businesses' => function ($query) {
                 $query->where('is_visible', true)->with('category');

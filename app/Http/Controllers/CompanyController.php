@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CompanyRequest;
 use App\Models\Category;
 use App\Models\Company;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Services\ImageOptimizerService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -18,6 +19,8 @@ use Illuminate\View\View;
  */
 class CompanyController extends Controller
 {
+    use Concerns\ResolvesRegionNames;
+
     /**
      * Display the specified intrapreneur (Company).
      */
@@ -25,7 +28,6 @@ class CompanyController extends Controller
     {
         $company->load(['user', 'category']);
 
-        // Security check: Check if visible or authorized
         $isOwner = auth()->id() === $company->user_id;
         $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($company->user) === 'accepted';
         $isAdmin = auth()->user()?->isAdmin();
@@ -63,46 +65,21 @@ class CompanyController extends Controller
     /**
      * Store a newly created company work profile (Intrapreneur).
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CompanyRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'position' => 'required|string|max:255',
-            'level_position' => 'nullable|string|max:255',
-            'company_scale' => 'nullable|string|max:255',
-            'province' => 'nullable',
-            'city' => 'nullable',
-            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
-            'job_description' => 'required|string|min:10',
-            'logo_url' => 'nullable|image|max:5120',
-        ]);
+        $validated = $request->validated();
 
         $data = $validated;
         $data['user_id'] = Auth::id();
         $data['is_visible'] = true;
         $data['approval_status'] = Auth::user()->isAdmin() ? 'approved' : 'pending';
 
-        if ($request->hasFile('logo_url')) {
-            $file = $request->file('logo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $data['logo_url'] = '/storage/'.$path;
-            }
+        $logo = $request->file('logo_url');
+        if ($logo instanceof UploadedFile) {
+            $data['logo_url'] = $this->storeLogo($logo, $validated['name']);
         }
 
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $provObj = Province::find($data['province']);
-            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $regObj = Regency::find($data['city']);
-            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
-        }
-
-        $company = Company::create($data);
+        $company = Company::create($this->resolveRegionNames($data, titleCase: true));
 
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile registered successfully!');
     }
@@ -130,66 +107,41 @@ class CompanyController extends Controller
     /**
      * Update a company work profile (Intrapreneur).
      */
-    public function update(Company $company, Request $request): RedirectResponse
+    public function update(Company $company, CompanyRequest $request): RedirectResponse
     {
-        if (Auth::id() !== $company->user_id && !$this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'position' => 'required|string|max:255',
-            'level_position' => 'nullable|string|max:255',
-            'company_scale' => 'nullable|string|max:255',
-            'province' => 'nullable',
-            'city' => 'nullable',
-            'year_started_working' => 'nullable|integer|min:1900|max:'.(date('Y') + 1),
-            'job_description' => 'required|string|min:10',
-            'logo_url' => 'nullable|image|max:5120',
-        ]);
+        $validated = $request->validated();
 
         $data = $validated;
 
-        // Handle logo deletion
         if ($request->boolean('delete_logo')) {
             $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
             $data['logo_url'] = null;
         }
 
-        // Handle file uploads (Logo)
         if ($request->hasFile('logo_url')) {
             $company->deleteFileFromStorage($company->getRawOriginal('logo_url'));
-            $file = $request->file('logo_url');
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                $path = $file->storeAs('company-logos', Str::slug($validated['name']).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                $data['logo_url'] = '/storage/'.$path;
+            $logo = $request->file('logo_url');
+            if ($logo instanceof UploadedFile) {
+                $data['logo_url'] = $this->storeLogo($logo, $validated['name']);
             }
         }
 
         if ($validated['name'] !== $company->name) {
-            $slug = Str::slug($validated['name']);
-            $original = $slug;
-            $i = 1;
-            while (Company::where('slug', $slug)->where('id', '!=', $company->id)->exists()) {
-                $slug = $original . '-' . $i++;
-            }
-            $data['slug'] = $slug;
+            $data['slug'] = $company->freshSlugFor($validated['name']);
         }
 
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $provObj = Province::find($data['province']);
-            $data['province'] = $provObj ? Str::title(strtolower($provObj->name)) : $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $regObj = Regency::find($data['city']);
-            $data['city'] = $regObj ? Str::title(strtolower($regObj->name)) : $data['city'];
-        }
-
-        $company->update($data);
+        $company->update($this->resolveRegionNames($data, titleCase: true));
 
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile updated successfully!');
+    }
+
+    // --- Form helpers ---
+
+    private function storeLogo(UploadedFile $file, string $name): string
+    {
+        app(ImageOptimizerService::class)->optimizeUploadedFile($file);
+        $path = $file->storeAs('company-logos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
+
+        return '/storage/'.$path;
     }
 }

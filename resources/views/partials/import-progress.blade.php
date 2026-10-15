@@ -4,7 +4,7 @@
      class="relative">
      
 
-    {{-- SVG Gradients --}}
+    {{-- --- SVG Gradients --- --}}
     <svg class="w-0 h-0 absolute pointer-events-none">
         <defs>
             <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -14,7 +14,7 @@
         </defs>
     </svg>
 
-    {{-- Floating Progress Card (Bottom-Right) --}}
+    {{-- --- Floating Progress Card (Bottom-Right) --- --}}
     <div x-show="visible" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0 translate-y-4 scale-95"
@@ -27,7 +27,7 @@
          x-cloak>
          
         <div class="flex items-center justify-between gap-3">
-            {{-- Circular Progress Ring --}}
+            {{-- --- Circular Progress Ring --- --}}
             <div class="relative flex-shrink-0 w-12 h-12">
                 <svg class="w-full h-full transform -rotate-90">
                     <circle cx="24" cy="24" r="20" stroke="rgba(229, 231, 235, 0.5)" stroke-width="3.5" fill="transparent" />
@@ -41,7 +41,7 @@
                      x-text="(status === 'uploading' ? uploadPercent : percent) + '%'"></div>
             </div>
 
-            {{-- Text Info --}}
+            {{-- --- Text Info --- --}}
             <div class="flex-1 min-w-0">
                 <p class="text-xs font-bold text-gray-500 uppercase tracking-wider" 
                    x-text="status === 'uploading' ? 'Uploading File' : (status === 'completed' ? 'Import Complete' : 'Importing Data')"></p>
@@ -49,7 +49,7 @@
                    x-text="status === 'uploading' ? fileName : (format || 'Processing...')"></p>
             </div>
 
-            {{-- Controls / Close Button --}}
+            {{-- --- Controls / Close Button --- --}}
             <div class="flex items-center gap-1">
                 <button x-show="status === 'completed' || status === 'failed'"
                         @click.stop="dismiss()" 
@@ -60,7 +60,7 @@
             </div>
         </div>
         
-        {{-- Footer/Mini Banner --}}
+        {{-- --- Footer/Mini Banner --- --}}
         <div class="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400 font-semibold">
             <div class="flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 rounded-full" 
@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    {{-- Detailed Popup Modal --}}
+    {{-- --- Detailed Popup Modal --- --}}
     <div x-show="showDetailModal" 
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
@@ -97,7 +97,7 @@
              x-transition:leave-end="opacity-0 scale-95 translate-y-4"
              class="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-2xl w-full p-8 flex flex-col max-h-[90vh]">
             
-            {{-- Modal Header --}}
+            {{-- --- Modal Header --- --}}
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <div class="flex items-center gap-2.5 mb-1.5">
@@ -124,10 +124,10 @@
                 </button>
             </div>
 
-            {{-- Modal Body --}}
+            {{-- --- Modal Body --- --}}
             <div class="flex-1 overflow-y-auto pr-1 custom-scrollbar space-y-6">
                 
-                {{-- Progress Bar Indicator --}}
+                {{-- --- Progress Bar Indicator --- --}}
                 <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
                     <div class="flex justify-between text-sm font-bold text-gray-700 mb-2">
                         <span x-text="status === 'uploading' ? 'Uploading file to server...' : (status === 'completed' ? 'Processing completed!' : 'Importing records to database...')"></span>
@@ -139,7 +139,7 @@
                     </div>
                 </div>
 
-                {{-- Statistics Cards --}}
+                {{-- --- Statistics Cards --- --}}
                 <div class="grid grid-cols-3 gap-4">
                     <div class="bg-slate-50 border border-gray-200 rounded-lg p-4 text-center">
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Processed</p>
@@ -155,14 +155,14 @@
                     </div>
                 </div>
 
-                {{-- Activity Log / Warnings --}}
+                {{-- --- Activity Log / Warnings --- --}}
                 <div>
                     <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
                         <i class="bi bi-journal-text text-gray-400 text-lg"></i>
                         Import Log & Warning Messages
                     </h4>
 
-                    {{-- Placeholder when empty --}}
+                    {{-- --- Placeholder when empty --- --}}
                     <div x-show="errors.length === 0 && status !== 'uploading'" 
                          class="border border-dashed border-gray-300 rounded-lg p-8 text-center bg-gray-50">
                         <div class="w-12 h-12 rounded bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto mb-3">
@@ -172,7 +172,7 @@
                         <p class="text-xs text-gray-400 mt-1">If files contain skipped rows or data validation mismatches, they will appear here in real-time.</p>
                     </div>
 
-                    {{-- List of warnings --}}
+                    {{-- --- List of warnings --- --}}
                     <div x-show="errors.length > 0" 
                          class="border border-gray-200 rounded-lg overflow-hidden">
                         <div class="max-h-56 overflow-y-auto custom-scrollbar p-3 bg-slate-50 space-y-2">
@@ -195,7 +195,7 @@
 
             </div>
 
-            {{-- Modal Footer --}}
+            {{-- --- Modal Footer --- --}}
             <div class="mt-6 pt-4 border-t border-gray-100 flex items-center justify-between">
                 <p class="text-[10px] text-gray-400 font-semibold max-w-sm">
                     You can safely minimize this popup or continue using the website. The background import process will continue running.

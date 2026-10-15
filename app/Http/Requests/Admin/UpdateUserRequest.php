@@ -11,7 +11,7 @@ class UpdateUserRequest extends UserFormRequest
         return $this->accountRules('required|string|email|max:255|unique:users,email,'.$this->route('user')->id, ['nullable', 'confirmed', Rules\Password::defaults()])
             + $this->profileRules()
             + [
-                // Files & Deletion flags
+                // --- Files and deletion flags ---
                 'profile_photo_url' => 'nullable|image|max:5120',
                 'delete_profile_photo_url' => 'nullable|boolean',
                 'activities_docs' => ['nullable', 'array'],

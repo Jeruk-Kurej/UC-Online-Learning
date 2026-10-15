@@ -2,7 +2,7 @@
 <x-people.profile-card :person="$owner" title-start="Owned" title-end="By" :status="$owner->student_status"
     :career="$owner->current_status ?: ($owner->role_label ?: '-')" />
 
-{{-- Additional Owners Section (Title & Grid) --}}
+{{-- --- Additional Owners Section (Title & Grid) --- --}}
 @if ($coOwners->isNotEmpty())
     <div class="flex flex-col gap-3">
         <div class="relative">

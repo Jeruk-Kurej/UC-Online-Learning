@@ -75,48 +75,48 @@ class User extends Authenticatable
     use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug;
 
     protected $fillable = [
-        // System
+        // --- System ---
         'email',
         'password',
         'google_id',
         'role',
         'email_verified_at',
 
-        // CSV: Identity
+        // --- CSV: Identity ---
         'submitted_at',
         'prefix_title',
         'name',
         'suffix_title',
         'personal_email',
 
-        // CSV: Contact
+        // --- CSV: Contact ---
         'phone_number',
         'mobile_number',
         'whatsapp',
         'linkedin',
 
-        // CSV: Academic
+        // --- CSV: Academic ---
         'current_status',
         'nis',
         'year_of_enrollment',
         'graduate_year',
         'major',
 
-        // CSV: Profile extras
+        // --- CSV: Profile extras ---
         'testimony',
 
         'profile_photo_url',
         'activities_doc_url',
         'expertise_certification_url',
 
-        // Platform management
+        // --- Platform management ---
         'is_visible',
         'is_featured',
         'is_featured_testimony',
         'student_status',
         'show_contact_details',
 
-        // AI Analysis
+        // --- AI Analysis ---
         'ai_sentiment',
         'ai_score',
         'ai_rejection_reason',
@@ -142,7 +142,7 @@ class User extends Authenticatable
         ];
     }
 
-    // ─── Accessors ───
+    // --- Accessors ---
 
     public function getProfilePhotoUrlAttribute($value)
     {
@@ -284,7 +284,7 @@ class User extends Authenticatable
         return $file;
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function businesses()
     {
@@ -306,11 +306,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Business::class, 'business_user')->withPivot('position')->withTimestamps();
     }
 
-    public function sentMessages()
-    {
-        return $this->hasMany(Message::class, 'sender_id');
-    }
-
     public function receivedMessages()
     {
         return $this->hasMany(Message::class, 'recipient_id');
@@ -319,11 +314,6 @@ class User extends Authenticatable
     public function sentCollabs()
     {
         return $this->hasMany(Collab::class, 'sender_id');
-    }
-
-    public function receivedCollabs()
-    {
-        return $this->hasMany(Collab::class, 'recipient_id');
     }
 
     public function collabStatusWith(?User $user)
@@ -341,7 +331,7 @@ class User extends Authenticatable
         return $collab ? $collab->status : null;
     }
 
-    // ─── Helpers ───
+    // --- Helpers ---
 
     public function isAdmin(): bool
     {

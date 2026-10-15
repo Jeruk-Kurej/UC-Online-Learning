@@ -2,59 +2,10 @@
 // Imported by app.js on pages with [data-testimony-admin]; Alpine starts after this module has run.
 // <button data-testimony-featured-toggle="{user id}">
 
-function testimonyAdminList() {
-    return {
-        isSubmitting: false,
-        debounceTimer: null,
-        init() {
-            window.addEventListener('popstate', () => {
-                this.updateList(window.location.href, false);
-            });
-        },
-        updateList(url = null, pushState = true, shouldScroll = false) {
-            this.isSubmitting = true;
-            if (!url) {
-                const form = this.$refs.filterForm;
-                if (!form) { console.error('filterForm ref not found!'); this.isSubmitting = false; return; }
-                const formData = new FormData(form);
-                const params = new URLSearchParams(formData);
-                url = `${form.action}?${params.toString()}`;
-            }
+import ajaxList from '../lib/ajax-list';
 
-            fetch(url, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                credentials: 'same-origin'
-            })
-            .then(res => {
-                if (!res.ok) { console.error('AJAX error:', res.status, res.url); }
-                return res.text();
-            })
-            .then(html => {
-                const container = document.getElementById('testimonies-list-container');
-                if (container) {
-                    container.innerHTML = html;
-                }
-                if (pushState) window.history.pushState({}, '', url);
-                this.isSubmitting = false;
-                if (shouldScroll) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            })
-            .catch(err => {
-                console.error('Fetch failed:', err);
-                this.isSubmitting = false;
-            });
-        },
-        resetFilters() {
-            this.$refs.filterForm.reset();
-            this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
-            this.updateList();
-        },
-        submitDebounced() {
-            if (this.debounceTimer) clearTimeout(this.debounceTimer);
-            this.debounceTimer = setTimeout(() => this.updateList(), 500);
-        }
-    };
+function testimonyAdminList() {
+    return ajaxList({ container: 'testimonies-list-container', revealItems: false });
 }
 
 function toggleFeatured(userId, buttonElement) {
@@ -85,7 +36,6 @@ function toggleFeatured(userId, buttonElement) {
             buttonElement.setAttribute('data-featured', isFeatured ? '1' : '0');
             buttonElement.title = isFeatured ? 'Remove from featured' : 'Add to featured';
 
-            // Adjust classes
             const icon = buttonElement.querySelector('i');
             if (isFeatured) {
                 buttonElement.className = 'w-10 h-10 rounded-full inline-flex items-center justify-center transition-all duration-300 border shadow-md focus:outline-none bg-[#ff8a00] border-[#ff8a00] text-white hover:bg-orange-600';
@@ -95,7 +45,6 @@ function toggleFeatured(userId, buttonElement) {
                 icon.className = 'bi bi-star text-lg leading-none';
             }
 
-            // Update stats counters dynamically
             const statFeatured = document.getElementById('stat-featured-testimonies');
             if (statFeatured) {
                 let currentCount = parseInt(statFeatured.textContent, 10);

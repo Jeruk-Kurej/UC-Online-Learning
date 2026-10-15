@@ -1,9 +1,9 @@
 <x-app-layout>
-    {{-- UCO Inbox & Network Hub --}}
+    {{-- --- UCO Inbox & Network Hub --- --}}
     <div class="inbox-wrapper max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-8" 
          x-data="{ activeTab: 'messages' }">
         
-        {{-- Page Header Banner --}}
+        {{-- --- Page Header Banner --- --}}
         <x-ui.page-header badge="UCO Network" title="Inbox & Connections" subtitle="Manage your collaboration invitations and connect with partners.">
             <x-slot:actions>
                 <a href="{{ route('featured') }}" 
@@ -14,7 +14,7 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- Standard Navigation Tabbar --}}
+        {{-- --- Standard Navigation Tabbar --- --}}
         <div class="border-b border-gray-200 mb-8">
             <nav class="-mb-px flex space-x-6 sm:space-x-8 overflow-x-auto" aria-label="Tabs">
                 <button @click="activeTab = 'messages'" 
@@ -61,10 +61,10 @@
             </nav>
         </div>
 
-        {{-- Tabs Content Container --}}
+        {{-- --- Tabs Content Container --- --}}
         <div class="grid grid-cols-1 min-h-[500px] relative">
             
-            {{-- Tab 1: Messages / Inbox --}}
+            {{-- --- Tab 1: Messages / Inbox --- --}}
             <div x-show="activeTab === 'messages'"
                  class="col-span-1 w-full"
                  x-transition:enter="transition ease-out duration-300"
@@ -121,7 +121,7 @@
                 @endif
             </div>
 
-            {{-- Tab 2: Sent Requests --}}
+            {{-- --- Tab 2: Sent Requests --- --}}
             <div x-show="activeTab === 'sent'" x-cloak
                  class="col-span-1 w-full"
                  x-transition:enter="transition ease-out duration-300"
@@ -193,7 +193,7 @@
                 @endif
             </div>
 
-            {{-- Tab 3: Connections --}}
+            {{-- --- Tab 3: Connections --- --}}
             <div x-show="activeTab === 'connections'" x-cloak
                  class="col-span-1 w-full"
                  x-transition:enter="transition ease-out duration-300"

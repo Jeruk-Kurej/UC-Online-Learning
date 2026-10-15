@@ -21,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Load custom helpers
         foreach (glob(app_path('Helpers') . '/*.php') as $filename) {
             require_once $filename;
         }
@@ -32,21 +31,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // ✅ Register policies
+        // --- Policies ---
         Gate::policy(Business::class, BusinessPolicy::class);
-        Gate::policy(User::class, UserPolicy::class); // ✅ ADDED
+        Gate::policy(User::class, UserPolicy::class);
 
-        // ✅ Register showcase rate limiter
+        // --- Showcase rate limiter ---
         RateLimiter::for('showcase', function (Request $request) {
             return Limit::perMinute(60)->by($request->ip() ?: '127.0.0.1');
         });
 
-        // ✅ Register background image uploads rate limiter
+        // --- Background image upload rate limiter ---
         RateLimiter::for('image-uploads', function (object $job) {
             return Limit::perMinute(30);
         });
 
-        // Unread inbox count for the navigation bell
+        // --- Unread inbox count for the navigation bell ---
         View::composer('layouts.navigation', function ($view) {
             $view->with('unreadInboxCount', auth()->check()
                 ? Message::where('recipient_id', auth()->id())->whereNull('read_at')->count()

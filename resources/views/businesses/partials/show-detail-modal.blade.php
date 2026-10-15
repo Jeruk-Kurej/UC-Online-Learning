@@ -1,14 +1,14 @@
 {{-- --- Product / service detail dialog, filled by openDetailModal() (businessShowPage) --- --}}
 <div x-show="detailModalOpen" x-cloak class="fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-y-auto"
      role="dialog" aria-modal="true">
-    {{-- Background Overlay --}}
+    {{-- --- Background Overlay --- --}}
     <div x-show="detailModalOpen" x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
         x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0" @click="detailModalOpen = false"
         class="fixed inset-0 transition-opacity bg-black/80 backdrop-blur-sm"></div>
 
-    {{-- Modal Content Card --}}
+    {{-- --- Modal Content Card --- --}}
     <div x-show="detailModalOpen" x-transition:enter="ease-out duration-300 transform"
          x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
          x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
@@ -17,7 +17,7 @@
          x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
          class="relative bg-white rounded-2xl shadow-2xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row border border-gray-100 transition-all pointer-events-auto z-[10000]">
 
-        {{-- Close Button --}}
+        {{-- --- Close Button --- --}}
         <button type="button" @click="detailModalOpen = false"
             class="absolute top-4 right-4 z-50 bg-white/80 hover:bg-white text-gray-500 hover:text-gray-800 p-2 rounded-full shadow-md transition border border-gray-200/50">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,9 +25,9 @@
             </svg>
         </button>
 
-        {{-- Left Column: Square Picture Container --}}
+        {{-- --- Left Column: Square Picture Container --- --}}
         <div class="w-full md:w-1/2 flex flex-col bg-gray-50 border-b md:border-b-0 md:border-r border-gray-100 relative aspect-square md:max-h-[90vh]">
-            {{-- Image Container --}}
+            {{-- --- Image Container --- --}}
             <div class="flex-grow flex items-center justify-center p-6 relative overflow-hidden h-[calc(100%-3rem)] min-h-[300px]">
                 <img x-show="detailItem.photo_url" :src="detailItem.photo_url" :alt="detailItem.name"
                      class="max-w-full max-h-full object-contain rounded-md shadow-sm">
@@ -36,18 +36,18 @@
                     <span class="text-xs text-gray-400">No image available</span>
                 </div>
             </div>
-            {{-- Caption Container on Bottom --}}
+            {{-- --- Caption Container on Bottom --- --}}
             <div x-show="detailItem.photo_caption" 
                  class="bg-gray-900/90 backdrop-blur-xs text-white p-3 text-xs text-center font-medium border-t border-gray-800 w-full min-h-[3rem] flex items-center justify-center">
                 <p x-text="detailItem.photo_caption"></p>
             </div>
         </div>
 
-        {{-- Right Column: Information --}}
+        {{-- --- Right Column: Information --- --}}
         <div class="w-full md:w-1/2 flex flex-col p-6 md:p-8 max-h-[90vh]">
-            {{-- Scrollable Container --}}
+            {{-- --- Scrollable Container --- --}}
             <div class="flex-grow overflow-y-auto pr-1">
-                {{-- Tag (Product / Service) --}}
+                {{-- --- Tag (Product / Service) --- --}}
                 <div class="mb-3">
                     <span x-show="detailItem.type === 'product'" class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 uppercase tracking-wider">
                         <i class="bi bi-box-seam"></i> Product
@@ -57,10 +57,10 @@
                     </span>
                 </div>
 
-                {{-- Item Name --}}
+                {{-- --- Item Name --- --}}
                 <h3 class="text-2xl font-extrabold text-gray-900 tracking-tight leading-tight mb-4" x-text="detailItem.name"></h3>
 
-                {{-- Price and Price Type --}}
+                {{-- --- Price and Price Type --- --}}
                 <div class="mb-6 bg-orange-50/50 rounded-xl p-4 border border-orange-100/50">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Pricing</p>
                     <div class="flex flex-col gap-1.5">
@@ -78,14 +78,14 @@
                     </div>
                 </div>
 
-                {{-- Description --}}
+                {{-- --- Description --- --}}
                 <div class="mb-6">
                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Description</p>
                     <div class="text-sm text-gray-600 leading-relaxed whitespace-pre-line" x-text="detailItem.description"></div>
                 </div>
             </div>
 
-            {{-- Actions / Contact (Sticky Bottom) --}}
+            {{-- --- Actions / Contact (Sticky Bottom) --- --}}
             <div class="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-3 bg-white mt-auto">
                 <template x-if="detailItem.whatsapp_link">
                     <a :href="detailItem.whatsapp_link" target="_blank"

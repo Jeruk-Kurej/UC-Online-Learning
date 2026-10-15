@@ -21,7 +21,7 @@ class Skill extends Model
         });
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function users()
     {

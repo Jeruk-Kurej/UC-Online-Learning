@@ -1,5 +1,5 @@
 {{-- --- Work profile fields shared by the create and edit pages ($company is null when creating) --- --}}
-{{-- Company Name --}}
+{{-- --- Company Name --- --}}
 <div class="md:col-span-2">
     <label for="name" class="form-label-custom">Company Name <span class="text-red-500">*</span></label>
     <input type="text" name="name" id="name" value="{{ old('name', $company?->name) }}" required
@@ -8,7 +8,7 @@
     @error('name')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Category --}}
+{{-- --- Category --- --}}
 <div>
     <label for="category_id" class="form-label-custom">Industry Category <span class="text-red-500">*</span></label>
     <select name="category_id" id="category_id" data-tom-select="Select Category" required 
@@ -23,7 +23,7 @@
     @error('category_id')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Position / Job Role --}}
+{{-- --- Position / Job Role --- --}}
 <div>
     <label for="position" class="form-label-custom">Your Position / Job Title <span class="text-red-500">*</span></label>
     <input type="text" name="position" id="position" value="{{ old('position', $company?->position) }}" required
@@ -32,7 +32,7 @@
     @error('position')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Level --}}
+{{-- --- Level --- --}}
 <div>
     <label for="level_position" class="form-label-custom">Job Role Level</label>
     <select name="level_position" id="level_position" data-tom-select="Select Level" 
@@ -47,7 +47,7 @@
     @error('level_position')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Company Scale --}}
+{{-- --- Company Scale --- --}}
 <div>
     <label for="company_scale" class="form-label-custom">Company Scale</label>
     <select name="company_scale" id="company_scale" data-tom-select="Select Scale" 
@@ -60,7 +60,7 @@
     @error('company_scale')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Year Started Working --}}
+{{-- --- Year Started Working --- --}}
 <div>
     <label for="year_started_working" class="form-label-custom">Year Started Working</label>
     <input type="number" name="year_started_working" id="year_started_working" 
@@ -71,7 +71,7 @@
     @error('year_started_working')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
 </div>
 
-{{-- Province --}}
+{{-- --- Province --- --}}
 <div>
     <label for="province" class="form-label-custom">Province</label>
     <select name="province" id="province" data-region-province data-region-city="#city" class="form-input-custom">
@@ -84,7 +84,7 @@
     </select>
 </div>
 
-{{-- City --}}
+{{-- --- City --- --}}
 <div>
     <label for="city" class="form-label-custom">City / Regency</label>
     <select name="city" id="city" data-region-city-placeholder="{{ $company ? 'Select City' : 'Select Province First' }}" @unless($company) data-region-city-starts-disabled @endunless class="form-input-custom">

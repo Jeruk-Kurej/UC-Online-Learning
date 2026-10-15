@@ -1,7 +1,7 @@
 <nav x-data="{ open: false }" class="bg-white border-b border-soft-gray-100 shadow-sm sticky top-0 z-50">
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16">
-            {{-- Logo & Brand --}}
+            {{-- --- Logo & Brand --- --}}
             <div class="flex items-center">
                 <a href="{{ route('home') }}" class="flex items-center gap-3">
                     <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-9 h-9 object-contain">
@@ -12,11 +12,10 @@
             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('featured') }}" class="text-sm font-bold {{ request()->routeIs('featured') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Featured</a>
                 <a href="{{ route('businesses.index') }}" class="text-sm font-bold {{ (request()->routeIs('businesses.index', 'businesses.show', 'intrapreneurs.show', 'showcase.resolve')) ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Business</a>
-                {{-- <a href="{{ route('uc-testimonies.index') }}" class="text-sm font-bold {{ request()->routeIs('uc-testimonies.index') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">Testimonies</a> --}}
                 <a href="{{ route('about') }}" class="text-sm font-bold {{ request()->routeIs('about') ? 'text-soft-gray-900 border-b-2 border-uco-orange-500' : 'text-soft-gray-600 hover:text-soft-gray-900' }}">About</a>
                 
                 @auth
-                    {{-- Inbox Notification Bell --}}
+                    {{-- --- Inbox Notification Bell --- --}}
                     <a href="{{ route('inbox.index') }}" class="relative p-2 text-soft-gray-600 hover:text-soft-gray-900 transition-colors duration-200 mr-2 flex items-center justify-center rounded-full hover:bg-soft-gray-50" title="Inbox">
                         <i class="bi bi-bell-fill text-lg"></i>
                         @if($unreadInboxCount > 0)
@@ -26,7 +25,7 @@
                         @endif
                     </a>
 
-                    {{-- Profile Dropdown --}}
+                    {{-- --- Profile Dropdown --- --}}
                     <div class="relative group" x-data="{ open: false }" @click.away="open = false">
                         <button @click="open = !open" class="text-sm font-medium text-soft-gray-700 hover:text-soft-gray-900 transition flex items-center gap-2 px-3 py-2 rounded-md hover:bg-soft-gray-50">
                             @if(auth()->user()->isAdmin())
@@ -72,7 +71,7 @@
                 @endif
             </div>
  
-            {{-- Mobile Menu Button --}}
+            {{-- --- Mobile Menu Button --- --}}
             <div class="flex md:hidden">
                 <button @click="open = ! open" class="p-2 rounded-lg text-soft-gray-700">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
@@ -84,7 +83,7 @@
         </div>
     </div>
  
-    {{-- Mobile Menu --}}
+    {{-- --- Mobile Menu --- --}}
     <div :class="{'block': open, 'hidden': ! open}" class="hidden md:hidden border-t border-gray-100 bg-white shadow-lg">
         <div class="px-4 py-3 space-y-1">
             <a href="{{ route('featured') }}" class="block py-2.5 text-base font-bold {{ request()->routeIs('featured') ? 'text-uco-orange-500' : 'text-gray-800' }}">Featured</a>

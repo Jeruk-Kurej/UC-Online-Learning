@@ -43,7 +43,7 @@ class Business extends Model
         'business_legality',
         'product_legality',
 
-        // Platform management
+        // --- Platform management ---
         'is_visible',
         'approval_status',
         'rejection_reason',
@@ -62,30 +62,9 @@ class Business extends Model
         ];
     }
 
-    // ─── Accessors ───
+    // --- Accessors ---
 
-    public function getProfileQualityScoreAttribute()
-    {
-        $score = 0;
-        $total = 10;
-        
-        if (!empty($this->getRawOriginal('logo_url'))) $score++;
-        if (!empty($this->description)) $score++;
-        if (!empty($this->unique_value_proposition)) $score++;
-        if (!empty($this->city) || !empty($this->province) || !empty($this->address)) $score++;
-        if (!empty($this->phone_number) || !empty($this->whatsapp)) $score++;
-        if (!empty($this->website) || !empty($this->instagram)) $score++;
-        if (!empty($this->company_profile_url)) $score++;
-        if (!empty($this->target_market)) $score++;
-        
-        // Count related models (without triggering N+1 if loaded, but using count() if not)
-        if ($this->products()->count() > 0) $score++;
-        if ($this->legalDocuments()->count() > 0 || $this->certifications()->count() > 0) $score++;
-
-        return round(($score / $total) * 100);
-    }
-
-    // ─── Model events ───
+    // --- Model events ---
 
     protected static function booted(): void
     {
@@ -96,7 +75,7 @@ class Business extends Model
         });
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function user()
     {
@@ -128,21 +107,14 @@ class Business extends Model
         return $this->belongsToMany(User::class, 'business_user')->withPivot('position')->withTimestamps();
     }
 
-    // ─── Scopes ───
+    // --- Scopes ---
 
     public function scopeEntrepreneur($query)
     {
         return $query->where('type', 'entrepreneur');
     }
 
-    public function scopeIntrapreneur($query)
-    {
-        return $query->where('type', 'intrapreneur');
-    }
-
-    // ─── Public people ───
-    // A business stays public while at least one of its people (owner or co-owner) is visible.
-    // Hidden people are left out of what the public sees.
+    // --- Public people: a business stays public while one of its owners or co-owners is visible; hidden people are left out ---
 
     protected function whereSomeoneVisible($query): void
     {

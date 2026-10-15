@@ -1,16 +1,16 @@
 {{-- --- Community voices: testimony carousel and its reading dialog --- --}}
 <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
-    {{-- Background decorative glows --}}
+    {{-- --- Background decorative glows --- --}}
     <div class="uco-ambient-glow uco-ambient-glow--purple uco-floating-blob-slow -top-20 -left-20"></div>
 
-    {{-- Floating micro-shapes (Ada Kehidupan) --}}
+    {{-- --- Floating micro-shapes (Ada Kehidupan) --- --}}
     <div class="uco-floating-shape uco-floating-shape--plus-blue top-[15%] right-[12%]"></div>
     <div class="uco-floating-shape uco-floating-shape--ring-blue bottom-[30%] left-[6%]"></div>
     <div class="uco-floating-shape uco-floating-shape--dot top-[55%] right-[30%]"></div>
 
     <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
         <div class="space-y-4 relative">
-            {{-- Outline background text --}}
+            {{-- --- Outline background text --- --}}
             <div class="uco-outline-bg-text uco-outline-bg-text--purple uco-parallax-text">VOICES</div>
             <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">
                 Community <span class="uco-text-gradient-orange">Voices</span></h2>
@@ -38,7 +38,7 @@
                         data-testimony="{{ $student->testimony }}"
                         @click="openModal($el.dataset.name, $el.dataset.status, $el.dataset.photo, $el.dataset.testimony)">
 
-                        {{-- Top Section: Image & Info --}}
+                        {{-- --- Top Section: Image & Info --- --}}
                         <div class="relative h-[280px] w-full flex-shrink-0">
                             @if ($student->profile_photo_url)
                                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="w-full h-full" />
@@ -48,10 +48,10 @@
                                 </div>
                             @endif
 
-                            {{-- Overlay Gradient --}}
+                            {{-- --- Overlay Gradient --- --}}
                             <div class="testimony-shade"></div>
 
-                            {{-- Text Content on Image --}}
+                            {{-- --- Text Content on Image --- --}}
                             <div class="testimony-card-info">
                                 <h3 class="testimony-card-name">
                                     {{ $student->full_titled_name }}</h3>
@@ -61,9 +61,9 @@
                             </div>
                         </div>
 
-                        {{-- Bottom Section: Testimony content --}}
+                        {{-- --- Bottom Section: Testimony content --- --}}
                         <div class="testimony-card-body flex-grow flex items-center justify-center bg-white rounded-b-[20px] relative group/text">
-                            {{-- Quote Icon --}}
+                            {{-- --- Quote Icon --- --}}
                             <div
                                 class="absolute -top-5 left-1/2 -translate-x-1/2 w-10 h-10 bg-uco-orange-500 rounded-xl shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] flex items-center justify-center text-white z-10 transition-transform duration-300 group-hover:scale-110">
                                 <i class="fa-solid fa-quote-left text-base"></i>

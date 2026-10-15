@@ -1,16 +1,16 @@
 {{-- --- Featured ventures carousel --- --}}
 <section class="max-w-[1600px] mx-auto px-8 md:px-12 py-12 space-y-16 relative overflow-hidden">
-    {{-- Background decorative glows --}}
+    {{-- --- Background decorative glows --- --}}
     <div class="uco-ambient-glow uco-ambient-glow--orange uco-floating-blob-slow -bottom-20 -right-20"></div>
 
-    {{-- Floating micro-shapes (Ada Kehidupan) --}}
+    {{-- --- Floating micro-shapes (Ada Kehidupan) --- --}}
     <div class="uco-floating-shape uco-floating-shape--plus top-[20%] left-[8%]"></div>
     <div class="uco-floating-shape uco-floating-shape--ring bottom-[20%] right-[10%]"></div>
     <div class="uco-floating-shape uco-floating-shape--dot top-[60%] left-[25%]"></div>
 
     <div class="reveal-on-scroll flex flex-col md:flex-row md:items-end justify-between gap-10 relative z-10">
         <div class="space-y-4 relative">
-            {{-- Outline background text --}}
+            {{-- --- Outline background text --- --}}
             <div class="uco-outline-bg-text uco-outline-bg-text--orange uco-parallax-text">VENTURES</div>
             <h2 class="text-5xl font-[900] text-gray-950 tracking-tighter uco-section-title relative z-10">
                 Featured <span class="uco-text-gradient-orange">Ventures</span>
@@ -35,7 +35,7 @@
                     <a href="{{ route('businesses.show', $featuredBusiness) }}"
                         class="reveal-on-scroll block uco-premium-card uco-premium-card--orange group rounded-[2rem] border border-gray-100 bg-white p-7 shadow-[0_20px_60px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:border-orange-100/70 w-full flex flex-col justify-between cursor-pointer">
 
-                        {{-- Top Part: Venture Info & Description --}}
+                        {{-- --- Top Part: Venture Info & Description --- --}}
                         <div>
                             <div class="flex items-start gap-4">
                                 <div
@@ -68,7 +68,7 @@
                             </p>
                         </div>
 
-                        {{-- Middle Part: Founder Profile & Academic Specs --}}
+                        {{-- --- Middle Part: Founder Profile & Academic Specs --- --}}
                         <div class="mt-6 border-t border-gray-50 pt-5">
                             <p class="text-[9px] font-black uppercase tracking-[0.25em] text-gray-400 mb-3">
                                 Owned By</p>
@@ -96,7 +96,7 @@
                             </div>
                         </div>
 
-                        {{-- Bottom Part: Visit CTA --}}
+                        {{-- --- Bottom Part: Visit CTA --- --}}
                         <div class="mt-6 pt-4 border-t border-gray-50 flex items-center justify-between">
                             <span
                                 class="inline-flex items-center gap-2 text-sm font-black text-uco-orange-600 group-hover:text-uco-orange-700 transition">

@@ -5,7 +5,7 @@
         x-data="userAdminList"
         @ajax-pagination.window="updateList($event.detail.url)">
         
-        {{-- Page Header --}}
+        {{-- --- Page Header --- --}}
         <x-ui.page-header badge="Admin Portal" title="User Management" subtitle="Manage student and alumni profiles synced from the central database.">
             <x-slot:actions>
                 <span class="inline-flex items-center justify-center gap-2.5 px-3 py-2 bg-uco-yellow-50 border border-uco-yellow-200 rounded-md shadow-[0_1px_2px_rgba(0,0,0,0.02)] select-none flex-grow sm:flex-initial">
@@ -37,7 +37,7 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- Statistics --}}
+        {{-- --- Statistics --- --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8"
              @ajax-update-stats.window="refreshStats()">
             <x-admin.stat-card class="delay-100">
@@ -58,12 +58,12 @@
             </x-admin.stat-card>
         </div>
 
-        {{-- Filters & Search --}}
+        {{-- --- Filters & Search --- --}}
         <div class="bg-white border border-gray-200 rounded-lg p-5 mb-8 shadow-sm reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
                 @submit.prevent="updateList()">
                 
-                {{-- Search & Reset Row --}}
+                {{-- --- Search & Reset Row --- --}}
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                     <div class="relative flex-1 w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
 
-                {{-- Filters Row --}}
+                {{-- --- Filters Row --- --}}
                 <div class="flex flex-wrap items-center gap-3">
                     <select id="sort_name" name="sort_name" @change="updateList()" class="flex-1 min-w-[130px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm">
                         <option value="">Sort Name: Default</option>
@@ -136,19 +136,18 @@
             </form>
         </div>
 
-        {{-- Flash messages removed - handled by global toasts --}}
         @if($errors->has('featured'))
             <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl">
                 {{ $errors->first('featured') }}
             </div>
         @endif
 
-        {{-- Users List Container --}}
+        {{-- --- Users List Container --- --}}
         <div id="users-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
             @include('users.partials.list')
         </div>
 
-        {{-- Import Modal --}}
+        {{-- --- Import Modal --- --}}
         <x-admin.import-modal title="Import Data" :action="route('users.import')" input-id="csv_file" name-id="file_name" />
 
         @include('partials.import-progress')

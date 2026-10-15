@@ -30,7 +30,7 @@ abstract class UserFormRequest extends FormRequest
     protected function profileRules(): array
     {
         return [
-            // Identity & Contact
+            // --- Identity and contact ---
             'prefix_title' => 'nullable|string|max:255',
             'suffix_title' => 'nullable|string|max:255',
             'personal_email' => 'nullable|email|max:255',
@@ -39,7 +39,7 @@ abstract class UserFormRequest extends FormRequest
             'whatsapp' => 'nullable|string|max:50',
             'linkedin' => 'nullable|string|max:255',
 
-            // Academic & Career
+            // --- Academic and career ---
             'nis' => 'nullable|string|max:255',
             'year_of_enrollment' => 'nullable|string|max:50',
             'graduate_year' => 'nullable|string|max:50',

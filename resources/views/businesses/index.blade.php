@@ -11,9 +11,9 @@
           ]))"
           x-init="viewType = $el.dataset.viewType || 'entrepreneur'; init()"
           @ajax-pagination.window="updateList($event.detail.url, true, true)">
-        {{-- Page Header --}}
+        {{-- --- Page Header --- --}}
         <section class="relative overflow-hidden uco-hero-section-bleed py-8 md:py-10 mb-8 reveal-on-scroll">
-            {{-- Background Effects with Gradient Mask --}}
+            {{-- --- Background Effects with Gradient Mask --- --}}
             <div class="absolute inset-0 overflow-hidden pointer-events-none uco-hero-mask">
                 <div class="uco-hero-mesh"></div>
             </div>
@@ -39,7 +39,7 @@
             </div>
         </section>
 
-        {{-- Entrepreneur / Intrapreneur Tabs (Tactile Glass Cards) --}}
+        {{-- --- Entrepreneur / Intrapreneur Tabs --- --}}
         <div class="grid grid-cols-2 sm:flex sm:justify-center gap-3 sm:gap-4 mb-8 reveal-on-scroll delay-100" :class="{ 'opacity-50 pointer-events-none': isLoading }">
             <!-- Entrepreneurs Card -->
             <a href="{{ route('businesses.index', ['view' => 'entrepreneur']) }}" 
@@ -118,12 +118,12 @@
             </a>
         </div>
 
-        {{-- Filters --}}
+        {{-- --- Filters --- --}}
         <div class="mb-8 reveal-on-scroll delay-150">
             <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" class="space-y-4" @submit.prevent="updateList()">
                 <input type="hidden" name="view" :value="viewType">
                 
-                {{-- Search & Reset Row --}}
+                {{-- --- Search & Reset Row --- --}}
                 <div class="flex items-center gap-3">
                     <div class="relative flex-1">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -151,7 +151,7 @@
                     </div>
                 </div>
 
-                {{-- Filters Row --}}
+                {{-- --- Filters Row --- --}}
                 <div class="flex flex-wrap items-center gap-3">
                     <select name="category" @change="submitDebounced()" class="flex-1 min-w-[150px] border-gray-300 bg-white rounded-md px-3 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                         <option value="">All Categories</option>
@@ -183,9 +183,9 @@
             </form>
         </div>
 
-        {{-- Scrollable Quick Tags for Categories --}}
+        {{-- --- Scrollable Quick Tags for Categories --- --}}
 
-        {{-- Grid --}}
+        {{-- --- Grid --- --}}
         @if(auth()->user()?->isAdmin() && $errors->has('featured'))
             <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm font-bold px-4 py-3 rounded-xl">
                 {{ $errors->first('featured') }}

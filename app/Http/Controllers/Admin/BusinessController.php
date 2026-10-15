@@ -23,17 +23,13 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function index(Request $request): View|Response
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
-        $viewType = $request->get('type', 'entrepreneur'); // 'entrepreneur' or 'intrapreneur'
+        $viewType = $request->get('type', 'entrepreneur');
         $status = $request->get('status');
         $search = $request->get('search');
         $featured = $request->get('featured');
 
         if ($viewType === 'intrapreneur') {
-            // ── Intrapreneur (Company) mode ──────────────────────────────────
+            // --- Intrapreneur (Company) mode ---
             $query = Company::with(['user', 'category']);
 
             $totalBusinesses = Company::count();
@@ -55,57 +51,35 @@ class BusinessController extends \App\Http\Controllers\Controller
                       });
                 });
             }
+        } else {
+            // --- Entrepreneur (Business) mode ---
+            $viewType = 'entrepreneur';
+            $query = Business::with(['user', 'category'])->entrepreneur();
 
-            $businesses = $query->latest()->paginate(10)->withQueryString();
+            $totalBusinesses = Business::entrepreneur()->count();
+            $pendingBusinesses = Business::entrepreneur()->where('approval_status', 'pending')->count();
+            $approvedBusinesses = Business::entrepreneur()->where('approval_status', 'approved')->count();
+            $rejectedBusinesses = Business::entrepreneur()->whereIn('approval_status', ['rejected', 'need_revision'])->count();
+            $featuredBusinessesCount = Business::entrepreneur()->where('is_featured', true)->count();
 
-            if ($request->ajax()) {
-                return response()
-                    ->view('businesses.admin.partials.list', compact('businesses', 'viewType'))
-                    ->header('Vary', 'X-Requested-With');
+            if ($status) {
+                $query->where('approval_status', $status);
             }
 
-            return view('businesses.admin.index', compact(
-                'businesses',
-                'viewType',
-                'status',
-                'search',
-                'featured',
-                'totalBusinesses',
-                'pendingBusinesses',
-                'approvedBusinesses',
-                'rejectedBusinesses',
-                'featuredBusinessesCount'
-            ));
-        }
+            if ($featured === 'yes') {
+                $query->where('is_featured', true);
+            } elseif ($featured === 'no') {
+                $query->where('is_featured', false);
+            }
 
-        // ── Entrepreneur (Business) mode ─────────────────────────────────────
-        $viewType = 'entrepreneur';
-        $query = Business::with(['user', 'category'])->entrepreneur();
-
-        // Calculate statistics
-        $totalBusinesses = Business::entrepreneur()->count();
-        $pendingBusinesses = Business::entrepreneur()->where('approval_status', 'pending')->count();
-        $approvedBusinesses = Business::entrepreneur()->where('approval_status', 'approved')->count();
-        $rejectedBusinesses = Business::entrepreneur()->whereIn('approval_status', ['rejected', 'need_revision'])->count();
-        $featuredBusinessesCount = Business::entrepreneur()->where('is_featured', true)->count();
-
-        if ($status) {
-            $query->where('approval_status', $status);
-        }
-
-        if ($featured === 'yes') {
-            $query->where('is_featured', true);
-        } elseif ($featured === 'no') {
-            $query->where('is_featured', false);
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhereHas('user', function ($uq) use ($search) {
-                      $uq->where('name', 'LIKE', "%{$search}%");
-                  });
-            });
+            if ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                      ->orWhereHas('user', function ($uq) use ($search) {
+                          $uq->where('name', 'LIKE', "%{$search}%");
+                      });
+                });
+            }
         }
 
         $businesses = $query->latest()->paginate(10)->withQueryString();
@@ -135,24 +109,8 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function updateStatus(Request $request, Business $business): RedirectResponse
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
-        $this->validate($request, [
-            'status' => 'required|in:approved,rejected,need_revision,pending',
-            'rejection_reason' => 'required_if:status,rejected,need_revision',
-        ]);
-
-        $status = $request->input('status');
-        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
-
-        $business->fill([
-            'approval_status' => $status,
-            'rejection_reason' => $rejectionReason,
-            'is_visible' => $status === 'approved',
-        ]);
-        $business->save();
+        $status = $this->validatedStatus($request);
+        $business->applyApprovalStatus($status, $request->input('rejection_reason'));
 
         return back()->with('success', 'Business status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
@@ -162,24 +120,8 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function updateCompanyStatus(Request $request, Company $company): RedirectResponse
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
-        $this->validate($request, [
-            'status' => 'required|in:approved,rejected,need_revision,pending',
-            'rejection_reason' => 'required_if:status,rejected,need_revision',
-        ]);
-
-        $status = $request->input('status');
-        $rejectionReason = in_array($status, ['rejected', 'need_revision']) ? $request->input('rejection_reason') : null;
-
-        $company->fill([
-            'approval_status' => $status,
-            'rejection_reason' => $rejectionReason,
-            'is_visible' => $status === 'approved',
-        ]);
-        $company->save();
+        $status = $this->validatedStatus($request);
+        $company->applyApprovalStatus($status, $request->input('rejection_reason'));
 
         return back()->with('success', 'Company status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
@@ -189,10 +131,6 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function approve(Business $business): RedirectResponse
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
         $business->is_visible = true;
         $business->save();
 
@@ -204,40 +142,16 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function toggleFeatured(Request $request, Business $business): RedirectResponse|JsonResponse
     {
-        if (! $this->currentUserIsAdmin()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => 'Unauthorized.'], 403);
-            }
-            abort(403);
-        }
-
         if ($business->approval_status !== 'approved') {
-            $msg = 'Only approved businesses can be featured.';
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => false, 'message' => $msg], 422);
-            }
-            return back()->withErrors(['approval' => $msg]);
+            return $this->reply($request, 'Only approved businesses can be featured.', false);
         }
 
-        if ($business->is_featured) {
-            $business->is_featured = false;
-            $business->save();
-            $msg = "\"{$business->name}\" removed from featured.";
-            if ($request->ajax() || $request->wantsJson()) {
-                return new JsonResponse(['success' => true, 'message' => $msg]);
-            }
-
-            return back()->with('success', $msg);
-        }
-
-        $business->is_featured = true;
+        $business->is_featured = ! $business->is_featured;
         $business->save();
-        $msg = "\"{$business->name}\" is now featured.";
-        if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse(['success' => true, 'message' => $msg]);
-        }
 
-        return back()->with('success', $msg);
+        return $this->reply($request, $business->is_featured
+            ? "\"{$business->name}\" is now featured."
+            : "\"{$business->name}\" removed from featured.");
     }
 
     /**
@@ -245,10 +159,6 @@ class BusinessController extends \App\Http\Controllers\Controller
      */
     public function destroy(Business $business): RedirectResponse
     {
-        if (! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
-
         $business->delete();
 
         return redirect()->route('businesses.index')
@@ -301,5 +211,29 @@ class BusinessController extends \App\Http\Controllers\Controller
 
             return back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    // --- Helpers ---
+
+    private function validatedStatus(Request $request): string
+    {
+        $this->validate($request, [
+            'status' => 'required|in:approved,rejected,need_revision,pending',
+            'rejection_reason' => 'required_if:status,rejected,need_revision',
+        ]);
+
+        return $request->input('status');
+    }
+
+    /**
+     * JSON for the list's fetch calls, a redirect with a flash message otherwise.
+     */
+    private function reply(Request $request, string $message, bool $success = true): RedirectResponse|JsonResponse
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            return new JsonResponse(['success' => $success, 'message' => $message], $success ? 200 : 422);
+        }
+
+        return $success ? back()->with('success', $message) : back()->withErrors(['approval' => $message]);
     }
 }

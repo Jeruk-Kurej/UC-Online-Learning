@@ -53,7 +53,6 @@ class UcTestimonyController extends Controller
             ->orderByDesc('created_at')
             ->paginate(12);
 
-        // Fetch stats
         $totalTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->count();
         $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured_testimony', true)->count();
 

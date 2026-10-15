@@ -43,14 +43,4 @@ class BusinessPolicy
     {
         return $business->canBeManagedBy($user);
     }
-
-    public function restore(User $user, Business $business): bool
-    {
-        return $user->role === 'admin';
-    }
-
-    public function forceDelete(User $user, Business $business): bool
-    {
-        return $user->role === 'admin';
-    }
 }

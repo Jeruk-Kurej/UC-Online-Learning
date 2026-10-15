@@ -1,4 +1,4 @@
-{{-- ======================================== COMPONENT: AUTH SESSION STATUS ======================================== --}}
+{{-- --- Auth session status --- --}}
 @props(['status'])
 
 @if ($status)

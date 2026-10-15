@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="w-full max-w-[1600px] 2xl:max-w-[1720px] mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {{-- Page Header --}}
+        {{-- --- Page Header --- --}}
         <div class="mb-12 reveal-on-scroll">
             <h1 class="text-4xl font-extrabold text-gray-900 tracking-tight mb-2">My Business & Career Portfolio</h1>
             <p class="text-lg text-gray-500 max-w-3xl leading-relaxed">
@@ -8,7 +8,7 @@
             </p>
         </div>
 
-        {{-- ── SECTION 1: MY VENTURES (ENTREPRENEURSHIP) ── --}}
+        {{-- --- Section 1: my ventures (entrepreneurship) --- --}}
         <div class="mb-16">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b pb-4 border-gray-100 reveal-on-scroll">
                 <div>
@@ -32,9 +32,9 @@
                         <a href="{{ route('businesses.show', $b) }}" 
                            class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll">
                             
-                            {{-- Card Header --}}
+                            {{-- --- Card Header --- --}}
                             <div class="flex items-start gap-4">
-                                {{-- Logo Thumbnail --}}
+                                {{-- --- Logo Thumbnail --- --}}
                                 <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
                                     @if($b->logo_thumb_url)
                                         <img src="{{ $b->logo_thumb_url }}" class="w-full h-full object-contain">
@@ -45,7 +45,7 @@
                                     @endif
                                 </div>
                                 
-                                {{-- Titles --}}
+                                {{-- --- Titles --- --}}
                                 <div class="flex-1 min-w-0 text-left">
                                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-2 leading-tight mb-1">{{ $b->name }}</h3>
                                     <span class="inline-block px-2.5 py-0.5 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[9px] font-bold uppercase tracking-wider">
@@ -54,16 +54,16 @@
                                 </div>
                             </div>
 
-                            {{-- Badges Row --}}
+                            {{-- --- Badges Row --- --}}
                             <div class="flex items-center gap-2 mt-4">
-                                {{-- Status Badge --}}
+                                {{-- --- Status Badge --- --}}
                                 <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm
                                     {{ $b->status === 'approved' ? 'bg-green-500 text-white' : ($b->status === 'rejected' ? 'bg-red-500 text-white' : 'bg-uco-orange-500 text-white') }}">
                                     <i class="bi {{ $b->status === 'approved' ? 'bi-check-circle-fill' : ($b->status === 'rejected' ? 'bi-x-circle-fill' : 'bi-hourglass-split') }} text-[9px]"></i>
                                     {{ $b->status_label }}
                                 </span>
 
-                                {{-- Featured Badge --}}
+                                {{-- --- Featured Badge --- --}}
                                 @if($b->is_featured && $b->status === 'approved')
                                     <span class="bg-yellow-400 text-yellow-900 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-lg shadow-sm flex items-center gap-1.5">
                                         <i class="bi bi-star-fill text-[9px]"></i> Featured
@@ -71,12 +71,12 @@
                                 @endif
                             </div>
 
-                            {{-- Description --}}
+                            {{-- --- Description --- --}}
                             <p class="text-sm text-gray-500 line-clamp-3 my-4 flex-1 italic text-left leading-relaxed">
                                 {{ $b->description ?: 'No description provided' }}
                             </p>
 
-                            {{-- Rejection / Revision reason --}}
+                            {{-- --- Rejection / Revision reason --- --}}
                             @if(in_array($b->status, ['rejected', 'need_revision']) && $b->rejection_reason)
                                 <div class="mb-4 p-3 {{ $b->status === 'rejected' ? 'bg-red-50 border-red-100' : 'bg-blue-50 border-blue-100' }} border rounded-xl text-left">
                                     <p class="text-[10px] font-bold {{ $b->status === 'rejected' ? 'text-red-600' : 'text-blue-600' }} uppercase tracking-wider mb-1">
@@ -86,7 +86,7 @@
                                 </div>
                             @endif
 
-                            {{-- Arrow link footer --}}
+                            {{-- --- Arrow link footer --- --}}
                             <div class="flex items-center justify-end pt-4 border-t border-gray-50 mt-auto">
                                 <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
                                     <i class="bi bi-arrow-right-circle-fill text-xl"></i>
@@ -108,7 +108,7 @@
             @endif
         </div>
 
-        {{-- ── SECTION 2: MY EMPLOYMENT CAREER (INTRAPRENEURSHIP) ── --}}
+        {{-- --- Section 2: my employment career (intrapreneurship) --- --}}
         <div>
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 border-b pb-4 border-gray-100 reveal-on-scroll">
                 <div>
@@ -132,9 +132,9 @@
                         <a href="{{ route('intrapreneurs.show', $c) }}" 
                            class="group bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:border-uco-orange-300 transition-all duration-500 overflow-hidden flex flex-col p-6 reveal-on-scroll">
                             
-                            {{-- Card Header --}}
+                            {{-- --- Card Header --- --}}
                             <div class="flex items-start gap-4">
-                                {{-- Logo Thumbnail --}}
+                                {{-- --- Logo Thumbnail --- --}}
                                 <div class="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden shadow-sm">
                                     @if($c->logo_thumb_url)
                                         <img src="{{ $c->logo_thumb_url }}" class="w-full h-full object-contain">
@@ -145,7 +145,7 @@
                                     @endif
                                 </div>
                                 
-                                {{-- Titles --}}
+                                {{-- --- Titles --- --}}
                                 <div class="flex-1 min-w-0 text-left">
                                     <h3 class="text-lg font-bold text-gray-900 group-hover:text-uco-orange-600 transition-colors line-clamp-2 leading-tight mb-1">{{ $c->name }}</h3>
                                     <span class="inline-block px-2.5 py-0.5 rounded-lg bg-soft-gray-100 text-soft-gray-600 text-[9px] font-bold uppercase tracking-wider">
@@ -154,16 +154,16 @@
                                 </div>
                             </div>
 
-                            {{-- Badges Row --}}
+                            {{-- --- Badges Row --- --}}
                             <div class="flex items-center gap-2 mt-4">
-                                {{-- Status Badge --}}
+                                {{-- --- Status Badge --- --}}
                                 <span class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm bg-emerald-500 text-white">
                                     <i class="bi bi-check-circle-fill text-[9px]"></i>
                                     Active
                                 </span>
                             </div>
 
-                            {{-- Metadata --}}
+                            {{-- --- Metadata --- --}}
                             <div class="space-y-1.5 my-4 text-left flex-1">
                                 <p class="text-sm font-extrabold text-slate-700 flex items-center gap-1.5">
                                     <i class="bi bi-person-badge text-slate-400"></i>
@@ -183,7 +183,7 @@
                                 @endif
                             </div>
 
-                            {{-- Arrow link footer --}}
+                            {{-- --- Arrow link footer --- --}}
                             <div class="flex items-center justify-end pt-4 border-t border-gray-50 mt-auto">
                                 <div class="text-uco-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all">
                                     <i class="bi bi-arrow-right-circle-fill text-xl"></i>

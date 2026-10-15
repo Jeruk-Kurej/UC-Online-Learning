@@ -15,7 +15,7 @@
             <div class="flex-1 text-center sm:text-left pt-2">
                 <h1 class="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-1">{{ $user->name }}</h1>
 
-                {{-- Edit Button (Admin only) --}}
+                {{-- --- Edit Button (Admin only) --- --}}
                 @if(Auth::check() && Auth::user()->isAdmin())
                     <div class="mt-3">
                         <a href="{{ route('users.edit', $user) }}" class="btn-uco btn-uco-secondary">
@@ -25,7 +25,7 @@
                     </div>
                 @endif
 
-                {{-- Collab Button --}}
+                {{-- --- Collab Button --- --}}
                 @if(Auth::check() && Auth::id() !== $user->id)
                     <div class="mt-3">
                         @if($collabStatus === 'accepted')

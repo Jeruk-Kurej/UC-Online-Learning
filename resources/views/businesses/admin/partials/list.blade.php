@@ -20,7 +20,7 @@
         <tbody class="divide-y">
             @forelse($businesses as $b)
                 <tr class="hover:bg-orange-50/30 transition">
-                    {{-- Business / Company name + logo --}}
+                    {{-- --- Business / Company name + logo --- --}}
                     <td class="px-4 py-3 max-w-[220px]">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-sm flex items-center justify-center flex-shrink-0 overflow-hidden">
@@ -41,7 +41,7 @@
                         </div>
                     </td>
 
-                    {{-- Owner --}}
+                    {{-- --- Owner --- --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <div class="flex items-center gap-2">
                             <div class="w-6 h-6 rounded-sm overflow-hidden flex-shrink-0">
@@ -57,7 +57,7 @@
                         </div>
                     </td>
 
-                    {{-- Location (entrepreneur) / Position (intrapreneur) --}}
+                    {{-- --- Location (entrepreneur) / Position (intrapreneur) --- --}}
                     <td class="px-4 py-3 max-w-[160px]">
                         @if(($viewType ?? 'entrepreneur') === 'intrapreneur')
                             <div class="min-w-0">
@@ -71,12 +71,12 @@
                         @endif
                     </td>
 
-                    {{-- Approval Status --}}
+                    {{-- --- Approval Status --- --}}
                     <td class="px-4 py-3">
                         <x-admin.status-badge :item="$b" />
                     </td>
 
-                    {{-- Visible dot --}}
+                    {{-- --- Visible dot --- --}}
                     <td class="px-4 py-3 text-center">
                         <div class="relative group flex-shrink-0 inline-block">
                             <span class="w-2.5 h-2.5 rounded-full inline-block {{ $b->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
@@ -87,7 +87,7 @@
                         </div>
                     </td>
 
-                    {{-- Featured (entrepreneur only) --}}
+                    {{-- --- Featured (entrepreneur only) --- --}}
                     @if(($viewType ?? 'entrepreneur') === 'entrepreneur')
                         <td class="px-4 py-3 text-center">
                             <form action="{{ route('businesses.toggle-featured', $b) }}" method="POST" class="inline-block toggle-featured-form">
@@ -112,19 +112,19 @@
                         </td>
                     @endif
 
-                    {{-- Actions --}}
+                    {{-- --- Actions --- --}}
                     <td class="px-4 py-3 whitespace-nowrap w-px">
                         <div class="flex items-center justify-end gap-1.5">
                             @if(($viewType ?? 'entrepreneur') === 'intrapreneur')
-                                {{-- View intrapreneur profile --}}
+                                {{-- --- View intrapreneur profile --- --}}
                                 <x-admin.icon-action :href="route('intrapreneurs.show', $b)" icon="bi-eye-fill" tip="View Profile" />
-                                {{-- Change status (modal) --}}
+                                {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}" />
                             @else
-                                {{-- View entrepreneur business --}}
+                                {{-- --- View entrepreneur business --- --}}
                                 <x-admin.icon-action :href="route('businesses.show', $b)" icon="bi-eye-fill" tip="View Details" />
-                                {{-- Change status (modal) --}}
+                                {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}" />
                             @endif

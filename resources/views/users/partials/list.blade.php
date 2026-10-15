@@ -1,4 +1,4 @@
-{{-- Users Table --}}
+{{-- --- Users Table --- --}}
 <div class="overflow-x-auto bg-white border rounded-xl shadow-sm reveal-on-scroll delay-[350ms]">
     <table class="w-full text-left">
         <thead class="bg-gray-50 border-b">
@@ -16,7 +16,7 @@
             @forelse($users as $user)
                 <tr class="hover:bg-orange-50/30 transition">
 
-                    {{-- Name + Avatar --}}
+                    {{-- --- Name + Avatar --- --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <div class="flex items-center gap-2.5">
                             <div class="w-8 h-8 rounded-sm overflow-hidden flex-shrink-0">
@@ -37,27 +37,27 @@
                         </div>
                     </td>
 
-                    {{-- Email (truncated) --}}
+                    {{-- --- Email (truncated) --- --}}
                     <td class="px-4 py-3 max-w-[180px]">
                         <span class="block text-sm text-gray-500 truncate" title="{{ $user->email }}">{{ $user->email }}</span>
                     </td>
 
-                    {{-- Student Status Badge --}}
+                    {{-- --- Student Status Badge --- --}}
                     <td class="px-4 py-3">
                         <span class="px-2 py-1 rounded-md text-[10px] font-bold uppercase {{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
                             {{ $user->student_status }}
                         </span>
                     </td>
 
-                    {{-- Major (truncated) --}}
+                    {{-- --- Major (truncated) --- --}}
                     <td class="px-4 py-3 max-w-[120px]">
                         <span class="block text-sm text-gray-500 truncate" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
                     </td>
 
-                    {{-- Flags: Visible dot + Featured star (combined column) --}}
+                    {{-- --- Flags: Visible dot + Featured star (combined column) --- --}}
                     <td class="px-4 py-3">
                         <div class="flex items-center justify-center gap-2">
-                            {{-- Visible dot --}}
+                            {{-- --- Visible dot --- --}}
                             <div class="relative group flex-shrink-0">
                                 <span class="w-2.5 h-2.5 rounded-full inline-block {{ $user->is_visible ? 'bg-emerald-400' : 'bg-red-400' }}"></span>
                                 <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 z-30 flex flex-col items-center">
@@ -66,7 +66,7 @@
                                 </div>
                             </div>
 
-                            {{-- Featured star toggle --}}
+                            {{-- --- Featured star toggle --- --}}
                             <form action="{{ route('users.toggle-featured', $user) }}" method="POST">
                                 @csrf
                                 <button type="submit"
@@ -89,23 +89,23 @@
                         </div>
                     </td>
 
-                    {{-- Businesses count --}}
+                    {{-- --- Businesses count --- --}}
                     <td class="px-4 py-3 text-center">
                         <span class="text-sm font-bold text-gray-700">{{ $user->businesses_count }}</span>
                     </td>
 
-                    {{-- Actions: icon-only buttons with tooltips --}}
+                    {{-- --- Actions: icon-only buttons with tooltips --- --}}
                     <td class="px-4 py-3 whitespace-nowrap w-px">
                         <div class="flex items-center justify-end gap-1.5">
-                            {{-- View --}}
+                            {{-- --- View --- --}}
                             <x-admin.icon-action :href="route('users.show', $user)" icon="bi-eye-fill" tip="View" />
 
                             @if(auth()->user()?->isAdmin())
-                                {{-- Edit --}}
+                                {{-- --- Edit --- --}}
                                 <x-admin.icon-action :href="route('users.edit', $user)" variant="secondary" icon="bi-pencil-fill" tip="Edit" />
 
                                 @if(auth()->id() !== $user->id)
-                                    {{-- Disable / Enable --}}
+                                    {{-- --- Disable / Enable --- --}}
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
                                         @csrf
                                         <x-admin.icon-action type="submit" :variant="$user->is_visible ? 'danger' : 'success'"

@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Intervention\Image\ImageManager;
@@ -46,7 +45,6 @@ class MigrateUserDocsToStorage extends Command
 
             $updated = false;
 
-            // Process activities_doc_url
             if (!empty($user->activities_doc_url)) {
                 $newUrls = $this->processUrls($user->activities_doc_url, "users/{$user->id}/activities", $manager, $dryRun);
                 if ($newUrls !== (is_array($user->activities_doc_url) ? implode(';', $user->activities_doc_url) : $user->activities_doc_url)) {
@@ -55,7 +53,6 @@ class MigrateUserDocsToStorage extends Command
                 }
             }
 
-            // Process expertise_certification_url
             if (!empty($user->expertise_certification_url)) {
                 $newUrls = $this->processUrls($user->expertise_certification_url, "users/{$user->id}/certs", $manager, $dryRun);
                 if ($newUrls !== (is_array($user->expertise_certification_url) ? implode(';', $user->expertise_certification_url) : $user->expertise_certification_url)) {
@@ -83,7 +80,6 @@ class MigrateUserDocsToStorage extends Command
         $processedUrls = [];
 
         foreach ($urls as $url) {
-            // Already on Cloudinary? Keep it.
             if (str_contains($url, 'cloudinary.com')) {
                 $this->line("  [Skip] Already on Cloudinary: {$url}");
                 $processedUrls[] = $url;
@@ -94,11 +90,10 @@ class MigrateUserDocsToStorage extends Command
             $isGoogleDrive = false;
             $isLocalHost = false;
 
-            // Handle localhost URLs that were already processed
+            // --- Localhost URLs left by an earlier run ---
             if (str_contains($url, '127.0.0.1') || str_contains($url, env('APP_URL'))) {
                 $isLocalHost = true;
-                // e.g. http://127.0.0.1:8000/storage/users/670113/activities/mGlogV9pSIYoK8Knmw1B.webp
-                $path = parse_url($url, PHP_URL_PATH); // /storage/users/...
+                $path = parse_url($url, PHP_URL_PATH);
                 $localPath = str_replace('/storage/', '', $path);
                 $fullLocalPath = storage_path('app/public/' . $localPath);
                 
@@ -109,7 +104,6 @@ class MigrateUserDocsToStorage extends Command
                     $isImage = in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'webp', 'gif']);
                     $isPdf = strtolower($extension) === 'pdf';
                     
-                    // We already converted these, so we just upload them
                     $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
                     file_put_contents($tempFile, $contents);
                     $resourceType = $isImage || $isPdf ? 'image' : 'raw';
@@ -130,14 +124,13 @@ class MigrateUserDocsToStorage extends Command
 
             if (!$response->ok() || strlen($response->body()) < 100) {
                 $this->error("  [Error] Failed to download or file too small: {$downloadUrl}");
-                $processedUrls[] = $url; // keep original if failed
+                $processedUrls[] = $url;
                 continue;
             }
 
             $contents = $response->body();
             $contentType = $response->header('Content-Type') ?? 'application/octet-stream';
             
-            // Refine content type for Google Drive generic binary type
             if ($isGoogleDrive && str_contains(strtolower($contentType), 'application/octet-stream')) {
                 $finfo = new \finfo(FILEINFO_MIME_TYPE);
                 $detectedType = $finfo->buffer($contents);
@@ -162,7 +155,6 @@ class MigrateUserDocsToStorage extends Command
                     $this->line("  [Process] Converted to WEBP");
                 } catch (\Exception $e) {
                     $this->error("  [Error] Failed to process image: {$e->getMessage()}");
-                    // fallback to original
                     $extension = 'jpg'; 
                 }
             } else {
@@ -197,14 +189,9 @@ class MigrateUserDocsToStorage extends Command
                 $newUrl = $uploadResult['secure_url'];
                 $processedUrls[] = $newUrl;
                 $this->info("  [Uploaded] {$newUrl}");
-                
-                // Do not delete local file yet to prevent data loss if DB update fails
-                // if (isset($isLocalHost) && $isLocalHost && isset($fullLocalPath) && file_exists($fullLocalPath)) {
-                //     unlink($fullLocalPath);
-                // }
             } catch (\Exception $e) {
                 $this->error("  [Error] Cloudinary upload failed: {$e->getMessage()}");
-                $processedUrls[] = $url; // keep original if failed
+                $processedUrls[] = $url;
             } finally {
                 if (isset($tempFile) && file_exists($tempFile)) unlink($tempFile);
             }

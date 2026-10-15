@@ -24,7 +24,7 @@ class Company extends Model
         'city',
         'logo_url',
 
-        // Platform management
+        // --- Platform management ---
         'is_visible',
         'approval_status',
         'rejection_reason',
@@ -39,7 +39,7 @@ class Company extends Model
         ];
     }
 
-    // ─── Accessors ───
+    // --- Accessors ---
 
     public function getAchievementsListAttribute(): array
     {
@@ -65,15 +65,14 @@ class Company extends Model
         return $items;
     }
 
-    // ─── Public people ───
-    // A work profile belongs to one person and is shown or hidden with them.
+    // --- Public people: a work profile is shown or hidden with its person ---
 
     public function getPublicOwnerAttribute(): ?User
     {
         return $this->user;
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function user()
     {

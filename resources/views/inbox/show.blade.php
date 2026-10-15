@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="inbox-detail-wrapper max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        {{-- Top Back Button Bar --}}
+        {{-- --- Top Back Button Bar --- --}}
         <div class="mb-6 flex items-center justify-between flex-wrap gap-4">
             <a href="{{ route('inbox.index') }}" 
                class="group inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-gray-900 border border-gray-200 hover:border-gray-900 text-gray-700 hover:text-white rounded-xl font-medium text-sm shadow-sm hover:shadow-md transition-all duration-200">
@@ -14,10 +14,10 @@
             </span>
         </div>
 
-        {{-- Main Container Card --}}
+        {{-- --- Main Container Card --- --}}
         <div class="rounded-xl border border-gray-200 bg-white p-6 md:p-8 shadow-sm space-y-6">
             
-            {{-- Primary Message Subject (H1 Title) --}}
+            {{-- --- Primary Message Subject (H1 Title) --- --}}
             <div class="border-b border-gray-100 pb-5">
                 <h1 class="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight mb-2">
                     {{ $message->subject }}
@@ -27,7 +27,7 @@
                 </div>
             </div>
 
-            {{-- Sender Info Card --}}
+            {{-- --- Sender Info Card --- --}}
             <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 md:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div class="flex items-center gap-3.5">
                     @if($message->sender)
@@ -68,12 +68,12 @@
                 @endif
             </div>
 
-            {{-- Message Body --}}
+            {{-- --- Message Body --- --}}
             <div class="text-base text-gray-700 leading-relaxed font-normal px-1 py-2 whitespace-pre-line">
                 {!! nl2br(e($message->body)) !!}
             </div>
 
-            {{-- Collaboration Invitation Actions Box --}}
+            {{-- --- Collaboration Invitation Actions Box --- --}}
             @if($message->type === 'collab_invite')
                 <div class="rounded-xl border border-sky-200 bg-sky-50 p-6 space-y-4">
                     <div class="flex items-center gap-3">

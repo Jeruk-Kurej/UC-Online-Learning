@@ -16,18 +16,18 @@
     </div>
 
     <div class="bg-white border border-gray-100 rounded-2xl p-6 md:p-8 shadow-[0_8px_30px_rgb(0,0,0,0.02)] hover:border-orange-200 hover:shadow-lg transition-all duration-300 relative overflow-hidden">
-        {{-- Background Decorative Quote Mark --}}
+        {{-- --- Background Decorative Quote Mark --- --}}
         <div class="absolute -right-4 -bottom-10 opacity-5 pointer-events-none select-none">
             <i class="bi bi-quote text-[200px] text-[#f7931e] leading-none"></i>
         </div>
 
         <div class="relative z-10 space-y-6">
-            {{-- Quote Text --}}
+            {{-- --- Quote Text --- --}}
             <p class="text-xs sm:text-sm text-gray-600 font-normal leading-relaxed relative">
                 "{{ $user->testimony ?: 'Universitas Ciputra Online Learning helps me develop business capabilities and entrepreneurial mindset while managing my day-to-day operations.' }}"
             </p>
 
-            {{-- Student Profile Signature Footer --}}
+            {{-- --- Student Profile Signature Footer --- --}}
             <div class="flex items-center gap-3.5 pt-4 border-t border-gray-100">
                 @if($user->profile_photo_url)
                     <img src="{{ $user->profile_photo_url }}" class="w-10 h-10 rounded-full object-cover border-2 border-orange-400 shadow-sm">

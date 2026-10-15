@@ -15,6 +15,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -24,6 +25,8 @@ use Illuminate\View\View;
  */
 class BusinessController extends Controller
 {
+    use Concerns\ResolvesRegionNames;
+
     /**
      * Display a listing of the businesses.
      */
@@ -80,7 +83,6 @@ class BusinessController extends Controller
 
         $availableProvinces = $locationQuery->whereNotNull('province')->distinct()->pluck('province')->sort();
 
-        // Dynamic city list based on selected province
         $cityQuery = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())->whereNotNull('city');
         $selectedProvince = $request->get('province');
         if ($selectedProvince) {
@@ -88,7 +90,7 @@ class BusinessController extends Controller
         }
         $availableCities = $cityQuery->distinct()->pluck('city')->sort();
 
-        // Mapping for Alpine.js dependent dropdown
+        // --- Province → city map for the dependent dropdown ---
         $provinceCityMap = ($viewType === 'intrapreneur' ? Company::visible() : Business::visible())
             ->whereNotNull('province')
             ->whereNotNull('city')
@@ -101,7 +103,6 @@ class BusinessController extends Controller
 
         $featuredBusinessCount = Business::where('is_featured', true)->count();
 
-        // If admin, also get count of businesses waiting for approval
         $pendingCount = 0;
         if ($this->currentUserIsAdmin()) {
             $pendingCount = Business::where('is_visible', false)->count();
@@ -172,7 +173,6 @@ class BusinessController extends Controller
     {
         $business->load(['user', 'category', 'products', 'legalDocuments', 'certifications', 'members']);
 
-        // Security check: Check if visible or authorized
         $isOwner = auth()->id() === $business->user_id;
         $isCoOwner = auth()->check() && $business->members->contains(auth()->id());
         $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($business->user) === 'accepted';
@@ -261,71 +261,31 @@ class BusinessController extends Controller
     {
         $this->authorize('update', $business);
 
-        $validated = $request->validated();
-        $data = $validated;
+        $data = $request->businessData();
 
-        // Security: only admins can change visibility or featured status or primary owner
+        // --- Only admins may change visibility, featured status or the primary owner ---
         if (! $this->currentUserIsAdmin()) {
             unset($data['is_visible'], $data['is_featured'], $data['user_id']);
         }
 
-        if (isset($validated['business_type_id'])) {
-            $data['category_id'] = $validated['business_type_id'];
-            unset($data['business_type_id']);
-        }
-        if (isset($validated['business_mode'])) {
-            $data['offering_type'] = $validated['business_mode'];
-            unset($data['business_mode']);
-        }
-        if (isset($validated['phone'])) {
-            $data['phone_number'] = $validated['phone'];
-            unset($data['phone']);
-        }
-        if (isset($validated['whatsapp_number'])) {
-            $data['whatsapp'] = $validated['whatsapp_number'];
-            unset($data['whatsapp_number']);
-        }
-        if (isset($validated['instagram_handle'])) {
-            $data['instagram'] = $validated['instagram_handle'];
-            unset($data['instagram_handle']);
-        }
         if ($this->currentUserIsAdmin() && $request->has('is_featured')) {
             $data['is_featured'] = $request->boolean('is_featured');
         }
 
-        // Handle logo deletion
         if ($request->boolean('delete_logo')) {
             $business->deleteFileFromStorage($business->getRawOriginal('logo_url'));
             $data['logo_url'] = null;
         }
 
-        // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
             $business->deleteFileFromStorage($business->getRawOriginal('logo_url'));
-
-            /** @var \Illuminate\Http\UploadedFile $logoFile */
-            $logoFile = $request->file('logo');
-            app(ImageOptimizerService::class)->optimizeUploadedFile($logoFile);
-            $path = $logoFile->store('logos', 'public');
-            $data['logo_url'] = $path;
+            $data['logo_url'] = $this->storeLogo($request->file('logo'));
         }
 
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $data['province'] = Province::find($data['province'])?->name ?? $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $data['city'] = Regency::find($data['city'])?->name ?? $data['city'];
-        }
-
-        $business->fill($data);
+        $business->fill($this->resolveRegionNames($data));
         $business->save();
 
-        // Sync members if provided
-        if ($request->has('owner_ids')) {
-            $ownerIds = (array) $request->input('owner_ids');
-            $business->members()->sync($ownerIds);
-        }
+        $this->syncMembers($request, $business);
 
         return redirect()->route('businesses.show', $business)->with('success', 'Business updated successfully!');
     }
@@ -347,65 +307,45 @@ class BusinessController extends Controller
      */
     public function store(StoreBusinessRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
-        $data = $validated;
-
-        if (isset($validated['business_mode'])) {
-            $data['offering_type'] = $validated['business_mode'];
-            unset($data['business_mode']);
-        }
-        if (isset($validated['phone'])) {
-            $data['phone_number'] = $validated['phone'];
-            unset($data['phone']);
-        }
-        if (isset($validated['whatsapp_number'])) {
-            $data['whatsapp'] = $validated['whatsapp_number'];
-            unset($data['whatsapp_number']);
-        }
-        if (isset($validated['instagram_handle'])) {
-            $data['instagram'] = $validated['instagram_handle'];
-            unset($data['instagram_handle']);
-        }
-
+        $data = $request->businessData();
         $data['user_id'] = Auth::id();
         $data['type'] = 'entrepreneur';
 
-        // Student-created businesses are invisible until approved by admin
+        // --- Businesses created by students stay hidden until an admin approves them ---
         if (! $this->currentUserIsAdmin()) {
             $data['is_visible'] = false;
         } else {
             $data['is_visible'] = true;
         }
 
-        // Handle file uploads (Logo)
         if ($request->hasFile('logo')) {
-            /** @var \Illuminate\Http\UploadedFile $logoFile */
-            $logoFile = $request->file('logo');
-            app(ImageOptimizerService::class)->optimizeUploadedFile($logoFile);
-            $path = $logoFile->store('logos', 'public');
-            $data['logo_url'] = $path;
+            $data['logo_url'] = $this->storeLogo($request->file('logo'));
         }
 
-        // Resolve Province and City names if IDs are sent
-        if (isset($data['province']) && is_numeric($data['province'])) {
-            $data['province'] = Province::find($data['province'])?->name ?? $data['province'];
-        }
-        if (isset($data['city']) && is_numeric($data['city'])) {
-            $data['city'] = Regency::find($data['city'])?->name ?? $data['city'];
-        }
+        $business = Business::create($this->resolveRegionNames($data));
 
-        $business = Business::create($data);
-
-        // Sync members if provided
-        if ($request->has('owner_ids')) {
-            $ownerIds = (array) $request->input('owner_ids');
-            $business->members()->sync($ownerIds);
-        }
+        $this->syncMembers($request, $business);
 
         $message = $this->currentUserIsAdmin()
             ? 'Business created successfully!'
             : 'Business submitted for approval! An admin will review it soon.';
 
         return redirect()->route('businesses.my')->with('success', $message);
+    }
+
+    // --- Form helpers ---
+
+    private function storeLogo(UploadedFile $file): string
+    {
+        app(ImageOptimizerService::class)->optimizeUploadedFile($file);
+
+        return $file->store('logos', 'public');
+    }
+
+    private function syncMembers(Request $request, Business $business): void
+    {
+        if ($request->has('owner_ids')) {
+            $business->members()->sync((array) $request->input('owner_ids'));
+        }
     }
 }

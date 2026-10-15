@@ -21,7 +21,7 @@ class Category extends Model
         });
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function businesses()
     {

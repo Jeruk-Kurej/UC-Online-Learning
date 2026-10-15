@@ -17,12 +17,10 @@ class CollabController extends Controller
     {
         $sender = Auth::user();
 
-        // Prevent self-collab
         if ($sender->id === $user->id) {
             return back()->with('error', 'You cannot collab with yourself.');
         }
 
-        // Check if already collabed or pending
         $existing = Collab::where(function ($q) use ($sender, $user) {
             $q->where('sender_id', $sender->id)->where('recipient_id', $user->id);
         })->orWhere(function ($q) use ($sender, $user) {
@@ -31,7 +29,7 @@ class CollabController extends Controller
 
         if ($existing) {
             if ($existing->status === 'rejected') {
-                // If it was rejected, we can allow them to send a new request by updating the old one
+                // --- A rejected request can be sent again by reusing its row ---
                 $existing->update([
                     'sender_id' => $sender->id,
                     'recipient_id' => $user->id,
@@ -41,7 +39,6 @@ class CollabController extends Controller
                 return back()->with('error', 'A collab request already exists or you are already connected.');
             }
         } else {
-            // Create the Collab record
             Collab::create([
                 'sender_id' => $sender->id,
                 'recipient_id' => $user->id,
@@ -49,7 +46,6 @@ class CollabController extends Controller
             ]);
         }
 
-        // Send a message invite to their inbox
         Message::create([
             'sender_id' => $sender->id,
             'recipient_id' => $user->id,
@@ -68,7 +64,6 @@ class CollabController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the logged-in user is the recipient
         if ($collab->recipient_id !== $user->id) {
             abort(403);
         }
@@ -79,7 +74,6 @@ class CollabController extends Controller
 
         $collab->update(['status' => 'accepted']);
 
-        // Send a confirmation message back to the sender
         Message::create([
             'sender_id' => $user->id,
             'recipient_id' => $collab->sender_id,
@@ -98,7 +92,6 @@ class CollabController extends Controller
     {
         $user = Auth::user();
 
-        // Ensure the logged-in user is the recipient
         if ($collab->recipient_id !== $user->id) {
             abort(403);
         }

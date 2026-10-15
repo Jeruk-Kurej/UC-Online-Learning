@@ -27,14 +27,14 @@
     @stack('meta')
     @stack('styles')
 </head>
-{{-- Layout body: keep background subtle and readable --}}
+{{-- --- Layout body: keep background subtle and readable --- --}}
 
 <body class="font-sans antialiased bg-gray-50 overflow-x-hidden">
     <div class="min-h-screen flex flex-col">
-        {{-- Navigation --}}
+        {{-- --- Navigation --- --}}
         @include('layouts.navigation')
 
-        {{-- Page Heading --}}
+        {{-- --- Page Heading --- --}}
         @isset($header)
             <header class="bg-white shadow-sm border-b border-gray-200">
                 <div class="w-full max-w-[1600px] mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -43,10 +43,10 @@
             </header>
         @endisset
 
-        {{-- Main Content --}}
+        {{-- --- Main Content --- --}}
         <main class="flex-grow">
             <div class="w-full max-w-[1600px] mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                {{-- Global Toast Notifications --}}
+                {{-- --- Global Toast Notifications --- --}}
                 <div class="fixed top-6 right-6 z-50 flex flex-col gap-3 items-end pointer-events-none">
                     @foreach (['success', 'error', 'status', 'warning'] as $flashType)
                         @if (session($flashType))
@@ -59,15 +59,15 @@
                     @endif
                 </div>
 
-                {{-- Local JS Toast Trigger --}}
+                {{-- --- Local JS Toast Trigger --- --}}
                 <x-flash.toast-stack />
 
-                {{-- Page Content --}}
+                {{-- --- Page Content --- --}}
                 {{ $slot }}
             </div>
         </main>
 
-        {{-- Footer --}}
+        {{-- --- Footer --- --}}
         @include('layouts.footer')
     </div>
 

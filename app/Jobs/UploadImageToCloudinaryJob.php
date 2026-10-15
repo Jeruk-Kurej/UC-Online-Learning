@@ -9,7 +9,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class UploadImageToCloudinaryJob implements ShouldQueue
 {
@@ -51,7 +50,6 @@ class UploadImageToCloudinaryJob implements ShouldQueue
         $url = $this->cleanUrl($this->url);
         if (!$url) return;
 
-        // If already Cloudinary URL, skip
         if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
             return;
         }
@@ -60,7 +58,7 @@ class UploadImageToCloudinaryJob implements ShouldQueue
         try {
             Log::info("[UploadImageToCloudinaryJob] Starting async download: {$url} for model " . get_class($this->model) . " (ID: {$this->model->id})");
 
-            // Rate-limit safeguard to avoid hammering external servers during concurrent imports
+            // --- Rate limit so concurrent imports do not hammer external servers ---
             usleep(random_int(100000, 300000));
 
             $ch = curl_init();
@@ -92,7 +90,7 @@ class UploadImageToCloudinaryJob implements ShouldQueue
             $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
             curl_close($ch);
 
-            // Fallback for employee redirection
+            // --- Fallback for the employee host redirect ---
             if ($isUniversityPortal && str_contains(strtolower($contentType ?? ''), 'text/html')) {
                 $fallbackUrl = str_replace('employee.uc.ac.id', 'employee.ciputra.ac.id', $url);
                 $ch = curl_init();
@@ -119,7 +117,6 @@ class UploadImageToCloudinaryJob implements ShouldQueue
             file_put_contents($tmpFile, $contents);
             unset($contents);
 
-            // Compress WebP
             $tmpFile = $this->compressToWebp($tmpFile);
 
             $sanitizedId = Str::slug($this->identifier ?? 'unknown');
@@ -140,7 +137,6 @@ class UploadImageToCloudinaryJob implements ShouldQueue
                 $this->model->update([$this->column => $uploadResult['secure_url']]);
                 Log::info("[UploadImageToCloudinaryJob] Successfully uploaded to Cloudinary: " . $uploadResult['secure_url']);
             }
-
         } catch (\Throwable $e) {
             if ($tmpFile && file_exists($tmpFile)) {
                 unlink($tmpFile);

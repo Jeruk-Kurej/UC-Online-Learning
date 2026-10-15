@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Exception;
 
 class MigrateImagesToCloudinary extends Command
@@ -30,7 +29,7 @@ class MigrateImagesToCloudinary extends Command
         $domain = $this->option('domain');
         $includeLocal = $this->option('include-local');
 
-        // Load UC cookies from config for authenticated downloads
+        // --- UC cookies for authenticated downloads ---
         $ucCookieRaw = config('services.uc.cookie_raw', '');
 
         $this->info("Using disk: {$disk}");
@@ -48,7 +47,7 @@ class MigrateImagesToCloudinary extends Command
 
             [$table, $column] = explode('.', $pair, 2);
 
-            // Build query: remote URLs + optionally local extracted_images paths
+            // --- Rows to migrate: remote URLs, plus local extracted_images paths when asked ---
             $query = DB::table($table)->where(function ($q) use ($column, $includeLocal) {
                 $q->where($column, 'like', 'http%');
                 if ($includeLocal) {
@@ -75,14 +74,13 @@ class MigrateImagesToCloudinary extends Command
                     continue;
                 }
 
-                // Skip already-cloudinary URLs
                 if (str_contains($url, 'cloudinary.com') || str_contains($url, 'res.cloudinary.com')) {
                     $this->line("  ⏩ id={$id} already on Cloudinary");
                     $stats['skipped']++;
                     continue;
                 }
 
-                // Clean and convert Google Drive viewer links to direct download links
+                // --- Google Drive viewer links become direct downloads ---
                 if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
                     if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
                         $url = "https://drive.google.com/uc?export=download&confirm=t&id=" . $matches[1];
@@ -93,7 +91,7 @@ class MigrateImagesToCloudinary extends Command
                     $contents = null;
                     $basename = null;
 
-                    // Case 1: Local file from extracted_images/
+                    // --- Case 1: local file from extracted_images/ ---
                     if (str_starts_with($url, 'extracted_images/')) {
                         $localPath = storage_path('app/public/' . $url);
                         if (!file_exists($localPath)) {
@@ -105,7 +103,7 @@ class MigrateImagesToCloudinary extends Command
                         $basename = basename($url);
                         $this->line("  📁 id={$id} reading local: {$basename}");
                     }
-                    // Case 2: employee.uc.ac.id or employee.ciputra.ac.id (needs cookies)
+                    // --- Case 2: employee.uc.ac.id or employee.ciputra.ac.id (needs cookies) ---
                     elseif ((str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id')) && $ucCookieRaw) {
                         $this->line("  🔐 id={$id} downloading with cookies: {$url}");
                         
@@ -127,7 +125,7 @@ class MigrateImagesToCloudinary extends Command
                         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
                         $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
 
-                        // FALLBACK: If we got HTML from employee.uc.ac.id, try swapping to employee.ciputra.ac.id
+                        // --- HTML from employee.uc.ac.id: retry on employee.ciputra.ac.id ---
                         if (str_contains($url, 'employee.uc.ac.id') && str_contains(strtolower($contentType ?? ''), 'text/html')) {
                             $fallbackUrl = str_replace('employee.uc.ac.id', 'employee.ciputra.ac.id', $url);
                             $this->line("    🔄 HTML detected on uc.ac.id. Trying fallback to ciputra.ac.id...");
@@ -154,7 +152,7 @@ class MigrateImagesToCloudinary extends Command
 
                         $basename = basename(parse_url($url, PHP_URL_PATH) ?? 'image.jpg');
                     }
-                    // Case 3: Regular public URL
+                    // --- Case 3: regular public URL ---
                     else {
                         $this->line("  🌐 id={$id} downloading: {$url}");
                         $response = Http::timeout(30)->get($url);
@@ -181,7 +179,6 @@ class MigrateImagesToCloudinary extends Command
                         continue;
                     }
 
-                    // Sanitize filename
                     $sanitized = preg_replace('/[^A-Za-z0-9_.-]/', '_', $basename);
                     $targetPath = "uco/{$table}/{$id}/{$sanitized}";
 
@@ -190,12 +187,11 @@ class MigrateImagesToCloudinary extends Command
                         continue;
                     }
 
-                    // Upload to Cloudinary (or configured disk)
+                    // --- Upload to Cloudinary (or the configured disk) ---
                     if ($disk === 'cloudinary') {
                         $tempFile = tempnam(sys_get_temp_dir(), 'uco_mig_');
                         file_put_contents($tempFile, $contents);
                         
-                        // Compress to WebP & Resize to max 1200px before uploading
                         $tempFile = $this->compressToWebp($tempFile);
                         
                         try {
@@ -224,11 +220,9 @@ class MigrateImagesToCloudinary extends Command
                         continue;
                     }
 
-                    // Update DB with the new URL
                     DB::table($table)->where('id', $id)->update([$column => $newUrl]);
                     $this->info("  ✅ id={$id} → {$newUrl}");
                     $stats['uploaded']++;
-
                 } catch (Exception $e) {
                     $this->error("  ❌ id={$id}: " . $e->getMessage());
                     $stats['failed']++;
@@ -283,7 +277,7 @@ class MigrateImagesToCloudinary extends Command
                 return $filePath;
             }
 
-            // Convert palette images to truecolor to prevent "Palette image not supported by webp" error
+            // --- Palette images become truecolor (WebP does not support palettes) ---
             if (!imageistruecolor($image)) {
                 $trueColorImage = imagecreatetruecolor(imagesx($image), imagesy($image));
                 imagealphablending($trueColorImage, false);

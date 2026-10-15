@@ -27,21 +27,21 @@ class FeaturedController extends Controller
             ->where('role', '!=', 'admin')
             ->whereNotNull('profile_photo_url');
 
-        // Featured intrapreneur students (admin-starred + intrapreneur status)
+        // --- Featured intrapreneur students (admin-starred, intrapreneur status) ---
         $topIntrapreneurs = $featuredStudentQuery()
             ->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])
             ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
             ->latest()
             ->get();
 
-        // Featured entrepreneur students (admin-starred + entrepreneur status)
+        // --- Featured entrepreneur students (admin-starred, entrepreneur status) ---
         $topEntrepreneurs = $featuredStudentQuery()
             ->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])
             ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
             ->latest()
             ->get();
 
-        // Spotlight businesses
+        // --- Spotlight businesses ---
         $spotlightBusinesses = Business::visible()
             ->entrepreneur()
             ->where('is_featured', true)
@@ -49,20 +49,20 @@ class FeaturedController extends Controller
             ->with(['category', 'user', 'members'])
             ->get();
 
-        // Categories
+        // --- Categories ---
         $categories = Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
             ->orderByDesc('businesses_count')
             ->take(8)
             ->get();
 
-        // Community Voices: users with AI-approved testimonies (NOT tied to is_featured toggle)
+        // --- Community voices: users with AI-approved testimonies (not tied to is_featured) ---
         $testimonies = User::where('is_visible', true)
             ->where('is_featured_testimony', true)
             ->whereNotNull('testimony')
             ->where('testimony', '!=', '')
             ->whereNotNull('profile_photo_url')
             ->where(function ($q) {
-                // Prefer AI-approved testimonies (score >= 80), but fallback to any visible testimony
+                // --- Prefer AI-approved testimonies (score >= 80), fall back to any visible testimony ---
                 $q->where('ai_score', '>=', 80)
                     ->orWhere(function ($q2) {
                         $q2->whereNull('ai_score')->where('is_visible', true);

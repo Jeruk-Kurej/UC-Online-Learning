@@ -4,7 +4,7 @@
 export default function sharedImportManager() {
     return {
         importId: '',
-        status: 'idle', // 'idle' | 'uploading' | 'processing' | 'completed' | 'failed'
+        status: 'idle',
         uploadPercent: 0,
         total: 0,
         current: 0,
@@ -19,7 +19,7 @@ export default function sharedImportManager() {
         fileName: '',
 
         init() {
-            // Restore from localStorage first (survives page refresh)
+            // --- Restore from localStorage first (survives a page refresh) ---
             const saved = localStorage.getItem('uco_active_import');
             if (saved) {
                 try {
@@ -31,12 +31,11 @@ export default function sharedImportManager() {
                         this.status = 'processing';
                         this.visible = true;
                         this.startPolling();
-                        return; // Skip server check since we already have importId
+                        return;
                     }
                 } catch(e) {}
             }
 
-            // Fallback: check server session
             this.checkActiveImport().then(() => {
                 if (this.importId) {
                     this.status = 'processing';
@@ -74,7 +73,6 @@ export default function sharedImportManager() {
             const file = fileInput.files[0];
             this.fileName = file.name;
 
-            // Close parent view modals by sending window event
             window.dispatchEvent(new CustomEvent('close-import-modal'));
 
             this.visible = true;
@@ -95,7 +93,6 @@ export default function sharedImportManager() {
             xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
             xhr.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
 
-            // Track upload percentage
             xhr.upload.addEventListener('progress', (e) => {
                 if (e.lengthComputable) {
                     this.uploadPercent = Math.round((e.loaded / e.total) * 100);
@@ -110,7 +107,6 @@ export default function sharedImportManager() {
                             this.importId = data.importId;
                             this.format = data.format || 'Excel Importer';
                             this.status = 'processing';
-                            // Persist to localStorage so refresh doesn't lose widget
                             localStorage.setItem('uco_active_import', JSON.stringify({
                                 importId: this.importId,
                                 fileName: this.fileName,
@@ -148,7 +144,7 @@ export default function sharedImportManager() {
             if (!this.importId) return;
             if (this.polling) clearInterval(this.polling);
             this.pollCount = 0;
-            this.poll(); // Poll immediately
+            this.poll();
             this.polling = setInterval(() => this.poll(), 2000);
         },
 
@@ -170,7 +166,7 @@ export default function sharedImportManager() {
                 this.errors = data.errors || [];
                 this.percent = this.total > 0 ? Math.min(100, Math.round((this.current / this.total) * 100)) : 0;
 
-                // ── Live table refresh: every 3rd poll (~6s) refresh any list on the page ──
+                // --- Live table refresh: every 3rd poll (~6 s) ---
                 this.pollCount = (this.pollCount || 0) + 1;
                 if (this.pollCount % 3 === 0 || this.current !== this._lastCurrent) {
                     this._lastCurrent = this.current;
@@ -180,11 +176,8 @@ export default function sharedImportManager() {
                 if (this.status === 'completed' || this.status === 'failed') {
                     clearInterval(this.polling);
                     this.polling = null;
-                    // Clear localStorage so widget doesn't reappear after dismiss
                     localStorage.removeItem('uco_active_import');
-                    // Refresh the table one final time on completion
                     this._refreshPageList();
-                    // Clear active session backend key
                     fetch('/clear-active-import', {
                         method: 'POST',
                         headers: {
@@ -199,15 +192,11 @@ export default function sharedImportManager() {
             }
         },
 
-        // Trigger AJAX list refresh on any page that has a recognised list container
         _refreshPageList() {
-            // Users management page — refresh table rows
             if (document.getElementById('users-list-container')) {
                 window.dispatchEvent(new CustomEvent('ajax-update-list'));
-                // Also refresh the stat counters (Total Users / Entrepreneurs / etc.)
                 window.dispatchEvent(new CustomEvent('ajax-update-stats'));
             }
-            // Businesses admin page
             if (document.getElementById('businesses-list-container')) {
                 window.dispatchEvent(new CustomEvent('ajax-update-list'));
             }
@@ -236,7 +225,6 @@ export default function sharedImportManager() {
                 this.polling = null;
             }
 
-            // Always clear localStorage on dismiss
             localStorage.removeItem('uco_active_import');
 
             fetch('/clear-active-import', {

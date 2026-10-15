@@ -37,4 +37,16 @@ trait HasApprovalStatus
     {
         $query->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
+
+    // --- Admin decision: only approved items are visible; a reason is kept for rejections and revision requests ---
+
+    public function applyApprovalStatus(string $status, ?string $reason): void
+    {
+        $this->fill([
+            'approval_status' => $status,
+            'rejection_reason' => in_array($status, ['rejected', 'need_revision']) ? $reason : null,
+            'is_visible' => $status === 'approved',
+        ]);
+        $this->save();
+    }
 }

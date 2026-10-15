@@ -15,14 +15,13 @@ class ImporterFactory
     {
         $ext = strtolower(pathinfo($originalName ?: $path, PATHINFO_EXTENSION));
 
-        // Auto-detect importType based on CSV content first (most robust)
+        // --- Detect the import type from the CSV content first ---
         $detectedType = null;
         if ($ext === 'csv' && file_exists($path)) {
             $handle = fopen($path, 'r');
             if ($handle) {
                 $headers = fgetcsv($handle);
                 if ($headers) {
-                    // Normalize headers: lowercase and remove spaces, underscores, and question marks
                     $normHeaders = array_map(function($h) {
                         return strtolower(trim(str_replace([' ', '_', '?'], '', $h)));
                     }, $headers);
@@ -35,7 +34,6 @@ class ImporterFactory
                             $selectedVal = strtolower(trim($row[$selectedIdx] ?? ''));
                             $categoryVal = strtolower(trim($row[$categoryIdx] ?? ''));
 
-                            // If we find any row where Category is Intrapreneur and Selected is truthy
                             if (str_contains($categoryVal, 'intrapreneur') && in_array($selectedVal, ['true', '1', 'yes', 'selected', 'y'])) {
                                 $detectedType = 'intrapreneur';
                                 break;
@@ -47,7 +45,7 @@ class ImporterFactory
             }
         }
 
-        // Fall back to filename check if content detection didn't resolve it
+        // --- Fall back to the file name ---
         if (!$detectedType) {
             $lowerName = strtolower($originalName ?: basename($path));
             if (str_contains($lowerName, 'intrapreneur')) {
@@ -55,7 +53,7 @@ class ImporterFactory
             } elseif (str_contains($lowerName, 'entrepreneur')) {
                 $detectedType = 'entrepreneur';
             } else {
-                $detectedType = 'entrepreneur'; // default fallback
+                $detectedType = 'entrepreneur';
             }
         }
 
@@ -69,7 +67,7 @@ class ImporterFactory
             return new FormResponseImport($importId, $constructedName);
         }
 
-        // For CSV/Raw: read first 2KB and search for markers
+        // --- CSV: search the first 2 KB for markers ---
         $handle = fopen($path, 'r');
         if (! $handle) {
             Log::info('Import: falling back to Form Response format (' . $detectedType . ')');

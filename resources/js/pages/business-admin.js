@@ -1,21 +1,17 @@
 // --- Admin business list: filters and AJAX list, status modal, featured toggle ---
 // Imported by app.js on pages with [data-business-admin]; Alpine starts after this module has run.
 
+import ajaxList from '../lib/ajax-list';
+
 function businessAdminList() {
     return {
+        ...ajaxList({ container: 'businesses-admin-list-container', restoreOnBack: false }),
         showImportModal: false,
-        isSubmitting: false,
-        debounceTimer: null,
         viewType: '',
-        submitDebounced() {
-            if (this.debounceTimer) clearTimeout(this.debounceTimer);
-            this.debounceTimer = setTimeout(() => this.updateList(), 500);
-        },
         resetFilters() {
             const currentType = this.viewType;
             this.$refs.filterForm.reset();
             this.$refs.filterForm.querySelectorAll('input, select').forEach(el => el.value = '');
-            // Re-apply viewType after reset
             const typeInput = this.$refs.filterForm.querySelector('[name=type]');
             if (typeInput) typeInput.value = currentType;
             this.updateList();
@@ -24,43 +20,10 @@ function businessAdminList() {
             this.viewType = type;
             const typeInput = this.$refs.filterForm.querySelector('[name=type]');
             if (typeInput) typeInput.value = type;
-            // Reset other filters
             const searchInput = this.$refs.filterForm.querySelector('[name=search]');
             if (searchInput) searchInput.value = '';
             this.updateList();
         },
-        updateList(url = null, pushState = true, shouldScroll = false) {
-            this.isSubmitting = true;
-            if (!url) {
-                const form = this.$refs.filterForm;
-                if (!form) { this.isSubmitting = false; return; }
-                const formData = new FormData(form);
-                const params = new URLSearchParams(formData);
-                url = `${form.action}?${params.toString()}`;
-            }
-
-            fetch(url, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' },
-                credentials: 'same-origin'
-            })
-            .then(res => res.text())
-            .then(html => {
-                const container = document.getElementById('businesses-admin-list-container');
-                if (container) {
-                    container.innerHTML = html;
-                    container.querySelectorAll('.reveal-on-scroll').forEach(el => el.classList.add('is-visible'));
-                }
-                if (pushState) window.history.pushState({}, '', url);
-                this.isSubmitting = false;
-                if (shouldScroll) {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            })
-            .catch(err => {
-                console.error('Fetch failed:', err);
-                this.isSubmitting = false;
-            });
-        }
     };
 }
 
@@ -98,7 +61,7 @@ function toggleReasonField() {
     }
 }
 
-// Intercept featured toggle form submissions to handle them via AJAX
+// --- Featured toggle over AJAX ---
 document.addEventListener('submit', function(e) {
     const form = e.target;
     if (form && form.classList.contains('toggle-featured-form')) {
@@ -127,14 +90,12 @@ document.addEventListener('submit', function(e) {
                     if (tooltipEl) tooltipEl.textContent = 'Make featured';
                 }
 
-                // Update featured badge count in header
                 const countEl = document.querySelector('.featured-count');
                 if (countEl) {
                     let currentCount = parseInt(countEl.textContent, 10) || 0;
                     countEl.textContent = isFeaturedNow ? currentCount + 1 : Math.max(0, currentCount - 1);
                 }
 
-                // Dispatch global toast message
                 window.dispatchEvent(new CustomEvent('notify', {
                     detail: { message: data.message, type: 'success' }
                 }));

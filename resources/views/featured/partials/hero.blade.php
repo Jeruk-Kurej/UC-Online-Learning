@@ -1,11 +1,11 @@
 {{-- --- Home hero: headline, call to action and the spotlight grid of featured ventures --- --}}
 <section class="group relative overflow-hidden uco-hero-section-bleed py-12 md:py-16 reveal-on-scroll">
-    {{-- Background Effects with Gradient Mask --}}
+    {{-- --- Background Effects with Gradient Mask --- --}}
     <div class="absolute inset-0 overflow-hidden pointer-events-none uco-hero-mask">
         <div class="uco-hero-mesh opacity-90"></div>
         <div class="uco-noise-overlay"></div>
 
-        {{-- Dynamic Floating Orbs with Subtle Motion --}}
+        {{-- --- Dynamic Floating Orbs with Subtle Motion --- --}}
         <div
             class="uco-float-orb uco-float-orb--one opacity-40  transition-transform duration-[10s] group-hover:translate-x-12 group-hover:-translate-y-8">
         </div>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-8 items-start">
-        {{-- Left Content --}}
+        {{-- --- Left Content --- --}}
         <div class="space-y-10 md:col-span-7 lg:col-span-7">
 
             <div class="space-y-8">
@@ -52,7 +52,7 @@
             </div>
         </div>
 
-        {{-- Right Content: Immersive Spotlight Grid (2x2) --}}
+        {{-- --- Right Content: Immersive Spotlight Grid (2x2) --- --}}
         <div class="md:col-span-5 lg:col-span-5">
             <div class="grid grid-cols-2 gap-6">
                 @foreach ($spotlightBusinesses->take(4) as $index => $business)
@@ -61,7 +61,7 @@
                             class="block overflow-hidden transition-all duration-700 hover:-translate-y-2">
 
                             <div class="space-y-3">
-                                {{-- Compact Showcase Image --}}
+                                {{-- --- Compact Showcase Image --- --}}
                                 <div
                                     class="relative aspect-video w-full overflow-hidden rounded-sm bg-white border border-gray-100 shadow-sm">
                                     @if ($business->products->first()?->photo_url)
@@ -79,7 +79,7 @@
                                         </div>
                                     @endif
 
-                                    {{-- Logo Overlay --}}
+                                    {{-- --- Logo Overlay --- --}}
                                     <div
                                         class="absolute bottom-2 left-3 h-8 w-8 overflow-hidden rounded-lg bg-white p-1 shadow-lg">
                                         @if ($business->logo_url)
@@ -94,7 +94,7 @@
                                     </div>
                                 </div>
 
-                                {{-- Content --}}
+                                {{-- --- Content --- --}}
                                 <div class="px-3 pb-2">
                                     <h4
                                         class="text-[15px] font-[900] text-gray-950 truncate tracking-tight group-hover/card:text-uco-orange-600 transition-colors">
@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        {{-- Mobile-only bottom button --}}
+        {{-- --- Mobile-only bottom button --- --}}
         <div class="col-span-full pt-4 block md:hidden text-center">
             <a href="{{ route('businesses.index') }}"
                 class="group/btn inline-flex items-center justify-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:bg-uco-orange-700 hover:scale-[1.03] active:scale-95 w-full">

@@ -17,21 +17,18 @@ if (! function_exists('cloudinary_url')) {
             return null;
         }
 
-        // If it's already an absolute URL, return as-is
         if (str_starts_with($publicId, 'http://') || str_starts_with($publicId, 'https://') || str_starts_with($publicId, 'data:')) {
             return $publicId;
         }
 
-        // If Cloudinary SDK is available, use it to build a transformed URL
+        // --- Cloudinary transformed URL when the SDK is available ---
         try {
             if (function_exists('cloudinary')) {
                 /** @var Cloudinary $cl */
                 $cl = cloudinary();
 
-                // Use Cloudinary image builder and pass transformation params
                 $image = $cl->image($publicId);
 
-                // Default to auto format/quality if not provided
                 if (! array_key_exists('fetch_format', $options) && ! array_key_exists('format', $options)) {
                     $options['fetch_format'] = 'auto';
                 }
@@ -39,17 +36,15 @@ if (! function_exists('cloudinary_url')) {
                     $options['quality'] = 'auto';
                 }
 
-                // If width/height provided as integers, ensure they are ints
                 if (isset($options['width'])) $options['width'] = (int) $options['width'];
                 if (isset($options['height'])) $options['height'] = (int) $options['height'];
 
                 return (string) $image->toUrl($options);
             }
         } catch (Exception $e) {
-            // silently fail and fallback to Storage::url
         }
 
-        // If Cloudinary couldn't generate a URL, return null (do not call Storage::exists())
+        // --- No Cloudinary URL: return null (never call Storage::exists()) ---
         return null;
     }
 }
@@ -74,7 +69,6 @@ if (! function_exists('storage_image_url')) {
             return null;
         }
 
-        // Allow passing a preset name as string
         $preset = null;
         if (is_string($options) && $options !== '') {
             $preset = $options;
@@ -85,7 +79,7 @@ if (! function_exists('storage_image_url')) {
             unset($options['preset']);
         }
 
-        // Preset map: named transform sets used across views
+        // --- Presets: named transform sets used across views ---
         $presets = [
             'hero' => ['width' => 1400, 'height' => 420, 'crop' => 'fit', 'quality' => 'auto', 'fetch_format' => 'auto'],
             'gallery_full' => ['width' => 1200, 'height' => 720, 'quality' => 'auto', 'fetch_format' => 'auto'],
@@ -96,7 +90,6 @@ if (! function_exists('storage_image_url')) {
         ];
 
         if ($preset && isset($presets[$preset])) {
-            // merge preset options with provided options (explicit options win)
             $options = array_merge($presets[$preset], $options ?: []);
         }
 
@@ -113,7 +106,6 @@ if (! function_exists('storage_image_url')) {
                     return $url;
                 }
             } catch (\Throwable $e) {
-                // If Cloudinary SDK throws (e.g. resource not found), swallow and fall back to Storage::url()
             }
         }
 

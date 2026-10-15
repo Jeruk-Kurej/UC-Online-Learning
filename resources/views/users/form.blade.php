@@ -25,7 +25,7 @@
                 Account & Auth Info
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Full Name --}}
+                {{-- --- Full Name --- --}}
                 <div>
                     <label for="name" class="form-label-custom">
                         Full Name <span class="text-red-500">*</span>
@@ -35,7 +35,7 @@
                     @error('name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Email Address --}}
+                {{-- --- Email Address --- --}}
                 <div>
                     <label for="email" class="form-label-custom">
                         Email Address <span class="text-red-500">*</span>
@@ -45,7 +45,7 @@
                     @error('email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Role --}}
+                {{-- --- Role --- --}}
                 <div>
                     <label for="role" class="form-label-custom">
                         Role <span class="text-red-500">*</span>
@@ -57,7 +57,7 @@
                     @error('role')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Student Status --}}
+                {{-- --- Student Status --- --}}
                 <div id="student_status_container">
                     <label for="student_status" class="form-label-custom">
                         Student Status <span class="text-red-500">*</span>
@@ -73,7 +73,7 @@
                     @error('student_status')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Password --}}
+                {{-- --- Password --- --}}
                 <div>
                     <label for="password" class="form-label-custom">
                         @if($userToEdit)
@@ -87,7 +87,7 @@
                     @error('password')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Password Confirmation --}}
+                {{-- --- Password Confirmation --- --}}
                 <div>
                     <label for="password_confirmation" class="form-label-custom">
                         Confirm Password @unless($userToEdit) <span class="text-red-500">*</span> @endunless
@@ -103,21 +103,21 @@
                 Identity & Contact
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Prefix Title --}}
+                {{-- --- Prefix Title --- --}}
                 <div>
                     <label for="prefix_title" class="form-label-custom">Prefix Title</label>
                     <input type="text" name="prefix_title" id="prefix_title" value="{{ old('prefix_title', $userToEdit?->prefix_title) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Suffix Title --}}
+                {{-- --- Suffix Title --- --}}
                 <div>
                     <label for="suffix_title" class="form-label-custom">Suffix Title</label>
                     <input type="text" name="suffix_title" id="suffix_title" value="{{ old('suffix_title', $userToEdit?->suffix_title) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Personal Email --}}
+                {{-- --- Personal Email --- --}}
                 <div>
                     <label for="personal_email" class="form-label-custom">Personal Email</label>
                     <input type="email" name="personal_email" id="personal_email" value="{{ old('personal_email', $userToEdit?->personal_email) }}"
@@ -125,35 +125,35 @@
                     @error('personal_email')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Phone Number --}}
+                {{-- --- Phone Number --- --}}
                 <div>
                     <label for="phone_number" class="form-label-custom">Phone Number</label>
                     <input type="tel" name="phone_number" id="phone_number" value="{{ old('phone_number', $userToEdit?->phone_number) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Mobile Number --}}
+                {{-- --- Mobile Number --- --}}
                 <div>
                     <label for="mobile_number" class="form-label-custom">Mobile Number</label>
                     <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number', $userToEdit?->mobile_number) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- WhatsApp --}}
+                {{-- --- WhatsApp --- --}}
                 <div>
                     <label for="whatsapp" class="form-label-custom">WhatsApp Number</label>
                     <input type="tel" name="whatsapp" id="whatsapp" value="{{ old('whatsapp', $userToEdit?->whatsapp) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- LinkedIn --}}
+                {{-- --- LinkedIn --- --}}
                 <div>
                     <label for="linkedin" class="form-label-custom">LinkedIn URL</label>
                     <input type="url" name="linkedin" id="linkedin" value="{{ old('linkedin', $userToEdit?->linkedin) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Profile Photo --}}
+                {{-- --- Profile Photo --- --}}
                 @if($userToEdit)
                     <x-forms.removable-image label="Profile Photo" name="profile_photo_url" delete-name="delete_profile_photo_url"
                         :url="$userToEdit->profile_photo_url" :initial="strtoupper(substr($userToEdit->name, 0, 1))" noun="Photo"
@@ -189,35 +189,35 @@
                 Academic & Extra
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- NIS --}}
+                {{-- --- Nis --- --}}
                 <div>
                     <label for="nis" class="form-label-custom">NIS (Student ID)</label>
                     <input type="text" name="nis" id="nis" value="{{ old('nis', $userToEdit?->nis) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Year of Enrollment --}}
+                {{-- --- Year of Enrollment --- --}}
                 <div>
                     <label for="year_of_enrollment" class="form-label-custom">Year of Enrollment</label>
                     <input type="text" name="year_of_enrollment" id="year_of_enrollment" value="{{ old('year_of_enrollment', $userToEdit?->year_of_enrollment) }}"
                            class="form-input-custom" placeholder="e.g. 2023">
                 </div>
 
-                {{-- Graduate Year --}}
+                {{-- --- Graduate Year --- --}}
                 <div>
                     <label for="graduate_year" class="form-label-custom">Graduate Year</label>
                     <input type="text" name="graduate_year" id="graduate_year" value="{{ old('graduate_year', $userToEdit?->graduate_year) }}"
                            class="form-input-custom" placeholder="e.g. 2027">
                 </div>
 
-                {{-- Major --}}
+                {{-- --- Major --- --}}
                 <div>
                     <label for="major" class="form-label-custom">{{ $userToEdit ? 'Peminatan' : 'Major' }}</label>
                     <input type="text" name="major" id="major" value="{{ old('major', $userToEdit?->major) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Current Status --}}
+                {{-- --- Current Status --- --}}
                 <div>
                     <label for="current_status" class="form-label-custom">Current Career Status</label>
                     <select name="current_status" id="current_status" data-tom-select="Select Career Status" class="block w-full">
@@ -227,7 +227,7 @@
                     </select>
                 </div>
 
-                {{-- Activities Documentation Files --}}
+                {{-- --- Activities Documentation Files --- --}}
                 @if($userToEdit)
                 <div class="md:col-span-2 relative" x-data="activityFiles(@js($userToEdit->activity_files))">
                     <div class="flex items-center justify-between mb-3">
@@ -274,14 +274,14 @@
                     </x-forms.file-drop>
                 @endif
 
-                {{-- Testimony --}}
+                {{-- --- Testimony --- --}}
                 <div class="md:col-span-2">
                     <label for="testimony" class="form-label-custom">Student Testimony</label>
                     <textarea name="testimony" id="testimony" rows="3"
                                class="form-textarea-custom">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
                 </div>
 
-                {{-- Activities Caption --}}
+                {{-- --- Activities Caption --- --}}
                 <div class="md:col-span-2">
                     <label for="activities_caption" class="form-label-custom">Activities Caption</label>
                     <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit?->activities_caption) }}"
@@ -295,7 +295,7 @@
                 Business Transfers & Assignments
             </h2>
             <div class="grid grid-cols-1 gap-6">
-                {{-- Transfer Owned Businesses --}}
+                {{-- --- Transfer Owned Businesses --- --}}
                 <div>
                     <label for="owned_businesses" class="form-label-custom">
                         Owned Businesses to assign directly:
@@ -311,7 +311,7 @@
             </div>
         </div>
 
-        {{-- Action Buttons --}}
+        {{-- --- Action Buttons --- --}}
         <div class="flex items-center justify-between pb-10">
             <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn-uco btn-uco-neutral">
                 Cancel

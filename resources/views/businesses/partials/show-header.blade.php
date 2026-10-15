@@ -1,6 +1,6 @@
 {{-- --- Business page top: breadcrumbs, logo, type and mode badges, edit and collab buttons --- --}}
 <div class="mb-8 px-4 sm:px-0">
-    {{-- Breadcrumbs --}}
+    {{-- --- Breadcrumbs --- --}}
     <nav class="flex pt-4 sm:pt-6 mb-8 text-sm font-medium" aria-label="Breadcrumb">
         <ol class="flex items-center space-x-2">
             <li><a href="{{ route('businesses.index') }}?view=entrepreneur" class="text-gray-400 hover:text-uco-orange-500 transition">Directory</a></li>
@@ -14,7 +14,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
 
         <div class="flex-1 flex flex-row items-center sm:items-start gap-4 sm:gap-5">
-            {{-- Business Logo --}}
+            {{-- --- Business Logo --- --}}
             @if ($business->logo_url)
                 <img src="{{ storage_image_url($business->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                     alt="{{ $business->name }} Logo" loading="lazy"

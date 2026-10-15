@@ -3,7 +3,7 @@
 
 
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10" x-data="{ showLightbox: false, lightboxUrl: '' }">
-        {{-- Breadcrumbs (matches business / intrapreneur detail pages) --}}
+        {{-- --- Breadcrumbs (matches business / intrapreneur detail pages) --- --}}
         <nav class="flex mb-3 text-sm font-medium" aria-label="Breadcrumb">
             <ol class="flex items-center space-x-2">
                 <li>
@@ -18,7 +18,7 @@
             </ol>
         </nav>
 
-        {{-- Dynamic Profile Title below Breadcrumb --}}
+        {{-- --- Dynamic Profile Title below Breadcrumb --- --}}
         <div class="mb-8">
             <h2 class="text-sm font-black uppercase tracking-[0.2em] text-uco-orange-500">
                 {{ $user->isIntrapreneur() ? 'Intrapreneur Student' : 'Entrepreneur Student' }}
@@ -29,7 +29,7 @@
             
             @include('users.partials.show-profile')
 
-            {{-- Right Side: Businesses & Jobs (8 cols) --}}
+            {{-- --- Right Side: Businesses & Jobs (8 cols) --- --}}
             <div class="lg:col-span-8 space-y-10">
 
                 @include('users.partials.show-ventures')

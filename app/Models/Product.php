@@ -29,7 +29,7 @@ class Product extends Model
         ];
     }
 
-    // ─── Accessors ───
+    // --- Accessors ---
 
     public function getPhotoUrlAttribute($value)
     {
@@ -67,7 +67,7 @@ class Product extends Model
         };
     }
 
-    // ─── Relationships ───
+    // --- Relationships ---
 
     public function business()
     {

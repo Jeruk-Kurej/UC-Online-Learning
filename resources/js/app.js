@@ -31,7 +31,6 @@ Alpine.data('achievementList', achievementList);
 Alpine.data('sectionBuilder', sectionBuilder);
 Alpine.data('guestToasts', guestToasts);
 
-
 // --- Start Alpine once page modules that register Alpine components are loaded ---
 
 const alpinePageModules = [];
@@ -102,7 +101,7 @@ function initRevealOnScroll() {
 
 window.initRevealOnScroll = initRevealOnScroll;
 
-// Global Toast Helper
+// --- Global toast helper ---
 window.showToast = function(message, type = 'success') {
     window.dispatchEvent(new CustomEvent('notify', {
         detail: { message, type }
@@ -112,8 +111,7 @@ window.showToast = function(message, type = 'success') {
 document.addEventListener('DOMContentLoaded', () => {
 	initRevealOnScroll();
 
-    // Global Price Input Handler: 1000-step increments with Arrow Keys
-    // This provides a 'Premium' UX where arrows jump by 1000, but allows ANY value (no validation errors)
+    // --- Price inputs: arrow keys step by 1000, any value is allowed ---
     document.addEventListener('keydown', (e) => {
         const target = e.target;
         if (target.tagName === 'INPUT' && target.type === 'number') {
@@ -127,10 +125,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentVal = parseFloat(target.value) || 0;
                 const newVal = e.key === 'ArrowUp' ? currentVal + step : currentVal - step;
                 
-                // Set value and ensure it's not negative unless allowed
                 target.value = Math.max(0, newVal);
                 
-                // Manually trigger input/change events for Alpine.js or other bindings
                 target.dispatchEvent(new Event('input', { bubbles: true }));
                 target.dispatchEvent(new Event('change', { bubbles: true }));
             }

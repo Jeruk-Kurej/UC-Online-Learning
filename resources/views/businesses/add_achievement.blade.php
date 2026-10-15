@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-5xl mx-auto">
-        {{-- Page Header - Elegant Design --}}
+        {{-- --- Page Header - Elegant Design --- --}}
         <div class="mb-8 flex flex-row items-center gap-3">
             <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary flex-shrink-0">
                 <i class="bi bi-arrow-left"></i>
@@ -17,7 +17,7 @@
                 <form method="POST" action="{{ route('intrapreneurs.add_achievement', $company) }}" class="space-y-6">
                     @csrf
 
-                    {{-- Achievement Textarea --}}
+                    {{-- --- Achievement Textarea --- --}}
                     <div>
                         <label for="achievement" class="block text-sm font-medium text-gray-700 mb-2">
                             Achievement Details <span class="text-red-500">*</span>
@@ -33,7 +33,7 @@
                         @enderror
                     </div>
 
-                    {{-- Submit Buttons --}}
+                    {{-- --- Submit Buttons --- --}}
                     <div class="flex items-center justify-between pt-6 border-t-2 border-soft-gray-100">
                         <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
                             Cancel

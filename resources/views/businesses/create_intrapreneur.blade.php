@@ -4,7 +4,7 @@
     @endpush
 
     <div class="max-w-4xl mx-auto px-4 py-8">
-        {{-- Header Section --}}
+        {{-- --- Header Section --- --}}
         <div class="mb-8 flex items-center gap-4 reveal-on-scroll">
             <a href="{{ route('businesses.my') }}" class="btn-uco btn-uco-secondary">
                 <i class="bi bi-arrow-left"></i>
@@ -16,7 +16,7 @@
             </div>
         </div>
 
-        {{-- Notice Banner --}}
+        {{-- --- Notice Banner --- --}}
         <div class="mb-8 p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-left reveal-on-scroll">
             <p class="text-xs font-bold text-indigo-800 uppercase tracking-wider mb-1 flex items-center gap-1.5">
                 <i class="bi bi-info-circle-fill"></i>
@@ -34,7 +34,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     @include('businesses.partials.work-profile-fields')
 
-                    {{-- Logo Upload --}}
+                    {{-- --- Logo Upload --- --}}
                     <div>
                         <label for="logo_url" class="form-label-custom">Company Logo</label>
                         <input type="file" name="logo_url" id="logo_url" accept="image/*"
@@ -42,7 +42,7 @@
                         @error('logo_url')<p class="mt-1 text-xs text-red-600 font-medium">{{ $message }}</p>@enderror
                     </div>
 
-                    {{-- Job Description --}}
+                    {{-- --- Job Description --- --}}
                     <div class="md:col-span-2">
                         <label for="job_description" class="form-label-custom">Job Description & Responsibilities <span class="text-red-500">*</span></label>
                         <textarea name="job_description" id="job_description" required
@@ -52,7 +52,7 @@
                     </div>
                 </div>
 
-                {{-- Action Buttons --}}
+                {{-- --- Action Buttons --- --}}
                 <div class="flex items-center justify-between border-t border-slate-100 pt-6 mt-8">
                     <a href="{{ route('businesses.my') }}" class="btn-uco btn-uco-neutral">
                         Cancel

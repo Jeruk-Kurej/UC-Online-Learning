@@ -51,12 +51,12 @@ class ImageOptimizerService
     {
         $mime = $file->getMimeType() ?? '';
 
-        // Skip non-image files (e.g. PDF activity docs)
+        // --- Skip non-image files (e.g. PDF activity docs) ---
         if (! str_starts_with($mime, 'image/')) {
             return;
         }
 
-        // Skip SVGs — they are XML, not raster images
+        // --- Skip SVGs — they are XML, not raster images ---
         if ($mime === 'image/svg+xml') {
             return;
         }
@@ -71,16 +71,12 @@ class ImageOptimizerService
      */
     public function optimize(string $path): void
     {
-        // Pass 1: PHP GD compression (no system binaries required)
         $this->gdCompress($path);
 
-        // Pass 2: CLI tool optimizer (optional, skips silently if not installed)
         $this->cliOptimize($path);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Pass 1: GD-based compression
-    // ─────────────────────────────────────────────────────────────────────────
+    // --- Pass 1: GD-based compression ---
 
     /**
      * Re-encode and resize the image using PHP GD.
@@ -97,7 +93,7 @@ class ImageOptimizerService
         try {
             $info = @getimagesize($path);
             if (! $info) {
-                return; // Not a recognised image format
+                return;
             }
 
             $mimeType = $info['mime'] ?? '';
@@ -107,11 +103,9 @@ class ImageOptimizerService
                 return;
             }
 
-            // Get original dimensions
             $width = imagesx($image);
             $height = imagesy($image);
 
-            // Proportional resize if any dimension exceeds MAX_DIMENSION
             if ($width > self::MAX_DIMENSION || $height > self::MAX_DIMENSION) {
                 if ($width > $height) {
                     $newWidth = self::MAX_DIMENSION;
@@ -123,7 +117,6 @@ class ImageOptimizerService
 
                 $resizedImage = imagecreatetruecolor($newWidth, $newHeight);
 
-                // Preserve transparency for PNG and WebP
                 if ($hasAlpha) {
                     imagealphablending($resizedImage, false);
                     imagesavealpha($resizedImage, true);
@@ -146,7 +139,7 @@ class ImageOptimizerService
             $this->gdSave($image, $path, $mimeType, $hasAlpha);
             imagedestroy($image);
         } catch (\Throwable $e) {
-            // GD compression is best-effort — never block an upload
+            // --- GD compression is best-effort and never blocks an upload ---
             report($e);
         }
     }
@@ -165,7 +158,7 @@ class ImageOptimizerService
             'image/png'  => (function () use ($path, &$hasAlpha) {
                 $img = @imagecreatefrompng($path);
                 if ($img) {
-                    $hasAlpha = true; // PNG may have transparency
+                    $hasAlpha = true;
                     imagesavealpha($img, true);
                 }
                 return $img;
@@ -196,7 +189,6 @@ class ImageOptimizerService
                 break;
 
             case 'image/png':
-                // PNG compression is lossless — alpha is preserved
                 imagepng($image, $path, self::PNG_COMPRESSION);
                 break;
 
@@ -210,9 +202,7 @@ class ImageOptimizerService
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // Pass 2: CLI optimizer (spatie/image-optimizer)
-    // ─────────────────────────────────────────────────────────────────────────
+    // --- Pass 2: CLI optimizer (spatie/image-optimizer) ---
 
     /**
      * Run spatie/image-optimizer on the file.
@@ -228,7 +218,6 @@ class ImageOptimizerService
             $chain = OptimizerChainFactory::create();
             $chain->optimize($path);
         } catch (\Throwable $e) {
-            // Silently swallow — CLI tools are optional
             report($e);
         }
     }

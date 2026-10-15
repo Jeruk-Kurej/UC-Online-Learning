@@ -134,10 +134,10 @@ function testimonyCarousel() {
 }
 
 function initFeaturedAnimations() {
-    // GSAP Animations
+    // --- GSAP animations ---
     gsap.registerPlugin(ScrollTrigger);
 
-    // Disable default transitions only for items we are going to animate to avoid FOUC
+    // --- Default transitions are turned off only for animated items (avoids a flash of unstyled content) ---
     const animatedElements = document.querySelectorAll(
         'section:nth-of-type(2) .reveal-on-scroll, section:nth-of-type(3) .reveal-on-scroll, section:nth-of-type(4) .reveal-on-scroll, section:nth-of-type(5) .reveal-on-scroll'
     );
@@ -147,7 +147,7 @@ function initFeaturedAnimations() {
         el.style.transition = 'none';
     });
 
-    // Featured Intrapreneur Students
+    // --- Featured Intrapreneur Students ---
     gsap.to("section:nth-of-type(2) .reveal-on-scroll", {
         opacity: 1,
         y: 0,
@@ -161,7 +161,7 @@ function initFeaturedAnimations() {
         }
     });
 
-    // Featured Entrepreneur Students
+    // --- Featured Entrepreneur Students ---
     gsap.to("section:nth-of-type(3) .reveal-on-scroll", {
         opacity: 1,
         y: 0,
@@ -175,7 +175,7 @@ function initFeaturedAnimations() {
         }
     });
 
-    // Featured Ventures
+    // --- Featured Ventures ---
     gsap.to("section:nth-of-type(4) .reveal-on-scroll", {
         opacity: 1,
         y: 0,
@@ -189,7 +189,7 @@ function initFeaturedAnimations() {
         }
     });
 
-    // Community Voices / Testimonies
+    // --- Community Voices / Testimonies ---
     gsap.to("section:nth-of-type(5) .reveal-on-scroll", {
         opacity: 1,
         y: 0,
@@ -203,7 +203,7 @@ function initFeaturedAnimations() {
         }
     });
 
-    // Scroll-Driven Heading Parallax (Alternate horizontal movements)
+    // --- Scroll-driven heading parallax (alternating horizontal movement) ---
     gsap.utils.toArray('.uco-parallax-text').forEach((text, idx) => {
         const movementX = idx % 2 === 0 ? 100 : -100;
         gsap.to(text, {
@@ -217,7 +217,7 @@ function initFeaturedAnimations() {
         });
     });
 
-    // Spotlight hover coordinates tracker
+    // --- Spotlight hover coordinates ---
     document.querySelectorAll('.uco-premium-card').forEach(card => {
         card.addEventListener('mousemove', e => {
             const rect = card.getBoundingClientRect();
@@ -228,7 +228,7 @@ function initFeaturedAnimations() {
         });
     });
 
-    // Magnetic buttons elastic tracking
+    // --- Magnetic buttons ---
     document.querySelectorAll('.uco-magnetic-btn').forEach(btn => {
         btn.addEventListener('mousemove', e => {
             const rect = btn.getBoundingClientRect();
@@ -253,7 +253,7 @@ function initFeaturedAnimations() {
         });
     });
 
-    // Mouse movements for background elements (parallax on mouse move)
+    // --- Background parallax on mouse move ---
     window.addEventListener('mousemove', e => {
         const mouseX = (e.clientX / window.innerWidth - 0.5) * 25;
         const mouseY = (e.clientY / window.innerHeight - 0.5) * 25;

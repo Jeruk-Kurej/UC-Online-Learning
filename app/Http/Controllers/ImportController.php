@@ -23,18 +23,15 @@ class ImportController extends Controller
     {
         $prefix = "import_{$importId}";
 
-        // Fetch status and errors from the shared cache (Database)
         $progress = Cache::get($prefix);
 
         if (! $progress) {
-            // Fallback to ensure UI has something to work with initially
             $progress = [
                 'status' => 'processing',
                 'errors' => [],
             ];
         }
 
-        // Fetch atomic counts pushed by the background worker
         $total = (int) Cache::get("{$prefix}_total", 0);
         $current = (int) Cache::get("{$prefix}_current", 0);
         $success = (int) Cache::get("{$prefix}_success", 0);
@@ -54,7 +51,6 @@ class ImportController extends Controller
     public function checkActive(Request $request): JsonResponse
     {
         $session = $request->session();
-        // Check all possible session keys where import IDs might be stored
         $importId = $session->get('active_import')
             ?: $session->get('importId')
             ?: $session->get('active_business_import_id')
@@ -72,7 +68,6 @@ class ImportController extends Controller
      */
     public function clearActive(Request $request): JsonResponse
     {
-        // Clear all possible session keys used for imports
         $request->session()->forget([
             'active_import',
             'importId',

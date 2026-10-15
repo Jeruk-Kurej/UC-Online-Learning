@@ -26,7 +26,7 @@
                 Core Information
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Business Name --}}
+                {{-- --- Business Name --- --}}
                 <div class="relative pb-5">
                     <label for="name" class="form-label-custom">
                         Business Name <span class="text-red-500">*</span>
@@ -36,7 +36,7 @@
                     @error('name')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Business Category --}}
+                {{-- --- Business Category --- --}}
                 <div class="relative pb-5">
                     <label for="category_id" class="form-label-custom">
                         Business Category <span class="text-red-500">*</span>
@@ -52,7 +52,7 @@
                     @error('category_id')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Offering Type / Mode --}}
+                {{-- --- Offering Type / Mode --- --}}
                 <div class="relative pb-5">
                     <label for="business_mode" class="form-label-custom">
                         Offering Type <span class="text-red-500">*</span>
@@ -65,7 +65,7 @@
                     @error('business_mode')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Established Date --}}
+                {{-- --- Established Date --- --}}
                 <div class="relative pb-5">
                     <label for="established_date" class="form-label-custom">
                         Established Date
@@ -75,7 +75,7 @@
                     @error('established_date')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Description --}}
+                {{-- --- Description --- --}}
                 <div class="md:col-span-2 relative pb-5">
                     <label for="description" class="form-label-custom">
                         Description <span class="text-red-500">*</span>
@@ -85,7 +85,7 @@
                     @error('description')<p class="absolute bottom-0 left-0 text-[10px] font-bold text-red-600 uppercase tracking-tight">{{ $message }}</p>@enderror
                 </div>
 
-                {{-- Business Logo --}}
+                {{-- --- Business Logo --- --}}
                 @if($business)
                     <x-forms.removable-image class="md:col-span-2 pb-5" label="Business Logo" name="logo" delete-name="delete_logo"
                         :url="$business->logo_url" :has-image="$business->has_logo" :initial="strtoupper(substr($business->name, 0, 1))" noun="Logo"
@@ -122,7 +122,7 @@
                 Location & Contact Details
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {{-- Province --}}
+                {{-- --- Province --- --}}
                 <div>
                     <label for="province" class="form-label-custom">Province</label>
                     <select name="province" id="province" data-region-province data-region-city="#city" class="block w-full">
@@ -135,7 +135,7 @@
                     </select>
                 </div>
 
-                {{-- City --}}
+                {{-- --- City --- --}}
                 <div>
                     <label for="city" class="form-label-custom">City / Regency</label>
                     <select name="city" id="city" data-region-city-placeholder="{{ $business ? 'Select City' : 'Select Province First' }}" @unless($business) data-region-city-starts-disabled @endunless class="block w-full">
@@ -148,42 +148,42 @@
                     </select>
                 </div>
 
-                {{-- Full Address --}}
+                {{-- --- Full Address --- --}}
                 <div class="md:col-span-2">
                     <label for="address" class="form-label-custom">Full Address</label>
                     <textarea name="address" id="address" rows="2"
                               class="form-input-custom">{{ old('address', $business?->address) }}</textarea>
                 </div>
 
-                {{-- Phone Number --}}
+                {{-- --- Phone Number --- --}}
                 <div>
                     <label for="phone" class="form-label-custom">Business Phone Number</label>
                     <input type="tel" name="phone" id="phone" value="{{ old('phone', $business?->phone_number) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- WhatsApp Number --}}
+                {{-- --- WhatsApp Number --- --}}
                 <div>
                     <label for="whatsapp_number" class="form-label-custom">Business WhatsApp Number</label>
                     <input type="tel" name="whatsapp_number" id="whatsapp_number" value="{{ old('whatsapp_number', $business?->whatsapp) }}"
                            class="form-input-custom" placeholder="e.g. 62812...">
                 </div>
 
-                {{-- Email Address --}}
+                {{-- --- Email Address --- --}}
                 <div>
                     <label for="email" class="form-label-custom">Business Email</label>
                     <input type="email" name="email" id="email" value="{{ old('email', $business?->email) }}"
                            class="form-input-custom">
                 </div>
 
-                {{-- Website --}}
+                {{-- --- Website --- --}}
                 <div>
                     <label for="website" class="form-label-custom">Website URL</label>
                     <input type="url" name="website" id="website" value="{{ old('website', $business?->website) }}"
                            class="form-input-custom" placeholder="https://...">
                 </div>
 
-                {{-- Instagram Handle --}}
+                {{-- --- Instagram Handle --- --}}
                 <div>
                     <label for="instagram_handle" class="form-label-custom">Instagram Handle</label>
                     <input type="text" name="instagram_handle" id="instagram_handle" value="{{ old('instagram_handle', $business?->instagram) }}"
@@ -198,7 +198,7 @@
                     Ownership Management
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Primary Owner --}}
+                    {{-- --- Primary Owner --- --}}
                     <div>
                         <label for="user_id" class="form-label-custom">
                             Primary Owner (Admin Only)
@@ -213,7 +213,7 @@
                         </select>
                     </div>
 
-                    {{-- Additional Owners --}}
+                    {{-- --- Additional Owners --- --}}
                     <div>
                         <label for="owner_ids" class="form-label-custom">
                             Additional Owners (Optional)
@@ -230,7 +230,7 @@
             </div>
         @endif
 
-        {{-- Action Buttons --}}
+        {{-- --- Action Buttons --- --}}
         <div class="flex items-center justify-between pb-6">
             <a href="{{ $cancelUrl }}" 
                class="btn-uco btn-uco-neutral">

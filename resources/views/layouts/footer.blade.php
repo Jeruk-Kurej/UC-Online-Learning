@@ -1,8 +1,8 @@
 <footer class="bg-white border-t border-gray-200 mt-16">
-    {{-- ======================================== LAYOUT: FOOTER ======================================== --}}
+    {{-- --- Footer --- --}}
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div class="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
-            {{-- Column 1: About UCO (Span 4) --}}
+            {{-- --- Column 1: About UCO (Span 4) --- --}}
             <div class="md:col-span-5 lg:col-span-4">
                 <div class="flex items-center gap-2.5 mb-4">
                     <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="w-10 h-10 object-contain">
@@ -16,7 +16,7 @@
                 </p>
             </div>
 
-            {{-- Column 2: Quick Links (Span 3) --}}
+            {{-- --- Column 2: Quick Links (Span 3) --- --}}
             <div class="md:col-span-3 lg:col-span-3 lg:col-start-6">
                 <h4 class="font-medium text-sm text-gray-900 mb-4">Quick Links</h4>
                 <ul class="space-y-2">
@@ -29,11 +29,6 @@
                         <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
                             Business Directory</a>
                     </li>
-                    {{-- <li>
-                        <a href="{{ route('uc-testimonies.index') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
-                            Community Testimonies
-                        </a>
-                    </li> --}}
                     <li>
                         <a href="{{ route('about') }}" class="text-sm text-gray-600 hover:text-uco-orange-500 transition-colors">
                             About UCO
@@ -42,7 +37,7 @@
                 </ul>
             </div>
 
-            {{-- Column 3: Contact (Span 4) --}}
+            {{-- --- Column 3: Contact (Span 4) --- --}}
             <div class="md:col-span-4 lg:col-span-4">
                 <h4 class="font-medium text-sm text-gray-900 mb-4">Contact Us</h4>
                 <ul class="space-y-3 text-sm text-gray-600">
@@ -60,7 +55,7 @@
                     </li>
                 </ul>
 
-                {{-- Social Media Icons --}}
+                {{-- --- Social Media Icons --- --}}
                 <div class="mt-6">
                     <h5 class="font-medium text-sm text-gray-900 mb-3">Follow Us</h5>
                     <div class="flex gap-2.5">
@@ -81,7 +76,7 @@
             </div>
         </div>
         
-        {{-- Copyright - Center --}}
+        {{-- --- Copyright - Center --- --}}
         <div class="mt-8 pt-6 border-t border-gray-200 text-center">
             <p class="text-sm text-gray-600">&copy; {{ date('Y') }} UCO Student & Alumni Platform. All rights reserved.</p>
         </div>

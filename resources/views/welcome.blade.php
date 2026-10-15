@@ -16,11 +16,11 @@
 </head>
 <body class="antialiased bg-soft-white overflow-x-hidden">
     <div class="min-h-screen flex flex-col relative overflow-x-hidden">
-        {{-- Hero Content --}}
+        {{-- --- Hero Content --- --}}
         <main class="flex-shrink-0 flex items-center relative overflow-hidden z-10 py-20">
             <div class="max-w-6xl mx-auto px-8 w-full relative z-10">
                 <div class="grid lg:grid-cols-2 gap-16 items-center">
-                    {{-- Left: Content --}}
+                    {{-- --- Left: Content --- --}}
                     <div class="space-y-6 relative reveal-on-scroll">
                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-soft-gray-200 rounded-full shadow-sm">
                             <div class="w-2 h-2 bg-gradient-to-r from-uco-orange-400 to-uco-yellow-400 rounded-full"></div>
@@ -36,7 +36,7 @@
                             Connect with Universitas Ciputra's professional community. Discover businesses, explore achievements, showcase products, and grow your network.
                         </p>
                         
-                        {{-- Feature Pills --}}
+                        {{-- --- Feature Pills --- --}}
                         <div class="flex flex-wrap gap-3 pt-2">
                             <div class="px-4 py-2 bg-white border border-soft-gray-200 rounded-lg text-sm font-medium text-soft-gray-700 shadow-sm hover:shadow-md transition-shadow">
                                 🏢 Business Profiles
@@ -50,9 +50,9 @@
                         </div>
                     </div>
                     
-                    {{-- Right: Login Form --}}
+                    {{-- --- Right: Login Form --- --}}
                     <div class="bg-white/90 backdrop-blur-2xl border border-white/60 rounded-[2.5rem] p-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] relative overflow-hidden reveal-on-scroll delay-200">
-                        {{-- Decorative corner elements --}}
+                        {{-- --- Decorative corner elements --- --}}
                         <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-uco-orange-100 to-uco-yellow-100 rounded-bl-[4rem] opacity-50"></div>
                         <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 rounded-tr-[4rem] opacity-40"></div>
                         
@@ -120,7 +120,7 @@
                             </a>
                         </form>
                         
-                        {{-- Back to Home Button --}}
+                        {{-- --- Back to Home Button --- --}}
                         <div class="mt-6 pt-6 border-t border-gray-100 relative z-10">
                             @if(auth()->check())
                                 <a href="{{ route('businesses.index') }}" 
@@ -158,7 +158,7 @@
             </div>
         </main>
 
-        {{-- Portfolio Overview Section --}}
+        {{-- --- Portfolio Overview Section --- --}}
         <section class="relative z-20 py-24 bg-white border-t border-soft-gray-100">
             <div class="max-w-6xl mx-auto px-8">
                 <div class="bg-gradient-to-br from-soft-gray-50 to-white rounded-[2.5rem] p-8 md:p-12 border border-soft-gray-100 shadow-sm relative overflow-hidden">
@@ -199,7 +199,7 @@
             </div>
         </section>
 
-        {{-- Dynamic JS Toast Trigger --}}
+        {{-- --- Dynamic JS Toast Trigger --- --}}
         <x-flash.guest-toasts />
     </div>
     

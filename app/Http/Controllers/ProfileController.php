@@ -68,14 +68,12 @@ class ProfileController extends Controller
 
         $user->show_contact_details = $request->boolean('show_contact_details');
 
-        // Handle profile photo deletion
         if ($request->boolean('delete_profile_photo')) {
             $user->deleteFileFromStorage($user->profile_photo_url);
             $user->profile_photo_url = null;
         }
 
         if ($request->hasFile('profile_photo')) {
-            // Delete old file if exists
             $user->deleteFileFromStorage($user->profile_photo_url);
 
             $file = $request->file('profile_photo');
@@ -91,13 +89,11 @@ class ProfileController extends Controller
             }
         }
 
-        // Handle activities files deletion and uploading
         $existingUrls = [];
         if ($user->activities_doc_url) {
             $existingUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
         }
 
-        // Delete flagged URLs
         if ($request->has('delete_activities_files')) {
             $toDelete = (array) $request->input('delete_activities_files');
             foreach ($toDelete as $urlToDelete) {
@@ -109,7 +105,6 @@ class ProfileController extends Controller
             $existingUrls = array_values($existingUrls);
         }
 
-        // Upload new files
         $newUrls = [];
         if ($request->hasFile('activities_files')) {
             /** @var \Illuminate\Filesystem\FilesystemAdapter $publicDisk */
@@ -137,8 +132,6 @@ class ProfileController extends Controller
 
         return Redirect::route('profile.edit')->with('success', 'Profile updated!');
     }
-
-
 
     /**
      * Delete the user's account.

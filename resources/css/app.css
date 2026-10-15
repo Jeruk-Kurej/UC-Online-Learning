@@ -5,8 +5,6 @@
 @import './base/document.css';
 @import './components/reveal.css';
 @import './components/hero.css';
-@import './components/step-card.css';
-@import './components/marquee.css';
 @import './components/surfaces.css';
 @import './components/forms.css';
 @import './components/buttons.css';

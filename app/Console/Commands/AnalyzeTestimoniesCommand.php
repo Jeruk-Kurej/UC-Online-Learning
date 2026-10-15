@@ -41,7 +41,7 @@ class AnalyzeTestimoniesCommand extends Command
         $bar = $this->output->createProgressBar($users->count());
 
         foreach ($users as $user) {
-            $rating = 5; // Default assumption for imported ones if no rating
+            $rating = 5;
             $result = $aiService->analyze($user->testimony, $rating, $user->name);
 
             $user->update([

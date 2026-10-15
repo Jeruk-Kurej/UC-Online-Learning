@@ -36,3 +36,7 @@ test('views have no inline event handlers', function () {
 test('views have no @php blocks', function () {
     expect(viewsMatching('/@php\b/'))->toBe([]);
 });
+
+test('view comments are section headers only', function () {
+    expect(viewsMatching('/\{\{--(?! --- [^\n]+ --- --\}\})/'))->toBe([]);
+});

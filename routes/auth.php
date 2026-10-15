@@ -13,9 +13,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    // Public registration can be toggled via the REGISTRATION_OPEN env var.
-    // When false (default) registration routes are not registered and users
-    // must be created by an admin.
+    // --- Registration routes exist only when REGISTRATION_OPEN is true; otherwise admins create users ---
     if (env('REGISTRATION_OPEN', false)) {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
@@ -23,7 +21,7 @@ Route::middleware('guest')->group(function () {
         Route::post('register', [RegisteredUserController::class, 'store']);
     }
 
-    // Show login page (welcome.blade.php)
+    // --- Login page (welcome.blade.php) ---
     Route::get('login', function () {
         return view('welcome');
     })->name('login');

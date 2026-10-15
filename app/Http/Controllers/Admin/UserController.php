@@ -71,7 +71,6 @@ class UserController extends \App\Http\Controllers\Controller
             $studentStatus = null;
         }
 
-        // Build query with search, filter, and sort options
         $query = User::withCount('businesses')
             ->where('role', '!=', 'admin')
             ->when($search !== '', function ($q) use ($search) {
@@ -86,7 +85,6 @@ class UserController extends \App\Http\Controllers\Controller
             ->when($major, fn ($q) => $q->where('major', $major))
             ->when($yearOfEnrollment, fn ($q) => $q->where('year_of_enrollment', $yearOfEnrollment));
 
-        // Apply requested sorting
         if ($sortName) {
             $query->orderBy('name', $sortName);
         }
@@ -97,7 +95,6 @@ class UserController extends \App\Http\Controllers\Controller
             );
         }
 
-        // Stable fallback ordering
         if (! $sortName && ! $sortYear) {
             $query->latest();
         } else {
@@ -106,7 +103,7 @@ class UserController extends \App\Http\Controllers\Controller
 
         $users = $query->paginate(10);
 
-        // Filter dropdown sources
+        // --- Filter dropdown sources ---
         $availableMajors = User::query()
             ->whereNotNull('major')
             ->where('major', '!=', '')
@@ -123,7 +120,7 @@ class UserController extends \App\Http\Controllers\Controller
             )
             ->pluck('year_of_enrollment');
 
-        // Get accurate counts from database (not from paginated collection)
+        // --- Counts from the database, not from the current page ---
         ['total' => $totalUsers, 'entrepreneurs' => $totalEntrepreneurs, 'intrapreneurs' => $totalIntrapreneurs, 'alumni' => $totalAlumni] = $this->userCounts();
         $featuredStats = $this->getFeaturedUserStats();
         $featuredUserCount = $featuredStats['total'];
@@ -177,7 +174,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function create()
     {
-        // Get available businesses for ownership transfer
         $availableBusinesses = Business::with('user', 'category')->get();
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
@@ -225,12 +221,10 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function edit(User $user)
     {
-        // Get available businesses for ownership transfer (excluding businesses owned by this user)
         $availableBusinesses = Business::with('user', 'category')
             ->where('user_id', '!=', $user->id)
             ->get();
 
-        // Get businesses currently owned by this user
         $provinces = Province::orderBy('name')->get(['id', 'name']);
 
         return view('users.form', [
@@ -289,7 +283,6 @@ class UserController extends \App\Http\Controllers\Controller
      */
     public function toggleFeatured(Request $request, User $user)
     {
-        // Cannot feature an inactive user
         if (! $user->is_visible && ! $user->is_featured) {
             if ($request->ajax() || $request->wantsJson()) {
                 return new JsonResponse(['success' => false, 'message' => 'Cannot feature an inactive user. Please activate the user first.'], 422);
@@ -322,7 +315,6 @@ class UserController extends \App\Http\Controllers\Controller
         $newVisibility = ! $user->is_visible;
         $updateData = ['is_visible' => $newVisibility];
 
-        // If deactivating, also turn off featured status
         if (! $newVisibility) {
             $updateData['is_featured'] = false;
         }
@@ -330,9 +322,7 @@ class UserController extends \App\Http\Controllers\Controller
         $user->fill($updateData);
         $user->save();
 
-        // Work profiles follow their person. Businesses are left alone when hiding: the visible
-        // scope already hides a business once none of its people is visible. Re-activating still
-        // restores businesses hidden by earlier deactivations.
+        // --- Work profiles follow their person; businesses hide through the visible scope (re-activating restores earlier ones) ---
         $user->companies()->update(['is_visible' => $newVisibility]);
         if ($newVisibility) {
             $user->businesses()->update(['is_visible' => true]);
@@ -353,25 +343,16 @@ class UserController extends \App\Http\Controllers\Controller
     }
 
     /**
-     * Remove the specified user from storage.
-     */
-    public function destroy(User $user)
-    {
-        // Deactivated as per user request to use toggleStatus instead of delete
-        abort(405, 'Delete action is disabled. Use Toggle Status instead.');
-    }
-
-    /**
      * Import users from Excel file.
      */
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv,txt|max:10240', // Max 10MB
+            'file' => 'required|mimes:xlsx,xls,csv,txt|max:10240',
         ]);
 
-        // Increase execution time and memory limit for large imports
-        set_time_limit(300); // 5 minutes
+        // --- Large imports need more time and memory ---
+        set_time_limit(300);
         ini_set('memory_limit', '512M');
 
         try {
@@ -382,13 +363,10 @@ class UserController extends \App\Http\Controllers\Controller
                 throw new \RuntimeException('No valid file was uploaded.');
             }
 
-            // Store file so queue worker can access it
             $path = $file->store('imports', 'local');
 
-            // Peek at the file to auto-detect format
             $importer = \App\Factories\ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
 
-            // Queue it — runs in background via artisan queue:work
             Excel::queueImport($importer, (string) $path, 'local');
 
             $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';

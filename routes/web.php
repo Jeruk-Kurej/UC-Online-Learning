@@ -19,14 +19,11 @@ use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-// ============================================================
-// PUBLIC ROUTES
-// ============================================================
+// --- Public routes ---
 
 Route::get('/', function () {
     return redirect('/featured');
 })->name('home');
-
 
 Route::middleware(['throttle:showcase'])->group(function () {
     Route::get('/about', AboutController::class)->name('about');
@@ -36,12 +33,9 @@ Route::middleware(['throttle:showcase'])->group(function () {
     Route::get('/google-drive-image/{id}', [UserProfileController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
 });
 
-// ============================================================
-// AUTHENTICATED ROUTES
-// ============================================================
+// --- Authenticated routes ---
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    
     Route::get('/import-progress/check', [ImportController::class, 'checkActive'])->name('import.check');
     Route::get('/import-progress/{sessionId}', [ImportController::class, 'progress'])->name('import.progress');
     Route::post('/clear-active-import', [ImportController::class, 'clearActive'])->name('import.clear');
@@ -53,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
     Route::get('/inbox/{message}', [InboxController::class, 'show'])->name('inbox.show');
 
-    // Collabs
+    // --- Collabs ---
     Route::post('/collabs/{user}', [CollabController::class, 'store'])->name('collabs.store');
     Route::post('/collabs/{collab}/accept', [CollabController::class, 'accept'])->name('collabs.accept');
     Route::post('/collabs/{collab}/reject', [CollabController::class, 'reject'])->name('collabs.reject');
@@ -68,28 +62,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
     Route::post('/uc-testimonies', [UcTestimonyController::class, 'store'])->name('uc-testimonies.store');
 
-    // Products and Services CRUD
+    // --- Products and Services CRUD ---
     Route::resource('business.products', ProductController::class)->parameters(['business' => 'business'])->names('businesses.products')->except(['index', 'show']);
     Route::resource('business.services', ServiceController::class)->parameters(['business' => 'business'])->names('businesses.services')->except(['index', 'show']);
 
-    // Intrapreneur Achievements
+    // --- Intrapreneur Achievements ---
     Route::get('/intrapreneurs/{company}/achievements/create', [CompanyAchievementController::class, 'create'])->name('intrapreneurs.create_achievement');
     Route::post('/intrapreneurs/{company}/achievements', [CompanyAchievementController::class, 'store'])->name('intrapreneurs.add_achievement');
     Route::delete('/intrapreneurs/{company}/achievements', [CompanyAchievementController::class, 'destroy'])->name('intrapreneurs.delete_achievement');
 
-    // Intrapreneur / Company Management
+    // --- Intrapreneur / Company Management ---
     Route::get('/intrapreneurs/create', [CompanyController::class, 'create'])->name('intrapreneurs.create');
     Route::post('/intrapreneurs', [CompanyController::class, 'store'])->name('intrapreneurs.store');
     Route::get('/intrapreneurs/{company}/edit', [CompanyController::class, 'edit'])->name('intrapreneurs.edit');
     Route::put('/intrapreneurs/{company}', [CompanyController::class, 'update'])->name('intrapreneurs.update');
 });
 
-// ============================================================
-// ADMIN-ONLY ROUTES
-// ============================================================
+// --- Admin routes ---
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(function () {
-    
     Route::resource('users', AdminUserController::class)->except(['show', 'destroy']);
     Route::post('/users/import', [AdminUserController::class, 'import'])->name('users.import');
     Route::get('/users/stats', [AdminUserController::class, 'stats'])->name('users.stats');
@@ -112,18 +103,17 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
 });
 
 Route::middleware(['throttle:showcase'])->group(function () {
-    // Universal business resolver for incoming requests
+    // --- Business resolver ---
     Route::get('/business/{slug}', [BusinessController::class, 'resolveShowcase'])->name('showcase.resolve');
 
-    // These routes must be defined AFTER the resolver. They are used to preserve reverse routing (url generation) 
-    // for existing Blade views without needing to refactor all route() calls.
+    // --- Same-URI routes after the resolver, kept only for route() URL generation ---
     Route::get('/business/{company}', [CompanyController::class, 'show'])->name('intrapreneurs.show');
     Route::get('/business/{business}', [BusinessController::class, 'show'])->name('businesses.show');
 });
 
 require __DIR__.'/auth.php';
 
-// Catch-all route for user profiles (must be at the very bottom to avoid intercepting other routes like /login or /about)
+// --- Catch-all user profile route: must stay last ---
 Route::middleware(['throttle:showcase'])->group(function () {
     Route::get('/{user}', [UserProfileController::class, 'show'])->name('users.show');
 });

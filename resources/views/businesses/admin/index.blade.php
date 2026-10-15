@@ -24,7 +24,7 @@
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- Statistics --}}
+        {{-- --- Statistics --- --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
             <x-admin.stat-card class="delay-100">
                 <x-slot:label>
@@ -56,14 +56,14 @@
             </x-admin.stat-card>
         </div>
 
-        {{-- Filters & Search --}}
+        {{-- --- Filters & Search --- --}}
         <div class="mb-8 reveal-on-scroll delay-300">
             <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
-                {{-- Hidden type input (kept in sync by switchType()) --}}
+                {{-- --- Hidden type input (kept in sync by switchType()) --- --}}
                 <input type="hidden" name="type" :value="viewType">
 
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3">
-                    {{-- Search Input --}}
+                    {{-- --- Search Input --- --}}
                     <div class="relative flex-1 w-full">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <i class="bi bi-search text-gray-400"></i>
@@ -79,10 +79,10 @@
                         >
                     </div>
 
-                    {{-- Filters & Reset Button --}}
+                    {{-- --- Filters & Reset Button --- --}}
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
 
-                        {{-- Type dropdown --}}
+                        {{-- --- Type dropdown --- --}}
                         <select x-model="viewType"
                                 @change="switchType($event.target.value)"
                                 class="flex-1 sm:flex-initial min-w-[175px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
@@ -90,7 +90,7 @@
                             <option value="intrapreneur">Type: Intrapreneur</option>
                         </select>
 
-                        {{-- Status filter --}}
+                        {{-- --- Status filter --- --}}
                         <select name="status" @change="updateList()"
                                 class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
                             <option value="">Status: All</option>
@@ -100,7 +100,7 @@
                             <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
                         </select>
 
-                        {{-- Featured filter (entrepreneur only) --}}
+                        {{-- --- Featured filter (entrepreneur only) --- --}}
                         <template x-if="viewType === 'entrepreneur'">
                             <select name="featured" @change="updateList()"
                                     class="flex-1 sm:flex-initial min-w-[145px] border-gray-300 bg-white rounded-md pl-3 pr-8 py-2 text-sm focus:ring-uco-orange-500 focus:border-uco-orange-500 outline-none transition-all shadow-sm cursor-pointer">
@@ -110,13 +110,13 @@
                             </select>
                         </template>
 
-                        {{-- Reset --}}
+                        {{-- --- Reset --- --}}
                         <button type="button" @click="resetFilters()" x-show="!isSubmitting" title="Reset Filters"
                                 class="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-500 hover:text-gray-900 hover:bg-gray-50 h-[38px] w-[38px] rounded-md transition shadow-sm flex-shrink-0">
                             <i class="bi bi-arrow-clockwise text-lg"></i>
                         </button>
 
-                        {{-- Loading spinner --}}
+                        {{-- --- Loading spinner --- --}}
                         <div x-show="isSubmitting" x-cloak class="inline-flex items-center justify-center bg-uco-orange-50 border border-uco-orange-200 text-uco-orange-700 h-[38px] px-3 rounded-md shadow-sm">
                             <x-ui.spinner />
                             <span class="ml-2 text-xs font-medium hidden sm:inline">Updating...</span>
@@ -130,7 +130,7 @@
             @include('businesses.admin.partials.list')
         </div>
 
-    {{-- Status Modal --}}
+    {{-- --- Status Modal --- --}}
     <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" data-status-modal-close></div>
@@ -187,7 +187,7 @@
     </div>
 
 
-        {{-- Import Modal --}}
+        {{-- --- Import Modal --- --}}
         @if (auth()->user()?->isAdmin())
             <x-admin.import-modal title="Import Businesses" :action="route('businesses.import')" input-id="biz_csv_file" name-id="biz_file_name" />
         @endif

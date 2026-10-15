@@ -1,7 +1,7 @@
 {{-- --- Profile activities: autoplay photo carousel with caption, or the testimony card when there are no photos --- --}}
 <div class="pt-6 border-t border-slate-100">
     @if(count($user->activity_gallery_urls) > 0)
-        {{-- Sleek Carousel --}}
+        {{-- --- Sleek Carousel --- --}}
         <div x-data="autoplayCarousel({{ count($user->activity_gallery_urls) }})" class="relative w-full h-[200px] md:h-[240px] bg-slate-50 rounded-2xl overflow-hidden group">
             <!-- Slides -->
             <div class="w-full h-full relative flex items-center justify-center">
@@ -56,7 +56,7 @@
             </div>
         @endif
     @else
-        {{-- Fallback Card: Premium testimonial styling --}}
+        {{-- --- Fallback Card: Premium testimonial styling --- --}}
         <div class="w-full h-[200px] md:h-[240px] flex flex-col justify-between p-6 bg-slate-50/50 rounded-2xl relative overflow-hidden">
             <div class="absolute top-0 right-0 transform translate-x-8 -translate-y-8 opacity-[0.05] pointer-events-none select-none">
                 <i class="bi bi-quote text-[160px] text-[#f7931e]"></i>

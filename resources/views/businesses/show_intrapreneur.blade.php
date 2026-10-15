@@ -3,7 +3,7 @@
     
 
     <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {{-- Breadcrumbs --}}
+        {{-- --- Breadcrumbs --- --}}
         <nav class="flex pt-4 sm:pt-6 mb-8 text-sm font-medium" aria-label="Breadcrumb">
             <ol class="flex items-center space-x-2">
                 <li><a href="{{ route('businesses.index') }}?view=intrapreneur" class="text-gray-400 hover:text-uco-orange-500 transition">Directory</a></li>
@@ -14,11 +14,11 @@
             </ol>
         </nav>
 
-        {{-- Hero Header Section --}}
+        {{-- --- Hero Header Section --- --}}
         <div class="mb-8 px-4 sm:px-0">
             <div class="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
                 <div class="flex-1 flex flex-row items-center sm:items-start gap-4 sm:gap-5">
-                    {{-- Logo --}}
+                    {{-- --- Logo --- --}}
                     @if ($company->logo_url)
                         <img src="{{ storage_image_url($company->logo_url, ['width' => 256, 'height' => 256, 'crop' => 'thumb', 'quality' => 'auto', 'fetch_format' => 'auto']) }}"
                             alt="{{ $company->name }} Logo" loading="lazy"
@@ -61,14 +61,14 @@
             </div>
         </div>
 
-        {{-- ═══ 2-COLUMN LAYOUT ═══ --}}
+        {{-- --- 2-column layout --- --}}
         <div class="grid grid-cols-1 gap-6 md:gap-8 items-start" id="biz-layout-grid">
-            {{-- LEFT COLUMN: Company Content --}}
+            {{-- --- LEFT COLUMN: Company Content --- --}}
             <div class="space-y-6 min-w-0">
-                {{-- Company Overview Card --}}
+                {{-- --- Company Overview Card --- --}}
                 <div class="bg-white shadow-lg sm:rounded-lg overflow-hidden border border-soft-gray-100">
                     <div class="p-4 sm:p-6 lg:p-8">
-                        {{-- About Company --}}
+                        {{-- --- About Company --- --}}
                         <div class="mb-8">
                             <h4 class="text-sm font-bold text-soft-gray-900 uppercase tracking-wider mb-3">About This Company</h4>
                             <p class="text-base text-soft-gray-700 leading-relaxed w-full max-w-[1600px] 2xl:max-w-[1720px]">
@@ -76,9 +76,9 @@
                             </p>
                         </div>
 
-                        {{-- Metadata Grid --}}
+                        {{-- --- Metadata Grid --- --}}
                         <div class="grid grid-cols-1 sm:grid-cols-3 gap-y-6 gap-x-4 md:gap-x-6 lg:gap-x-8 py-8 mb-4 border-y border-gray-100">
-                            {{-- Company Scale --}}
+                            {{-- --- Company Scale --- --}}
                             <div class="flex items-start gap-4 sm:gap-2 md:gap-4 border-r border-gray-100 pr-4 md:pr-6 lg:pr-8">
                                 <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100/50 shadow-sm flex-shrink-0">
                                     <i class="bi bi-graph-up-arrow text-lg sm:text-sm md:text-lg"></i>
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
 
-                            {{-- Started Working --}}
+                            {{-- --- Started Working --- --}}
                             <div class="flex items-start gap-4 sm:gap-2 md:gap-4 border-r border-gray-100 pr-4 md:pr-6 lg:pr-8">
                                 <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100/50 shadow-sm flex-shrink-0">
                                     <i class="bi bi-calendar-check-fill text-lg sm:text-sm md:text-lg"></i>
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
 
-                            {{-- Job Position --}}
+                            {{-- --- Job Position --- --}}
                             <div class="flex items-start gap-4 sm:gap-2 md:gap-4">
                                 <div class="w-11 h-11 sm:w-9 sm:h-9 md:w-11 md:h-11 rounded-lg bg-orange-50 text-uco-orange-600 flex items-center justify-center border border-orange-100/50 shadow-sm flex-shrink-0">
                                     <i class="bi bi-person-badge-fill text-lg sm:text-sm md:text-lg"></i>
@@ -121,13 +121,13 @@
                     </div>
                 </div>
 
-                {{-- Achievements & Contributions Card --}}
+                {{-- --- Achievements & Contributions Card --- --}}
                 @if ($company->achievement || $canManage)
                     <div 
                         x-data="achievementList(@js($company->achievements_list), @js(route('intrapreneurs.delete_achievement', $company)))"
                         class="bg-white shadow-lg sm:rounded-lg border border-soft-gray-100 overflow-hidden"
                     >
-                        {{-- Section Header — same structure as "Our Products" --}}
+                        {{-- --- Section Header — same structure as "Our Products" --- --}}
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-5 border-b border-gray-100">
                             <div class="flex items-center gap-3">
                                 <div class="w-1 h-8 bg-uco-orange-500 rounded-full flex-shrink-0"></div>
@@ -147,9 +147,9 @@
                             @endif
                         </div>
 
-                        {{-- Content Body --}}
+                        {{-- --- Content Body --- --}}
                         <div class="p-6">
-                            {{-- Achievements Stack --}}
+                            {{-- --- Achievements Stack --- --}}
                             <div class="space-y-3">
                                 <template x-for="(item, index) in achievements" :key="index">
                                     <div class="group relative flex items-start gap-4 p-4 rounded-xl border border-gray-100 bg-gray-50/30 hover:bg-white hover:border-orange-200 hover:shadow-md transition-all duration-300">
@@ -171,7 +171,7 @@
                                     </div>
                                 </template>
 
-                                {{-- Empty State --}}
+                                {{-- --- Empty State --- --}}
                                 <template x-if="achievements.length === 0">
                                     <div class="flex items-center justify-center py-6 px-4 bg-gray-50/50 rounded-lg border border-dashed border-gray-200">
                                         <span class="text-sm text-gray-500">No achievements added yet. Start adding milestones and contributions.</span>
@@ -183,13 +183,13 @@
                 @endif
             </div>
 
-            {{-- RIGHT COLUMN: Student Profile Sidebar --}}
+            {{-- --- RIGHT COLUMN: Student Profile Sidebar --- --}}
             <div class="space-y-6 min-w-0">
-                {{-- Employee Profile Section --}}
+                {{-- --- Employee Profile Section --- --}}
                 @if($student)
                     <x-people.profile-card :person="$student" title-start="Employed" title-end="Student" :status="$student->display_status"
                         career="Intrapreneur" with-linkedin>
-                        {{-- Skills --}}
+                        {{-- --- Skills --- --}}
                         @if($student->skills->count() > 0)
                             <div class="w-full h-px bg-gray-100 my-5 relative z-10 pointer-events-none"></div>
                             <div>

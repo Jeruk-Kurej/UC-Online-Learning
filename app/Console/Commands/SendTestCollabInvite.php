@@ -44,7 +44,7 @@ class SendTestCollabInvite extends Command
                 return;
             }
         } else {
-            // Pick a random sender if none provided
+            // --- Pick a random sender if none provided ---
             $sender = User::where('id', '!=', $recipient->id)->inRandomOrder()->first();
         }
 
