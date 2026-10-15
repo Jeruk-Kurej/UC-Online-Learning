@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\CleanText;
+use App\Support\GoogleDrive;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -178,10 +179,9 @@ class User extends Authenticatable
             $name = basename(parse_url($url, PHP_URL_PATH) ?? $url);
             $previewUrl = null;
 
-            if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
-                if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
-                    $previewUrl = 'https://drive.google.com/thumbnail?sz=w400&id='.$matches[1];
-                }
+            if (GoogleDrive::isDriveUrl($url)) {
+                $id = GoogleDrive::fileId($url);
+                $previewUrl = $id ? GoogleDrive::thumbnailUrl($id, 'w400') : null;
             } elseif (in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                 $previewUrl = $url;
             }
@@ -247,12 +247,9 @@ class User extends Authenticatable
     public function getActivityGalleryUrlsAttribute(): array
     {
         return collect($this->activities_doc_url)->map(function ($url) {
-            if ((str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com'))
-                && preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
-                return 'https://drive.google.com/uc?export=view&id='.$matches[1];
-            }
+            $id = GoogleDrive::isDriveUrl($url) ? GoogleDrive::fileId($url) : null;
 
-            return $url;
+            return $id ? GoogleDrive::viewUrl($id) : $url;
         })->values()->all();
     }
 
@@ -273,11 +270,11 @@ class User extends Authenticatable
     {
         $file = ['originalUrl' => $url, 'previewUrl' => $url, 'isPdf' => false, 'isImage' => false, 'isGoogleDrive' => false, 'driveId' => null];
 
-        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
+        if (GoogleDrive::isDriveUrl($url)) {
             $file['isGoogleDrive'] = true;
-            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
-                $file['driveId'] = $matches[1];
-                $file['previewUrl'] = "https://drive.google.com/file/d/{$matches[1]}/preview";
+            if ($id = GoogleDrive::fileId($url)) {
+                $file['driveId'] = $id;
+                $file['previewUrl'] = GoogleDrive::previewUrl($id);
             }
             $file['isPdf'] = true;
 
@@ -376,6 +373,16 @@ class User extends Authenticatable
     public function getDisplayStatusAttribute(): string
     {
         return str_contains(strtolower($this->student_status ?? ''), 'alumni') ? 'Alumni' : 'Student';
+    }
+
+    // --- Scopes ---
+
+    /**
+     * Four-digit enrollment years in numeric order; anything else counts as 0.
+     */
+    public function scopeOrderByEnrollmentYear($query, string $direction)
+    {
+        return $query->orderByRaw("CASE WHEN year_of_enrollment REGEXP '^[0-9]{4}$' THEN CAST(year_of_enrollment AS UNSIGNED) ELSE 0 END {$direction}");
     }
 
     // --- Contact details on the profile ---

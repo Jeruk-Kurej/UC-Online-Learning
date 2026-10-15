@@ -3,28 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\UserImportTemplate;
-use App\Factories\ImporterFactory;
+use App\Http\Controllers\Concerns\QueuesImports;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
 use App\Http\Requests\Admin\UpdateUserRequest;
-use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Province;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Admin management of student and alumni accounts: list, create, edit, featuring, activation and import.
  */
 class UserController extends Controller
 {
+    use QueuesImports;
+
     /**
      * Featured user counts (total + by career focus).
      *
@@ -52,89 +53,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $search = trim((string) $request->get('search', ''));
-        $sortName = $request->get('sort_name');
-        $sortYear = $request->get('sort_year');
-        $studentStatus = $request->get('student_status');
-        $currentStatus = $request->get('current_status');
-        $major = $request->get('major');
-        $yearOfEnrollment = $request->get('year_of_enrollment');
-
-        if (! in_array($sortName, ['asc', 'desc'], true)) {
-            $sortName = null;
-        }
-
-        if (! in_array($sortYear, ['asc', 'desc'], true)) {
-            $sortYear = null;
-        }
-
-        $allowedStudentStatuses = ['active', 'inactive', 'cuti', 'alumni'];
-        if (! in_array($studentStatus, $allowedStudentStatuses, true)) {
-            $studentStatus = null;
-        }
-
-        $query = User::withCount('businesses')
-            ->where('role', '!=', 'admin')
-            ->when($search !== '', function ($q) use ($search) {
-                $q->where(function ($innerQuery) use ($search) {
-                    $innerQuery->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%")
-                        ->orWhere('nis', 'LIKE', "%{$search}%");
-                });
-            })
-            ->when($studentStatus, fn ($q) => $q->where('student_status', $studentStatus))
-            ->when($currentStatus, fn ($q) => $q->whereRaw('LOWER(current_status) = ?', [strtolower($currentStatus)]))
-            ->when($major, fn ($q) => $q->where('major', $major))
-            ->when($yearOfEnrollment, fn ($q) => $q->where('year_of_enrollment', $yearOfEnrollment));
-
-        if ($sortName) {
-            $query->orderBy('name', $sortName);
-        }
-
-        if ($sortYear) {
-            $query->orderByRaw(
-                "CASE WHEN year_of_enrollment REGEXP '^[0-9]{4}$' THEN CAST(year_of_enrollment AS UNSIGNED) ELSE 0 END {$sortYear}"
-            );
-        }
-
-        if (! $sortName && ! $sortYear) {
-            $query->latest();
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
-        $users = $query->paginate(10);
-
-        // --- Filter dropdown sources ---
-        $availableMajors = User::query()
-            ->whereNotNull('major')
-            ->where('major', '!=', '')
-            ->distinct()
-            ->orderBy('major')
-            ->pluck('major');
-
-        $availableEnrollmentYears = User::query()
-            ->whereNotNull('year_of_enrollment')
-            ->where('year_of_enrollment', '!=', '')
-            ->distinct()
-            ->orderByRaw(
-                "CASE WHEN year_of_enrollment REGEXP '^[0-9]{4}$' THEN CAST(year_of_enrollment AS UNSIGNED) ELSE 0 END DESC"
-            )
-            ->pluck('year_of_enrollment');
-
-        // --- Counts from the database, not from the current page ---
-        ['total' => $totalUsers, 'entrepreneurs' => $totalEntrepreneurs, 'intrapreneurs' => $totalIntrapreneurs, 'alumni' => $totalAlumni] = $this->userCounts();
-        $featuredStats = $this->getFeaturedUserStats();
-        $featuredUserCount = $featuredStats['total'];
-        $featuredIntrapreneurCount = $featuredStats['intrapreneurs'];
-        $featuredEntrepreneurCount = $featuredStats['entrepreneurs'];
-
-        $hasActiveFilters = $request->filled('search')
-            || $request->filled('sort_name')
-            || $request->filled('sort_year')
-            || $request->filled('student_status')
-            || $request->filled('major')
-            || $request->filled('year_of_enrollment');
+        $users = $this->filteredUsers($request);
+        $hasActiveFilters = $request->anyFilled(['search', 'sort_name', 'sort_year', 'student_status', 'major', 'year_of_enrollment']);
 
         if ($request->ajax()) {
             return response()
@@ -142,19 +62,32 @@ class UserController extends Controller
                 ->header('Vary', 'X-Requested-With');
         }
 
-        return view('users.index', compact(
-            'users',
-            'totalUsers',
-            'totalEntrepreneurs',
-            'totalIntrapreneurs',
-            'totalAlumni',
-            'featuredUserCount',
-            'featuredIntrapreneurCount',
-            'featuredEntrepreneurCount',
-            'availableMajors',
-            'availableEnrollmentYears',
-            'hasActiveFilters'
-        ));
+        ['total' => $totalUsers, 'entrepreneurs' => $totalEntrepreneurs, 'intrapreneurs' => $totalIntrapreneurs, 'alumni' => $totalAlumni] = $this->userCounts();
+        $featuredStats = $this->getFeaturedUserStats();
+
+        return view('users.index', [
+            'users' => $users,
+            'totalUsers' => $totalUsers,
+            'totalEntrepreneurs' => $totalEntrepreneurs,
+            'totalIntrapreneurs' => $totalIntrapreneurs,
+            'totalAlumni' => $totalAlumni,
+            'featuredUserCount' => $featuredStats['total'],
+            'featuredIntrapreneurCount' => $featuredStats['intrapreneurs'],
+            'featuredEntrepreneurCount' => $featuredStats['entrepreneurs'],
+            'availableMajors' => User::query()
+                ->whereNotNull('major')
+                ->where('major', '!=', '')
+                ->distinct()
+                ->orderBy('major')
+                ->pluck('major'),
+            'availableEnrollmentYears' => User::query()
+                ->whereNotNull('year_of_enrollment')
+                ->where('year_of_enrollment', '!=', '')
+                ->distinct()
+                ->orderByEnrollmentYear('DESC')
+                ->pluck('year_of_enrollment'),
+            'hasActiveFilters' => $hasActiveFilters,
+        ]);
     }
 
     /**
@@ -358,20 +291,13 @@ class UserController extends Controller
         ini_set('memory_limit', '512M');
 
         try {
-            $importId = (string) Str::uuid();
             $file = $request->file('file');
 
             if (! $file instanceof UploadedFile) {
                 throw new \RuntimeException('No valid file was uploaded.');
             }
 
-            $path = $file->store('imports', 'local');
-
-            $importer = ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
-
-            Excel::queueImport($importer, (string) $path, 'local');
-
-            $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
+            [$importId, $format] = $this->queueImport($file);
 
             session(['active_user_import_id' => $importId]);
 
@@ -410,6 +336,43 @@ class UserController extends Controller
     }
 
     // --- Form helpers ---
+
+    // --- User list filters and sorting ---
+
+    private function filteredUsers(Request $request): LengthAwarePaginator
+    {
+        $search = trim((string) $request->get('search', ''));
+        $sortName = in_array($request->get('sort_name'), ['asc', 'desc'], true) ? $request->get('sort_name') : null;
+        $sortYear = in_array($request->get('sort_year'), ['asc', 'desc'], true) ? $request->get('sort_year') : null;
+        $studentStatus = in_array($request->get('student_status'), ['active', 'inactive', 'cuti', 'alumni'], true) ? $request->get('student_status') : null;
+        $currentStatus = $request->get('current_status');
+        $major = $request->get('major');
+        $yearOfEnrollment = $request->get('year_of_enrollment');
+
+        $query = User::withCount('businesses')
+            ->where('role', '!=', 'admin')
+            ->when($search !== '', function ($q) use ($search) {
+                $q->where(function ($innerQuery) use ($search) {
+                    $innerQuery->where('name', 'LIKE', "%{$search}%")
+                        ->orWhere('email', 'LIKE', "%{$search}%")
+                        ->orWhere('nis', 'LIKE', "%{$search}%");
+                });
+            })
+            ->when($studentStatus, fn ($q) => $q->where('student_status', $studentStatus))
+            ->when($currentStatus, fn ($q) => $q->whereRaw('LOWER(current_status) = ?', [strtolower($currentStatus)]))
+            ->when($major, fn ($q) => $q->where('major', $major))
+            ->when($yearOfEnrollment, fn ($q) => $q->where('year_of_enrollment', $yearOfEnrollment))
+            ->when($sortName, fn ($q) => $q->orderBy('name', $sortName))
+            ->when($sortYear, fn ($q) => $q->orderByEnrollmentYear($sortYear));
+
+        if (! $sortName && ! $sortYear) {
+            $query->latest();
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        return $query->paginate(10);
+    }
 
     /**
      * Counts shown on the list page (everyone except admins).

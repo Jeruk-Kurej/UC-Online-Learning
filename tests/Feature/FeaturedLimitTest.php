@@ -4,7 +4,7 @@ use App\Models\Business;
 use App\Models\User;
 
 test('admin can feature more than 4 users', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
 
     // --- Create 4 already featured users ---
     User::factory()->count(4)->create([
@@ -29,7 +29,7 @@ test('admin can feature more than 4 users', function () {
 });
 
 test('admin can feature more than 8 businesses', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
 
     // --- Create 8 already featured businesses ---
     for ($i = 0; $i < 8; $i++) {

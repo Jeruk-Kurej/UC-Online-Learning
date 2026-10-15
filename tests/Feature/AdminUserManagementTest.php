@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('admin can view user edit screen', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $targetUser = User::factory()->create([
         'role' => 'user',
         'name' => 'Naqiya Salsabila Yasmien',
@@ -20,7 +20,7 @@ test('admin can view user edit screen', function () {
 });
 
 test('admin can update user successfully without 500 server error', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $targetUser = User::factory()->create([
         'role' => 'user',
         'name' => 'Naqiya Salsabila Yasmien',

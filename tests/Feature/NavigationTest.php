@@ -32,7 +32,7 @@ class NavigationTest extends TestCase
 
     public function test_admin_sees_admin_links()
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->admin()->create();
 
         $response = $this->actingAs($admin)->get(route('businesses.index'));
 

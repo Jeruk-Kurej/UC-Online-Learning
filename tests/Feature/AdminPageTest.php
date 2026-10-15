@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 test('admin can view page edit screen', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $page = Page::create([
         'slug' => 'about',
         'title' => 'About Us',
@@ -35,7 +35,7 @@ test('non-admin cannot view page edit screen', function () {
 });
 
 test('admin can update page content', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $page = Page::create([
         'slug' => 'about',
         'title' => 'About Us',

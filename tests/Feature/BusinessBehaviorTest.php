@@ -33,7 +33,7 @@ function businessWorld(): array
 
     $category = Category::create(['name' => 'Kuliner', 'slug' => 'kuliner']);
     $other = Category::create(['name' => 'Jasa', 'slug' => 'jasa']);
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $owner = User::factory()->create(['name' => 'Owner Person']);
     $stranger = User::factory()->create(['name' => 'Stranger Person']);
 

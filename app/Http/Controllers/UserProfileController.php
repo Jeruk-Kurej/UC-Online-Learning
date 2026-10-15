@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\GoogleDrive;
 
 /**
  * Public profile pages of students and alumni.
@@ -42,8 +43,6 @@ class UserProfileController extends Controller
      */
     public function proxyGoogleDriveImage($id)
     {
-        $url = 'https://drive.google.com/uc?export=view&id='.$id;
-
-        return redirect($url);
+        return redirect(GoogleDrive::viewUrl($id));
     }
 }

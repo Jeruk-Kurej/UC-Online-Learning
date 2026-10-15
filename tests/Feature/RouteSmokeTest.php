@@ -21,7 +21,7 @@ function smokeWorld(): array
 
     $category = Category::create(['name' => 'Kuliner', 'slug' => 'kuliner']);
 
-    $admin = User::factory()->create(['role' => 'admin', 'name' => 'Smoke Admin']);
+    $admin = User::factory()->admin()->create(['name' => 'Smoke Admin']);
 
     $owner = User::factory()->create([
         'name' => 'Smoke Owner',

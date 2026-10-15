@@ -23,7 +23,7 @@ test('the about page and the editor use saved sections', function () {
 
     $this->get('/about')->assertSee('Custom Hero Title')->assertDontSee('Rapid Launch');
 
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     expect(editorSections($this->actingAs($admin)->get(route('pages.edit', $page))))
         ->toBe([['type' => 'hero', 'badge' => 'Custom Badge', 'title' => 'Custom Hero Title', 'subtitle' => 'Custom subtitle']]);
 });
@@ -36,7 +36,7 @@ test('older pages saved with hero/pillars/stats/cta keys fill the default sectio
 
     $this->get('/about')->assertSee('Legacy Hero')->assertSee('Legacy CTA')->assertSee('Rapid Launch');
 
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $sections = editorSections($this->actingAs($admin)->get(route('pages.edit', $page)));
     expect(array_column($sections, 'type'))->toBe(['hero', 'feature_cards', 'stats_grid', 'cta_banner'])
         ->and($sections[0]['title'])->toBe('Legacy Hero')
@@ -47,7 +47,7 @@ test('older pages saved with hero/pillars/stats/cta keys fill the default sectio
 
 test('an empty page uses the defaults in the editor', function () {
     $page = Page::create(['slug' => 'about', 'title' => 'About', 'content_json' => null]);
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
 
     $sections = editorSections($this->actingAs($admin)->get(route('pages.edit', $page)));
     expect(count($sections))->toBe(4)->and($sections[1]['cards'][0]['icon'])->toBe('bi-rocket-takeoff');

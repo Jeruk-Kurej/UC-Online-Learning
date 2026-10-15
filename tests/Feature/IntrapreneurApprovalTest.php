@@ -4,7 +4,7 @@ use App\Models\Company;
 use App\Models\User;
 
 test('admin can approve, reject, or request revision on a company work profile', function () {
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
     $owner = User::factory()->create();
     $company = Company::create([
         'user_id' => $owner->id,

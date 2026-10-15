@@ -95,7 +95,7 @@ test('a team member and an admin can manage offerings', function () {
     ['business' => $business, 'product' => $product] = offeringWorld();
     $member = User::factory()->create();
     $business->members()->attach($member->id);
-    $admin = User::factory()->create(['role' => 'admin']);
+    $admin = User::factory()->admin()->create();
 
     $this->actingAs($member)->get(route('businesses.products.edit', [$business, $product]))->assertOk();
     $this->actingAs($admin)->get(route('businesses.products.edit', [$business, $product]))->assertOk();

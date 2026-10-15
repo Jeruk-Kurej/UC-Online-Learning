@@ -17,7 +17,7 @@ function userWorld(): array
     $pdo = DB::connection()->getPdo();
     $pdo->sqliteCreateFunction('REGEXP', fn ($pattern, $value) => (int) preg_match('/'.$pattern.'/', (string) $value), 2);
 
-    $admin = User::factory()->create(['role' => 'admin', 'name' => 'Admin Person']);
+    $admin = User::factory()->admin()->create(['name' => 'Admin Person']);
     $student = User::factory()->create(['name' => 'Student Person', 'is_visible' => true]);
 
     return compact('admin', 'student');
@@ -283,7 +283,7 @@ test('activity files describe each stored document with a preview when one exist
     ]);
 
     expect($user->activity_files)->toBe([
-        ['url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view', 'previewUrl' => 'https://drive.google.com/thumbnail?sz=w400&id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345', 'name' => 'view'],
+        ['url' => 'https://drive.google.com/file/d/1AbCdEfGhIjKlMnOpQrStUvWxYz012345/view', 'previewUrl' => 'https://drive.google.com/thumbnail?id=1AbCdEfGhIjKlMnOpQrStUvWxYz012345&sz=w400', 'name' => 'view'],
         ['url' => '/storage/student-activities/act_1.png', 'previewUrl' => '/storage/student-activities/act_1.png', 'name' => 'act_1.png'],
         ['url' => '/storage/student-activities/report.pdf', 'previewUrl' => null, 'name' => 'report.pdf'],
     ])

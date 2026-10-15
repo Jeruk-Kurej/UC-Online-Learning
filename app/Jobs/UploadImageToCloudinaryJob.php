@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Support\GoogleDrive;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -247,10 +248,8 @@ class UploadImageToCloudinaryJob implements ShouldQueue
             $url = $matches[1];
         }
 
-        if (str_contains($url, 'drive.google.com') || str_contains($url, 'docs.google.com')) {
-            if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]+)/', $url, $matches)) {
-                $url = 'https://drive.google.com/uc?export=download&confirm=t&id='.$matches[1];
-            }
+        if (GoogleDrive::isDriveUrl($url) && ($id = GoogleDrive::fileId($url, 1))) {
+            $url = GoogleDrive::downloadUrl($id);
         }
 
         return (filter_var($url, FILTER_VALIDATE_URL)) ? $url : null;

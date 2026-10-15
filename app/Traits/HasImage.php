@@ -2,10 +2,10 @@
 
 namespace App\Traits;
 
+use App\Support\GoogleDrive;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 trait HasImage
 {
@@ -107,8 +107,10 @@ trait HasImage
         }
 
         // --- 1. Google Drive links ---
-        if (Str::contains($path, ['drive.google.com', 'docs.google.com'])) {
-            return $this->convertGoogleDriveLink($path);
+        if (GoogleDrive::isDriveUrl($path)) {
+            $id = GoogleDrive::fileId($path);
+
+            return $id ? GoogleDrive::thumbnailUrl($id, 'w1000') : $path;
         }
 
         // --- 2. Absolute URLs ---
@@ -133,25 +135,6 @@ trait HasImage
         }
 
         return $fallback;
-    }
-
-    /**
-     * Convert Google Drive sharing link to a direct image link.
-     */
-    private function convertGoogleDriveLink(string $url): string
-    {
-        // --- Drive URL formats: open?id=ID, file/d/ID/view, docs.google.com/file/d/ID/edit ---
-        $id = '';
-        if (preg_match('/(?:id=|\/d\/)([a-zA-Z0-9-_]{25,})/', $url, $matches)) {
-            $id = $matches[1];
-        }
-
-        if ($id) {
-            // --- Thumbnail API: skips the virus-scan page and allows <img> embedding ---
-            return "https://drive.google.com/thumbnail?id={$id}&sz=w1000";
-        }
-
-        return $url;
     }
 
     /**

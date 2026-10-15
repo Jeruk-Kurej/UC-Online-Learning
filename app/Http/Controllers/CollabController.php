@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Collab;
 use App\Models\Message;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CollabController extends Controller

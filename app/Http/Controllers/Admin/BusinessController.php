@@ -2,91 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Factories\ImporterFactory;
+use App\Http\Controllers\Concerns\QueuesImports;
 use App\Http\Controllers\Controller;
-use App\Imports\UCOStudentImport;
 use App\Models\Business;
 use App\Models\Company;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Admin moderation of businesses and work profiles: lists, approval, featuring, deletion and import.
  */
 class BusinessController extends Controller
 {
+    use QueuesImports;
+
     /**
      * Display a listing of businesses for administrative management.
      */
     public function index(Request $request): View|Response
     {
-        $viewType = $request->get('type', 'entrepreneur');
-        $status = $request->get('status');
-        $search = $request->get('search');
-        $featured = $request->get('featured');
-
-        if ($viewType === 'intrapreneur') {
-            // --- Intrapreneur (Company) mode ---
-            $query = Company::with(['user', 'category']);
-
-            $totalBusinesses = Company::count();
-            $approvedBusinesses = Company::where('approval_status', 'approved')->count();
-            $pendingBusinesses = Company::where('approval_status', 'pending')->count();
-            $rejectedBusinesses = Company::whereIn('approval_status', ['rejected', 'need_revision'])->count();
-            $featuredBusinessesCount = 0;
-
-            if ($status) {
-                $query->where('approval_status', $status);
-            }
-
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('position', 'LIKE', "%{$search}%")
-                        ->orWhereHas('user', function ($uq) use ($search) {
-                            $uq->where('name', 'LIKE', "%{$search}%");
-                        });
-                });
-            }
-        } else {
-            // --- Entrepreneur (Business) mode ---
-            $viewType = 'entrepreneur';
-            $query = Business::with(['user', 'category'])->entrepreneur();
-
-            $totalBusinesses = Business::entrepreneur()->count();
-            $pendingBusinesses = Business::entrepreneur()->where('approval_status', 'pending')->count();
-            $approvedBusinesses = Business::entrepreneur()->where('approval_status', 'approved')->count();
-            $rejectedBusinesses = Business::entrepreneur()->whereIn('approval_status', ['rejected', 'need_revision'])->count();
-            $featuredBusinessesCount = Business::entrepreneur()->where('is_featured', true)->count();
-
-            if ($status) {
-                $query->where('approval_status', $status);
-            }
-
-            if ($featured === 'yes') {
-                $query->where('is_featured', true);
-            } elseif ($featured === 'no') {
-                $query->where('is_featured', false);
-            }
-
-            if ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhereHas('user', function ($uq) use ($search) {
-                            $uq->where('name', 'LIKE', "%{$search}%");
-                        });
-                });
-            }
-        }
-
-        $businesses = $query->latest()->paginate(10)->withQueryString();
+        $viewType = $request->get('type') === 'intrapreneur' ? 'intrapreneur' : 'entrepreneur';
+        $businesses = $this->filteredList($request, $viewType)->latest()->paginate(10)->withQueryString();
 
         if ($request->ajax()) {
             return response()
@@ -94,18 +35,13 @@ class BusinessController extends Controller
                 ->header('Vary', 'X-Requested-With');
         }
 
-        return view('businesses.admin.index', compact(
-            'businesses',
-            'viewType',
-            'status',
-            'search',
-            'featured',
-            'totalBusinesses',
-            'pendingBusinesses',
-            'approvedBusinesses',
-            'rejectedBusinesses',
-            'featuredBusinessesCount'
-        ));
+        return view('businesses.admin.index', [
+            'businesses' => $businesses,
+            'viewType' => $viewType,
+            'status' => $request->get('status'),
+            'search' => $request->get('search'),
+            'featured' => $request->get('featured'),
+        ] + $this->listStats($viewType));
     }
 
     /**
@@ -179,17 +115,7 @@ class BusinessController extends Controller
         ]);
 
         try {
-            $importId = (string) Str::uuid();
-            /** @var UploadedFile $file */
-            $file = $request->file('file');
-
-            $path = $file->store('imports', 'local');
-
-            $importer = ImporterFactory::make($file->getRealPath(), $importId, $file->getClientOriginalName());
-
-            Excel::queueImport($importer, $path, 'local');
-
-            $format = $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response';
+            [$importId, $format] = $this->queueImport($request->file('file'));
 
             session(['active_import' => $importId]);
 
@@ -215,6 +141,53 @@ class BusinessController extends Controller
 
             return back()->withErrors(['error' => $e->getMessage()]);
         }
+    }
+
+    // --- List and statistics (entrepreneur businesses or intrapreneur work profiles) ---
+
+    private function filteredList(Request $request, string $viewType): Builder
+    {
+        $query = $viewType === 'intrapreneur'
+            ? Company::with(['user', 'category'])
+            : Business::with(['user', 'category'])->entrepreneur();
+
+        if ($status = $request->get('status')) {
+            $query->where('approval_status', $status);
+        }
+
+        if ($viewType === 'entrepreneur' && in_array($request->get('featured'), ['yes', 'no'], true)) {
+            $query->where('is_featured', $request->get('featured') === 'yes');
+        }
+
+        if ($search = $request->get('search')) {
+            $query->where(function ($q) use ($search, $viewType) {
+                $q->where('name', 'LIKE', "%{$search}%");
+                if ($viewType === 'intrapreneur') {
+                    $q->orWhere('position', 'LIKE', "%{$search}%");
+                }
+                $q->orWhereHas('user', function ($uq) use ($search) {
+                    $uq->where('name', 'LIKE', "%{$search}%");
+                });
+            });
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return array<string, int>
+     */
+    private function listStats(string $viewType): array
+    {
+        $all = fn () => $viewType === 'intrapreneur' ? Company::query() : Business::entrepreneur();
+
+        return [
+            'totalBusinesses' => $all()->count(),
+            'approvedBusinesses' => $all()->where('approval_status', 'approved')->count(),
+            'pendingBusinesses' => $all()->where('approval_status', 'pending')->count(),
+            'rejectedBusinesses' => $all()->whereIn('approval_status', ['rejected', 'need_revision'])->count(),
+            'featuredBusinessesCount' => $viewType === 'intrapreneur' ? 0 : $all()->where('is_featured', true)->count(),
+        ];
     }
 
     // --- Helpers ---
