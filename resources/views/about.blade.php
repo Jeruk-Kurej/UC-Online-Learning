@@ -25,7 +25,7 @@
                             </div>
                         @endif
                         <h1 class="mx-auto mb-6 max-w-4xl text-4xl font-black leading-tight tracking-tight text-gray-950 md:text-6xl">
-                            {!! e($sec['title'] ?? '') !!}
+                            {{ $sec['title'] ?? '' }}
                         </h1>
                         <p class="mx-auto max-w-2xl text-base font-medium leading-relaxed text-gray-600 md:text-lg">
                             {{ $sec['subtitle'] ?? '' }}
@@ -98,7 +98,7 @@
                     <div class="reveal-on-scroll relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-10 text-center text-white shadow-sm md:p-16">
                         <div class="relative z-10 mx-auto max-w-3xl space-y-6">
                             <h2 class="text-3xl font-black leading-tight tracking-tight md:text-4xl">
-                                {!! e($sec['heading'] ?? '') !!}
+                                {{ $sec['heading'] ?? '' }}
                             </h2>
                             <p class="mx-auto max-w-2xl text-base font-normal leading-relaxed text-slate-300">
                                 {{ $sec['subtitle'] ?? '' }}

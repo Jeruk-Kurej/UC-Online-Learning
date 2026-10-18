@@ -21,9 +21,4 @@ class Village extends Model
     protected $hidden = [
         'district_id',
     ];
-
-    public function district()
-    {
-        return $this->belongsTo(District::class);
-    }
 }
