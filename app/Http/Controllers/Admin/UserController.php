@@ -302,12 +302,7 @@ class UserController extends Controller
             session(['active_user_import_id' => $importId]);
 
             if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => true,
-                    'importId' => $importId,
-                    'format' => $format,
-                    'message' => "Import started ({$format})! Format auto-detected.",
-                ]);
+                return $this->importQueuedJson($importId, $format, "Import started ({$format})! Format auto-detected.");
             }
 
             return back()
@@ -315,10 +310,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('User import exception: '.$e->getMessage());
             if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Import failed: '.$e->getMessage(),
-                ], 500);
+                return $this->importFailedJson($e);
             }
 
             return redirect()

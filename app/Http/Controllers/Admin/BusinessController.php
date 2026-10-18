@@ -120,12 +120,7 @@ class BusinessController extends Controller
             session(['active_import' => $importId]);
 
             if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => true,
-                    'importId' => $importId,
-                    'format' => $format,
-                    'message' => "Import queued! Format: {$format}.",
-                ]);
+                return $this->importQueuedJson($importId, $format, "Import queued! Format: {$format}.");
             }
 
             return back()->with('success', "Import queued! Format: {$format}. Processing ~1500 rows in background...")
@@ -133,10 +128,7 @@ class BusinessController extends Controller
         } catch (\Exception $e) {
             Log::error('Import error: '.$e->getMessage());
             if ($request->wantsJson()) {
-                return new JsonResponse([
-                    'success' => false,
-                    'message' => 'Import failed: '.$e->getMessage(),
-                ], 500);
+                return $this->importFailedJson($e);
             }
 
             return back()->withErrors(['error' => $e->getMessage()]);

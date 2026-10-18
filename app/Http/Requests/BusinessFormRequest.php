@@ -72,7 +72,7 @@ abstract class BusinessFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // Basic fields
+            // --- Basic fields ---
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:1000',
             'category_id' => 'required|exists:categories,id',
@@ -82,12 +82,12 @@ abstract class BusinessFormRequest extends FormRequest
             'owner_ids.*' => 'integer|exists:users,id',
             'position' => 'nullable|string|max:255',
 
-            // Location
+            // --- Location ---
             'city' => 'nullable|string|max:255',
             'province' => 'nullable|string|max:255',
             'address' => 'nullable|string',
 
-            // Enhanced fields
+            // --- Logo, documents and business facts ---
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:'.$this->maxLogoKilobytes(),
         ] + $this->logoFlagRules() + [
             'established_date' => 'nullable|date',
@@ -100,7 +100,7 @@ abstract class BusinessFormRequest extends FormRequest
             'legal_documents.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
             'product_certifications.*' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ] + $this->documentRemovalRules() + [
-            // Additional data fields
+            // --- Contact and market details ---
             'phone' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:255',
             'website' => 'nullable|url|max:255',
@@ -114,7 +114,7 @@ abstract class BusinessFormRequest extends FormRequest
             'establishment_date' => 'nullable|date',
             'operational_status' => 'nullable|in:active,inactive,seasonal',
 
-            // Inline products/services
+            // --- Inline products / services ---
             'products' => 'nullable|array',
             'products.*.id' => 'nullable|integer',
             'products.*.name' => 'nullable|string|max:255',
@@ -134,58 +134,59 @@ abstract class BusinessFormRequest extends FormRequest
         return [
             function ($validator) {
                 $this->checkBeforeSharedRules($validator);
-
-                $user = $this->user();
-
-                // Admin validation for owner/user
-                if ($user->isAdmin()) {
-                    $selectedOwnerIds = collect($this->input('owner_ids', []))
-                        ->map(fn ($id) => (int) $id)
-                        ->filter(fn ($id) => $id > 0)
-                        ->unique()
-                        ->values()
-                        ->all();
-
-                    if (! empty($selectedOwnerIds)) {
-                        $adminOwnerExists = User::whereIn('id', $selectedOwnerIds)
-                            ->where('role', 'admin')
-                            ->exists();
-
-                        if ($adminOwnerExists) {
-                            $validator->errors()->add('owner_ids', 'Admin UCO tidak boleh menjadi owner business.');
-                        }
-                    }
-
-                    if ($this->filled('user_id')) {
-                        $ownerUser = User::find($this->input('user_id'));
-                        if ($ownerUser?->role === 'admin') {
-                            $validator->errors()->add('user_id', 'Admin UCO tidak boleh menjadi owner business.');
-                        }
-                    }
-                }
-
-                // Business mode logical checks vs inline products/services
-                $mode = $this->input('business_mode');
-                $productRows = $this->input('products', []);
-                $serviceRows = $this->input('services', []);
-
-                $inlineErrors = array_merge(
-                    $this->validateInlineRows($productRows, 'product'),
-                    $this->validateInlineRows($serviceRows, 'service')
-                );
-
-                if ($mode === 'service' && ! empty($productRows)) {
-                    $inlineErrors['products'] = 'Business mode Service Only tidak boleh memiliki produk.';
-                }
-                if ($mode === 'product' && ! empty($serviceRows)) {
-                    $inlineErrors['services'] = 'Business mode Product Only tidak boleh memiliki layanan.';
-                }
-
-                foreach ($inlineErrors as $key => $message) {
-                    $validator->errors()->add($key, $message);
-                }
+                $this->checkOwnersAreNotAdmins($validator);
+                $this->checkInlineOfferings($validator);
             },
         ];
+    }
+
+    // --- Admins pick the owners, but an admin account can never own a business ---
+
+    private function checkOwnersAreNotAdmins($validator): void
+    {
+        if (! $this->user()->isAdmin()) {
+            return;
+        }
+
+        $selectedOwnerIds = collect($this->input('owner_ids', []))
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
+
+        if (! empty($selectedOwnerIds) && User::whereIn('id', $selectedOwnerIds)->where('role', 'admin')->exists()) {
+            $validator->errors()->add('owner_ids', 'Admin UCO tidak boleh menjadi owner business.');
+        }
+
+        if ($this->filled('user_id') && User::find($this->input('user_id'))?->isAdmin()) {
+            $validator->errors()->add('user_id', 'Admin UCO tidak boleh menjadi owner business.');
+        }
+    }
+
+    // --- Inline products / services: every row complete, and none of a kind the business mode rules out ---
+
+    private function checkInlineOfferings($validator): void
+    {
+        $mode = $this->input('business_mode');
+        $productRows = $this->input('products', []);
+        $serviceRows = $this->input('services', []);
+
+        $inlineErrors = array_merge(
+            $this->validateInlineRows($productRows, 'product'),
+            $this->validateInlineRows($serviceRows, 'service')
+        );
+
+        if ($mode === 'service' && ! empty($productRows)) {
+            $inlineErrors['products'] = 'Business mode Service Only tidak boleh memiliki produk.';
+        }
+        if ($mode === 'product' && ! empty($serviceRows)) {
+            $inlineErrors['services'] = 'Business mode Product Only tidak boleh memiliki layanan.';
+        }
+
+        foreach ($inlineErrors as $key => $message) {
+            $validator->errors()->add($key, $message);
+        }
     }
 
     /**

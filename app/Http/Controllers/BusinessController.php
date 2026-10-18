@@ -34,51 +34,9 @@ class BusinessController extends Controller
      */
     public function index(Request $request): View|Response
     {
-        $search = $request->get('search');
         $viewType = $request->get('view', 'entrepreneur');
 
-        if ($viewType === 'intrapreneur') {
-            $query = Company::visible()->with(['user', 'category']);
-        } else {
-            $query = Business::visible()->with(['user', 'members', 'category', 'products'])->entrepreneur();
-        }
-
-        if ($search) {
-            $query->where(function ($q) use ($search, $viewType) {
-                $q->where('name', 'LIKE', "%{$search}%")
-                    ->orWhereHas('user', function ($uq) use ($search) {
-                        $uq->where('name', 'LIKE', "%{$search}%");
-                    });
-
-                if ($viewType === 'entrepreneur') {
-                    $q->orWhere('description', 'LIKE', "%{$search}%")
-                        ->orWhere('city', 'LIKE', "%{$search}%")
-                        ->orWhere('province', 'LIKE', "%{$search}%");
-                } else {
-                    $q->orWhere('job_description', 'LIKE', "%{$search}%")
-                        ->orWhere('position', 'LIKE', "%{$search}%")
-                        ->orWhere('achievement', 'LIKE', "%{$search}%")
-                        ->orWhere('city', 'LIKE', "%{$search}%")
-                        ->orWhere('province', 'LIKE', "%{$search}%");
-                }
-            });
-        }
-
-        $category = $request->get('category');
-        if ($category) {
-            $query->where('category_id', $category);
-        }
-
-        $city = $request->get('city');
-        $province = $request->get('province');
-        if ($city) {
-            $query->where('city', 'LIKE', "%{$city}%");
-        }
-        if ($province) {
-            $query->where('province', 'LIKE', "%{$province}%");
-        }
-
-        $businesses = $query->latest()->paginate(6)->withQueryString();
+        $businesses = $this->directoryQuery($request, $viewType)->latest()->paginate(6)->withQueryString();
 
         if ($request->ajax()) {
             return response()
@@ -316,6 +274,47 @@ class BusinessController extends Controller
     {
         if ($request->has('owner_ids')) {
             $business->members()->sync((array) $request->input('owner_ids'));
+        }
+    }
+
+    // --- Directory list: visible ventures of the chosen type, narrowed by the search box and the filters ---
+
+    private function directoryQuery(Request $request, string $viewType): Builder
+    {
+        $query = $viewType === 'intrapreneur'
+            ? Company::visible()->with(['user', 'category'])
+            : Business::visible()->with(['user', 'members', 'category', 'products'])->entrepreneur();
+
+        if ($search = $request->get('search')) {
+            $query->where(fn (Builder $matches) => $this->searchDirectory($matches, $search, $viewType));
+        }
+        if ($category = $request->get('category')) {
+            $query->where('category_id', $category);
+        }
+        if ($city = $request->get('city')) {
+            $query->where('city', 'LIKE', "%{$city}%");
+        }
+        if ($province = $request->get('province')) {
+            $query->where('province', 'LIKE', "%{$province}%");
+        }
+
+        return $query;
+    }
+
+    /**
+     * The name or the person's name, then the text columns of the venture type.
+     */
+    private function searchDirectory(Builder $query, $search, string $viewType): void
+    {
+        $query->where('name', 'LIKE', "%{$search}%")
+            ->orWhereHas('user', fn (Builder $users) => $users->where('name', 'LIKE', "%{$search}%"));
+
+        $columns = $viewType === 'entrepreneur'
+            ? ['description', 'city', 'province']
+            : ['job_description', 'position', 'achievement', 'city', 'province'];
+
+        foreach ($columns as $column) {
+            $query->orWhere($column, 'LIKE', "%{$search}%");
         }
     }
 
