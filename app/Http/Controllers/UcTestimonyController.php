@@ -26,9 +26,7 @@ class UcTestimonyController extends Controller
         $search = trim((string) $request->get('search', ''));
         $featured = $request->get('featured');
 
-        $query = User::query()
-            ->whereNotNull('testimony')
-            ->where('testimony', '!=', '');
+        $query = User::withTestimony();
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
@@ -47,8 +45,8 @@ class UcTestimonyController extends Controller
             ->orderByDesc('created_at')
             ->paginate(12);
 
-        $totalTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->count();
-        $featuredTestimonies = User::whereNotNull('testimony')->where('testimony', '!=', '')->where('is_featured_testimony', true)->count();
+        $totalTestimonies = User::withTestimony()->count();
+        $featuredTestimonies = User::withTestimony()->where('is_featured_testimony', true)->count();
 
         if ($request->ajax()) {
             return response()

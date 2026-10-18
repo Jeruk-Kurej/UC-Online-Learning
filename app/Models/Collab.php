@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,6 +30,17 @@ class Collab extends Model
     public function recipient()
     {
         return $this->belongsTo(User::class, 'recipient_id');
+    }
+
+    /**
+     * Requests between two users, whoever sent them.
+     */
+    public function scopeBetween(Builder $query, int $firstId, int $secondId): Builder
+    {
+        return $query->where(function ($pair) use ($firstId, $secondId) {
+            $pair->where(fn ($q) => $q->where('sender_id', $firstId)->where('recipient_id', $secondId))
+                ->orWhere(fn ($q) => $q->where('sender_id', $secondId)->where('recipient_id', $firstId));
+        });
     }
 
     /**

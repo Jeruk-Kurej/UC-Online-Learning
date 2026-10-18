@@ -339,11 +339,7 @@ class User extends Authenticatable
             return null;
         }
 
-        $collab = Collab::where(function ($query) use ($user) {
-            $query->where('sender_id', $this->id)->where('recipient_id', $user->id);
-        })->orWhere(function ($query) use ($user) {
-            $query->where('sender_id', $user->id)->where('recipient_id', $this->id);
-        })->first();
+        $collab = Collab::between($this->id, $user->id)->first();
 
         return $collab ? $collab->status : null;
     }
@@ -376,6 +372,11 @@ class User extends Authenticatable
     }
 
     // --- Scopes ---
+
+    public function scopeWithTestimony($query)
+    {
+        return $query->whereNotNull('testimony')->where('testimony', '!=', '');
+    }
 
     /**
      * Four-digit enrollment years in numeric order; anything else counts as 0.

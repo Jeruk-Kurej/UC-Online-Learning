@@ -69,8 +69,7 @@ class FeaturedController extends Controller
     {
         return User::where('is_visible', true)
             ->where('is_featured_testimony', true)
-            ->whereNotNull('testimony')
-            ->where('testimony', '!=', '')
+            ->withTestimony()
             ->whereNotNull('profile_photo_url')
             ->where(function ($q) {
                 $q->where('ai_score', '>=', 80)

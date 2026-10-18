@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Collab;
 use App\Models\Message;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class CollabController extends Controller
@@ -20,11 +21,7 @@ class CollabController extends Controller
             return back()->with('error', 'You cannot collab with yourself.');
         }
 
-        $existing = Collab::where(function ($q) use ($sender, $user) {
-            $q->where('sender_id', $sender->id)->where('recipient_id', $user->id);
-        })->orWhere(function ($q) use ($sender, $user) {
-            $q->where('sender_id', $user->id)->where('recipient_id', $sender->id);
-        })->first();
+        $existing = Collab::between($sender->id, $user->id)->first();
 
         if ($existing) {
             if ($existing->status === 'rejected') {
@@ -63,12 +60,8 @@ class CollabController extends Controller
     {
         $user = Auth::user();
 
-        if ($collab->recipient_id !== $user->id) {
-            abort(403);
-        }
-
-        if ($collab->status !== 'pending') {
-            return back()->with('error', 'This request is no longer pending.');
+        if ($notPending = $this->guardAnswer($collab, $user)) {
+            return $notPending;
         }
 
         $collab->update(['status' => 'accepted']);
@@ -91,16 +84,28 @@ class CollabController extends Controller
     {
         $user = Auth::user();
 
-        if ($collab->recipient_id !== $user->id) {
-            abort(403);
-        }
-
-        if ($collab->status !== 'pending') {
-            return back()->with('error', 'This request is no longer pending.');
+        if ($notPending = $this->guardAnswer($collab, $user)) {
+            return $notPending;
         }
 
         $collab->update(['status' => 'rejected']);
 
         return back()->with('success', 'Collab request rejected.');
+    }
+
+    // --- Answering a request ---
+
+    /**
+     * Only the recipient may answer, and only while the request is pending; returns the redirect to send otherwise.
+     */
+    private function guardAnswer(Collab $collab, User $user): ?RedirectResponse
+    {
+        if ($collab->recipient_id !== $user->id) {
+            abort(403);
+        }
+
+        return $collab->status === 'pending'
+            ? null
+            : back()->with('error', 'This request is no longer pending.');
     }
 }
