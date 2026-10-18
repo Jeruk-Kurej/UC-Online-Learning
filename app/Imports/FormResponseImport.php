@@ -148,6 +148,11 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
         Log::info('[FormResponseImport] DEBUG - Raw column keys from CSV (Maatwebsite snake_case):', $keysAndSamples);
     }
 
+    private function logoLink(array $row): ?string
+    {
+        return $this->col($row, 'businesscompany_logo', 'business_company_logo');
+    }
+
     /**
      * A file name without "entrepreneur" / "intrapreneur" gets its type from the first row that has only one kind.
      */
@@ -229,30 +234,54 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
     private function importUser(array $row, string $email, string $fullName, ?string $careerCategory, ?bool $isFeatured): User
     {
         $graduateYearRaw = $this->col($row, 'graduate_year');
-        // --- graduate_year holds a 4-digit year or text such as "Active Student"; only a real year means alumni ---
-        $graduateYear = (is_numeric($graduateYearRaw) && strlen(trim((string) $graduateYearRaw)) === 4)
-            ? trim((string) $graduateYearRaw)
-            : null;
+        $graduateYear = $this->graduateYear($graduateYearRaw);
+        $studentStatus = $this->studentStatus($row, $graduateYear);
 
+        $this->logRowForDebug($row, $email, $careerCategory, $isFeatured, $graduateYearRaw, $graduateYear, $studentStatus);
+
+        $userData = $this->userAttributes($row, $fullName, $careerCategory, $graduateYear, $studentStatus);
+
+        if ($isFeatured !== null) {
+            $userData['is_featured'] = $isFeatured;
+        }
+
+        $user = User::where('email', $email)->first();
+        if ($user) {
+            $user->update($userData);
+        } else {
+            $user = User::create(array_merge($userData, [
+                'email' => $email,
+                'password' => Hash::make('password123'),
+            ]));
+        }
+
+        $this->queueImageUpload($user, 'profile_photo_url', $this->col($row, 'professional_profile_photo'), 'users', $fullName);
+
+        $this->approveImportedTestimony($user);
+
+        return $user;
+    }
+
+    // --- Reading the user columns ---
+
+    /**
+     * graduate_year holds a 4-digit year or text such as "Active Student"; only a real year means alumni.
+     */
+    private function graduateYear(?string $raw): ?string
+    {
+        return (is_numeric($raw) && strlen(trim((string) $raw)) === 4) ? trim((string) $raw) : null;
+    }
+
+    private function studentStatus(array $row, ?string $graduateYear): string
+    {
         $enrollmentStatus = strtolower($this->col($row, 'current_status') ?? '');
-        $studentStatus = ($graduateYear || str_contains($enrollmentStatus, 'alumni')) ? 'alumni' : 'active';
 
-        // --- Debug: critical field values ---
-        Log::debug('[FormResponseImport] Row debug', [
-            'email' => $email,
-            'category_raw' => $row['category'] ?? '<<KEY MISSING>>',
-            'current_status_raw' => $row['current_status'] ?? '<<KEY MISSING>>',
-            'graduate_year_raw' => $graduateYearRaw,
-            'graduate_year_resolved' => $graduateYear,
-            'student_status' => $studentStatus,
-            'career_category' => $careerCategory,
-            'is_featured' => $isFeatured,
-            'selected_raw' => $row['selected'] ?? '<<KEY MISSING>>',
-            'business_name' => $row['business_name'] ?? '<<KEY MISSING>>',
-            'company_name' => $row['company_name_'] ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
-        ]);
+        return ($graduateYear || str_contains($enrollmentStatus, 'alumni')) ? 'alumni' : 'active';
+    }
 
-        $userData = [
+    private function userAttributes(array $row, string $fullName, ?string $careerCategory, ?string $graduateYear, string $studentStatus): array
+    {
+        return [
             'submitted_at' => $this->parseTimestamp($this->col($row, 'timestamp')),
             'prefix_title' => $this->col($row, 'prefix_title'),
             'name' => $fullName,
@@ -274,24 +303,30 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
             'student_status' => $studentStatus,
             'email_verified_at' => now(),
         ];
+    }
 
-        if ($isFeatured !== null) {
-            $userData['is_featured'] = $isFeatured;
-        }
+    private function logRowForDebug(array $row, string $email, ?string $careerCategory, ?bool $isFeatured, ?string $graduateYearRaw, ?string $graduateYear, string $studentStatus): void
+    {
+        // --- Debug: critical field values ---
+        Log::debug('[FormResponseImport] Row debug', [
+            'email' => $email,
+            'category_raw' => $row['category'] ?? '<<KEY MISSING>>',
+            'current_status_raw' => $row['current_status'] ?? '<<KEY MISSING>>',
+            'graduate_year_raw' => $graduateYearRaw,
+            'graduate_year_resolved' => $graduateYear,
+            'student_status' => $studentStatus,
+            'career_category' => $careerCategory,
+            'is_featured' => $isFeatured,
+            'selected_raw' => $row['selected'] ?? '<<KEY MISSING>>',
+            'business_name' => $row['business_name'] ?? '<<KEY MISSING>>',
+            'company_name' => $row['company_name_'] ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
+        ]);
+    }
 
-        $user = User::where('email', $email)->first();
-        if ($user) {
-            $user->update($userData);
-        } else {
-            $user = User::create(array_merge($userData, [
-                'email' => $email,
-                'password' => Hash::make('password123'),
-            ]));
-        }
+    // --- Imported testimonies are auto-approved (skips Gemini to avoid rate limits) ---
 
-        $this->queueImageUpload($user, 'profile_photo_url', $this->col($row, 'professional_profile_photo'), 'users', $fullName);
-
-        // --- Imported testimonies are auto-approved (skips Gemini to avoid rate limits) ---
+    private function approveImportedTestimony(User $user): void
+    {
         if (! empty($user->testimony) && is_null($user->ai_score)) {
             Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
             $user->update([
@@ -301,17 +336,35 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
                 'ai_rejection_reason' => null,
             ]);
         }
-
-        return $user;
     }
 
     // --- Business (entrepreneur) ---
 
     private function importBusiness(User $user, string $businessName, array $row, ?bool $isFeatured): void
     {
-        $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
+        $businessData = $this->businessAttributes($row);
 
-        $businessData = [
+        if ($isFeatured !== null) {
+            $businessData['is_featured'] = $isFeatured;
+        }
+
+        $business = $this->upsertBusiness($user, $businessName, $businessData);
+
+        $this->queueImageUpload($business, 'logo_url', $this->logoLink($row), 'businesses', $businessName);
+
+        $business->members()->syncWithoutDetaching([
+            $user->id => ['position' => $this->col($row, 'entrepreneur_position')],
+        ]);
+
+        $this->importProducts($business, $row);
+
+        $this->syncByName($business->legalDocuments(), $this->col($row, 'legal_documents'), fn (string $name) => $this->firstOrCreateByName(LegalDocument::class, $name), 'legal doc');
+        $this->syncByName($business->certifications(), $this->col($row, 'business_certification', 'certification'), fn (string $name) => $this->firstOrCreateByName(Certification::class, $name), 'certification');
+    }
+
+    private function businessAttributes(array $row): array
+    {
+        return [
             'category_id' => $this->categoryId($this->col($row, 'industry_category'), 'category'),
             'position' => $this->col($row, 'entrepreneur_position'),
             'established_date' => $this->parseDate($this->col($row, 'established_date')),
@@ -333,7 +386,7 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
             'revenue_range' => $this->col($row, 'revenue_range_per_year'),
             'academic_heritage' => $this->col($row, 'academic_heritage'),
             'company_profile_url' => $this->col($row, 'company_profile'),
-            'logo_url' => $rawLogoUrl,
+            'logo_url' => $this->logoLink($row),
             'business_scale' => $this->col($row, 'business_scale'),
             'business_legality' => $this->col($row, 'business_legality'),
             'product_legality' => $this->col($row, 'product_legality'),
@@ -341,23 +394,6 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
             'approval_status' => 'approved',
             'is_visible' => true,
         ];
-
-        if ($isFeatured !== null) {
-            $businessData['is_featured'] = $isFeatured;
-        }
-
-        $business = $this->upsertBusiness($user, $businessName, $businessData);
-
-        $this->queueImageUpload($business, 'logo_url', $rawLogoUrl, 'businesses', $businessName);
-
-        $business->members()->syncWithoutDetaching([
-            $user->id => ['position' => $this->col($row, 'entrepreneur_position')],
-        ]);
-
-        $this->importProducts($business, $row);
-
-        $this->syncByName($business->legalDocuments(), $this->col($row, 'legal_documents'), fn (string $name) => $this->firstOrCreateByName(LegalDocument::class, $name), 'legal doc');
-        $this->syncByName($business->certifications(), $this->col($row, 'business_certification', 'certification'), fn (string $name) => $this->firstOrCreateByName(Certification::class, $name), 'certification');
     }
 
     /**
@@ -395,8 +431,6 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
 
     private function importCompany(User $user, string $companyName, array $row): void
     {
-        $rawLogoUrl = $this->col($row, 'businesscompany_logo', 'business_company_logo');
-
         $company = $this->upsertCompany($user, $companyName, [
             'category_id' => $this->categoryId($this->col($row, 'industry_category'), 'industry category'),
             'position' => $this->col($row, 'intrapreneur_position'),
@@ -405,11 +439,11 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
             'year_started_working' => $this->col($row, 'year_started_working'),
             'achievement' => $this->col($row, 'achievement'),
             'company_scale' => $this->col($row, 'company_scale'),
-            'logo_url' => $rawLogoUrl,
+            'logo_url' => $this->logoLink($row),
             'is_visible' => true,
         ]);
 
-        $this->queueImageUpload($company, 'logo_url', $rawLogoUrl, 'companies', $companyName);
+        $this->queueImageUpload($company, 'logo_url', $this->logoLink($row), 'companies', $companyName);
     }
 
     // --- Lookups: categories, skills, legal documents, certifications ---
