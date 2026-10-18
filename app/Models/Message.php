@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class Message extends Model
 {
-    use HasFactory;
+    use HasFactory, \App\Traits\OrdersNewestFirst;
 
     protected $fillable = [
         'sender_id',

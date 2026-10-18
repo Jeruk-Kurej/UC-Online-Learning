@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial, \App\Traits\OrdersNewestFirst;
 
     protected $fillable = [
         'user_id',

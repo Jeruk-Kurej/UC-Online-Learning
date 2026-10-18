@@ -333,13 +333,7 @@ class UserController extends Controller
             ->when($sortName, fn ($q) => $q->orderBy('name', $sortName))
             ->when($sortYear, fn ($q) => $q->orderByEnrollmentYear($sortYear));
 
-        if (! $sortName && ! $sortYear) {
-            $query->latest();
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
-        return $query->paginate(10);
+        return $query->newestFirst()->paginate(10);
     }
 
     /**

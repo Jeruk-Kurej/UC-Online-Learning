@@ -17,20 +17,22 @@ class FeaturedController extends Controller
         return view('featured.index', [
             'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
                 ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
-                ->latest()
+                ->newestFirst()
                 ->get(),
             'topEntrepreneurs' => $this->featuredStudents('entrepreneur')
                 ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
-                ->latest()
+                ->newestFirst()
                 ->get(),
             'spotlightBusinesses' => Business::visible()
                 ->entrepreneur()
                 ->where('is_featured', true)
-                ->latest()
+                ->newestFirst()
                 ->with(['category', 'user', 'members'])
                 ->get(),
             'categories' => Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
                 ->orderByDesc('businesses_count')
+                ->orderBy('name')
+                ->orderBy('id')
                 ->take(8)
                 ->get(),
             'testimonies' => $this->communityTestimonies(),
@@ -69,7 +71,7 @@ class FeaturedController extends Controller
                     });
             })
             ->orderByDesc('ai_score')
-            ->latest()
+            ->newestFirst()
             ->take(6)
             ->get();
     }

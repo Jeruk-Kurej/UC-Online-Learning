@@ -24,7 +24,7 @@ class BusinessController extends Controller
     public function index(Request $request): View|Response
     {
         $viewType = $request->get('type') === 'intrapreneur' ? 'intrapreneur' : 'entrepreneur';
-        $businesses = $this->filteredList($request, $viewType)->latest()->paginate(10)->withQueryString();
+        $businesses = $this->filteredList($request, $viewType)->newestFirst()->paginate(10)->withQueryString();
 
         if ($request->ajax()) {
             return response()

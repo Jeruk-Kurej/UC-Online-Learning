@@ -78,7 +78,7 @@ use Illuminate\Support\Carbon;
  */
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink;
+    use HasFactory, Notifiable, \App\Traits\HasImage, \App\Traits\HasSlug, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink, \App\Traits\OrdersNewestFirst;
 
     protected $fillable = [
         // --- System ---

@@ -12,7 +12,7 @@ class InboxController extends Controller
     {
         $user = $request->user();
 
-        $messages = $user->receivedMessages()->latest()->paginate(15);
+        $messages = $user->receivedMessages()->newestFirst()->paginate(15);
 
         $sentCollabs = $user->sentCollabs()->with(['recipient'])->latest()->get();
 

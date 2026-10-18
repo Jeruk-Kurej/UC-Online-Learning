@@ -15,7 +15,7 @@ use Illuminate\Support\Collection;
  */
 class Business extends Model
 {
-    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink;
+    use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial, \App\Traits\HasWhatsAppLink, \App\Traits\OrdersNewestFirst;
 
     protected $fillable = [
         'user_id',

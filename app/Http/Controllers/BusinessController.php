@@ -33,7 +33,7 @@ class BusinessController extends Controller
     {
         $viewType = $request->get('view', 'entrepreneur');
 
-        $businesses = $this->directoryQuery($request, $viewType)->latest()->paginate(6)->withQueryString();
+        $businesses = $this->directoryQuery($request, $viewType)->newestFirst()->paginate(6)->withQueryString();
 
         if ($request->ajax()) {
             return response()

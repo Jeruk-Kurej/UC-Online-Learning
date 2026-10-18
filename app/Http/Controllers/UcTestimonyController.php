@@ -34,6 +34,7 @@ class UcTestimonyController extends Controller
 
         $users = $query->orderByDesc('submitted_at')
             ->orderByDesc('created_at')
+            ->orderByDesc('id')
             ->paginate(12);
 
         $totalTestimonies = User::withTestimony()->count();
