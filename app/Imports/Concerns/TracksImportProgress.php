@@ -5,17 +5,22 @@ namespace App\Imports\Concerns;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Events\AfterImport;
 use Maatwebsite\Excel\Events\BeforeImport;
+use Maatwebsite\Excel\Events\ImportFailed;
 
 /**
  * Progress of an import in the cache (read by the import progress card): totals before, counters per row, skipped
  * rows with their reason, and the completed state. Needs $importId, $successCount, $skippedCount and $errors on the
  * importer, plus the log lines it writes (startedLogLine, completedLogLine, skippedLogLine) and headerRows().
  * The progress card is for admins and may name an email; the log is read by more people and never carries personal data.
+ * The uploaded sheet (names, phones, links) is deleted when the import has finished or failed.
  */
 trait TracksImportProgress
 {
+    protected ?string $uploadedPath = null;
+
     abstract protected function headerRows(): int;
 
     abstract protected function startedLogLine(int $total): string;
@@ -43,6 +48,8 @@ trait TracksImportProgress
                 Log::info($this->startedLogLine($total));
             },
             AfterImport::class => function () {
+                $this->forgetUploadedFile();
+
                 if (! $this->importId) {
                     return;
                 }
@@ -52,7 +59,26 @@ trait TracksImportProgress
                 Cache::put($prefix, $progress, now()->addMinutes(60));
                 Log::info($this->completedLogLine());
             },
+            ImportFailed::class => function () {
+                $this->forgetUploadedFile();
+            },
         ];
+    }
+
+    // --- The uploaded sheet ---
+
+    public function deleteFileAfterImport(string $path): static
+    {
+        $this->uploadedPath = $path;
+
+        return $this;
+    }
+
+    private function forgetUploadedFile(): void
+    {
+        if ($this->uploadedPath) {
+            Storage::disk('local')->delete($this->uploadedPath);
+        }
     }
 
     private function updateProgress(string $status): void

@@ -6,6 +6,7 @@ use App\Factories\ImporterFactory;
 use App\Imports\UCOStudentImport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -23,8 +24,14 @@ trait QueuesImports
         $importId = (string) Str::uuid();
         $path = $file->store('imports', 'local');
 
-        $importer = ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName());
-        Excel::queueImport($importer, (string) $path, 'local');
+        try {
+            $importer = ImporterFactory::make((string) $file->getRealPath(), $importId, $file->getClientOriginalName())->deleteFileAfterImport($path);
+            Excel::queueImport($importer, (string) $path, 'local');
+        } catch (\Throwable $e) {
+            Storage::disk('local')->delete($path);
+
+            throw $e;
+        }
 
         return [$importId, $importer instanceof UCOStudentImport ? 'UCO Student Profile' : 'Form Response'];
     }
