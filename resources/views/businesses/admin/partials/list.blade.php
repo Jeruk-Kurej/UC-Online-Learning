@@ -97,13 +97,13 @@
                                 <x-admin.icon-action :href="route('intrapreneurs.show', $b)" icon="bi-eye-fill" tip="View Profile" />
                                 {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'intrapreneur']) }}" />
+                                                     data-status-modal="{{ json_encode(['name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'url' => route('intrapreneurs.update-status', $b, false)]) }}" />
                             @else
                                 {{-- --- View entrepreneur business --- --}}
                                 <x-admin.icon-action :href="route('businesses.show', $b)" icon="bi-eye-fill" tip="View Details" />
                                 {{-- --- Change status (modal) --- --}}
                                 <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                                     data-status-modal="{{ json_encode(['id' => $b->id, 'name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'type' => 'entrepreneur']) }}" />
+                                                     data-status-modal="{{ json_encode(['name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'url' => route('businesses.update-status', $b, false)]) }}" />
                             @endif
                         </div>
                     </td>

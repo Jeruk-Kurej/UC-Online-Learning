@@ -34,11 +34,7 @@ function openStatusModal(data) {
     const statusSelect = document.getElementById('statusSelect');
     const reasonArea = document.getElementById('rejection_reason');
 
-    if (data.type === 'intrapreneur') {
-        form.action = `/admin/intrapreneurs/${data.id}/status`;
-    } else {
-        form.action = `/admin/business/${data.id}/status`;
-    }
+    form.action = data.url;
     nameDisplay.innerText = `Updating: ${data.name}`;
     statusSelect.value = data.status;
     reasonArea.value = data.reason || '';
