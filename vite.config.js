@@ -4,13 +4,7 @@ import laravel from 'laravel-vite-plugin';
 export default defineConfig({
     plugins: [
         laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/css/pages/user-form.css',
-                'resources/css/pages/my-testimony.css',
-                'resources/css/vendor/tom-select.css',
-            ],
+            input: ['resources/css/app.css', 'resources/js/app.js', 'resources/css/vendor/tom-select.css'],
             refresh: true,
         }),
     ],

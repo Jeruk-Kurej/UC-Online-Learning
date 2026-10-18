@@ -15,10 +15,10 @@ trait HasApprovalStatus
     {
         return match ($this->status) {
             'approved' => 'Approved',
-            'pending' => 'Pending Approval',
+            'pending' => 'Pending approval',
             'rejected' => 'Rejected',
-            'need_revision' => 'Need Revision',
-            default => 'Pending Approval',
+            'need_revision' => 'Needs revision',
+            default => 'Pending approval',
         };
     }
 

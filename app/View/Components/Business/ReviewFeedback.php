@@ -14,8 +14,8 @@ class ReviewFeedback extends Component
     // --- Box, title and text classes plus title per outcome ---
 
     private const LOOKS = [
-        'rejected' => ['bg-red-50 border-red-100', 'text-red-600', 'text-red-700', 'Rejection Reason:'],
-        'need_revision' => ['bg-blue-50 border-blue-100', 'text-blue-600', 'text-blue-700', 'Revision Feedback:'],
+        'rejected' => ['border-red-300 bg-red-50', 'text-red-900', 'text-red-900', 'Why it was rejected'],
+        'need_revision' => ['border-amber-300 bg-amber-50', 'text-amber-900', 'text-amber-900', 'What to change'],
     ];
 
     public string $boxClass;

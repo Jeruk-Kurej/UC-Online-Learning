@@ -1,125 +1,61 @@
-<div class="reveal-on-scroll overflow-x-auto rounded-xl border bg-white shadow-sm">
-    <table class="w-full text-left">
-        <thead class="border-b bg-gray-50">
+<div class="card overflow-hidden !p-0">
+    <table class="admin-table">
+        <thead>
             <tr>
-                <x-admin.th>
-                    {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Company' : 'Business' }}
-                </x-admin.th>
+                <x-admin.th>{{ $viewType === 'intrapreneur' ? 'Company' : 'Business' }}</x-admin.th>
                 <x-admin.th>Owner</x-admin.th>
-                <x-admin.th>
-                    {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'Position' : 'Location' }}
-                </x-admin.th>
-                <x-admin.th class="whitespace-nowrap">Status</x-admin.th>
-                <x-admin.th class="whitespace-nowrap text-center">Visible</x-admin.th>
-                @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
-                    <x-admin.th class="whitespace-nowrap text-center">Featured</x-admin.th>
-                @endif
-                <x-admin.th class="w-px whitespace-nowrap text-right">Actions</x-admin.th>
+                <x-admin.th>{{ $viewType === 'intrapreneur' ? 'Job title' : 'Location' }}</x-admin.th>
+                <x-admin.th>Status</x-admin.th>
+                <x-admin.th>Listing</x-admin.th>
+                @unless ($viewType === 'intrapreneur')
+                    <x-admin.th>Home page</x-admin.th>
+                @endunless
+                <x-admin.th>Actions</x-admin.th>
             </tr>
         </thead>
-        <tbody class="divide-y">
-            @forelse($businesses as $b)
-                <tr class="transition hover:bg-orange-50/30">
-                    {{-- --- Business / Company name + logo --- --}}
-                    <td class="max-w-[220px] px-4 py-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="flex h-8 w-8 flex-shrink-0 items-center justify-center overflow-hidden rounded-sm">
-                                @if ($b->logo_url)
-                                    <img src="{{ $b->logo_url }}" class="h-full w-full object-contain">
-                                @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-bold text-white">
-                                        {{ $b->initial }}
-                                    </div>
-                                @endif
-                            </div>
+        <tbody>
+            @forelse ($businesses as $b)
+                <tr>
+                    <td data-label="">
+                        <div class="flex min-w-0 items-center gap-3 text-left">
+                            <x-ui.thumb :src="$b->logo_url" :name="$b->name" size="h-10 w-10" class="text-base" />
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $b->name }}</p>
-                                @if (($viewType ?? 'entrepreneur') === 'intrapreneur' && $b->company_scale)
-                                    <p class="truncate text-xs text-gray-600">{{ $b->company_scale }}</p>
+                                <p class="truncate font-semibold text-gray-900">{{ $b->name }}</p>
+                                @if ($viewType === 'intrapreneur' && $b->company_scale)
+                                    <p class="truncate text-sm text-gray-600">{{ $b->company_scale }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
-
-                    {{-- --- Owner --- --}}
-                    <td class="max-w-[180px] px-4 py-3">
-                        <div class="flex items-center gap-2">
-                            <div class="h-6 w-6 flex-shrink-0 overflow-hidden rounded-sm">
-                                @if ($b->user?->has_profile_photo)
-                                    <img src="{{ $b->user->profile_photo_url }}" class="h-full w-full object-contain">
-                                @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-bold text-white">
-                                        {{ $b->user?->initial ?? 'U' }}
-                                    </div>
-                                @endif
-                            </div>
-                            <span class="truncate text-xs font-bold text-gray-700">{{ $b->user?->name ?? 'Unknown' }}</span>
-                        </div>
-                    </td>
-
-                    {{-- --- Location (entrepreneur) / Position (intrapreneur) --- --}}
-                    <td class="max-w-[160px] px-4 py-3">
-                        @if (($viewType ?? 'entrepreneur') === 'intrapreneur')
-                            <div class="min-w-0">
-                                <p class="truncate text-sm font-semibold text-gray-700">{{ $b->position }}</p>
-                                @if ($b->level_position)
-                                    <p class="truncate text-xs text-gray-600">{{ $b->level_position }}</p>
-                                @endif
-                            </div>
+                    <td data-label="Owner">{{ $b->user?->name ?? 'Unknown' }}</td>
+                    <td data-label="{{ $viewType === 'intrapreneur' ? 'Job title' : 'Location' }}">
+                        @if ($viewType === 'intrapreneur')
+                            {{ $b->position ?: 'Not set' }}
                         @else
-                            <span class="block truncate text-sm text-gray-600" title="{{ $b->city }}, {{ $b->province }}">{{ $b->city }}, {{ $b->province }}</span>
+                            {{ collect([$b->city, $b->province])->filter()->implode(', ') ?:'Not set' }}
                         @endif
                     </td>
-
-                    {{-- --- Approval Status --- --}}
-                    <td class="px-4 py-3">
-                        <x-admin.status-badge :item="$b" />
-                    </td>
-
-                    {{-- --- Visible dot --- --}}
-                    <td class="px-4 py-3 text-center">
-                        <x-admin.visibility-dot :visible="$b->is_visible" class="inline-block" />
-                    </td>
-
-                    {{-- --- Featured (entrepreneur only) --- --}}
-                    @if (($viewType ?? 'entrepreneur') === 'entrepreneur')
-                        <td class="px-4 py-3 text-center">
-                            <x-admin.featured-toggle :action="route('businesses.toggle-featured', $b)" :visible="$b->is_visible" :featured="$b->is_featured"
-                                                     class="toggle-featured-form inline-block" tip-class="tooltip-text" />
-                        </td>
-                    @endif
-
-                    {{-- --- Actions --- --}}
-                    <td class="w-px whitespace-nowrap px-4 py-3">
-                        <div class="flex items-center justify-end gap-1.5">
-                            @if (($viewType ?? 'entrepreneur') === 'intrapreneur')
-                                {{-- --- View intrapreneur profile --- --}}
-                                <x-admin.icon-action :href="route('intrapreneurs.show', $b)" icon="bi-eye-fill" tip="View Profile" />
-                                {{-- --- Change status (modal) --- --}}
-                                <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                                     data-status-modal="{{ json_encode(['name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'url' => route('intrapreneurs.update-status', $b, false)]) }}" />
-                            @else
-                                {{-- --- View entrepreneur business --- --}}
-                                <x-admin.icon-action :href="route('businesses.show', $b)" icon="bi-eye-fill" tip="View Details" />
-                                {{-- --- Change status (modal) --- --}}
-                                <x-admin.icon-action variant="secondary" icon="bi-pencil-square" tip="Change Status" tip-align="right" arrow-class="mr-3"
-                                                     data-status-modal="{{ json_encode(['name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'url' => route('businesses.update-status', $b, false)]) }}" />
-                            @endif
+                    <td data-label="Status"><x-business.status-pill :item="$b" /></td>
+                    <td data-label="Listing"><x-admin.visibility-badge :visible="$b->is_visible" /></td>
+                    @unless ($viewType === 'intrapreneur')
+                        <td data-label="Home page"><x-admin.featured-toggle :action="route('businesses.toggle-featured', $b)" :visible="$b->is_visible" :featured="$b->is_featured" class="toggle-featured-form" /></td>
+                    @endunless
+                    <td data-label="Actions">
+                        <div class="flex flex-wrap justify-end gap-2 md:flex-nowrap">
+                            <a href="{{ $viewType === 'intrapreneur' ? route('intrapreneurs.show', $b) : route('businesses.show', $b) }}" class="btn btn-secondary btn-sm">View</a>
+                            <button type="button" class="btn btn-secondary btn-sm" data-status-modal="{{ json_encode(['name' => $b->name, 'status' => $b->status, 'reason' => $b->rejection_reason, 'url' => $viewType === 'intrapreneur' ? route('intrapreneurs.update-status', $b, false) : route('businesses.update-status', $b, false)]) }}">Change status</button>
                         </div>
                     </td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-16 text-center">
-                        <p class="italic text-gray-600">
-                            No {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'career profiles' : 'businesses' }} found matching the criteria.
-                        </p>
+                    <td colspan="7" class="!block px-6 py-12 text-center !text-base">
+                        <p class="text-gray-700">No {{ $viewType === 'intrapreneur' ? 'work profiles' : 'businesses' }} match your search.</p>
                     </td>
                 </tr>
             @endforelse
         </tbody>
     </table>
-
 </div>
 
 @if ($businesses->hasPages())

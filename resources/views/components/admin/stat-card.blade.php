@@ -1,8 +1,6 @@
-<div {{ $attributes->class(['bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all duration-300 reveal-on-scroll', $compactOnMobile ? 'p-4 sm:p-6' : 'p-6']) }}>
-    <p class="{{ $labelClass }} mb-1 text-xs font-bold">{{ $label }}</p>
-    <p @class([
-        $compactOnMobile ? 'text-2xl sm:text-3xl' : 'text-3xl',
-        'font-bold',
-        $valueClass,
-    ]) @if ($valueId) id="{{ $valueId }}" @endif>{{ $slot }}</p>
+@props(['valueId' => null])
+
+<div {{ $attributes->class(['card !p-4']) }}>
+    <p class="text-sm text-gray-600">{{ $label }}</p>
+    <p class="mt-1 font-serif text-3xl font-semibold text-brand-900" @if ($valueId) id="{{ $valueId }}" @endif>{{ $slot }}</p>
 </div>

@@ -3,6 +3,7 @@
 // <button data-testimony-featured-toggle="{toggle URL}">
 
 import ajaxList from '../lib/ajax-list';
+import showFeatured from '../lib/featured-button';
 import { readJsonOrThrow, sendJson } from '../lib/json-request';
 
 function testimonyAdminList() {
@@ -18,19 +19,7 @@ function toggleFeatured(url, buttonElement) {
         .then((data) => {
             if (data.success) {
                 const isFeatured = data.is_featured;
-                buttonElement.setAttribute('data-featured', isFeatured ? '1' : '0');
-                buttonElement.title = isFeatured ? 'Remove from featured' : 'Add to featured';
-
-                const icon = buttonElement.querySelector('i');
-                if (isFeatured) {
-                    buttonElement.className =
-                        'w-10 h-10 rounded-full inline-flex items-center justify-center transition-all duration-300 border shadow-md focus:outline-none bg-[#ff8a00] border-[#ff8a00] text-white hover:bg-orange-600';
-                    icon.className = 'bi bi-star-fill text-lg leading-none';
-                } else {
-                    buttonElement.className =
-                        'w-10 h-10 rounded-full inline-flex items-center justify-center transition-all duration-300 border shadow-md focus:outline-none bg-white/90 border-gray-200 text-gray-400 hover:text-[#ff8a00] hover:border-[#ff8a00]';
-                    icon.className = 'bi bi-star text-lg leading-none';
-                }
+                showFeatured(buttonElement, isFeatured);
 
                 const statFeatured = document.getElementById('stat-featured-testimonies');
                 if (statFeatured) {

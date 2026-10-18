@@ -2,6 +2,7 @@
 // Imported by app.js on pages with [data-business-admin]; Alpine starts after this module has run.
 
 import ajaxList from '../lib/ajax-list';
+import showFeatured from '../lib/featured-button';
 
 function businessAdminList() {
     return {
@@ -77,16 +78,7 @@ document.addEventListener('submit', function (e) {
             .then((data) => {
                 if (data.success) {
                     const isFeaturedNow = data.message.includes('now featured');
-                    const tooltipEl = button.querySelector('.tooltip-text');
-                    if (isFeaturedNow) {
-                        button.className =
-                            'relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500';
-                        if (tooltipEl) tooltipEl.textContent = 'Remove featured';
-                    } else {
-                        button.className =
-                            'relative group w-7 h-7 rounded-full inline-flex items-center justify-center transition-all border bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300';
-                        if (tooltipEl) tooltipEl.textContent = 'Make featured';
-                    }
+                    showFeatured(button, isFeaturedNow);
 
                     const countEl = document.querySelector('.featured-count');
                     if (countEl) {

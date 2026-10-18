@@ -1,7 +1,7 @@
 @layer components {
     /* --- Buttons: one shape, three looks (primary, secondary, danger), always a text label --- */
     .btn {
-        @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md border border-transparent px-4 py-2 text-base font-semibold leading-6 no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
+        @apply inline-flex min-h-[2.75rem] items-center whitespace-nowrap justify-center gap-2 rounded-md border border-transparent px-4 py-2 text-base font-semibold leading-6 no-underline transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50;
     }
 
     .btn-primary {
@@ -14,6 +14,10 @@
 
     .btn-danger {
         @apply bg-red-700 text-white hover:bg-red-800;
+    }
+
+    .btn-danger-outline {
+        @apply border-red-700 bg-white text-red-800 hover:bg-red-50;
     }
 
     .btn-quiet {

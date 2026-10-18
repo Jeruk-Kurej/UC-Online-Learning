@@ -118,12 +118,12 @@ test('status and label follow approval_status, falling back to visibility', func
     expect($record->status)->toBe($status)->and($record->status_label)->toBe($label);
 })->with(['business', 'company'])->with([
     'approved' => ['approved', true, 'approved', 'Approved'],
-    'pending' => ['pending', true, 'pending', 'Pending Approval'],
+    'pending' => ['pending', true, 'pending', 'Pending approval'],
     'rejected' => ['rejected', false, 'rejected', 'Rejected'],
-    'need revision' => ['need_revision', false, 'need_revision', 'Need Revision'],
-    'unknown value' => ['archived', true, 'archived', 'Pending Approval'],
+    'need revision' => ['need_revision', false, 'need_revision', 'Needs revision'],
+    'unknown value' => ['archived', true, 'archived', 'Pending approval'],
     'no status, visible' => [null, true, 'approved', 'Approved'],
-    'no status, hidden' => [null, false, 'pending', 'Pending Approval'],
+    'no status, hidden' => [null, false, 'pending', 'Pending approval'],
 ]);
 
 test('visible scope needs approval, visibility and a visible owner', function (string $kind) {

@@ -60,6 +60,55 @@
         @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-brand-50;
     }
 
+    /* --- Admin tables: a table from tablet width up, one card per row on phones (cells carry data-label) --- */
+    .admin-table {
+        @apply w-full text-left;
+    }
+
+    .admin-table th {
+        @apply whitespace-nowrap bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700;
+    }
+
+    .admin-table td {
+        @apply px-4 py-3 align-middle text-base text-gray-800;
+    }
+
+    .admin-table tbody tr {
+        @apply border-t border-line;
+    }
+
+    @media (max-width: 767px) {
+        .admin-table thead {
+            @apply sr-only;
+        }
+
+        .admin-table tbody tr {
+            @apply block px-1 py-3;
+        }
+
+        .admin-table td {
+            @apply flex items-start justify-between gap-4 px-3 py-1.5 text-right;
+        }
+
+        .admin-table td[data-label]::before {
+            content: attr(data-label);
+            @apply shrink-0 text-left text-sm text-gray-600;
+        }
+
+        .admin-table td[data-label='']::before {
+            content: none;
+        }
+    }
+
+    /* --- Dialogs: dark backdrop and a bordered panel --- */
+    .modal-backdrop {
+        @apply fixed inset-0 bg-black/60;
+    }
+
+    .modal-panel {
+        @apply relative w-full max-w-lg rounded-lg border border-line bg-white p-6 shadow-xl;
+    }
+
     /* --- Tabs: plain text with a gold underline on the open one --- */
     .tabs {
         @apply flex gap-6 overflow-x-auto border-b border-line;
