@@ -79,24 +79,6 @@ class UcTestimonyController extends Controller
     }
 
     /**
-     * Display a public list of testimonies.
-     * Note: Removed from main navigation as per user request.
-     */
-    public function index(): View
-    {
-        $testimonies = User::query()
-            ->where('is_visible', true)
-            ->where('is_featured_testimony', true)
-            ->whereNotNull('testimony')
-            ->where('testimony', '!=', '')
-            ->orderByDesc('submitted_at')
-            ->orderByDesc('created_at')
-            ->paginate(8);
-
-        return view('uc-testimonies.index', compact('testimonies'));
-    }
-
-    /**
      * Store or update the authenticated user's testimony.
      */
     public function store(Request $request): RedirectResponse

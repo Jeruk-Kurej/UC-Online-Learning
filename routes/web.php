@@ -28,7 +28,6 @@ Route::middleware(['throttle:showcase'])->group(function () {
     Route::get('/about', AboutController::class)->name('about');
     Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
     Route::get('/business', [BusinessController::class, 'index'])->name('businesses.index');
-    Route::get('/uc-testimonies', [UcTestimonyController::class, 'index'])->name('uc-testimonies.index');
     Route::get('/google-drive-image/{id}', [UserProfileController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
 });
 
@@ -41,7 +40,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/inbox', [InboxController::class, 'index'])->name('inbox.index');
     Route::get('/inbox/{message}', [InboxController::class, 'show'])->name('inbox.show');

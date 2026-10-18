@@ -9,7 +9,6 @@ use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
@@ -134,22 +133,5 @@ class ProfileController extends Controller
         $user->save();
 
         return Redirect::route('profile.edit')->with('success', 'Profile updated!');
-    }
-
-    /**
-     * Delete the user's account.
-     *
-     * @param  Request  $request  Current request instance
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $this->validate($request, ['password' => ['required', 'current_password']]);
-        $user = $this->getUser($request);
-        Auth::logout();
-        $user->delete();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
     }
 }

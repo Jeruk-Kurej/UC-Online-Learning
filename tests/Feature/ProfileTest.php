@@ -32,40 +32,10 @@ test('profile information can be updated', function () {
     $this->assertSame('0812345678', $user->whatsapp);
 });
 
-test('user can delete their account', function () {
-    $user = User::factory()->create([
-        'password' => Hash::make('password'),
-    ]);
+test('users cannot delete their own account', function () {
+    $user = User::factory()->create(['password' => Hash::make('password')]);
 
-    $response = $this
-        ->actingAs($user)
-        ->delete('/profile', [
-            'password' => 'password',
-        ]);
-
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/');
-
-    $this->assertGuest();
-    $this->assertNull($user->fresh());
-});
-
-test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create([
-        'password' => Hash::make('password'),
-    ]);
-
-    $response = $this
-        ->actingAs($user)
-        ->from('/profile')
-        ->delete('/profile', [
-            'password' => 'wrong-password',
-        ]);
-
-    $response
-        ->assertSessionHasErrors('password')
-        ->assertRedirect('/profile');
+    $this->actingAs($user)->delete('/profile', ['password' => 'password'])->assertStatus(405);
 
     $this->assertNotNull($user->fresh());
 });

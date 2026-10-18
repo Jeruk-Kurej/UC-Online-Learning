@@ -87,7 +87,6 @@ function smokeUris(array $w): array
         'featured' => '/featured',
         'business list' => '/business',
         'business list intrapreneur' => '/business?view=intrapreneur',
-        'testimonies' => '/uc-testimonies',
         'login' => '/login',
         'forgot password' => '/forgot-password',
         'business show' => "/business/{$b}",
@@ -133,7 +132,6 @@ function smokeExpected(): array
         'featured' => [200, 200, 200],
         'business list' => [200, 200, 200],
         'business list intrapreneur' => [200, 200, 200],
-        'testimonies' => [200, 200, 200],
         'login' => [200, 302, 302],
         'forgot password' => [200, 302, 302],
         'business show' => [200, 200, 200],
@@ -188,4 +186,8 @@ test('every page answers with the recorded status for guest, owner and admin', f
     }
 
     expect($actual)->toBe($expected);
+});
+
+test('the removed public testimonies page is gone', function () {
+    $this->get('/uc-testimonies')->assertNotFound();
 });
