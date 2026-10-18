@@ -1,0 +1,52 @@
+name: Checks
+
+on:
+    push:
+        branches: [main]
+    pull_request:
+
+concurrency:
+    group: checks-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    checks:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.3'
+                  extensions: mbstring, xml, gd, zip, bcmath, exif, intl, pdo_sqlite, sqlite3, fileinfo
+                  tools: composer:v2
+                  coverage: none
+
+            - name: Install PHP dependencies
+              run: composer install --no-interaction --no-progress --prefer-dist
+
+            - name: Prepare the environment
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: npm
+
+            - name: Install JS dependencies and build the assets
+              run: |
+                  npm ci
+                  npm run build
+
+            - name: PHP code style (Pint)
+              run: vendor/bin/pint --test
+
+            - name: JS, CSS and Blade code style (Prettier)
+              run: npm run format:check
+
+            - name: Tests (Pest)
+              run: composer run test
