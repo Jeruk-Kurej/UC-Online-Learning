@@ -67,10 +67,7 @@ class ProfileController extends Controller
             }
         }
 
-        $existingUrls = [];
-        if ($user->activities_doc_url) {
-            $existingUrls = array_filter(array_map('trim', preg_split('/[;,]+/', $user->activities_doc_url)));
-        }
+        $existingUrls = $user->activities_doc_url;
 
         if ($request->has('delete_activities_files')) {
             $toDelete = (array) $request->input('delete_activities_files');
@@ -100,7 +97,7 @@ class ProfileController extends Controller
         }
 
         $finalUrls = array_merge($existingUrls, $newUrls);
-        $user->activities_doc_url = count($finalUrls) > 0 ? implode(';', $finalUrls) : null;
+        $user->activities_doc_url = $finalUrls ?: null;
 
         if ($request->filled('password')) {
             $user->password = Hash::make($request->input('password'));
