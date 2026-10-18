@@ -118,19 +118,8 @@
                     <x-forms.file-drop label="Profile Photo" name="profile_photo_url" accept="image/*"
                                        prompt="Upload or drop a photo" formats="JPG, PNG, WEBP">
                         <x-slot:selection>
-                            <div x-show="selected" class="mb-3 flex items-center gap-4">
-                                <div class="h-20 w-16 flex-shrink-0 overflow-hidden rounded-sm">
-                                    <img :src="fileUrl" class="h-full w-full object-contain">
-                                </div>
-                                <div class="flex flex-col gap-1.5">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500" x-text="fileName">Selected Photo</span>
-                                    <button type="button" @click="clear()"
-                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 transition-all hover:text-red-700">
-                                        <i class="bi bi-x-circle text-sm"></i>
-                                        <span>Clear Selection</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <x-forms.picked-image label="Selected Photo" frame-class="h-20 w-16 flex-shrink-0 overflow-hidden rounded-sm"
+                                                  image-class="h-full w-full object-contain" />
                         </x-slot:selection>
                         @error('profile_photo_url')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -178,16 +167,7 @@
                     <div class="relative md:col-span-2" x-data="activityFiles(@js($userToEdit->activity_files))">
                         <div class="mb-3 flex items-center justify-between">
                             <label class="form-label-custom mb-0">Activities Documentation Files</label>
-                            <div class="relative">
-                                <input type="file" name="activities_docs[]" id="activities_docs" multiple accept="image/*,application/pdf" x-ref="activityInput"
-                                       class="hidden"
-                                       @change="handleNewFiles($event)">
-                                <button type="button" @click="pickFiles()"
-                                        class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold text-blue-600 shadow-sm transition hover:bg-blue-100 hover:text-blue-700">
-                                    <i class="bi bi-plus-lg text-[9px]"></i>
-                                    <span>Add Files</span>
-                                </button>
-                            </div>
+                            <x-files.add-files name="activities_docs" />
                         </div>
 
                         <x-files.activity-previews />

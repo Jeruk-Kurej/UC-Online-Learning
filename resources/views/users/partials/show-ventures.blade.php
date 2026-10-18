@@ -11,16 +11,11 @@
                         </span>
                     @endif
                     @if ($biz->unique_value_proposition || $biz->description)
-                        <p class="mt-2 line-clamp-2 text-xs font-normal leading-relaxed text-gray-500">
-                            {{ $biz->unique_value_proposition ?? $biz->description }}
-                        </p>
+                        <x-people.venture-summary>{{ $biz->unique_value_proposition ?? $biz->description }}</x-people.venture-summary>
                     @endif
                     <x-slot:footer>
                         @if ($biz->city)
-                            <span class="flex items-center gap-1 text-[11px] font-bold text-gray-500">
-                                <i class="bi bi-geo-alt-fill text-orange-500"></i>
-                                {{ $biz->city }}
-                            </span>
+                            <x-people.venture-meta icon="bi-geo-alt-fill text-orange-500">{{ $biz->city }}</x-people.venture-meta>
                         @endif
                     </x-slot:footer>
                 </x-people.venture-card>
@@ -39,16 +34,11 @@
                         {{ $biz->pivot->position ?? 'Co-Owner' }} (Team Member)
                     </span>
                     @if ($biz->unique_value_proposition || $biz->description)
-                        <p class="mt-2 line-clamp-2 text-xs font-normal leading-relaxed text-gray-500">
-                            {{ $biz->unique_value_proposition ?? $biz->description }}
-                        </p>
+                        <x-people.venture-summary>{{ $biz->unique_value_proposition ?? $biz->description }}</x-people.venture-summary>
                     @endif
                     <x-slot:footer>
                         @if ($biz->city)
-                            <span class="flex items-center gap-1 text-[11px] font-bold text-gray-500">
-                                <i class="bi bi-geo-alt-fill text-blue-500"></i>
-                                {{ $biz->city }}
-                            </span>
+                            <x-people.venture-meta icon="bi-geo-alt-fill text-blue-500">{{ $biz->city }}</x-people.venture-meta>
                         @endif
                     </x-slot:footer>
                 </x-people.venture-card>
@@ -75,17 +65,12 @@
                         </span>
                     @endif
                     @if ($company->job_description)
-                        <p class="mt-2 line-clamp-2 text-xs font-normal leading-relaxed text-gray-500">
-                            {{ $company->job_description }}
-                        </p>
+                        <x-people.venture-summary>{{ $company->job_description }}</x-people.venture-summary>
                     @endif
                     <x-slot:footer>
                         <div class="flex min-w-0 flex-wrap gap-x-4 gap-y-1">
                             @if ($company->year_started_working)
-                                <span class="flex items-center gap-1 text-[11px] font-bold text-gray-500">
-                                    <i class="bi bi-calendar-check text-orange-500"></i>
-                                    Since {{ $company->year_started_working }}
-                                </span>
+                                <x-people.venture-meta icon="bi-calendar-check text-orange-500">Since {{ $company->year_started_working }}</x-people.venture-meta>
                             @endif
                             @if ($company->company_scale)
                                 <span class="line-clamp-1 text-[11px] font-bold text-gray-400" title="{{ $company->company_scale }}">

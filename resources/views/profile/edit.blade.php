@@ -136,16 +136,7 @@
                             <div class="profile-row items-start">
                                 <div class="flex w-[140px] shrink-0 flex-col gap-2">
                                     <label class="profile-row-label mt-1">Activities Docs</label>
-                                    <div class="relative self-start">
-                                        <input type="file" name="activities_files[]" id="activities_files" multiple accept="image/*,application/pdf"
-                                               class="hidden" x-ref="activityInput"
-                                               @change="handleNewFiles($event)">
-                                        <button type="button" @click="pickFiles()"
-                                                class="inline-flex cursor-pointer select-none items-center gap-1.5 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-[10px] font-extrabold text-blue-600 shadow-sm transition hover:bg-blue-100 hover:text-blue-700">
-                                            <i class="bi bi-plus-lg text-[9px]"></i>
-                                            <span>Add Files</span>
-                                        </button>
-                                    </div>
+                                    <x-files.add-files name="activities_files" class="self-start" />
                                 </div>
                                 <div class="profile-stack gap-[15px]">
                                     <x-files.activity-previews blur-overlay />

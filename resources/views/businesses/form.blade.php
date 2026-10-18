@@ -73,19 +73,8 @@
                     <x-forms.file-drop class="pb-5 md:col-span-2" label="Business Logo" name="logo" accept="image/*"
                                        prompt="Upload or drop a logo" formats="JPG, PNG, WEBP — Max 10MB">
                         <x-slot:selection>
-                            <div x-show="selected" class="mb-3 flex items-center gap-4">
-                                <div class="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-2 shadow-sm">
-                                    <img :src="fileUrl" class="max-h-full max-w-full object-contain">
-                                </div>
-                                <div class="flex flex-col gap-1.5">
-                                    <span class="text-xs font-bold uppercase tracking-wider text-gray-500" x-text="fileName">Selected Logo</span>
-                                    <button type="button" @click="clear()"
-                                            class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 transition-all hover:text-red-700">
-                                        <i class="bi bi-x-circle text-sm"></i>
-                                        <span>Clear Selection</span>
-                                    </button>
-                                </div>
-                            </div>
+                            <x-forms.picked-image label="Selected Logo" image-class="max-h-full max-w-full object-contain"
+                                                  frame-class="flex h-20 w-20 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-gray-200 bg-gray-50 p-2 shadow-sm" />
                         </x-slot:selection>
                         @error('logo')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -100,27 +89,8 @@
                 Location & Contact Details
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="business" name="province" label="Province" :show-error="false">
-                    <select name="province" id="province" data-region-province data-region-city="#city" data-regencies-url="{{ route('api.regencies', [], false) }}" class="block w-full">
-                        <option value="">Select Province</option>
-                        @foreach ($provinces as $prov)
-                            <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>
-                                {{ $prov->display_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </x-forms.field>
-
-                <x-forms.field look="business" name="city" label="City / Regency" :show-error="false">
-                    <select name="city" id="city" data-region-city-placeholder="{{ $business ? 'Select City' : 'Select Province First' }}" @unless ($business) data-region-city-starts-disabled @endunless class="block w-full">
-                        <option value="">Select Province First</option>
-                        @foreach ($availableCities as $city)
-                            <option value="{{ $city->id }}" {{ old('city', $business?->city) == $city->name ? 'selected' : '' }}>
-                                {{ $city->display_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </x-forms.field>
+                <x-forms.region-fields look="business" select-class="block w-full" :provinces="$provinces" :cities="$availableCities"
+                                       :selected-province-id="$selectedProvinceId" :record="$business" />
 
                 <x-forms.field look="business" name="address" label="Full Address" :show-error="false" class="md:col-span-2">
                     <textarea name="address" id="address" rows="2"

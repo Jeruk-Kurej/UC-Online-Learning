@@ -53,24 +53,5 @@
            placeholder="e.g. 2021">
 </x-forms.field>
 
-<x-forms.field look="work-profile" name="province" label="Province" :show-error="false">
-    <select name="province" id="province" data-region-province data-region-city="#city" data-regencies-url="{{ route('api.regencies', [], false) }}" class="form-input-custom">
-        <option value="">Select Province</option>
-        @foreach ($provinces as $prov)
-            <option value="{{ $prov->id }}" {{ old('province', $selectedProvinceId) == $prov->id ? 'selected' : '' }}>
-                {{ $prov->display_name }}
-            </option>
-        @endforeach
-    </select>
-</x-forms.field>
-
-<x-forms.field look="work-profile" name="city" label="City / Regency" :show-error="false">
-    <select name="city" id="city" data-region-city-placeholder="{{ $company ? 'Select City' : 'Select Province First' }}" @unless ($company) data-region-city-starts-disabled @endunless class="form-input-custom">
-        <option value="">Select Province First</option>
-        @foreach ($availableCities as $city_item)
-            <option value="{{ $city_item->id }}" {{ old('city', $company?->city) == $city_item->name ? 'selected' : '' }}>
-                {{ $city_item->display_name }}
-            </option>
-        @endforeach
-    </select>
-</x-forms.field>
+<x-forms.region-fields look="work-profile" select-class="form-input-custom" :provinces="$provinces" :cities="$availableCities"
+                       :selected-province-id="$selectedProvinceId" :record="$company" />
