@@ -13,8 +13,8 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
-    // --- Registration routes exist only when REGISTRATION_OPEN is true; otherwise admins create users ---
-    if (env('REGISTRATION_OPEN', false)) {
+    // --- Registration routes exist only when auth.registration_open is true; otherwise admins create users ---
+    if (config('auth.registration_open')) {
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
 

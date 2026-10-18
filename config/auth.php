@@ -114,4 +114,8 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    // --- Public registration: off unless REGISTRATION_OPEN is true; otherwise admins create the users ---
+
+    'registration_open' => (bool) env('REGISTRATION_OPEN', false),
+
 ];
