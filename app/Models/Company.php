@@ -77,6 +77,13 @@ class Company extends Model
         return $this->user;
     }
 
+    // --- Access ---
+
+    public function canBeManagedBy(User $user): bool
+    {
+        return $user->isAdmin() || $this->user_id === $user->id;
+    }
+
     // --- Relationships ---
 
     public function user()

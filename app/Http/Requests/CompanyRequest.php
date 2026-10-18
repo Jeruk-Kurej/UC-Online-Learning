@@ -13,7 +13,7 @@ class CompanyRequest extends FormRequest
     {
         $company = $this->route('company');
 
-        if ($company && $this->user()->id !== $company->user_id && ! $this->user()->isAdmin()) {
+        if ($company && ! $company->canBeManagedBy($this->user())) {
             abort(403);
         }
 

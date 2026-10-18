@@ -23,12 +23,6 @@ class UcTestimonyController extends Controller
      */
     public function adminIndex(Request $request): View|Response
     {
-        /** @var User $user */
-        $user = Auth::user();
-        if (! $user || ! $user->isAdmin()) {
-            abort(403, 'Only administrators can view testimonies management.');
-        }
-
         $search = trim((string) $request->get('search', ''));
         $featured = $request->get('featured');
 
@@ -105,11 +99,6 @@ class UcTestimonyController extends Controller
      */
     public function toggleFeatured(Request $request, User $user): JsonResponse
     {
-        $authUser = Auth::user();
-        if (! $authUser instanceof User || ! $authUser->isAdmin()) {
-            return new JsonResponse(['success' => false, 'message' => 'Unauthorized'], 403);
-        }
-
         if (! $user->is_visible) {
             return new JsonResponse(['success' => false, 'message' => 'Cannot feature an invisible user.'], 400);
         }

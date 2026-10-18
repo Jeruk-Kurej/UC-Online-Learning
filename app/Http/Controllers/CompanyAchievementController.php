@@ -19,9 +19,7 @@ class CompanyAchievementController extends Controller
      */
     public function create(Company $company): View
     {
-        if (Auth::id() !== $company->user_id && ! $this->currentUserIsAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
+        $this->authorizeManage($company);
 
         return view('work-profiles.add-achievement', compact('company'));
     }
@@ -31,9 +29,7 @@ class CompanyAchievementController extends Controller
      */
     public function store(Company $company, Request $request): RedirectResponse|JsonResponse
     {
-        if (Auth::id() !== $company->user_id && ! $this->currentUserIsAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
+        $this->authorizeManage($company);
 
         $this->validate($request, [
             'achievement' => 'required|string|max:500',
@@ -67,9 +63,7 @@ class CompanyAchievementController extends Controller
      */
     public function destroy(Company $company, Request $request): RedirectResponse|JsonResponse
     {
-        if (Auth::id() !== $company->user_id && ! $this->currentUserIsAdmin()) {
-            abort(403, 'Unauthorized.');
-        }
+        $this->authorizeManage($company);
 
         $this->validate($request, [
             'index' => 'required|integer|min:0',
@@ -94,5 +88,12 @@ class CompanyAchievementController extends Controller
         }
 
         return back()->with('success', 'Achievement deleted successfully!');
+    }
+
+    // --- Access ---
+
+    private function authorizeManage(Company $company): void
+    {
+        abort_unless($company->canBeManagedBy(Auth::user()), 403, 'Unauthorized.');
     }
 }

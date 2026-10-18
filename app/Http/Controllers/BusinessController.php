@@ -187,8 +187,6 @@ class BusinessController extends Controller
      */
     public function update(UpdateBusinessRequest $request, Business $business): RedirectResponse
     {
-        $this->authorize('update', $business);
-
         $data = $request->businessData();
 
         // --- Only admins may change visibility, featured status or the primary owner ---

@@ -7,27 +7,7 @@ use App\Models\User;
 
 class BusinessPolicy
 {
-    /*
-    |--------------------------------------------------------------------------
-    | View Policies
-    |--------------------------------------------------------------------------
-    */
-
-    public function viewAny(?User $user): bool
-    {
-        return true;
-    }
-
-    public function view(?User $user, Business $business): bool
-    {
-        return true;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Mutation Policies
-    |--------------------------------------------------------------------------
-    */
+    // --- Abilities ---
 
     public function create(User $user): bool
     {
@@ -35,11 +15,6 @@ class BusinessPolicy
     }
 
     public function update(User $user, Business $business): bool
-    {
-        return $business->canBeManagedBy($user);
-    }
-
-    public function delete(User $user, Business $business): bool
     {
         return $business->canBeManagedBy($user);
     }

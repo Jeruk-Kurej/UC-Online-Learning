@@ -42,7 +42,7 @@ class CompanyController extends Controller
         return view('work-profiles.show', [
             'company' => $company,
             'student' => $company->user,
-            'canManage' => auth()->check() && (auth()->user()->id === $company->user_id || auth()->user()->isAdmin()),
+            'canManage' => auth()->check() && $company->canBeManagedBy(auth()->user()),
         ]);
     }
 
@@ -90,9 +90,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company): View
     {
-        if (Auth::id() !== $company->user_id && ! $this->currentUserIsAdmin()) {
-            abort(403);
-        }
+        abort_unless($company->canBeManagedBy(Auth::user()), 403);
 
         $categories = Category::all();
         $provinces = Province::orderBy('name')->get();

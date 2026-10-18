@@ -4,9 +4,7 @@ namespace App\Providers;
 
 use App\Models\Business;
 use App\Models\Message;
-use App\Models\User;
 use App\Policies\BusinessPolicy;
-use App\Policies\UserPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -33,7 +31,6 @@ class AppServiceProvider extends ServiceProvider
     {
         // --- Policies ---
         Gate::policy(Business::class, BusinessPolicy::class);
-        Gate::policy(User::class, UserPolicy::class);
 
         // --- Showcase rate limiter ---
         RateLimiter::for('showcase', function (Request $request) {
