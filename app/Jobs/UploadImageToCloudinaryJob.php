@@ -111,18 +111,32 @@ class UploadImageToCloudinaryJob implements ShouldQueue
     private function fetch(string $url, array $headers): array
     {
         $ch = curl_init();
-        curl_setopt_array($ch, [
+        curl_setopt_array($ch, $this->curlOptions($url, $headers));
+        $contents = curl_exec($ch);
+
+        if ($contents === false) {
+            Log::warning('[UploadImageToCloudinaryJob] Download error: '.curl_error($ch));
+        }
+
+        return [$contents, curl_getinfo($ch, CURLINFO_HTTP_CODE), curl_getinfo($ch, CURLINFO_CONTENT_TYPE)];
+    }
+
+    /**
+     * The server certificate is checked (curl's default); only http and https are followed, up to five redirects.
+     */
+    private function curlOptions(string $url, array $headers): array
+    {
+        return [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_MAXREDIRS => 5,
+            CURLOPT_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
+            CURLOPT_REDIR_PROTOCOLS => CURLPROTO_HTTP | CURLPROTO_HTTPS,
             CURLOPT_CONNECTTIMEOUT => 10,
             CURLOPT_TIMEOUT => 30,
             CURLOPT_HTTPHEADER => $headers,
-        ]);
-
-        return [curl_exec($ch), curl_getinfo($ch, CURLINFO_HTTP_CODE), curl_getinfo($ch, CURLINFO_CONTENT_TYPE)];
+        ];
     }
 
     private function requestHeaders(string $url): array
@@ -130,20 +144,27 @@ class UploadImageToCloudinaryJob implements ShouldQueue
         $headers = [
             'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
-            'Referer: https://employee.uc.ac.id/index.php/login',
         ];
 
-        $cookie = $this->isUniversityPortal($url) ? config('services.uc.cookie_raw', '') : '';
-        if ($cookie) {
+        if (! $this->isUniversityPortal($url)) {
+            return $headers;
+        }
+
+        $headers[] = 'Referer: https://employee.uc.ac.id/index.php/login';
+
+        if ($cookie = config('services.uc.cookie_raw', '')) {
             $headers[] = 'Cookie: '.trim($cookie);
         }
 
         return $headers;
     }
 
+    /**
+     * Only a link whose host is the portal itself gets the portal's referer and session cookie.
+     */
     private function isUniversityPortal(string $url): bool
     {
-        return str_contains($url, 'employee.uc.ac.id') || str_contains($url, 'employee.ciputra.ac.id');
+        return in_array(strtolower((string) parse_url($url, PHP_URL_HOST)), ['employee.uc.ac.id', 'employee.ciputra.ac.id'], true);
     }
 
     // --- Upload ---
