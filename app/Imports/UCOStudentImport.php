@@ -121,7 +121,7 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
         try {
             $loginEmail = $this->loginEmail($row);
             if (! $loginEmail) {
-                $this->skip('Row has no email and no NIS: '.implode('|', array_slice($row, 0, 5)));
+                $this->skip('Row has no email and no NIS');
 
                 return;
             }
@@ -148,10 +148,8 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
             $this->successCount++;
             $this->updateProgress('success');
         } catch (\Exception $e) {
-            $this->skip("Exception: {$e->getMessage()}");
-            Log::error("[UCOStudentImport] Error: {$e->getMessage()}", [
-                'row_preview' => array_slice($row, 0, 10),
-            ]);
+            $this->skip("Exception: {$this->safeMessage($e)}");
+            Log::error("[UCOStudentImport] Error: {$this->safeMessage($e)}", ['exception' => $e::class]);
         }
     }
 

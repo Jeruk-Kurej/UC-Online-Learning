@@ -110,8 +110,8 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
 
             return $user;
         } catch (\Exception $e) {
-            $this->skip("Error: {$e->getMessage()}");
-            Log::error("FormResponseImport error: {$e->getMessage()}", ['row' => $row]);
+            $this->skip("Error: {$this->safeMessage($e)}");
+            Log::error("FormResponseImport error: {$this->safeMessage($e)}", ['exception' => $e::class]);
 
             return null;
         }
@@ -141,11 +141,7 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
         }
         self::$debugKeysDumped = true;
 
-        $keysAndSamples = [];
-        foreach ($row as $k => $v) {
-            $keysAndSamples[$k] = (string) ($v ?? '');
-        }
-        Log::info('[FormResponseImport] DEBUG - Raw column keys from CSV (Maatwebsite snake_case):', $keysAndSamples);
+        Log::info('[FormResponseImport] Column keys of the CSV (Maatwebsite snake_case):', array_keys($row));
     }
 
     private function logoLink(array $row): ?string
@@ -233,11 +229,8 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
 
     private function importUser(array $row, string $email, string $fullName, ?string $careerCategory, ?bool $isFeatured): User
     {
-        $graduateYearRaw = $this->col($row, 'graduate_year');
-        $graduateYear = $this->graduateYear($graduateYearRaw);
+        $graduateYear = $this->graduateYear($this->col($row, 'graduate_year'));
         $studentStatus = $this->studentStatus($row, $graduateYear);
-
-        $this->logRowForDebug($row, $email, $careerCategory, $isFeatured, $graduateYearRaw, $graduateYear, $studentStatus);
 
         $userData = $this->userAttributes($row, $fullName, $careerCategory, $graduateYear, $studentStatus);
 
@@ -305,30 +298,12 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
         ];
     }
 
-    private function logRowForDebug(array $row, string $email, ?string $careerCategory, ?bool $isFeatured, ?string $graduateYearRaw, ?string $graduateYear, string $studentStatus): void
-    {
-        // --- Debug: critical field values ---
-        Log::debug('[FormResponseImport] Row debug', [
-            'email' => $email,
-            'category_raw' => $row['category'] ?? '<<KEY MISSING>>',
-            'current_status_raw' => $row['current_status'] ?? '<<KEY MISSING>>',
-            'graduate_year_raw' => $graduateYearRaw,
-            'graduate_year_resolved' => $graduateYear,
-            'student_status' => $studentStatus,
-            'career_category' => $careerCategory,
-            'is_featured' => $isFeatured,
-            'selected_raw' => $row['selected'] ?? '<<KEY MISSING>>',
-            'business_name' => $row['business_name'] ?? '<<KEY MISSING>>',
-            'company_name' => $row['company_name_'] ?? ($row['company_name'] ?? '<<KEY MISSING>>'),
-        ]);
-    }
-
     // --- Imported testimonies are auto-approved (skips Gemini to avoid rate limits) ---
 
     private function approveImportedTestimony(User $user): void
     {
         if (! empty($user->testimony) && is_null($user->ai_score)) {
-            Log::info("[FormResponseImport] Auto-approving testimony for user: {$user->email} (Gemini AI skipped during import)");
+            Log::info("[FormResponseImport] Auto-approving testimony for user #{$user->id} (Gemini AI skipped during import)");
             $user->update([
                 'ai_score' => 100,
                 'ai_sentiment' => 'Positive',
@@ -457,7 +432,7 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
         try {
             return $this->firstOrCreateBySlug(Category::class, $name, 'category')->id;
         } catch (\Exception $e) {
-            Log::warning("[FormResponseImport] Failed to get or create {$what}: ".$e->getMessage());
+            Log::warning("[FormResponseImport] Failed to get or create {$what}: ".$this->safeMessage($e));
 
             return null;
         }
@@ -477,7 +452,7 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
             try {
                 $ids[] = $findOrCreate($name)->id;
             } catch (\Exception $e) {
-                Log::warning("[FormResponseImport] Failed to get or create {$what}: ".$e->getMessage());
+                Log::warning("[FormResponseImport] Failed to get or create {$what}: ".$this->safeMessage($e));
             }
         }
         $relation->syncWithoutDetaching($ids);

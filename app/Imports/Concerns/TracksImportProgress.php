@@ -2,6 +2,7 @@
 
 namespace App\Imports\Concerns;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Events\AfterImport;
@@ -11,6 +12,7 @@ use Maatwebsite\Excel\Events\BeforeImport;
  * Progress of an import in the cache (read by the import progress card): totals before, counters per row, skipped
  * rows with their reason, and the completed state. Needs $importId, $successCount, $skippedCount and $errors on the
  * importer, plus the log lines it writes (startedLogLine, completedLogLine, skippedLogLine) and headerRows().
+ * The progress card is for admins and may name an email; the log is read by more people and never carries personal data.
  */
 trait TracksImportProgress
 {
@@ -64,11 +66,23 @@ trait TracksImportProgress
         Cache::increment($status === 'success' ? "{$prefix}_success" : "{$prefix}_skipped");
     }
 
+    /**
+     * The exception text without personal data: a database error keeps the driver's message, not the SQL and its values.
+     */
+    private function safeMessage(\Throwable $e): string
+    {
+        if ($e instanceof QueryException) {
+            return $e->errorInfo[2] ?? $e->getPrevious()?->getMessage() ?? class_basename($e);
+        }
+
+        return $e->getMessage();
+    }
+
     private function skip(string $reason): void
     {
         $this->skippedCount++;
         $this->errors[] = $reason;
-        Log::warning($this->skippedLogLine($reason));
+        Log::warning($this->skippedLogLine(preg_replace('/\S+@\S+/', '<email>', $reason)));
         $this->updateProgress('skipped');
 
         if ($this->importId) {
