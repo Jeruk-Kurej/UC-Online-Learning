@@ -2,6 +2,8 @@
 // Used by partials/import-progress on the admin user and business lists; the partial passes the endpoint URLs as
 // data-check-url, data-progress-url (with __ID__ for the import id) and data-clear-url.
 
+import { sendJson } from '../lib/json-request';
+
 export default function sharedImportManager() {
     return {
         importId: '',
@@ -185,18 +187,15 @@ export default function sharedImportManager() {
                     this.polling = null;
                     localStorage.removeItem('uco_active_import');
                     this._refreshPageList();
-                    fetch(this.urls.clearUrl, {
-                        method: 'POST',
-                        headers: {
-                            Accept: 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                            'Content-Type': 'application/json',
-                        },
-                    });
+                    this._clearActiveImport();
                 }
             } catch (e) {
                 console.error('Progress poll error:', e);
             }
+        },
+
+        _clearActiveImport() {
+            sendJson(this.urls.clearUrl, 'POST');
         },
 
         _refreshPageList() {
@@ -234,14 +233,7 @@ export default function sharedImportManager() {
 
             localStorage.removeItem('uco_active_import');
 
-            fetch(this.urls.clearUrl, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    'Content-Type': 'application/json',
-                },
-            });
+            this._clearActiveImport();
 
             if (wasCompleted) {
                 window.location.reload();

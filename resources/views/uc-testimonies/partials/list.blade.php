@@ -16,7 +16,7 @@
                 <button type="button"
                         data-user-id="{{ $user->id }}"
                         data-featured="{{ $user->is_featured_testimony ? '1' : '0' }}"
-                        data-testimony-featured-toggle="{{ $user->id }}"
+                        data-testimony-featured-toggle="{{ route('uc-testimonies.toggle-featured', $user, false) }}"
                         title="{{ !$user->is_visible ? 'User must be visible to be featured' : ($user->is_featured_testimony ? 'Remove from featured' : 'Add to featured') }}"
                         {{ !$user->is_visible ? 'disabled' : '' }}
                         class="{{ !$user->is_visible ? 'bg-gray-200/90 border-gray-300 text-gray-400 cursor-not-allowed' : ($user->is_featured_testimony ? 'bg-[#ff8a00] border-[#ff8a00] text-white hover:bg-orange-600' : 'bg-white/90 border-gray-200 text-gray-400 hover:text-[#ff8a00] hover:border-[#ff8a00]') }} inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-md transition-all duration-300 focus:outline-none">

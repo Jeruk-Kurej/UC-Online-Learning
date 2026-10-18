@@ -1,6 +1,8 @@
 // --- About page section builder: add, remove, reorder and edit sections, then save as JSON ---
 // x-data="sectionBuilder(initialSections)"; the server always sends at least the default sections (Page::sectionsFor).
 
+import { sendJson } from '../lib/json-request';
+
 export default function sectionBuilder(initialSections) {
     return {
         sections: initialSections,
@@ -96,17 +98,9 @@ export default function sectionBuilder(initialSections) {
         },
 
         saveSections(updateUrl) {
-            fetch(updateUrl, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    Accept: 'application/json',
-                },
-                body: JSON.stringify({
-                    title: 'About Us',
-                    content_json: { sections: this.sections },
-                }),
+            sendJson(updateUrl, 'PUT', {
+                title: 'About Us',
+                content_json: { sections: this.sections },
             })
                 .then((res) => res.json())
                 .then((data) => {

@@ -12,9 +12,12 @@ function initFeaturedAnimations() {
     // --- GSAP animations ---
     gsap.registerPlugin(ScrollTrigger);
 
+    // --- Sections 2-5 (intrapreneur students, entrepreneur students, ventures, testimonies) reveal their items ---
+    const revealSections = [2, 3, 4, 5].map((n) => `section:nth-of-type(${n})`);
+
     // --- Default transitions are turned off only for animated items (avoids a flash of unstyled content) ---
     const animatedElements = document.querySelectorAll(
-        'section:nth-of-type(2) .reveal-on-scroll, section:nth-of-type(3) .reveal-on-scroll, section:nth-of-type(4) .reveal-on-scroll, section:nth-of-type(5) .reveal-on-scroll',
+        revealSections.map((section) => `${section} .reveal-on-scroll`).join(', '),
     );
     animatedElements.forEach((el) => {
         el.style.opacity = '0';
@@ -22,60 +25,19 @@ function initFeaturedAnimations() {
         el.style.transition = 'none';
     });
 
-    // --- Featured Intrapreneur Students ---
-    gsap.to('section:nth-of-type(2) .reveal-on-scroll', {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: 'power2.out',
-        scrollTrigger: {
-            trigger: 'section:nth-of-type(2)',
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-        },
-    });
-
-    // --- Featured Entrepreneur Students ---
-    gsap.to('section:nth-of-type(3) .reveal-on-scroll', {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: 'power2.out',
-        scrollTrigger: {
-            trigger: 'section:nth-of-type(3)',
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-        },
-    });
-
-    // --- Featured Ventures ---
-    gsap.to('section:nth-of-type(4) .reveal-on-scroll', {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: 'power2.out',
-        scrollTrigger: {
-            trigger: 'section:nth-of-type(4)',
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-        },
-    });
-
-    // --- Community Voices / Testimonies ---
-    gsap.to('section:nth-of-type(5) .reveal-on-scroll', {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.05,
-        ease: 'power2.out',
-        scrollTrigger: {
-            trigger: 'section:nth-of-type(5)',
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-        },
+    revealSections.forEach((section) => {
+        gsap.to(`${section} .reveal-on-scroll`, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.05,
+            ease: 'power2.out',
+            scrollTrigger: {
+                trigger: section,
+                start: 'top 90%',
+                toggleActions: 'play none none none',
+            },
+        });
     });
 
     // --- Scroll-driven heading parallax (alternating horizontal movement) ---

@@ -1,37 +1,20 @@
 // --- Admin testimonies: AJAX list and the star button that features a testimony on the home page ---
 // Imported by app.js on pages with [data-testimony-admin]; Alpine starts after this module has run.
-// <button data-testimony-featured-toggle="{user id}">
+// <button data-testimony-featured-toggle="{toggle URL}">
 
 import ajaxList from '../lib/ajax-list';
+import { readJsonOrThrow, sendJson } from '../lib/json-request';
 
 function testimonyAdminList() {
     return ajaxList({ container: 'testimonies-list-container', revealItems: false });
 }
 
-function toggleFeatured(userId, buttonElement) {
+function toggleFeatured(url, buttonElement) {
     if (buttonElement.disabled) return;
     buttonElement.disabled = true;
 
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-    const url = `/admin/testimonies/${userId}/toggle-featured`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': token,
-            Accept: 'application/json',
-            'X-Requested-With': 'XMLHttpRequest',
-        },
-    })
-        .then((response) => {
-            if (!response.ok) {
-                return response.json().then((err) => {
-                    throw err;
-                });
-            }
-            return response.json();
-        })
+    sendJson(url, 'POST', undefined, { 'X-Requested-With': 'XMLHttpRequest' })
+        .then(readJsonOrThrow)
         .then((data) => {
             if (data.success) {
                 const isFeatured = data.is_featured;
