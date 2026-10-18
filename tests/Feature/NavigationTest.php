@@ -25,9 +25,9 @@ class NavigationTest extends TestCase
         $response = $this->actingAs($user)->get(route('businesses.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('My Profile');
+        $response->assertSee('My profile');
         $response->assertSee($user->name);
-        $response->assertSee('My Business');
+        $response->assertSee('My businesses');
     }
 
     public function test_admin_sees_admin_links()
@@ -37,6 +37,6 @@ class NavigationTest extends TestCase
         $response = $this->actingAs($admin)->get(route('businesses.index'));
 
         $response->assertStatus(200);
-        $response->assertSee('Users');
+        $response->assertSee('Manage users');
     }
 }

@@ -59,4 +59,29 @@
     .text-link {
         @apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-900 hover:decoration-brand-700;
     }
+
+    /* --- Messages that float over the page: one look for success, error, info and warning --- */
+    .toast-stack {
+        @apply pointer-events-none fixed inset-x-4 top-20 z-50 flex flex-col gap-3 sm:left-auto sm:right-6 sm:w-96;
+    }
+
+    .toast {
+        @apply pointer-events-auto flex w-full items-start gap-3 rounded-md border border-l-4 border-line bg-white p-4 text-sm text-gray-800 shadow-lg;
+    }
+
+    .toast-success {
+        @apply border-l-green-700;
+    }
+
+    .toast-error {
+        @apply border-l-red-700;
+    }
+
+    .toast-info {
+        @apply border-l-brand-600;
+    }
+
+    .toast-warning {
+        @apply border-l-amber-600;
+    }
 }
