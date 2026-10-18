@@ -18,7 +18,7 @@
          x-transition:leave="transition ease-in duration-150 transform"
          x-transition:leave-start="opacity-100 scale-100 translate-y-0"
          x-transition:leave-end="opacity-0 scale-95 translate-y-2"
-         x-data="importDropzone('{{ $inputId }}', '{{ $nameId }}')"
+         x-data="importDropzone(@js($inputId), @js($nameId))"
          @click.stop>
         <div class="mb-2 flex items-center justify-between">
             <h3 class="text-2xl font-black text-gray-900">{{ $title }}</h3>

@@ -2,14 +2,14 @@
 <div class="border-t border-slate-100 pt-6">
     @if (count($user->activity_gallery_urls) > 0)
         {{-- --- Sleek Carousel --- --}}
-        <div x-data="autoplayCarousel({{ count($user->activity_gallery_urls) }})" class="group relative h-[200px] w-full overflow-hidden rounded-2xl bg-slate-50 md:h-[240px]">
+        <div x-data="autoplayCarousel(@js(count($user->activity_gallery_urls)))" class="group relative h-[200px] w-full overflow-hidden rounded-2xl bg-slate-50 md:h-[240px]">
             {{-- --- Slides --- --}}
             <div class="relative flex h-full w-full items-center justify-center">
                 @foreach ($user->activity_gallery_urls as $index => $url)
                     <div x-show="activeIndex === {{ $index }}"
                          class="absolute inset-0 z-10 h-full w-full"
                          @if ($index !== 0) x-cloak @endif>
-                        <div @click="lightboxUrl = '{{ $url }}'; showLightbox = true"
+                        <div @click="open(@js($url))"
                              class="relative block h-full w-full cursor-zoom-in transition-all duration-300 hover:scale-[1.02]">
                             <x-premium-image :src="$url" alt="Activity Image" class="h-full w-full" />
                         </div>

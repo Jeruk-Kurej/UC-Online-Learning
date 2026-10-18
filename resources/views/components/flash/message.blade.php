@@ -1,10 +1,9 @@
-<div x-data="{ show: true }" x-show="show"
+<div x-data="autoHide(4000)" x-show="show"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 translate-y-[-10px] scale-95"
      x-transition:enter-end="opacity-100 translate-y-0 scale-100"
      x-transition:leave="transition ease-in duration-200"
      x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95"
-     x-init="setTimeout(() => show = false, 4000)"
      class="{{ $border }} pointer-events-auto flex w-full max-w-sm items-center justify-between gap-3 rounded-2xl border bg-white/95 p-3.5 text-slate-800 shadow-[0_20px_40px_-5px_rgba(0,0,0,0.08),0_1px_4px_rgba(0,0,0,0.02)] backdrop-blur-md transition-all duration-300"
      role="alert">
     <div class="flex items-center gap-3">

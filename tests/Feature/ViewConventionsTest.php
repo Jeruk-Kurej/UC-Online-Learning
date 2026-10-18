@@ -44,3 +44,11 @@ test('views have no HTML comments', function () {
 test('view comments are section headers only', function () {
     expect(viewsMatching('/\{\{--(?! --- [^\n]+ --- --\}\})/'))->toBe([]);
 });
+
+test('views do not interpolate PHP into Alpine expressions as JS strings or call arguments', function () {
+    expect(viewsMatching('/\s(?:@|:|x-)[\w.:-]*="[^"]*[\'(]\{\{/'))->toBe([]);
+});
+
+test('views carry no timers or requests: those live in resources/js', function () {
+    expect(viewsMatching('/\b(?:setInterval|setTimeout|fetch)\s*\(/'))->toBe([]);
+});

@@ -4,6 +4,7 @@
     <script id="initial-sections-data" type="application/json">@json($initialSections)</script>
 
     <div class="cms-builder-wrapper mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8"
+         data-save-url="{{ route('pages.update', $page->slug, false) }}"
          x-data="sectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
 
         {{-- --- Page Header --- --}}
@@ -151,7 +152,7 @@
 
             <div class="flex flex-wrap gap-2">
                 @foreach ($sectionTypes as $type => $section)
-                    <button type="button" @click="addSection('{{ $type }}')" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
+                    <button type="button" @click="addSection(@js($type))" class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 px-3.5 py-2 text-xs font-semibold text-white transition-all hover:bg-white/20">
                         <i class="bi {{ $section['icon'] }}"></i> {{ $section['label'] }}
                     </button>
                 @endforeach
@@ -160,7 +161,7 @@
 
         {{-- --- Save Bar --- --}}
         <div class="mt-8 flex justify-end">
-            <button type="button" @click="saveSections('{{ route('pages.update', $page->slug) }}')" class="inline-flex items-center justify-center gap-2 rounded-lg bg-uco-orange-600 px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-uco-orange-700 active:scale-95">
+            <button type="button" @click="saveSections()" class="inline-flex items-center justify-center gap-2 rounded-lg bg-uco-orange-600 px-8 py-3.5 text-sm font-bold text-white shadow-sm transition-all hover:bg-uco-orange-700 active:scale-95">
                 <i class="bi bi-check2-circle"></i>
                 <span>Save All Changes Live</span>
             </button>

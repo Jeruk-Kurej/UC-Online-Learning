@@ -20,17 +20,7 @@
 
             <div class="space-y-8">
                 <h1 class="max-w-4xl text-3xl font-[900] leading-[1.2] tracking-[-0.04em] text-gray-950 sm:text-4xl md:text-5xl md:leading-[1.4] lg:text-6xl"
-                    x-data="{
-                        words: ['Innovative', 'Sustainable', 'Transformative', 'Pioneering'],
-                        currentWord: 0,
-                        isAnimating: false
-                    }" x-init="setInterval(() => {
-                        isAnimating = true;
-                        setTimeout(() => {
-                            currentWord = (currentWord + 1) % words.length;
-                            isAnimating = false;
-                        }, 300);
-                    }, 2300)">
+                    x-data="wordRotate(@js(['Innovative', 'Sustainable', 'Transformative', 'Pioneering']))">
                     Discover <span
                           class="uco-text-gradient-orange inline-block min-w-[130px] pb-2 sm:min-w-[180px] md:min-w-[280px]"
                           :class="isAnimating ? 'word-rotate-exit' : 'word-rotate-enter'"

@@ -1,7 +1,7 @@
 {{-- --- Content of one inbox tab, faded in when its tab is active; the first tab is not cloaked --- --}}
 @props(['name', 'cloak' => true])
 
-<div x-show="activeTab === '{{ $name }}'" @if ($cloak) x-cloak @endif
+<div x-show="activeTab === @js($name)" @if ($cloak) x-cloak @endif
      class="col-span-1 w-full"
      x-transition:enter="transition ease-out duration-300"
      x-transition:enter-start="opacity-0 transform translate-y-2"

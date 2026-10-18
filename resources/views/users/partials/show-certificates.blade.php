@@ -1,10 +1,7 @@
 {{-- --- Profile certificates: slides of PDFs and images, images open in the page lightbox --- --}}
 @if (count($user->certification_files) > 0)
     <div class="border-t border-slate-100 pt-6">
-        <div x-data="{
-            activeIndex: 0,
-            total: {{ count($user->certification_files) }}
-        }" class="group relative h-[250px] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] md:h-[300px]">
+        <div x-data="slideCarousel(@js(count($user->certification_files)))" class="group relative h-[250px] w-full overflow-hidden rounded-2xl border border-slate-200/60 bg-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] md:h-[300px]">
 
             {{-- --- Slides --- --}}
             <div class="relative flex h-full w-full items-center justify-center bg-slate-100">
@@ -25,7 +22,7 @@
                                 </a>
                             </div>
                         @else
-                            <div @click="lightboxUrl = '{{ $cert['previewUrl'] }}'; showLightbox = true"
+                            <div @click="open(@js($cert['previewUrl']))"
                                  class="group/img relative flex h-full w-full cursor-zoom-in items-center justify-center bg-slate-900/5 transition-all duration-300 hover:scale-[1.02]">
                                 <img src="{{ $cert['previewUrl'] }}"
                                      class="h-full w-full object-contain"

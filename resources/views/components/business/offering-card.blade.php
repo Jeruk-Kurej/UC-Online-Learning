@@ -12,7 +12,7 @@
         price_text: {{ Js::from($offering->price_text) }},
         price_type_label: {{ Js::from($offering->price_type_label) }},
         whatsapp_link: {{ Js::from($business->whatsappLinkFor($offering)) }},
-        type: '{{ $offering->type }}'
+        type: {{ Js::from($offering->type) }}
      })"
      class="group relative flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all duration-300 hover:border-orange-200 hover:shadow-xl">
 

@@ -1,8 +1,9 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import testimonyCarousel from '../components/testimony-carousel';
+import wordRotate from '../components/word-rotate';
 
-// --- Featured page: testimony carousels (components/testimony-carousel) and GSAP scroll/hover animations ---
+// --- Featured page: testimony carousels (components/testimony-carousel), the hero word rotator and GSAP scroll/hover animations ---
 // Imported by app.js on pages with [data-featured-page]; Alpine starts after this module has run.
 // window.gsap is read by the screenshot checks in .claude/safety-net to finish animations before a shot.
 
@@ -124,6 +125,7 @@ function initFeaturedAnimations() {
 }
 
 window.Alpine.data('testimonyCarousel', testimonyCarousel);
+window.Alpine.data('wordRotate', wordRotate);
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFeaturedAnimations);

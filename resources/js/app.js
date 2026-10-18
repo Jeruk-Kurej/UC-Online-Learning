@@ -10,14 +10,17 @@ import revealOnScroll from './lib/reveal-on-scroll';
 import showToast from './lib/show-toast';
 import achievementList from './components/achievement-list';
 import activityFiles from './components/activity-files';
+import autoHide from './components/auto-hide';
 import autoplayCarousel from './components/autoplay-carousel';
 import fileDrop from './components/file-drop';
 import guestToasts from './components/guest-toasts';
 import importDropzone from './components/import-dropzone';
 import sharedImportManager from './components/import-manager';
 import photoPicker from './components/photo-picker';
+import profileLightbox from './components/profile-lightbox';
 import removablePhoto from './components/removable-photo';
 import sectionBuilder from './components/section-builder';
+import slideCarousel from './components/slide-carousel';
 import toastStack from './components/toast-stack';
 
 // --- Shared Alpine components ---
@@ -31,7 +34,10 @@ Alpine.data('photoPicker', photoPicker);
 Alpine.data('removablePhoto', removablePhoto);
 Alpine.data('fileDrop', fileDrop);
 Alpine.data('activityFiles', activityFiles);
+Alpine.data('slideCarousel', slideCarousel);
 Alpine.data('autoplayCarousel', autoplayCarousel);
+Alpine.data('profileLightbox', profileLightbox);
+Alpine.data('autoHide', autoHide);
 Alpine.data('achievementList', achievementList);
 Alpine.data('sectionBuilder', sectionBuilder);
 Alpine.data('guestToasts', guestToasts);

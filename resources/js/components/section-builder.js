@@ -1,5 +1,5 @@
 // --- About page section builder: add, remove, reorder and edit sections, then save as JSON ---
-// x-data="sectionBuilder(initialSections)"; the server always sends at least the default sections (Page::sectionsFor).
+// x-data="sectionBuilder(initialSections)" with data-save-url on the same element; the server always sends at least the default sections (Page::sectionsFor).
 
 import { sendJson } from '../lib/json-request';
 
@@ -97,8 +97,8 @@ export default function sectionBuilder(initialSections) {
             this.sections[secIdx].items.splice(statIdx, 1);
         },
 
-        saveSections(updateUrl) {
-            sendJson(updateUrl, 'PUT', {
+        saveSections() {
+            sendJson(this.$root.dataset.saveUrl, 'PUT', {
                 title: 'About Us',
                 content_json: { sections: this.sections },
             })

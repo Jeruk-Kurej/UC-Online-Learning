@@ -1,7 +1,7 @@
 <x-app-layout>
     @section('title', $user->name . ' - ' . ($user->major ?? 'Profile'))
 
-    <div class="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-8" x-data="{ showLightbox: false, lightboxUrl: '' }">
+    <div class="mx-auto max-w-[1600px] px-4 py-10 sm:px-6 lg:px-8" x-data="profileLightbox()">
         <x-ui.breadcrumbs class="mb-3" :href="route('businesses.index', ['view' => $user->directory_view])" :current="$user->name" current-class="font-semibold" />
 
         {{-- --- Dynamic Profile Title below Breadcrumb --- --}}

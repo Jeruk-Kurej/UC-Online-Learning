@@ -1,10 +1,11 @@
-// --- Slide index that advances by itself every 3.5 s ---
+// --- Slide carousel that advances by itself every 3.5 s ---
 // x-data="autoplayCarousel(count)"; the markup reads activeIndex and calls resetAutoplay() on manual moves.
+
+import slideCarousel from './slide-carousel';
 
 export default function autoplayCarousel(total) {
     return {
-        activeIndex: 0,
-        total,
+        ...slideCarousel(total),
         autoplayTimer: null,
 
         startAutoplay() {
