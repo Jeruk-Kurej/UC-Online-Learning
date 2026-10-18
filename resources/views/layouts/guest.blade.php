@@ -4,37 +4,23 @@
 <head>
     <x-layout.head>Universitas Ciputra Online</x-layout.head>
 
-    {{-- --- Scripts --- --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
 </head>
 
-<body class="overflow-x-hidden bg-soft-white font-sans antialiased">
-    <div class="relative flex min-h-screen flex-col items-center overflow-hidden pt-6 sm:justify-center sm:pt-0">
-        <div class="relative z-10">
-            <a href="/" class="flex flex-col items-center gap-3">
-                <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="h-20 w-20 object-contain shadow-lg">
-                <h1 class="text-2xl font-bold text-soft-gray-900">UCO Platform</h1>
-                <p class="text-sm text-soft-gray-600">Student & Alumni Community</p>
-            </a>
-        </div>
+<body class="overflow-x-hidden">
+    <div class="flex min-h-screen flex-col items-center px-4 py-10 sm:justify-center">
+        <a href="{{ route('home') }}" class="flex items-center gap-3">
+            <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-14 w-14 object-contain">
+            <span class="font-serif text-2xl font-semibold text-brand-900">UC Online Learning</span>
+        </a>
 
-        <div
-             class="relative z-10 mt-6 w-full rounded-lg border border-soft-gray-100 bg-white px-6 py-8 shadow-xl sm:max-w-md">
+        <main class="card mt-6 w-full max-w-md">
             {{ $slot }}
-        </div>
+        </main>
 
-        <div class="pointer-events-none fixed right-6 top-6 z-50 flex flex-col items-end gap-3">
-            {{-- --- Handled by dynamic script below --- --}}
-        </div>
-
-        {{-- --- Dynamic JS Toast Trigger --- --}}
         <x-flash.guest-toasts />
 
-        {{-- --- Footer --- --}}
-        <div class="relative z-10 mt-6 text-center text-sm text-gray-600">
-            <p>&copy; {{ date('Y') }} UCO. All rights reserved.</p>
-        </div>
+        <p class="mt-6 text-sm text-gray-600">&copy; {{ date('Y') }} Universitas Ciputra Online Learning</p>
     </div>
 </body>
 

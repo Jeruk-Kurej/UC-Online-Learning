@@ -8,7 +8,7 @@
          x-data="sectionBuilder(JSON.parse(document.getElementById('initial-sections-data').textContent))">
 
         {{-- --- Page Header --- --}}
-        <x-ui.page-header badge="Dynamic Section Builder (CMS)" :title="'Edit ' . $page->title" subtitle="Add, remove, reorder, or edit any section visually. No code required!">
+        <x-ui.page-header :title="'Edit ' . $page->title" subtitle="Add, remove, reorder, or edit any section visually. No code required!">
             <x-slot:actions>
                 <a href="{{ route($page->slug) }}" target="_blank" class="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-100 px-4 py-2.5 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-200">
                     <i class="bi bi-box-arrow-up-right"></i>

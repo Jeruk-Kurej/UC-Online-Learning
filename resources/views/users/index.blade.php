@@ -6,7 +6,7 @@
          @ajax-pagination.window="updateList($event.detail.url)">
 
         {{-- --- Page Header --- --}}
-        <x-ui.page-header badge="Admin Portal" title="User Management" subtitle="Manage student and alumni profiles synced from the central database.">
+        <x-ui.page-header title="User Management" subtitle="Manage student and alumni profiles synced from the central database.">
             <x-slot:actions>
                 <span class="inline-flex flex-grow select-none items-center justify-center gap-2.5 rounded-md border border-uco-yellow-200 bg-uco-yellow-50 px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.02)] sm:flex-initial">
                     <i class="bi bi-star-fill flex-shrink-0 text-sm text-uco-yellow-500"></i>

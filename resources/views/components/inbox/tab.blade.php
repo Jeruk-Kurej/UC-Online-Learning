@@ -1,16 +1,9 @@
-{{-- --- Inbox tab button; the count badge shows when the tab has items (orange on the main tab) --- --}}
-@props(['name', 'icon', 'label', 'count', 'highlight' => false])
+{{-- --- Inbox tab button; the count shows when the tab has items --- --}}
+@props(['name', 'label', 'count'])
 
-<button @click="activeTab = @js($name)"
-        :class="activeTab === @js($name) ? 'border-uco-orange-500 text-uco-orange-600 font-bold border-b-2' : 'border-transparent text-gray-600 hover:text-gray-700 hover:border-gray-300 font-semibold border-b-2'"
-        class="inline-flex items-center gap-2 whitespace-nowrap px-1 py-3 text-sm transition-all">
-    <i class="bi {{ $icon }} text-base"></i>
+<button type="button" @click="activeTab = @js($name)" class="tab" :class="{ 'tab-active': activeTab === @js($name) }" :aria-selected="activeTab === @js($name)" role="tab">
     <span>{{ $label }}</span>
     @if ($count > 0)
-        <span @class([
-            'ml-1.5 rounded-full px-2 py-0.5 text-xs font-bold',
-            'bg-uco-orange-100 text-uco-orange-800' => $highlight,
-            'bg-gray-100 text-gray-700' => !$highlight,
-        ])>{{ $count }}</span>
+        <span class="badge badge-neutral">{{ $count }}</span>
     @endif
 </button>

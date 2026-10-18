@@ -55,6 +55,23 @@
         @apply bg-red-100 text-red-800;
     }
 
+    /* --- Tabs: plain text with a gold underline on the open one --- */
+    .tabs {
+        @apply flex gap-6 overflow-x-auto border-b border-line;
+    }
+
+    .tab {
+        @apply -mb-px inline-flex items-center gap-2 whitespace-nowrap border-b-2 border-transparent px-1 py-3 text-base font-medium text-gray-700;
+    }
+
+    .tab:not(.tab-active) {
+        @apply hover:border-gray-300 hover:text-brand-900;
+    }
+
+    .tab-active {
+        @apply border-gold-500 text-brand-900;
+    }
+
     /* --- Links inside text --- */
     .text-link {
         @apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-900 hover:decoration-brand-700;

@@ -6,7 +6,7 @@
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
 
         {{-- --- Page Header --- --}}
-        <x-ui.page-header badge="Admin Portal" title="Manage Testimonies" subtitle="Review user testimonies and select which ones are featured on the homepage." stack-until="md" />
+        <x-ui.page-header title="Manage Testimonies" subtitle="Review user testimonies and select which ones are featured on the homepage." />
 
         {{-- --- Statistics --- --}}
         <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-2">

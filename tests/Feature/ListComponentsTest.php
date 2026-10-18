@@ -7,7 +7,7 @@ test('search field puts the class on its wrapper and everything else on the inpu
 
     expect($html)
         ->toContain('<div class="relative flex-1">')
-        ->toMatch('/<input type="text" name="search"[^>]*id="search"[^>]*value="abc"[^>]*placeholder="Find..."/')
+        ->toMatch('/<input type="search" name="search"[^>]*id="search"[^>]*value="abc"[^>]*placeholder="Find..."/')
         ->toContain('@input="submitDebounced()"');
 });
 

@@ -4,7 +4,7 @@
          x-data="{ activeTab: 'messages' }">
 
         {{-- --- Page Header Banner --- --}}
-        <x-ui.page-header badge="UCO Network" title="Inbox & Connections" subtitle="Manage your collaboration invitations and connect with partners.">
+        <x-ui.page-header title="Inbox & Connections" subtitle="Manage your collaboration invitations and connect with partners.">
             <x-slot:actions>
                 <x-ui.back-link :href="route('featured')" label="Back to Featured" />
             </x-slot:actions>

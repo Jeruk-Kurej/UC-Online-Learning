@@ -1,8 +1,6 @@
 {{-- --- Search box of a filterable list: typing reloads the list (ajaxList), Enter reloads at once; the class goes on the wrapper --- --}}
 <div {{ $attributes->only('class')->class(['relative']) }}>
-    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-        <i class="bi bi-search text-gray-600"></i>
-    </div>
-    <input type="text" name="search" @input="submitDebounced()" @keydown.enter.prevent="updateList()"
-           {{ $attributes->except('class')->class(['w-full rounded-md border-gray-300 bg-white py-2 pl-10 pr-4 text-sm shadow-sm outline-none transition-all focus:border-uco-orange-500 focus:ring-uco-orange-500']) }}>
+    <label for="{{ $attributes->get('id', 'search') }}" class="sr-only">Search</label>
+    <i class="bi bi-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" aria-hidden="true"></i>
+    <input type="search" name="search" @input="submitDebounced()" @keydown.enter.prevent="updateList()" {{ $attributes->except('class')->class(['field-input !pl-10']) }}>
 </div>

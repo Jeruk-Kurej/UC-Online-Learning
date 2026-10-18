@@ -1,6 +1,6 @@
 {{-- --- Input label --- --}}
 @props(['value'])
 
-<label {{ $attributes->merge(['class' => 'block font-medium text-sm text-gray-700 dark:text-gray-600']) }}>
+<label {{ $attributes->class(['field-label']) }}>
     {{ $value ?? $slot }}
 </label>

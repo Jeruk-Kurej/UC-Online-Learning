@@ -6,7 +6,7 @@
          x-data="businessAdminList"
          x-init="viewType = $el.dataset.viewType || 'entrepreneur'"
          @ajax-pagination.window="updateList($event.detail.url, true, true)">
-        <x-ui.page-header badge="Admin Portal" title="Business Management" subtitle="Review and manage business submissions from students.">
+        <x-ui.page-header title="Business Management" subtitle="Review and manage business submissions from students.">
             <x-slot:actions>
                 <span class="inline-flex flex-grow items-center justify-center gap-1.5 rounded-md border border-uco-yellow-200 bg-uco-yellow-50 px-3 py-2 text-xs font-semibold text-uco-yellow-700 sm:flex-initial">
                     <i class="bi bi-star-fill text-uco-yellow-500"></i>

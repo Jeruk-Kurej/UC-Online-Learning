@@ -15,13 +15,10 @@ class StudentCard extends Component
 
     public mixed $highlight;
 
-    public ?string $ventureSummary;
-
     public function __construct(public User $student, public string $type = 'intra')
     {
         $this->isIntra = $type === 'intra';
         $this->highlight = $this->isIntra ? $student->companies->first() : $student->businesses->first();
-        $this->ventureSummary = $this->highlight?->unique_value_proposition ?? $this->highlight?->description ?? null;
     }
 
     public function render(): View

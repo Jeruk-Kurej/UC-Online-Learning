@@ -1,125 +1,60 @@
-{{-- --- Business page overview card: description, insights, operations and contact links --- --}}
-<div class="overflow-hidden border border-soft-gray-100 bg-white shadow-lg sm:rounded-lg">
+{{-- --- Business page overview: description, facts and contact links --- --}}
+<section class="card space-y-6" aria-labelledby="about-business">
+    <div>
+        <h2 id="about-business" class="card-title">About this business</h2>
+        <p class="mt-2 whitespace-pre-line text-base text-gray-800">{{ $business->description }}</p>
+    </div>
 
-    {{-- --- Business Info Section --- --}}
-    <div class="p-4 sm:p-6 lg:p-8">
-        {{-- --- Description --- --}}
-        <div class="mb-8">
-            <h4 class="mb-3 text-sm font-bold text-soft-gray-900">About This
-                Business</h4>
-            <p
-               class="w-full max-w-[1600px] text-base leading-relaxed text-soft-gray-700 2xl:max-w-[1720px]">
-                {{ $business->description }}</p>
-        </div>
+    <dl class="divide-y divide-line border-y border-line">
+        @can('update', $business)
+            <x-ui.fact label="Revenue"><i class="bi bi-lock" aria-hidden="true"></i> {{ $business->revenue_range ?? 'Not provided' }} <span class="text-sm text-gray-600">(only you can see this)</span></x-ui.fact>
+        @endcan
+        @if ($business->established_date)
+            <x-ui.fact label="Founded">{{ $business->established_date->format('F Y') }}</x-ui.fact>
+        @endif
+        @if ($business->employee_count)
+            <x-ui.fact label="Team size">{{ $business->employee_count }} people</x-ui.fact>
+        @endif
+        @if ($business->city || $business->province)
+            <x-ui.fact label="Location">{{ $business->city ? $business->city . ($business->province ? ', ' . $business->province : '') : $business->province }}</x-ui.fact>
+        @endif
+        @if ($business->target_market)
+            <x-ui.fact label="Target market">{{ $business->target_market }}</x-ui.fact>
+        @endif
+        @if ($business->customer_base_size)
+            <x-ui.fact label="Customers">{{ $business->customer_base_size }}</x-ui.fact>
+        @endif
+        @if ($business->business_scale)
+            <x-ui.fact label="Size of business">{{ $business->business_scale }}</x-ui.fact>
+        @endif
+        @if ($business->business_legality)
+            <x-ui.fact label="Business permit">{{ $business->business_legality }}</x-ui.fact>
+        @endif
+        @if ($business->product_legality)
+            <x-ui.fact label="Product permit">{{ $business->product_legality }}</x-ui.fact>
+        @endif
+        @if ($business->academic_heritage)
+            <x-ui.fact label="Joined UC Online">{{ $business->academic_heritage }}</x-ui.fact>
+        @endif
+    </dl>
 
-        {{-- --- Business Insights --- --}}
-        <div class="{{ $showRevenue ? 'sm:grid-cols-2' : 'sm:grid-cols-3' }} mb-4 grid grid-cols-1 gap-x-4 gap-y-6 border-y border-gray-100 py-8 md:gap-x-6 lg:gap-x-8">
-            @can('update', $business)
-                <x-business.insight class="border-gray-100 sm:border-r sm:pr-4 md:pr-6 lg:pr-8" icon="bi-cash-stack" tone="emerald" caption="Visible only to you" italic-caption>
-                    <x-slot:label class="flex items-center gap-1.5"><i class="bi bi-lock-fill text-xs"></i> Private Revenue</x-slot:label>
-                    {{ $business->revenue_range ?? 'Not Disclosed' }}
-                </x-business.insight>
-            @endcan
-
-            <x-business.insight :class="$showRevenue ? '' : 'sm:border-r border-gray-100 sm:pr-4 md:pr-6 lg:pr-8'" icon="bi-people-fill" tone="blue" caption="Active staff">
-                <x-slot:label>Team Size</x-slot:label>
-                {{ $business->employee_count ?? '0' }} Professionals
-            </x-business.insight>
-
-            <x-business.insight class="border-gray-100 sm:border-r sm:pr-4 md:pr-6 lg:pr-8" icon="bi-rocket-takeoff-fill" tone="indigo" caption="Operational milestone" italic-caption>
-                <x-slot:label>Venture Inception</x-slot:label>
-                @if ($business->established_date)
-                    Est. {{ $business->established_date->format('M Y') }}
-                @else
-                    Timeline Undisclosed
+    @if ($business->website || $business->email || $business->instagram || $business->whatsapp)
+        <div>
+            <h3 class="mb-3 text-sm font-semibold text-gray-800">Contact</h3>
+            <div class="space-y-2">
+                @if ($business->website)
+                    <x-people.contact-link :href="$business->website_url" icon="bi-globe" label="Website" new-tab>{{ $business->website_label }}</x-people.contact-link>
                 @endif
-            </x-business.insight>
-
-            <x-business.insight icon="bi-mortarboard-fill" tone="orange" caption="Founding academic Join UC Online">
-                <x-slot:label>Academic Heritage</x-slot:label>
-                {{ $business->academic_heritage ?? 'UCO Legacy' }}
-            </x-business.insight>
-        </div>
-
-        {{-- --- Comprehensive Business Details --- --}}
-        <div class="mb-12">
-            <h4 class="mb-6 text-sm font-bold text-soft-gray-900">Business Operations & Details</h4>
-
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                {{-- --- Target Market --- --}}
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-600">Target Market</p>
-                    <p class="text-sm font-normal text-gray-800">{{ $business->target_market ?: 'Not specified' }}</p>
-                </div>
-
-                {{-- --- Customer Base --- --}}
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-600">Customer Base Size</p>
-                    <p class="text-sm font-bold text-gray-800">{{ $business->customer_base_size ?: 'Not specified' }}</p>
-                </div>
-
-                {{-- --- Scale --- --}}
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-600">Business Scale</p>
-                    <p class="text-sm font-bold text-gray-800">{{ $business->business_scale ?: 'Not specified' }}</p>
-                </div>
-
-                {{-- --- Location --- --}}
-                <div class="space-y-1">
-                    <p class="text-xs font-bold text-gray-600">Location</p>
-                    <p class="text-sm font-bold text-gray-800">
-                        {{ $business->city ? $business->city . ($business->province ? ', ' . $business->province : '') : ($business->province ?: 'Not specified') }}
-                    </p>
-                </div>
-
-                {{-- --- Legality --- --}}
-                <div class="space-y-1 border-t border-gray-100 pt-3 md:col-span-2">
-                    <p class="mb-2 text-xs font-bold text-gray-600">Legality</p>
-                    <div class="flex flex-wrap gap-4">
-                        <div class="flex items-center gap-2 rounded-lg border border-gray-100 bg-white px-3 py-1.5 shadow-sm">
-                            <i class="bi bi-briefcase text-gray-600"></i>
-                            <span class="text-xs font-bold text-gray-700">Business: <span class="font-medium">{{ $business->business_legality ?: 'None' }}</span></span>
-                        </div>
-                        <div class="flex items-center gap-2 rounded-lg border border-gray-100 bg-white px-3 py-1.5 shadow-sm">
-                            <i class="bi bi-box-seam text-gray-600"></i>
-                            <span class="text-xs font-bold text-gray-700">Product: <span class="font-medium">{{ $business->product_legality ?: 'None' }}</span></span>
-                        </div>
-                    </div>
-                </div>
-
-                {{-- --- Connect & Contacts --- --}}
-                @if ($business->website || $business->email || $business->instagram || $business->whatsapp)
-                    <div class="space-y-2 border-t border-gray-100 pt-3 md:col-span-2">
-                        <p class="mb-3 text-xs font-bold text-gray-600">Connect</p>
-                        <div class="flex flex-wrap gap-3">
-                            @if ($business->website)
-                                <a href="{{ $business->website_url }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-gray-200 bg-gray-50 px-3 py-1.5 text-gray-700 transition-colors hover:bg-gray-100">
-                                    <i class="bi bi-globe text-gray-600"></i>
-                                    <span class="text-xs font-bold">{{ $business->website_label }}</span>
-                                </a>
-                            @endif
-                            @if ($business->whatsapp)
-                                <a href="{{ $business->whatsapp_link }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-green-700 transition-colors hover:bg-green-100">
-                                    <i class="bi bi-whatsapp"></i>
-                                    <span class="text-xs font-bold">{{ $business->whatsapp }}</span>
-                                </a>
-                            @endif
-                            @foreach ($business->instagram_handles as $handle)
-                                <a href="https://instagram.com/{{ $handle }}" target="_blank" class="flex items-center gap-2 rounded-lg border border-pink-200 bg-pink-50 px-3 py-1.5 text-pink-700 transition-colors hover:bg-pink-100">
-                                    <i class="bi bi-instagram"></i>
-                                    <span class="text-xs font-bold">@ {{ $handle }}</span>
-                                </a>
-                            @endforeach
-                            @if ($business->email)
-                                <a href="mailto:{{ $business->email }}" class="flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-blue-700 transition-colors hover:bg-blue-100">
-                                    <i class="bi bi-envelope-fill"></i>
-                                    <span class="text-xs font-bold">{{ $business->email }}</span>
-                                </a>
-                            @endif
-                        </div>
-                    </div>
+                @if ($business->whatsapp)
+                    <x-people.contact-link :href="$business->whatsapp_link" icon="bi-whatsapp" label="WhatsApp" new-tab>{{ $business->whatsapp }}</x-people.contact-link>
+                @endif
+                @foreach ($business->instagram_handles as $handle)
+                    <x-people.contact-link :href="'https://instagram.com/' . $handle" icon="bi-instagram" label="Instagram" new-tab>{{ '@' . $handle }}</x-people.contact-link>
+                @endforeach
+                @if ($business->email)
+                    <x-people.contact-link :href="'mailto:' . $business->email" icon="bi-envelope" label="Email">{{ $business->email }}</x-people.contact-link>
                 @endif
             </div>
         </div>
-    </div>
-</div>
+    @endif
+</section>
