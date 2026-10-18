@@ -6,7 +6,7 @@
             @foreach ($user->businesses as $biz)
                 <x-people.venture-card :href="route('businesses.show', $biz)" :name="$biz->name" :logo="$biz->logo_url">
                     @if ($biz->category)
-                        <span class="mt-1 block text-[9px] font-bold uppercase tracking-wider text-gray-500">
+                        <span class="mt-1 block text-xs font-bold text-gray-600">
                             {{ $biz->category->name }}
                         </span>
                     @endif
@@ -30,7 +30,7 @@
         <div class="grid grid-cols-1 gap-6">
             @foreach ($user->memberOfBusinesses as $biz)
                 <x-people.venture-card variant="member" :href="route('businesses.show', $biz)" :name="$biz->name" :logo="$biz->logo_url">
-                    <span class="mt-1 block text-[9px] font-bold uppercase tracking-wider text-blue-600">
+                    <span class="mt-1 block text-xs font-bold text-blue-600">
                         {{ $biz->pivot->position ?? 'Co-Owner' }} (Team Member)
                     </span>
                     @if ($biz->unique_value_proposition || $biz->description)
@@ -54,13 +54,13 @@
             @foreach ($user->companies as $company)
                 <x-people.venture-card variant="company" :href="route('intrapreneurs.show', $company)" :name="$company->name" :logo="$company->logo_url" :logo-alt="$company->name">
                     @if ($company->position)
-                        <span class="mt-1 line-clamp-1 block text-[9px] font-bold uppercase tracking-wider text-gray-500">
+                        <span class="mt-1 line-clamp-1 block text-xs font-bold text-gray-600">
                             {{ $company->position }}@if ($company->level_position)
                                 · {{ $company->level_position }}
                             @endif
                         </span>
                     @elseif($company->category)
-                        <span class="mt-1 block text-[9px] font-bold uppercase tracking-wider text-gray-500">
+                        <span class="mt-1 block text-xs font-bold text-gray-600">
                             {{ $company->category->name }}
                         </span>
                     @endif
@@ -73,7 +73,7 @@
                                 <x-people.venture-meta icon="bi-calendar-check text-orange-500">Since {{ $company->year_started_working }}</x-people.venture-meta>
                             @endif
                             @if ($company->company_scale)
-                                <span class="line-clamp-1 text-[11px] font-bold text-gray-400" title="{{ $company->company_scale }}">
+                                <span class="line-clamp-1 text-xs font-bold text-gray-600" title="{{ $company->company_scale }}">
                                     {{ $company->company_scale }}
                                 </span>
                             @endif

@@ -13,7 +13,7 @@ class StatCard extends Component
     // --- Label and value colours per tone ---
 
     private const TONES = [
-        'gray' => ['label' => 'text-gray-500', 'value' => 'text-gray-900'],
+        'gray' => ['label' => 'text-gray-600', 'value' => 'text-gray-900'],
         'blue' => ['label' => 'text-blue-500', 'value' => 'text-blue-600'],
         'green' => ['label' => 'text-green-500', 'value' => 'text-green-600'],
         'amber' => ['label' => 'text-amber-500', 'value' => 'text-amber-600'],

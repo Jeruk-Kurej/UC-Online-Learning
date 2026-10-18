@@ -10,7 +10,7 @@
             <img :src="previewUrl" class="{{ $imageClass }}" x-show="hasPhoto && !photoDeleted">
 
             <div class="photo-box__initials {{ $initialsClass }}" x-show="!hasPhoto || photoDeleted">
-                <span class="select-none text-3xl font-black text-white">{{ $initial }}</span>
+                <span class="select-none text-3xl font-bold text-white">{{ $initial }}</span>
             </div>
 
             <label for="{{ $name }}" class="absolute inset-0 z-20 cursor-pointer">
@@ -19,12 +19,12 @@
 
             <div class="photo-box__overlay">
                 <i class="bi bi-camera-fill text-lg text-white"></i>
-                <span class="mt-1 text-[8px] font-black uppercase tracking-widest text-white">Change</span>
+                <span class="mt-1 text-xs font-bold text-white">Change</span>
             </div>
         </div>
 
         <div class="{{ $actionsClass }} flex flex-col justify-center">
-            <p class="mb-2 text-[10px] font-bold uppercase tracking-wider text-gray-400">{{ $hint }}</p>
+            <p class="mb-2 text-xs font-bold text-gray-600">{{ $hint }}</p>
 
             <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
                 <button type="button" @click="photoDeleted = true"

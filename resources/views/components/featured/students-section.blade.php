@@ -6,14 +6,14 @@
     <div class="reveal-on-scroll relative z-10 flex flex-col justify-between gap-10 md:flex-row md:items-end">
         <div class="relative space-y-4">
             <div class="uco-outline-bg-text {{ $look['outlineTone'] }} uco-parallax-text">{{ $look['outlineText'] }}</div>
-            <h2 class="uco-section-title {{ $look['title'] }} relative z-10 text-5xl font-[900] tracking-tighter text-gray-950">
+            <h2 class="uco-section-title {{ $look['title'] }} relative z-10 text-5xl font-bold text-gray-950">
                 Our <span class="{{ $look['gradient'] }}">{{ $look['word'] }}</span> Students
             </h2>
-            <p class="relative z-10 mt-4 max-w-2xl text-xl font-medium leading-relaxed text-gray-500">
+            <p class="relative z-10 mt-4 max-w-2xl text-xl font-medium leading-relaxed text-gray-600">
                 {{ $look['lead'] }}
             </p>
         </div>
-        <div class="flex items-center gap-4 text-xs font-black uppercase tracking-[0.25em] text-gray-300">
+        <div class="flex items-center gap-4 text-xs font-bold text-gray-600">
             <span class="h-[2px] w-12 bg-gray-100"></span>
             {{ $look['tag'] }}
         </div>

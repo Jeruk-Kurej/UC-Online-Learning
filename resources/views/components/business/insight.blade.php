@@ -4,10 +4,10 @@
         <i class="bi {{ $icon }} text-lg sm:text-sm md:text-lg"></i>
     </div>
     <div class="min-w-0 flex-1">
-        <p {{ $label->attributes->class(['mb-1.5 text-[10px] font-bold uppercase leading-none tracking-widest text-gray-400']) }}>{{ $label }}</p>
-        <h5 class="text-sm font-extrabold text-gray-800 sm:text-xs md:text-sm lg:text-base">{{ $slot }}</h5>
+        <p {{ $label->attributes->class(['mb-1.5 text-xs font-bold  leading-none  text-gray-600']) }}>{{ $label }}</p>
+        <h5 class="text-sm font-bold text-gray-800 sm:text-xs md:text-sm lg:text-base">{{ $slot }}</h5>
         <p @class([
-            'mt-0.5 text-[9px] font-medium text-gray-400',
+            'mt-0.5 text-xs font-medium text-gray-600',
             'italic' => $italicCaption,
         ])>{{ $caption }}</p>
     </div>

@@ -26,7 +26,7 @@
                         <div class="flex items-center gap-3">
                             <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900 text-xs font-bold text-white" x-text="sIdx + 1"></span>
                             <div>
-                                <h2 class="text-base font-bold uppercase tracking-wide text-gray-900" x-text="getSectionTypeName(sec.type)"></h2>
+                                <h2 class="text-base font-bold text-gray-900" x-text="getSectionTypeName(sec.type)"></h2>
                                 <p class="text-xs font-medium text-gray-500">Reorder, edit fields, or delete this section anytime.</p>
                             </div>
                         </div>

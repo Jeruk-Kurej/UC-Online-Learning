@@ -39,15 +39,15 @@
                             class="transition-all duration-300 ease-out"
                             stroke-linecap="round" />
                 </svg>
-                <div class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-gray-800"
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-800"
                      x-text="(status === 'uploading' ? uploadPercent : percent) + '%'"></div>
             </div>
 
             {{-- --- Text Info --- --}}
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-bold uppercase tracking-wider text-gray-500"
+                <p class="text-xs font-bold text-gray-500"
                    x-text="status === 'uploading' ? 'Uploading File' : (status === 'completed' ? 'Import Complete' : 'Importing Data')"></p>
-                <p class="truncate pr-2 text-sm font-black text-gray-800"
+                <p class="truncate pr-2 text-sm font-bold text-gray-800"
                    x-text="status === 'uploading' ? fileName : (format || 'Processing...')"></p>
             </div>
 
@@ -63,7 +63,7 @@
         </div>
 
         {{-- --- Footer/Mini Banner --- --}}
-        <div class="mt-2.5 flex items-center justify-between border-t border-gray-100 pt-2 text-[10px] font-semibold text-gray-400">
+        <div class="mt-2.5 flex items-center justify-between border-t border-gray-100 pt-2 text-xs font-semibold text-gray-400">
             <div class="flex items-center gap-1.5">
                 <span class="h-1.5 w-1.5 rounded-full"
                       :class="{
@@ -103,21 +103,21 @@
             <div class="mb-6 flex items-start justify-between">
                 <div>
                     <div class="mb-1.5 flex items-center gap-2.5">
-                        <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700"
+                        <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-xs font-bold text-uco-orange-700"
                               x-text="format || 'Importer'"></span>
                         <template x-if="status === 'processing'">
-                            <span class="inline-flex animate-pulse items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-blue-700">
+                            <span class="inline-flex animate-pulse items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
                                 <span class="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
                                 Background Importing
                             </span>
                         </template>
                         <template x-if="status === 'completed'">
-                            <span class="inline-flex items-center rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-700">
+                            <span class="inline-flex items-center rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-700">
                                 Completed
                             </span>
                         </template>
                     </div>
-                    <h3 class="text-2xl font-black tracking-tight text-gray-900">Import Progress Details</h3>
+                    <h3 class="text-2xl font-bold text-gray-900">Import Progress Details</h3>
                     <p class="mt-1 max-w-md truncate text-xs font-semibold text-gray-400" x-text="'File: ' + (fileName || 'Import File')"></p>
                 </div>
                 <button @click="minimize()"
@@ -144,16 +144,16 @@
                 {{-- --- Statistics Cards --- --}}
                 <div class="grid grid-cols-3 gap-4">
                     <div class="rounded-lg border border-gray-200 bg-slate-50 p-4 text-center">
-                        <p class="mb-1 text-xs font-bold uppercase tracking-wider text-slate-400">Processed</p>
-                        <p class="text-2xl font-black text-slate-800" x-text="status === 'uploading' ? '-' : current + ' / ' + total"></p>
+                        <p class="mb-1 text-xs font-bold text-slate-400">Processed</p>
+                        <p class="text-2xl font-bold text-slate-800" x-text="status === 'uploading' ? '-' : current + ' / ' + total"></p>
                     </div>
                     <div class="rounded-lg border border-emerald-100/50 bg-emerald-50/50 p-4 text-center">
-                        <p class="mb-1 text-xs font-bold uppercase tracking-wider text-emerald-500">Success</p>
-                        <p class="text-2xl font-black text-emerald-600" x-text="status === 'uploading' ? '-' : success"></p>
+                        <p class="mb-1 text-xs font-bold text-emerald-500">Success</p>
+                        <p class="text-2xl font-bold text-emerald-600" x-text="status === 'uploading' ? '-' : success"></p>
                     </div>
                     <div class="rounded-lg border border-rose-100/50 bg-rose-50/50 p-4 text-center">
-                        <p class="mb-1 text-xs font-bold uppercase tracking-wider text-rose-500">Skipped</p>
-                        <p class="text-2xl font-black text-rose-600" x-text="status === 'uploading' ? '-' : skipped"></p>
+                        <p class="mb-1 text-xs font-bold text-rose-500">Skipped</p>
+                        <p class="text-2xl font-bold text-rose-600" x-text="status === 'uploading' ? '-' : skipped"></p>
                     </div>
                 </div>
 
@@ -185,7 +185,7 @@
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <div class="mb-0.5 flex items-center justify-between">
-                                            <span class="text-[10px] font-bold uppercase tracking-wider text-rose-500" x-text="'Row Skip #' + (index + 1)"></span>
+                                            <span class="text-xs font-bold text-rose-500" x-text="'Row Skip #' + (index + 1)"></span>
                                         </div>
                                         <p class="break-words text-xs font-semibold leading-relaxed text-gray-700" x-text="error"></p>
                                     </div>
@@ -199,19 +199,19 @@
 
             {{-- --- Modal Footer --- --}}
             <div class="mt-6 flex items-center justify-between border-t border-gray-100 pt-4">
-                <p class="max-w-sm text-[10px] font-semibold text-gray-400">
+                <p class="max-w-sm text-xs font-semibold text-gray-400">
                     You can safely minimize this popup or continue using the website. The background import process will continue running.
                 </p>
                 <div class="flex gap-3">
                     <template x-if="status === 'uploading' || status === 'processing'">
                         <button @click="minimize()"
-                                class="btn-uco btn-uco-secondary px-6 py-2.5 text-xs font-bold transition duration-200">
+                                class="btn btn-secondary px-6 py-2.5 text-xs font-bold transition duration-200">
                             Minimize
                         </button>
                     </template>
                     <template x-if="status === 'completed' || status === 'failed'">
                         <button @click="dismiss()"
-                                class="btn-uco btn-uco-primary px-6 py-2.5 text-xs font-bold transition duration-200">
+                                class="btn btn-primary px-6 py-2.5 text-xs font-bold transition duration-200">
                             <span x-text="status === 'completed' ? 'Done & Refresh' : 'Close'"></span>
                         </button>
                     </template>

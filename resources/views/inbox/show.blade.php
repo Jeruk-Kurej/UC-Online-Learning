@@ -5,7 +5,7 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
             <x-ui.back-link :href="route('inbox.index')" label="Back to Inbox" />
 
-            <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-blue-700">
+            <span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-700">
                 <i class="bi bi-envelope-open-fill"></i> Collaboration Message
             </span>
         </div>
@@ -15,10 +15,10 @@
 
             {{-- --- Primary Message Subject (H1 Title) --- --}}
             <div class="border-b border-gray-100 pb-5">
-                <h1 class="mb-2 text-2xl font-extrabold tracking-tight text-gray-900 md:text-3xl">
+                <h1 class="mb-2 text-2xl font-bold text-gray-900 md:text-3xl">
                     {{ $message->subject }}
                 </h1>
-                <div class="flex items-center gap-2 text-xs font-medium text-gray-400">
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-600">
                     <i class="bi bi-clock"></i> Received {{ $message->created_at->format('M d, Y \a\t H:i') }} ({{ $message->created_at->diffForHumans() }})
                 </div>
             </div>
@@ -31,27 +31,27 @@
                             @if ($message->sender->profile_photo_url)
                                 <img src="{{ $message->sender->profile_photo_url }}" class="h-12 w-12 rounded-full border border-gray-200 object-cover">
                             @else
-                                <div class="flex h-12 w-12 items-center justify-center rounded-full border border-sky-200 bg-sky-100 text-lg font-extrabold text-sky-700">
+                                <div class="flex h-12 w-12 items-center justify-center rounded-full border border-sky-200 bg-sky-100 text-lg font-bold text-sky-700">
                                     {{ substr($message->sender->name, 0, 1) }}
                                 </div>
                             @endif
                         </a>
                         <div>
                             <div class="flex items-center gap-2">
-                                <a href="{{ route('users.show', $message->sender) }}" class="text-base font-extrabold text-gray-900 transition-colors hover:text-uco-orange-600">
+                                <a href="{{ route('users.show', $message->sender) }}" class="text-base font-bold text-gray-900 transition-colors hover:text-uco-orange-600">
                                     {{ $message->sender->name }}
                                 </a>
-                                <span class="rounded border border-orange-200 bg-orange-50 px-2 py-0.5 text-[10px] font-bold uppercase text-orange-700">
+                                <span class="rounded border border-orange-200 bg-orange-50 px-2 py-0.5 text-xs font-bold text-orange-700">
                                     {{ $message->sender->current_status }}
                                 </span>
                             </div>
-                            <div class="mt-0.5 text-xs text-gray-500">{{ $message->sender->email }}</div>
+                            <div class="mt-0.5 text-xs text-gray-600">{{ $message->sender->email }}</div>
                         </div>
                     @else
-                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 text-lg font-extrabold text-gray-600">S</div>
+                        <div class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-200 text-lg font-bold text-gray-600">S</div>
                         <div>
-                            <div class="text-base font-extrabold text-gray-900">System Notification</div>
-                            <div class="mt-0.5 text-xs text-gray-500">Automated message</div>
+                            <div class="text-base font-bold text-gray-900">System Notification</div>
+                            <div class="mt-0.5 text-xs text-gray-600">Automated message</div>
                         </div>
                     @endif
                 </div>
@@ -77,7 +77,7 @@
                             <i class="bi bi-person-plus-fill"></i>
                         </div>
                         <div>
-                            <h3 class="text-base font-extrabold text-sky-900">Collaboration Invitation</h3>
+                            <h3 class="text-base font-bold text-sky-900">Collaboration Invitation</h3>
                             <p class="mt-0.5 text-xs font-medium text-sky-700">
                                 {{ $message->sender->name }} wants to connect and build business synergies with you.
                             </p>
@@ -85,7 +85,7 @@
                     </div>
 
                     @if (!$collab)
-                        <div class="pt-2 text-xs italic text-gray-500">
+                        <div class="pt-2 text-xs italic text-gray-600">
                             This collaboration request is no longer active.
                         </div>
                     @elseif($collab->status === 'pending')
@@ -107,7 +107,7 @@
                         </div>
                     @elseif($collab->status === 'accepted')
                         <div class="flex flex-wrap items-center justify-between gap-3 border-t border-sky-200/60 pt-4">
-                            <div class="inline-flex items-center gap-2 text-xs font-extrabold text-green-700">
+                            <div class="inline-flex items-center gap-2 text-xs font-bold text-green-700">
                                 <i class="bi bi-check-circle-fill text-base"></i> Connected with {{ $message->sender->name }}
                             </div>
                             <div class="flex items-center gap-2">

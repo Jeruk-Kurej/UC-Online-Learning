@@ -12,13 +12,13 @@
         <div class="relative space-y-4">
             {{-- --- Outline background text --- --}}
             <div class="uco-outline-bg-text uco-outline-bg-text--purple uco-parallax-text">VOICES</div>
-            <h2 class="uco-section-title relative z-10 text-5xl font-[900] tracking-tighter text-gray-950">
+            <h2 class="uco-section-title relative z-10 text-5xl font-bold text-gray-950">
                 Community <span class="uco-text-gradient-orange">Voices</span></h2>
             <p class="relative z-10 mt-4 max-w-2xl text-xl font-medium leading-relaxed text-gray-500">
                 Real stories, journeys, and experiences shared by UCO community.
             </p>
         </div>
-        <div class="flex items-center gap-4 text-xs font-black uppercase tracking-[0.25em] text-gray-300">
+        <div class="flex items-center gap-4 text-xs font-bold text-gray-300">
             <span class="h-[2px] w-12 bg-gray-100"></span>
             Student Stories
         </div>
@@ -43,7 +43,7 @@
                             @if ($student->profile_photo_url)
                                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="h-full w-full" />
                             @else
-                                <div class="uco-initials-bg flex h-full w-full items-center justify-center text-4xl font-black text-white">
+                                <div class="uco-initials-bg flex h-full w-full items-center justify-center text-4xl font-bold text-white">
                                     {{ $student->initial }}
                                 </div>
                             @endif
@@ -66,7 +66,7 @@
                             {{-- --- Quote Icon --- --}}
                             <div
                                  class="absolute -top-5 left-1/2 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-xl bg-uco-orange-500 text-white shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)] transition-transform duration-300 group-hover:scale-110">
-                                <i class="fa-solid fa-quote-left text-base"></i>
+                                <i class="bi bi-quote text-base"></i>
                             </div>
 
                             <p class="testimony-card-text transition-colors duration-300">
@@ -84,7 +84,7 @@
                             <i class="bi bi-chat-quote text-2xl text-uco-orange-400"></i>
                         </div>
                         <div class="space-y-1">
-                            <p class="text-lg font-black text-gray-900">No Testimonies</p>
+                            <p class="text-lg font-bold text-gray-900">No Testimonies</p>
                             <p class="text-sm font-medium text-gray-500">No student testimonies are featured at
                                 this moment.</p>
                         </div>
@@ -126,7 +126,7 @@
                     {{-- --- Image Fallback Gradient --- --}}
                     <template x-if="!modalPhoto">
                         <div
-                             class="absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f7931e] to-[#fdb913] text-7xl font-black text-white">
+                             class="absolute inset-0 flex h-full w-full items-center justify-center bg-gradient-to-br from-[#f7931e] to-[#fdb913] text-7xl font-bold text-white">
                             <span x-text="modalName.substring(0, 1).toUpperCase()"></span>
                         </div>
                     </template>
@@ -138,9 +138,9 @@
 
                     {{-- --- Student identity at the bottom --- --}}
                     <div class="absolute bottom-6 left-6 right-6 z-10 text-white">
-                        <h3 class="mb-1 text-xl font-black leading-tight tracking-tight" x-text="modalName">
+                        <h3 class="mb-1 text-xl font-bold leading-tight" x-text="modalName">
                         </h3>
-                        <p class="text-xs font-bold uppercase tracking-wider text-orange-400"
+                        <p class="text-xs font-bold text-orange-400"
                            x-text="modalStatus"></p>
                     </div>
                 </div>
@@ -151,7 +151,7 @@
                     {{-- --- Close button --- --}}
                     <button @click="closeModal()"
                             class="absolute right-5 top-5 z-30 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 shadow-sm transition-colors duration-200 hover:bg-slate-200 hover:text-slate-800">
-                        <i class="bi bi-x-lg text-[10px]"></i>
+                        <i class="bi bi-x-lg text-xs"></i>
                     </button>
 
                     {{-- --- Background Quote Icon --- --}}
@@ -164,11 +164,11 @@
                     <div class="mt-4 max-h-[250px] flex-grow overflow-y-auto pr-2 md:max-h-[320px]">
                         <div class="flex items-start gap-3">
                             <span
-                                  class="select-none text-2xl font-black leading-none text-orange-500">&ldquo;</span>
-                            <p class="pt-1 text-sm font-medium italic leading-relaxed text-slate-700 md:text-[15px]"
+                                  class="select-none text-2xl font-bold leading-none text-orange-500">&ldquo;</span>
+                            <p class="pt-1 text-sm font-medium italic leading-relaxed text-slate-700 md:text-sm"
                                x-text="modalText"></p>
                             <span
-                                  class="select-none self-end text-2xl font-black leading-none text-orange-500">&rdquo;</span>
+                                  class="select-none self-end text-2xl font-bold leading-none text-orange-500">&rdquo;</span>
                         </div>
                     </div>
                 </div>

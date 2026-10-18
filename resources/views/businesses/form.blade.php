@@ -5,7 +5,7 @@
         @vite('resources/css/vendor/tom-select.css')
     @endpush
     <div class="mb-6 flex items-center gap-4">
-        <a href="{{ $business ? route('businesses.show', $business) : $cancelUrl }}" class="btn-uco btn-uco-secondary">
+        <a href="{{ $business ? route('businesses.show', $business) : $cancelUrl }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i>
             Back
         </a>
@@ -157,10 +157,10 @@
         {{-- --- Action Buttons --- --}}
         <div class="flex items-center justify-between pb-6">
             <a href="{{ $cancelUrl }}"
-               class="btn-uco btn-uco-neutral">
+               class="btn btn-secondary">
                 Cancel
             </a>
-            <button type="submit" class="btn-uco btn-uco-primary">
+            <button type="submit" class="btn btn-primary">
                 <i class="bi bi-check-circle-fill"></i>
                 {{ $business ? 'Update' : 'Register' }} Business
             </button>

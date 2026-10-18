@@ -26,7 +26,7 @@
         </div>
         @if ($user->activities_caption)
             <div class="mt-3 px-1">
-                <p class="text-xs font-medium italic leading-relaxed text-slate-500">
+                <p class="text-xs font-medium italic leading-relaxed text-gray-600">
                     "{{ $user->activities_caption }}"
                 </p>
             </div>
@@ -40,17 +40,17 @@
             <div class="relative z-10 space-y-4">
                 <div class="flex items-center gap-1.5">
                     <span class="h-4 w-1.5 rounded-full bg-[#f7931e]"></span>
-                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-500">Student Testimony</span>
+                    <span class="text-xs font-bold text-gray-600">Student Testimony</span>
                 </div>
                 <p class="line-clamp-4 text-xs font-medium italic leading-relaxed text-slate-600">
                     "{{ $user->testimony ?: 'Universitas Ciputra Online Learning helps me develop business capabilities and entrepreneurial mindset while managing my day-to-day operations.' }}"
                 </p>
             </div>
             <div class="relative z-10 flex items-center gap-2 border-t border-slate-200 pt-3">
-                <div class="flex h-6 w-6 items-center justify-center rounded-full border border-orange-100 bg-orange-50 text-[10px] font-black text-orange-600">
+                <div class="flex h-6 w-6 items-center justify-center rounded-full border border-orange-100 bg-orange-50 text-xs font-bold text-orange-600">
                     {{ $user->initial }}
                 </div>
-                <p class="text-[10px] font-bold text-slate-500">— {{ $user->name }}</p>
+                <p class="text-xs font-bold text-gray-600">— {{ $user->name }}</p>
             </div>
         </div>
     @endif

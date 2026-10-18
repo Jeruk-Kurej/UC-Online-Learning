@@ -19,7 +19,7 @@
                     <a href="{{ route('inbox.index') }}" class="relative mr-2 flex items-center justify-center rounded-full p-2 text-soft-gray-600 transition-colors duration-200 hover:bg-soft-gray-50 hover:text-soft-gray-900" title="Inbox">
                         <i class="bi bi-bell-fill text-lg"></i>
                         @if ($unreadInboxCount > 0)
-                            <span class="absolute right-1.5 top-1.5 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-red-500 text-[10px] font-extrabold text-white ring-2 ring-white">
+                            <span class="absolute right-1.5 top-1.5 flex h-4 w-4 animate-pulse items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white ring-2 ring-white">
                                 {{ $unreadInboxCount }}
                             </span>
                         @endif
@@ -43,7 +43,7 @@
 
                         <div x-show="open" class="absolute right-0 z-50 mt-2 w-56 rounded-xl border border-soft-gray-100 bg-white py-2 shadow-xl">
                             <div class="border-b border-gray-50 px-4 py-2">
-                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400">{{ $authUser->role }}</p>
+                                <p class="text-xs font-bold text-gray-600">{{ $authUser->role }}</p>
                                 <p class="truncate text-sm font-bold text-gray-900">{{ $authUser->email }}</p>
                             </div>
 
@@ -65,7 +65,7 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="rounded-[1rem] bg-uco-orange-500 px-5 py-2.5 text-sm font-bold tracking-wide text-white shadow-[0_4px_10px_-2px_rgba(247,147,30,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-uco-orange-600 hover:shadow-[0_8px_15px_-3px_rgba(247,147,30,0.5)]">Log in</a>
+                    <a href="{{ route('login') }}" class="rounded-[1rem] bg-uco-orange-500 px-5 py-2.5 text-sm font-bold text-white shadow-[0_4px_10px_-2px_rgba(247,147,30,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-uco-orange-600 hover:shadow-[0_8px_15px_-3px_rgba(247,147,30,0.5)]">Log in</a>
                 @endauth
             </div>
 
@@ -94,7 +94,7 @@
                             {{ substr($authUser->name, 0, 1) }}
                         </div>
                         <div>
-                            <p class="text-xs font-extrabold uppercase tracking-widest text-gray-400">{{ $authUser->role }}</p>
+                            <p class="text-xs font-bold text-gray-600">{{ $authUser->role }}</p>
                             <p class="truncate text-sm font-bold text-gray-900">{{ $authUser->name }}</p>
                         </div>
                     </div>

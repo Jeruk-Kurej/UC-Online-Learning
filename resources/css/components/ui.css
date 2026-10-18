@@ -1,0 +1,62 @@
+@layer components {
+    /* --- Page shell: one width for every page --- */
+    .page {
+        @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8;
+    }
+
+    .page-narrow {
+        @apply mx-auto w-full max-w-3xl px-4 py-8 sm:px-6;
+    }
+
+    /* --- Page title block: serif title, one plain sentence, the main action on the right --- */
+    .page-title {
+        @apply font-serif text-3xl font-semibold text-brand-900 sm:text-4xl;
+    }
+
+    .page-lead {
+        @apply mt-2 max-w-2xl text-base text-gray-600;
+    }
+
+    /* --- Cards: a border and a radius, no shadow (shadows are for things that float) --- */
+    .card {
+        @apply rounded-lg border border-line bg-white p-5 sm:p-6;
+    }
+
+    .card-title {
+        @apply text-xl font-semibold text-brand-900;
+    }
+
+    .section-heading {
+        @apply font-serif text-2xl font-semibold text-brand-900;
+    }
+
+    /* --- Small status and category tags, sentence case --- */
+    .badge {
+        @apply inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-semibold;
+    }
+
+    .badge-neutral {
+        @apply bg-gray-100 text-gray-700;
+    }
+
+    .badge-info {
+        @apply bg-brand-50 text-brand-800;
+    }
+
+    .badge-success {
+        @apply bg-green-100 text-green-800;
+    }
+
+    .badge-warning {
+        @apply bg-amber-100 text-amber-900;
+    }
+
+    .badge-danger {
+        @apply bg-red-100 text-red-800;
+    }
+
+    /* --- Links inside text --- */
+    .text-link {
+        @apply font-medium text-brand-700 underline decoration-brand-300 underline-offset-2 hover:text-brand-900 hover:decoration-brand-700;
+    }
+}

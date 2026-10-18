@@ -6,13 +6,13 @@
         <div class="flex items-center gap-3">
             <div class="h-8 w-1 rounded-full bg-uco-orange-500"></div>
             <div>
-                <p class="mb-0.5 text-[11px] font-bold uppercase tracking-widest text-uco-orange-500">{{ $eyebrow }}</p>
+                <p class="mb-0.5 text-xs font-bold text-uco-orange-500">{{ $eyebrow }}</p>
                 <h2 class="text-xl font-bold text-gray-900">Our {{ ucfirst($type) }}s</h2>
             </div>
         </div>
         @auth
             @if ($canManage)
-                <a href="{{ route('businesses.' . $type . 's.create', $business) }}" class="btn-uco btn-uco-primary">
+                <a href="{{ route('businesses.' . $type . 's.create', $business) }}" class="btn btn-primary">
                     <i class="bi bi-plus-lg"></i>
                     Add {{ ucfirst($type) }}
                 </a>
@@ -29,7 +29,7 @@
             </div>
         @else
             <div class="flex items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50/50 px-4 py-6">
-                <span class="text-sm text-gray-500">{{ $emptyMessage }}</span>
+                <span class="text-sm text-gray-600">{{ $emptyMessage }}</span>
             </div>
         @endif
     </div>

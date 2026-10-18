@@ -102,23 +102,23 @@
                         <template x-if="!hasPhoto">
                             <div class="flex h-full w-full flex-col items-center justify-center p-6 text-center text-gray-400">
                                 <i class="bi bi-cloud-arrow-up mb-2 text-3xl text-gray-300"></i>
-                                <p class="text-[11px] font-bold uppercase tracking-wider">Upload Photo</p>
-                                <p class="mt-1 text-[9px] text-gray-400">Click to choose image</p>
+                                <p class="text-xs font-bold">Upload Photo</p>
+                                <p class="mt-1 text-xs text-gray-400">Click to choose image</p>
                             </div>
                         </template>
 
                         @if ($isEdit)
                             <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-4 text-center text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                                 <i class="bi bi-camera mb-1.5 text-2xl"></i>
-                                <span class="text-xs font-extrabold uppercase tracking-wider" x-text="hasPhoto ? 'Change Photo' : 'Upload Photo'"></span>
-                                <span class="mt-1 text-[9px] text-white/70">Max 10MB</span>
+                                <span class="text-xs font-bold" x-text="hasPhoto ? 'Change Photo' : 'Upload Photo'"></span>
+                                <span class="mt-1 text-xs text-white/70">Max 10MB</span>
                             </div>
                         @else
                             <template x-if="hasPhoto">
                                 <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/60 p-4 text-center text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                                     <i class="bi bi-camera mb-1.5 text-2xl"></i>
-                                    <span class="text-xs font-extrabold uppercase tracking-wider">Change Photo</span>
-                                    <span class="mt-1 text-[9px] text-white/70">Max 10MB</span>
+                                    <span class="text-xs font-bold">Change Photo</span>
+                                    <span class="mt-1 text-xs text-white/70">Max 10MB</span>
                                 </div>
                             </template>
                         @endif
@@ -154,7 +154,7 @@
 
                 {{-- --- Actions --- --}}
                 <div class="{{ $look['actions'] }}">
-                    <a href="{{ route('businesses.show', $business) }}" class="btn-uco btn-uco-neutral">
+                    <a href="{{ route('businesses.show', $business) }}" class="btn btn-secondary">
                         Cancel
                     </a>
                     @if ($isEdit)
@@ -162,19 +162,19 @@
                             <button type="button"
                                     data-confirm-submit="delete-form"
                                     data-confirm-message="Are you sure you want to delete this {{ $type }}? This action cannot be undone."
-                                    class="btn-uco btn-uco-danger">
+                                    class="btn btn-danger">
                                 <i class="bi bi-trash"></i>
                                 Delete
                             </button>
 
                             <button type="submit"
-                                    class="btn-uco btn-uco-primary">
+                                    class="btn btn-primary">
                                 <i class="bi bi-check-lg"></i>
                                 Update {{ $noun }}
                             </button>
                         </div>
                     @else
-                        <button type="submit" class="btn-uco btn-uco-primary">
+                        <button type="submit" class="btn btn-primary">
                             <i class="bi bi-check-lg"></i>
                             Create {{ $noun }}
                         </button>

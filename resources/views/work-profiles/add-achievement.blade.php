@@ -2,12 +2,12 @@
     <div class="mx-auto max-w-5xl">
         {{-- --- Page Header - Elegant Design --- --}}
         <div class="mb-8 flex flex-row items-center gap-3">
-            <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary flex-shrink-0">
+            <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary flex-shrink-0">
                 <i class="bi bi-arrow-left"></i>
                 Back
             </a>
             <div class="min-w-0 flex-grow">
-                <h1 class="text-xl font-bold leading-snug tracking-tight text-soft-gray-900 sm:text-3xl">Add New Achievement</h1>
+                <h1 class="text-xl font-bold leading-snug text-soft-gray-900 sm:text-3xl">Add New Achievement</h1>
                 <p class="mt-1 text-xs text-soft-gray-600 sm:text-sm">{{ $company->name }}</p>
             </div>
         </div>
@@ -28,10 +28,10 @@
 
                     {{-- --- Submit Buttons --- --}}
                     <div class="flex items-center justify-between border-t-2 border-soft-gray-100 pt-6">
-                        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-neutral px-8 py-3.5">
+                        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary px-8 py-3.5">
                             Cancel
                         </a>
-                        <button type="submit" class="btn-uco btn-uco-primary px-8 py-3.5">
+                        <button type="submit" class="btn btn-primary px-8 py-3.5">
                             <i class="bi bi-check-circle-fill text-lg"></i>
                             <span>Save Achievement</span>
                         </button>

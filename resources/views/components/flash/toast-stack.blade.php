@@ -33,7 +33,7 @@
                       x-text="toast.message"></span>
             </div>
             <button @click="remove(toast.id)"
-                    class="flex-shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600">
+                    class="flex-shrink-0 rounded-lg p-1 text-gray-600 transition-colors hover:bg-slate-50 hover:text-slate-600">
                 <i class="bi bi-x-lg text-xs"></i>
             </button>
         </div>

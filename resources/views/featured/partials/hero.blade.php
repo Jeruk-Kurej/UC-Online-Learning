@@ -19,7 +19,7 @@
         <div class="space-y-10 md:col-span-7 lg:col-span-7">
 
             <div class="space-y-8">
-                <h1 class="max-w-4xl text-3xl font-[900] leading-[1.2] tracking-[-0.04em] text-gray-950 sm:text-4xl md:text-5xl md:leading-[1.4] lg:text-6xl"
+                <h1 class="max-w-4xl text-3xl font-bold leading-[1.2] text-gray-950 sm:text-4xl md:text-5xl md:leading-[1.4] lg:text-6xl"
                     x-data="wordRotate(@js(['Innovative', 'Sustainable', 'Transformative', 'Pioneering']))">
                     Discover <span
                           class="uco-text-gradient-orange inline-block min-w-[130px] pb-2 sm:min-w-[180px] md:min-w-[280px]"
@@ -28,14 +28,14 @@
                     <br class="hidden md:inline">
                     Businesses from <span class="whitespace-nowrap italic">UCO Community</span>
                 </h1>
-                <p class="max-w-lg text-lg font-medium leading-relaxed tracking-tight text-gray-600/80">
+                <p class="max-w-lg text-lg font-medium leading-relaxed text-gray-600/80">
                     Explore a vibrant ecosystem of student-led ventures. Turning potential into market-ready impact.
                 </p>
             </div>
 
             <div class="pt-6">
                 <a href="{{ route('businesses.index') }}"
-                   class="group/btn inline-flex w-full items-center justify-center gap-4 rounded-[1.8rem] bg-uco-orange-600 px-8 py-4 text-base font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:scale-[1.03] hover:bg-uco-orange-700 active:scale-95 sm:w-auto sm:px-12 sm:py-5 sm:text-lg">
+                   class="group/btn inline-flex w-full items-center justify-center gap-4 rounded-[1.8rem] bg-uco-orange-600 px-8 py-4 text-base font-bold text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:scale-[1.03] hover:bg-uco-orange-700 active:scale-95 sm:w-auto sm:px-12 sm:py-5 sm:text-lg">
                     Explore Business
                     <i class="bi bi-arrow-right text-lg transition-transform group-hover/btn:translate-x-2 sm:text-xl"></i>
                 </a>
@@ -77,7 +77,7 @@
                                                  class="h-full w-full object-contain">
                                         @else
                                             <div
-                                                 class="flex h-full w-full items-center justify-center text-[10px] font-black text-uco-orange-400">
+                                                 class="flex h-full w-full items-center justify-center text-xs font-bold text-uco-orange-400">
                                                 {{ $business->initial }}
                                             </div>
                                         @endif
@@ -87,7 +87,7 @@
                                 {{-- --- Content --- --}}
                                 <div class="px-3 pb-2">
                                     <h4
-                                        class="truncate text-[15px] font-[900] tracking-tight text-gray-950 transition-colors group-hover/card:text-uco-orange-600">
+                                        class="truncate text-sm font-bold text-gray-950 transition-colors group-hover/card:text-uco-orange-600">
                                         {{ $business->name }}
                                     </h4>
                                     <div class="mt-1 flex items-center gap-2">
@@ -97,7 +97,7 @@
                                                  class="h-full w-full bg-slate-50 object-contain">
                                         </div>
                                         <span
-                                              class="max-w-[80px] truncate text-[9px] font-bold uppercase tracking-widest text-gray-400">
+                                              class="max-w-[80px] truncate text-xs font-bold text-gray-600">
                                             {{ $business->public_owner->full_titled_name ?? 'Founder' }}
                                         </span>
                                     </div>
@@ -112,7 +112,7 @@
         {{-- --- Mobile-only bottom button --- --}}
         <div class="col-span-full block pt-4 text-center md:hidden">
             <a href="{{ route('businesses.index') }}"
-               class="group/btn inline-flex w-full items-center justify-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-black text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:scale-[1.03] hover:bg-uco-orange-700 active:scale-95">
+               class="group/btn inline-flex w-full items-center justify-center gap-6 rounded-[1.8rem] bg-uco-orange-600 px-12 py-5 text-lg font-bold text-white shadow-[0_25px_60px_rgba(247,147,30,0.25)] transition-all hover:scale-[1.03] hover:bg-uco-orange-700 active:scale-95">
                 Explore Business
                 <i class="bi bi-arrow-right text-xl transition-transform group-hover/btn:translate-x-2"></i>
             </a>

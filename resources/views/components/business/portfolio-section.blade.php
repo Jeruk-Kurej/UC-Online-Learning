@@ -8,10 +8,10 @@
                 <i class="bi {{ $icon }} text-uco-orange-500"></i>
                 <span>{{ $title }}</span>
             </h2>
-            <p class="mt-1 text-sm text-gray-500">{{ $subtitle }}</p>
+            <p class="mt-1 text-sm text-gray-600">{{ $subtitle }}</p>
         </div>
         <div>
-            <a href="{{ $actionUrl }}" class="btn-uco btn-uco-primary inline-flex items-center gap-2">
+            <a href="{{ $actionUrl }}" class="btn btn-primary inline-flex items-center gap-2">
                 <i class="bi bi-plus-circle-fill"></i>
                 {{ $actionLabel }}
             </a>

@@ -2,8 +2,8 @@
     <div class="mx-auto w-full max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8 2xl:max-w-[1720px]">
         {{-- --- Page Header --- --}}
         <div class="reveal-on-scroll mb-12">
-            <h1 class="mb-2 text-4xl font-extrabold tracking-tight text-gray-900">My Business & Career Portfolio</h1>
-            <p class="max-w-3xl text-lg leading-relaxed text-gray-500">
+            <h1 class="mb-2 text-4xl font-bold text-gray-900">My Business & Career Portfolio</h1>
+            <p class="max-w-3xl text-lg leading-relaxed text-gray-600">
                 Manage and showcase your entrepreneurial ventures and professional employment profiles within the UCO community.
             </p>
         </div>
@@ -19,13 +19,13 @@
                                 <x-business.status-pill :item="$b" />
 
                                 @if ($b->is_featured && $b->status === 'approved')
-                                    <span class="flex items-center gap-1.5 rounded-lg bg-yellow-400 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-yellow-900 shadow-sm">
-                                        <i class="bi bi-star-fill text-[9px]"></i> Featured
+                                    <span class="flex items-center gap-1.5 rounded-lg bg-yellow-400 px-2.5 py-1 text-xs font-bold text-yellow-900 shadow-sm">
+                                        <i class="bi bi-star-fill text-xs"></i> Featured
                                     </span>
                                 @endif
                             </x-slot:badges>
 
-                            <p class="my-4 line-clamp-3 flex-1 text-left text-sm italic leading-relaxed text-gray-500">
+                            <p class="my-4 line-clamp-3 flex-1 text-left text-sm italic leading-relaxed text-gray-600">
                                 {{ $b->description ?: 'No description provided' }}
                             </p>
 
@@ -51,26 +51,26 @@
                     @foreach ($myCompanies as $c)
                         <x-business.portfolio-card :href="route('intrapreneurs.show', $c)" :item="$c" category-fallback="Corporate">
                             <x-slot:badges>
-                                <span class="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-2.5 py-1 text-[9px] font-black uppercase tracking-wider text-white shadow-sm">
-                                    <i class="bi bi-check-circle-fill text-[9px]"></i>
+                                <span class="flex items-center gap-1.5 rounded-lg bg-emerald-500 px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+                                    <i class="bi bi-check-circle-fill text-xs"></i>
                                     Active
                                 </span>
                             </x-slot:badges>
 
                             <div class="my-4 flex-1 space-y-1.5 text-left">
-                                <p class="flex items-center gap-1.5 text-sm font-extrabold text-slate-700">
-                                    <i class="bi bi-person-badge text-slate-400"></i>
+                                <p class="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+                                    <i class="bi bi-person-badge text-gray-600"></i>
                                     <span>{{ $c->position }}</span>
                                 </p>
                                 @if ($c->year_started_working)
-                                    <p class="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                                        <i class="bi bi-calendar-check text-slate-400"></i>
+                                    <p class="flex items-center gap-1.5 text-xs font-semibold text-gray-600">
+                                        <i class="bi bi-calendar-check text-gray-600"></i>
                                         <span>Started: {{ $c->year_started_working }}</span>
                                     </p>
                                 @endif
                                 @if ($c->company_scale)
-                                    <p class="flex items-center gap-1.5 text-xs font-semibold text-slate-400">
-                                        <i class="bi bi-diagram-3 text-slate-400"></i>
+                                    <p class="flex items-center gap-1.5 text-xs font-semibold text-gray-600">
+                                        <i class="bi bi-diagram-3 text-gray-600"></i>
                                         <span>Scale: {{ $c->company_scale }}</span>
                                     </p>
                                 @endif

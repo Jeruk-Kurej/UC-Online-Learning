@@ -47,7 +47,7 @@
             <x-premium-image :src="$offering->photo_url" :alt="$offering->name" class="h-full w-full transition-transform duration-500 group-hover:scale-105" />
             @if ($offering->photo_caption)
                 <div class="absolute bottom-0 left-0 right-0 translate-y-full transform bg-black/60 p-2 backdrop-blur-sm transition-transform duration-300 group-hover:translate-y-0">
-                    <p class="line-clamp-1 text-center text-[10px] font-medium text-white">{{ $offering->photo_caption }}</p>
+                    <p class="line-clamp-1 text-center text-xs font-medium text-white">{{ $offering->photo_caption }}</p>
                 </div>
             @endif
         @else
@@ -68,7 +68,7 @@
         <div class="mt-auto flex flex-col items-start gap-1">
             <div>
                 @if ($offering->shows_price)
-                    <span class="text-base font-extrabold text-[#f7931e]">
+                    <span class="text-base font-bold text-[#f7931e]">
                         Rp {{ $offering->formatted_price }}
                     </span>
                 @else
@@ -78,7 +78,7 @@
                 @endif
             </div>
             @if (is_numeric($offering->price) && $offering->price_type_label)
-                <span class="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                <span class="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-500">
                     {{ $offering->price_type_label }}
                 </span>
             @endif

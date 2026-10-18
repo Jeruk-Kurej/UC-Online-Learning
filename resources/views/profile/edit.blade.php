@@ -101,7 +101,7 @@
                             <label class="group relative inline-flex cursor-pointer items-center">
                                 <input type="checkbox" name="show_contact_details" value="1" class="peer sr-only" {{ old('show_contact_details', $user->show_contact_details) ? 'checked' : '' }}>
                                 <div class="peer h-6 w-11 rounded-full bg-gray-200 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-blue-600 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300"></div>
-                                <span class="ml-3 text-xs font-bold uppercase tracking-wider text-slate-600 transition-colors group-hover:text-slate-900">Show contacts publicly</span>
+                                <span class="ml-3 text-xs font-bold text-slate-600 transition-colors group-hover:text-slate-900">Show contacts publicly</span>
                             </label>
                         </x-slot:actions>
                         <div class="profile-grid">
@@ -150,7 +150,7 @@
             {{-- --- Footer (spacer keeps the button aligned with the sections) --- --}}
             <div class="profile-footer">
                 <div class="profile-footer-spacer"></div>
-                <button type="submit" class="btn-uco btn-uco-primary">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-file-earmark-check-fill text-base"></i>
                     Save Changes
                 </button>

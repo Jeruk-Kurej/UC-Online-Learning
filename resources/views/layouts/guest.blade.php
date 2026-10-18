@@ -4,10 +4,6 @@
 <head>
     <x-layout.head>Universitas Ciputra Online</x-layout.head>
 
-    {{-- --- Fonts --- --}}
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-
     {{-- --- Scripts --- --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -36,13 +32,10 @@
         <x-flash.guest-toasts />
 
         {{-- --- Footer --- --}}
-        <div class="relative z-10 mt-6 text-center text-sm text-soft-gray-500">
+        <div class="relative z-10 mt-6 text-center text-sm text-gray-600">
             <p>&copy; {{ date('Y') }} UCO. All rights reserved.</p>
         </div>
     </div>
-    {{-- --- instant.page prefetching --- --}}
-    <script src="https://instant.page/5.2.0" type="module"
-            integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous"></script>
 </body>
 
 </html>

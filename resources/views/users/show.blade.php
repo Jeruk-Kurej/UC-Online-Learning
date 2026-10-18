@@ -6,7 +6,7 @@
 
         {{-- --- Dynamic Profile Title below Breadcrumb --- --}}
         <div class="mb-8">
-            <h2 class="text-sm font-black uppercase tracking-[0.2em] text-uco-orange-500">
+            <h2 class="text-sm font-bold text-uco-orange-500">
                 {{ $user->isIntrapreneur() ? 'Intrapreneur Student' : 'Entrepreneur Student' }}
             </h2>
         </div>

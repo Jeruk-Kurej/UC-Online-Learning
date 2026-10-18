@@ -49,22 +49,22 @@
             <div class="flex-grow overflow-y-auto pr-1">
                 {{-- --- Tag (Product / Service) --- --}}
                 <div class="mb-3">
-                    <span x-show="detailItem.type === 'product'" class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-700">
+                    <span x-show="detailItem.type === 'product'" class="inline-flex items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700">
                         <i class="bi bi-box-seam"></i> Product
                     </span>
-                    <span x-show="detailItem.type === 'service'" class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-green-700">
+                    <span x-show="detailItem.type === 'service'" class="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
                         <i class="bi bi-gear"></i> Service
                     </span>
                 </div>
 
                 {{-- --- Item Name --- --}}
-                <h3 class="mb-4 text-2xl font-extrabold leading-tight tracking-tight text-gray-900" x-text="detailItem.name"></h3>
+                <h3 class="mb-4 text-2xl font-bold leading-tight text-gray-900" x-text="detailItem.name"></h3>
 
                 {{-- --- Price and Price Type --- --}}
                 <div class="mb-6 rounded-xl border border-orange-100/50 bg-orange-50/50 p-4">
-                    <p class="mb-1 text-[10px] font-bold uppercase tracking-widest text-gray-400">Pricing</p>
+                    <p class="mb-1 text-xs font-bold text-gray-400">Pricing</p>
                     <div class="flex flex-col gap-1.5">
-                        <div class="text-2xl font-extrabold text-[#f7931e]">
+                        <div class="text-2xl font-bold text-[#f7931e]">
                             <template x-if="detailItem.formatted_price">
                                 <span>Rp <span x-text="detailItem.formatted_price"></span></span>
                             </template>
@@ -73,14 +73,14 @@
                             </template>
                         </div>
                         <div x-show="detailItem.price_type_label" class="inline-flex">
-                            <span class="inline-flex items-center rounded bg-orange-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-700" x-text="detailItem.price_type_label"></span>
+                            <span class="inline-flex items-center rounded bg-orange-100 px-2 py-0.5 text-xs font-bold text-orange-700" x-text="detailItem.price_type_label"></span>
                         </div>
                     </div>
                 </div>
 
                 {{-- --- Description --- --}}
                 <div class="mb-6">
-                    <p class="mb-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</p>
+                    <p class="mb-2 text-xs font-bold text-gray-400">Description</p>
                     <div class="whitespace-pre-line text-sm leading-relaxed text-gray-600" x-text="detailItem.description"></div>
                 </div>
             </div>

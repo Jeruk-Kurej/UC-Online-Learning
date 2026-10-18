@@ -32,10 +32,10 @@
                             <a href="{{ route('inbox.show', $message) }}"
                                class="{{ $message->read_at ? 'border-gray-200 border-l-4 border-l-gray-300' : 'border-sky-200 border-l-4 border-l-sky-600 bg-sky-50/20' }} group block rounded-xl border bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md">
                                 <div class="mb-2 flex items-start justify-between">
-                                    <h3 class="{{ $message->read_at ? 'text-gray-800' : 'text-sky-700' }} text-base font-extrabold transition-colors group-hover:text-uco-orange-600">
+                                    <h3 class="{{ $message->read_at ? 'text-gray-800' : 'text-sky-700' }} text-base font-bold transition-colors group-hover:text-uco-orange-600">
                                         {{ $message->subject }}
                                     </h3>
-                                    <span class="ml-2 whitespace-nowrap text-xs font-medium text-gray-400">
+                                    <span class="ml-2 whitespace-nowrap text-xs font-medium text-gray-600">
                                         {{ $message->created_at->diffForHumans() }}
                                     </span>
                                 </div>
@@ -47,12 +47,12 @@
                                         @if ($message->sender->profile_photo_url)
                                             <img src="{{ $message->sender->profile_photo_url }}" class="h-6 w-6 rounded-full object-cover">
                                         @else
-                                            <div class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-700">
+                                            <div class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-bold text-gray-700">
                                                 {{ substr($message->sender->name, 0, 1) }}
                                             </div>
                                         @endif
                                         <span class="text-xs font-semibold text-gray-700">From: {{ $message->sender->name }}</span>
-                                        <span class="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold uppercase text-gray-600">
+                                        <span class="rounded bg-gray-100 px-2 py-0.5 text-xs font-bold text-gray-600">
                                             {{ $message->sender->current_status }}
                                         </span>
                                     </div>
@@ -79,7 +79,7 @@
                                         @if ($collab->recipient->profile_photo_url)
                                             <img src="{{ $collab->recipient->profile_photo_url }}" class="h-12 w-12 rounded-lg border border-gray-200 object-cover">
                                         @else
-                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 text-lg font-extrabold text-gray-500">
+                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 text-lg font-bold text-gray-600">
                                                 {{ substr($collab->recipient->name, 0, 1) }}
                                             </div>
                                         @endif
@@ -90,7 +90,7 @@
                                                 {{ $collab->recipient->name }}
                                             </a>
                                         </h3>
-                                        <p class="mt-0.5 text-xs font-medium text-gray-500">
+                                        <p class="mt-0.5 text-xs font-medium text-gray-600">
                                             {{ $collab->recipient->major ?? 'UC Student' }} • Sent {{ $collab->created_at->format('M d, Y') }}
                                         </p>
                                         @if ($collab->recipient->businesses->first())
@@ -106,15 +106,15 @@
                                         View Profile
                                     </a>
                                     @if ($collab->status === 'pending')
-                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-bold uppercase text-orange-700">
+                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-3 py-1.5 text-xs font-bold text-orange-700">
                                             <i class="bi bi-hourglass-split animate-spin"></i>Pending
                                         </span>
                                     @elseif($collab->status === 'accepted')
-                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-bold uppercase text-green-700">
+                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-bold text-green-700">
                                             <i class="bi bi-check-circle-fill"></i>Connected
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold uppercase text-red-700">
+                                        <span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-bold text-red-700">
                                             <i class="bi bi-x-circle-fill"></i>Declined
                                         </span>
                                     @endif

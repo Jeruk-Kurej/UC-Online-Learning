@@ -27,7 +27,7 @@
                                 @if ($b->logo_url)
                                     <img src="{{ $b->logo_url }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-bold text-white">
                                         {{ $b->initial }}
                                     </div>
                                 @endif
@@ -35,7 +35,7 @@
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $b->name }}</p>
                                 @if (($viewType ?? 'entrepreneur') === 'intrapreneur' && $b->company_scale)
-                                    <p class="truncate text-[10px] text-gray-400">{{ $b->company_scale }}</p>
+                                    <p class="truncate text-xs text-gray-600">{{ $b->company_scale }}</p>
                                 @endif
                             </div>
                         </div>
@@ -48,7 +48,7 @@
                                 @if ($b->user?->has_profile_photo)
                                     <img src="{{ $b->user->profile_photo_url }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-[10px] font-black text-white">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-bold text-white">
                                         {{ $b->user?->initial ?? 'U' }}
                                     </div>
                                 @endif
@@ -63,11 +63,11 @@
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-semibold text-gray-700">{{ $b->position }}</p>
                                 @if ($b->level_position)
-                                    <p class="truncate text-[10px] text-gray-400">{{ $b->level_position }}</p>
+                                    <p class="truncate text-xs text-gray-600">{{ $b->level_position }}</p>
                                 @endif
                             </div>
                         @else
-                            <span class="block truncate text-sm text-gray-500" title="{{ $b->city }}, {{ $b->province }}">{{ $b->city }}, {{ $b->province }}</span>
+                            <span class="block truncate text-sm text-gray-600" title="{{ $b->city }}, {{ $b->province }}">{{ $b->city }}, {{ $b->province }}</span>
                         @endif
                     </td>
 
@@ -111,7 +111,7 @@
             @empty
                 <tr>
                     <td colspan="8" class="px-6 py-16 text-center">
-                        <p class="italic text-gray-400">
+                        <p class="italic text-gray-600">
                             No {{ ($viewType ?? 'entrepreneur') === 'intrapreneur' ? 'career profiles' : 'businesses' }} found matching the criteria.
                         </p>
                     </td>

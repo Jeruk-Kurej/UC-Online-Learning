@@ -18,7 +18,7 @@ class Field extends Component
         'item-heading' => 'px-3 py-2 text-xs font-semibold text-gray-900',
         'item-body' => 'px-3 py-2 text-xs font-medium text-gray-700',
         'item-label' => 'px-3 py-2 text-xs font-semibold text-gray-800',
-        'item-number' => 'px-3 py-2 text-sm font-extrabold text-uco-orange-600',
+        'item-number' => 'px-3 py-2 text-sm font-bold text-uco-orange-600',
     ];
 
     public string $wrapperClass;
@@ -37,8 +37,8 @@ class Field extends Component
         $inItem = str_starts_with($look, 'item-');
         $this->wrapperClass = $inItem ? 'space-y-1' : 'space-y-1.5';
         $this->labelClass = $inItem
-            ? 'block text-[10px] font-bold uppercase tracking-wider text-gray-500'
-            : 'block text-xs font-bold uppercase tracking-wider text-gray-700';
+            ? 'block text-xs font-bold   text-gray-600'
+            : 'block text-xs font-bold   text-gray-700';
         $this->controlClass = 'w-full rounded-lg border border-gray-200 focus:border-uco-orange-500 focus:ring-uco-orange-500 '.self::LOOKS[$look];
     }
 

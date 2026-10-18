@@ -9,7 +9,7 @@
                  class="h-16 w-16 flex-shrink-0 rounded-sm object-contain sm:h-20 sm:w-20">
         @else
             <div class="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-soft-gray-50 to-soft-gray-100 sm:h-20 sm:w-20">
-                <i class="bi {{ $fallbackIcon }} text-2xl text-soft-gray-300 sm:text-3xl"></i>
+                <i class="bi {{ $fallbackIcon }} text-2xl text-gray-600 sm:text-3xl"></i>
             </div>
         @endif
 
@@ -17,7 +17,7 @@
             <div class="mb-2 flex flex-wrap items-center gap-2">
                 {{ $badges }}
             </div>
-            <h1 class="text-2xl font-bold leading-tight tracking-tight text-soft-gray-900 sm:text-3xl">{{ $name }}</h1>
+            <h1 class="text-2xl font-bold leading-tight text-soft-gray-900 sm:text-3xl">{{ $name }}</h1>
         </div>
     </div>
 

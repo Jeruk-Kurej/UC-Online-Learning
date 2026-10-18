@@ -23,7 +23,7 @@
                                 @if ($user->has_profile_photo)
                                     <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-full w-full object-contain">
                                 @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
+                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-bold text-white">
                                         {{ $user->initial }}
                                     </div>
                                 @endif
@@ -31,7 +31,7 @@
                             <div class="min-w-0">
                                 <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $user->name }}</p>
                                 @if ($user->nis)
-                                    <p class="text-[10px] font-medium text-gray-400">{{ $user->nis }}</p>
+                                    <p class="text-xs font-medium text-gray-600">{{ $user->nis }}</p>
                                 @endif
                             </div>
                         </div>
@@ -39,19 +39,19 @@
 
                     {{-- --- Email (truncated) --- --}}
                     <td class="max-w-[180px] px-4 py-3">
-                        <span class="block truncate text-sm text-gray-500" title="{{ $user->email }}">{{ $user->email }}</span>
+                        <span class="block truncate text-sm text-gray-600" title="{{ $user->email }}">{{ $user->email }}</span>
                     </td>
 
                     {{-- --- Student Status Badge --- --}}
                     <td class="px-4 py-3">
-                        <span class="{{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }} rounded-md px-2 py-1 text-[10px] font-bold uppercase">
+                        <span class="{{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }} rounded-md px-2 py-1 text-xs font-bold">
                             {{ $user->student_status }}
                         </span>
                     </td>
 
                     {{-- --- Major (truncated) --- --}}
                     <td class="max-w-[120px] px-4 py-3">
-                        <span class="block truncate text-sm text-gray-500" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
+                        <span class="block truncate text-sm text-gray-600" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
                     </td>
 
                     {{-- --- Flags: Visible dot + Featured star (combined column) --- --}}
@@ -95,7 +95,7 @@
                 <tr>
                     <td colspan="7" class="px-6 py-16 text-center">
                         <div class="space-y-3">
-                            <p class="italic text-gray-400">
+                            <p class="italic text-gray-600">
                                 {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
                             </p>
 

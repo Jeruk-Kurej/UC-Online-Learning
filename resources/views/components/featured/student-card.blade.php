@@ -5,7 +5,7 @@
             <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-sm transition-transform duration-500 group-hover:scale-105">
                 <x-premium-image :src="$student->profile_photo_url" :alt="$student->full_titled_name" class="size-full">
                     <x-slot name="fallback">
-                        <div class="{{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} flex h-full w-full items-center justify-center bg-gradient-to-br text-3xl font-black">
+                        <div class="{{ $isIntra ? 'from-blue-50 to-blue-100/40 text-blue-500' : 'from-orange-50 to-orange-100/40 text-uco-orange-500' }} flex h-full w-full items-center justify-center bg-gradient-to-br text-3xl font-bold">
                             {{ $student->initial }}
                         </div>
                     </x-slot>
@@ -13,9 +13,9 @@
             </div>
 
             <div class="min-w-0 flex-1 pt-1">
-                <h3 class="line-clamp-1 text-xl font-[900] tracking-tight text-gray-950 transition-colors group-hover:text-blue-600">{{ $student->full_titled_name }}</h3>
-                <p class="mt-1 line-clamp-1 text-xs font-semibold text-gray-500">{{ $student->major ?? 'General Studies' }}</p>
-                <p class="mt-1.5 flex items-center gap-1.5 text-[11px] font-bold text-gray-400">
+                <h3 class="line-clamp-1 text-xl font-bold text-gray-950 transition-colors group-hover:text-blue-600">{{ $student->full_titled_name }}</h3>
+                <p class="mt-1 line-clamp-1 text-xs font-semibold text-gray-600">{{ $student->major ?? 'General Studies' }}</p>
+                <p class="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-gray-600">
                     <span class="{{ $isIntra ? 'bg-blue-400' : 'bg-orange-400' }} h-1.5 w-1.5 rounded-full"></span>
                     Join UC Online {{ $student->year_of_enrollment ?? 'N/A' }}
                 </p>
@@ -31,17 +31,17 @@
                         <img src="{{ $highlight->logo_url }}" class="h-16 w-16 rounded-xl border border-slate-100 bg-white object-contain p-1 shadow-sm" alt="Logo">
                     @endif
                     <div>
-                        <p class="text-[9px] font-black uppercase tracking-[0.25em] text-slate-400">Corporate Role</p>
-                        <p class="mt-0.5 line-clamp-1 text-base font-bold tracking-tight text-slate-900">{{ $highlight->name }}</p>
+                        <p class="text-xs font-bold text-gray-600">Corporate Role</p>
+                        <p class="mt-0.5 line-clamp-1 text-base font-bold text-slate-900">{{ $highlight->name }}</p>
                     </div>
                 </div>
                 @if ($highlight->category)
-                    <span class="mt-1 inline-block rounded-lg bg-blue-50 px-2.5 py-1 text-[10px] font-bold text-blue-600">
+                    <span class="mt-1 inline-block rounded-lg bg-blue-50 px-2.5 py-1 text-xs font-bold text-blue-600">
                         {{ $highlight->category->name }}
                     </span>
                 @endif
                 @if ($highlight->job_description)
-                    <p class="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-slate-500">{{ $highlight->job_description }}</p>
+                    <p class="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-gray-600">{{ $highlight->job_description }}</p>
                 @endif
             </div>
         @elseif(!$isIntra && $highlight)
@@ -51,23 +51,23 @@
                         <img src="{{ $highlight->logo_url }}" class="h-16 w-16 rounded-xl border border-orange-100 bg-white object-contain p-1 shadow-sm" alt="Logo">
                     @endif
                     <div>
-                        <p class="text-[9px] font-black uppercase tracking-[0.25em] text-orange-400/90">Founded Venture</p>
-                        <p class="mt-0.5 line-clamp-1 text-base font-bold tracking-tight text-slate-900">{{ $highlight->name }}</p>
+                        <p class="text-xs font-bold text-orange-400/90">Founded Venture</p>
+                        <p class="mt-0.5 line-clamp-1 text-base font-bold text-slate-900">{{ $highlight->name }}</p>
                     </div>
                 </div>
                 @if ($highlight->category)
-                    <span class="mt-1 inline-block rounded-lg bg-orange-50 px-2.5 py-1 text-[10px] font-bold text-uco-orange-600">
+                    <span class="mt-1 inline-block rounded-lg bg-orange-50 px-2.5 py-1 text-xs font-bold text-uco-orange-600">
                         {{ $highlight->category->name }}
                     </span>
                 @endif
                 @if ($ventureSummary)
-                    <p class="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-slate-500">{{ $ventureSummary }}</p>
+                    <p class="mt-3 line-clamp-2 text-xs font-medium leading-relaxed text-gray-600">{{ $ventureSummary }}</p>
                 @endif
             </div>
         @else
             <div class="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-4 py-6 text-center">
-                <i class="bi {{ $isIntra ? 'bi-briefcase' : 'bi-rocket-takeoff' }} mb-1 block text-xl text-slate-300"></i>
-                <p class="text-[9px] font-medium text-slate-400">
+                <i class="bi {{ $isIntra ? 'bi-briefcase' : 'bi-rocket-takeoff' }} mb-1 block text-xl text-gray-600"></i>
+                <p class="text-xs font-medium text-gray-600">
                     {{ $isIntra ? 'No company info added yet' : 'No venture info added yet' }}
                 </p>
             </div>

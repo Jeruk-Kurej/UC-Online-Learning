@@ -14,7 +14,7 @@
         </div>
         <div class="flex min-w-0 flex-1 flex-col gap-1">
             <span class="text-xs font-bold leading-snug text-red-800">Validation Error</span>
-            <ul class="ml-4 mt-1 list-disc space-y-0.5 text-[11px] font-medium text-slate-500">
+            <ul class="ml-4 mt-1 list-disc space-y-0.5 text-xs font-medium text-gray-600">
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
                 @endforeach
@@ -22,7 +22,7 @@
         </div>
     </div>
     <button @click="show = false"
-            class="mt-0.5 flex-shrink-0 rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-50 hover:text-slate-600">
+            class="mt-0.5 flex-shrink-0 rounded-lg p-1 text-gray-600 transition-colors hover:bg-slate-50 hover:text-slate-600">
         <i class="bi bi-x-lg text-xs"></i>
     </button>
 </div>

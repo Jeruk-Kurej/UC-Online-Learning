@@ -6,6 +6,6 @@
     'left-1/2 -translate-x-1/2 items-center' => $align === 'center',
     'right-0 items-end' => $align === 'right',
 ])>
-    <div {{ $attributes->class(['whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-[9px] font-black text-white shadow-md']) }}>{{ $slot }}</div>
+    <div {{ $attributes->class(['whitespace-nowrap rounded bg-gray-900 px-2 py-0.5 text-xs font-bold text-white shadow-md']) }}>{{ $slot }}</div>
     <div @class([$arrowClass, '-mt-0.5 h-1.5 w-1.5 rotate-45 bg-gray-900'])></div>
 </div>

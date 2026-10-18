@@ -1,7 +1,7 @@
 {{-- --- Label, the control from the slot, and the field's validation message (App\View\Components\Forms\Field picks the classes) --- --}}
 <div {{ $wrapperAttributes() }}>
     <label for="{{ $for }}" class="{{ $labelClass }}">{{ $label }}@if ($required)
-            <span class="text-red-500">*</span>
+            <span class="text-red-700" aria-hidden="true">*</span><span class="sr-only">(required)</span>
         @endif
     </label>
     {{ $slot }}

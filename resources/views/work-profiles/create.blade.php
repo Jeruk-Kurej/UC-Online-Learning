@@ -6,19 +6,19 @@
     <div class="mx-auto max-w-4xl px-4 py-8">
         {{-- --- Header Section --- --}}
         <div class="reveal-on-scroll mb-8 flex items-center gap-4">
-            <a href="{{ route('businesses.my') }}" class="btn-uco btn-uco-secondary">
+            <a href="{{ route('businesses.my') }}" class="btn btn-secondary">
                 <i class="bi bi-arrow-left"></i>
                 Back
             </a>
             <div class="flex-1">
-                <h1 class="text-3xl font-extrabold tracking-tight text-gray-900">Register Workplace</h1>
-                <p class="mt-1 text-sm text-gray-500">Showcase your corporate professional career within the UCO directory.</p>
+                <h1 class="text-3xl font-bold text-gray-900">Register Workplace</h1>
+                <p class="mt-1 text-sm text-gray-600">Showcase your corporate professional career within the UCO directory.</p>
             </div>
         </div>
 
         {{-- --- Notice Banner --- --}}
         <div class="reveal-on-scroll mb-8 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-left">
-            <p class="mb-1 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-indigo-800">
+            <p class="mb-1 flex items-center gap-1.5 text-xs font-bold text-indigo-800">
                 <i class="bi bi-info-circle-fill"></i>
                 Professional Career Listing
             </p>
@@ -48,10 +48,10 @@
 
                 {{-- --- Action Buttons --- --}}
                 <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
-                    <a href="{{ route('businesses.my') }}" class="btn-uco btn-uco-neutral">
+                    <a href="{{ route('businesses.my') }}" class="btn btn-secondary">
                         Cancel
                     </a>
-                    <button type="submit" class="btn-uco btn-uco-primary">
+                    <button type="submit" class="btn btn-primary">
                         <i class="bi bi-check-circle-fill"></i>
                         Register Workplace
                     </button>

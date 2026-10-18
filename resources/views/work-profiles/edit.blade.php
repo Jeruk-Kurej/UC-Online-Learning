@@ -5,7 +5,7 @@
 
     {{-- --- Header Section --- --}}
     <div class="reveal-on-scroll mb-6 flex items-center gap-4">
-        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-secondary">
+        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i>
             Back
         </a>
@@ -42,10 +42,10 @@
 
             {{-- --- Action Buttons --- --}}
             <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
-                <a href="{{ route('intrapreneurs.show', $company) }}" class="btn-uco btn-uco-neutral">
+                <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">
                     Cancel
                 </a>
-                <button type="submit" class="btn-uco btn-uco-primary">
+                <button type="submit" class="btn btn-primary">
                     <i class="bi bi-check-circle-fill"></i>
                     Save Changes
                 </button>

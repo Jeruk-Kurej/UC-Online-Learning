@@ -17,8 +17,8 @@ class Form extends Component
     private const TYPES = [
         'product' => [
             'header' => 'mb-8 flex items-center gap-4',
-            'back' => 'btn-uco btn-uco-secondary mb-4 sm:mb-0',
-            'title' => 'text-3xl font-bold text-soft-gray-900 tracking-tight',
+            'back' => 'btn btn-secondary mb-4 sm:mb-0',
+            'title' => 'text-3xl font-bold text-soft-gray-900 ',
             'subtitle' => 'text-sm text-soft-gray-600 mt-1',
             'preview' => 'absolute inset-0 w-full h-full flex items-center justify-center',
             'actions' => 'flex items-center justify-between pt-6 border-t-2 border-soft-gray-100',
@@ -28,7 +28,7 @@ class Form extends Component
         ],
         'service' => [
             'header' => 'mb-6 flex flex-col sm:flex-row sm:items-center gap-4',
-            'back' => 'btn-uco btn-uco-secondary',
+            'back' => 'btn btn-secondary',
             'title' => 'text-2xl font-bold text-gray-900',
             'subtitle' => 'text-sm text-gray-600',
             'preview' => 'w-full h-full relative overflow-hidden flex items-center justify-center',

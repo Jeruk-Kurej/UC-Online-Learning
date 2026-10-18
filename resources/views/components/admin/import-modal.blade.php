@@ -21,7 +21,7 @@
          x-data="importDropzone(@js($inputId), @js($nameId))"
          @click.stop>
         <div class="mb-2 flex items-center justify-between">
-            <h3 class="text-2xl font-black text-gray-900">{{ $title }}</h3>
+            <h3 class="text-2xl font-bold text-gray-900">{{ $title }}</h3>
             <button type="button" @click="$dispatch('close-import-modal')" class="rounded-md p-1.5 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600">
                 <i class="bi bi-x-lg text-lg"></i>
             </button>
@@ -43,8 +43,8 @@
             </div>
 
             <div class="flex gap-3">
-                <button type="button" @click="$dispatch('close-import-modal')" class="btn-uco btn-uco-neutral flex-1 py-3">Cancel</button>
-                <button type="submit" class="btn-uco btn-uco-primary flex-1 py-3">Start Import</button>
+                <button type="button" @click="$dispatch('close-import-modal')" class="btn btn-secondary flex-1 py-3">Cancel</button>
+                <button type="submit" class="btn btn-primary flex-1 py-3">Start Import</button>
             </div>
         </form>
     </div>

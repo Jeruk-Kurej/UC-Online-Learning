@@ -8,10 +8,10 @@
         'md:flex-row md:items-end md:justify-between' => $stackUntil === 'md',
     ])>
         <div class="space-y-1">
-            <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-uco-orange-700">
+            <span class="inline-flex items-center rounded-md border border-uco-orange-200 bg-uco-orange-50 px-3 py-1 text-xs font-bold text-uco-orange-700">
                 {{ $badge }}
             </span>
-            <h1 class="text-3xl font-extrabold text-soft-gray-900 md:text-4xl">{{ $title }}</h1>
+            <h1 class="text-3xl font-bold text-soft-gray-900 md:text-4xl">{{ $title }}</h1>
             <p class="mt-1 text-sm text-soft-gray-600">{{ $subtitle }}</p>
         </div>
         @isset($actions)

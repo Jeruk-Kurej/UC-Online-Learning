@@ -12,12 +12,12 @@
                     <i class="bi bi-star-fill text-uco-yellow-500"></i>
                     <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
                 </span>
-                <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
+                <button type="button" @click="showImportModal = true" class="btn btn-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                     <i class="bi bi-cloud-upload mr-2"></i>
                     Import CSV
                 </button>
 
-                <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
+                <a href="{{ route('businesses.create') }}" class="btn btn-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                     <i class="bi bi-plus-lg mr-2"></i>
                     Create Business
                 </a>
@@ -124,10 +124,10 @@
                                         Update Business Status
                                     </h3>
                                     <div class="mt-2">
-                                        <p class="mb-4 text-sm text-gray-500" id="businessNameDisplay"></p>
+                                        <p class="mb-4 text-sm text-gray-600" id="businessNameDisplay"></p>
 
                                         <div class="mb-4">
-                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">New Status</label>
+                                            <label class="mb-2 block text-xs font-bold text-gray-600">New Status</label>
                                             <select name="status" id="statusSelect" data-status-select
                                                     class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
                                                 <option value="pending">Pending Approval</option>
@@ -138,7 +138,7 @@
                                         </div>
 
                                         <div id="reasonField" class="hidden">
-                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">Feedback / Reason</label>
+                                            <label class="mb-2 block text-xs font-bold text-gray-600">Feedback / Reason</label>
                                             <textarea name="rejection_reason" id="rejection_reason" rows="3"
                                                       class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
                                                       placeholder="Provide specific feedback or reason for rejection..."></textarea>
@@ -148,10 +148,10 @@
                             </div>
                         </div>
                         <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:items-center sm:gap-2 sm:px-6">
-                            <button type="submit" class="btn-uco btn-uco-primary w-full sm:w-auto">
+                            <button type="submit" class="btn btn-primary w-full sm:w-auto">
                                 Save Changes
                             </button>
-                            <button type="button" data-status-modal-close class="btn-uco btn-uco-neutral mt-3 w-full sm:mt-0 sm:w-auto">
+                            <button type="button" data-status-modal-close class="btn btn-secondary mt-3 w-full sm:mt-0 sm:w-auto">
                                 Cancel
                             </button>
                         </div>

@@ -14,7 +14,7 @@
                         <span class="text-xs font-semibold leading-none text-uco-yellow-700">
                             <span id="stat-featured-total">{{ $featuredUserCount }}</span> Featured
                         </span>
-                        <span class="mt-0.5 text-[10px] font-bold leading-none text-uco-yellow-600/90">
+                        <span class="mt-0.5 text-xs font-bold leading-none text-uco-yellow-600/90">
                             <span class="text-green-600" id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> Intra
                             <span class="mx-0.5 text-uco-yellow-400">·</span>
                             <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
@@ -22,14 +22,14 @@
                     </span>
                 </span>
                 @if (auth()->user()?->isAdmin())
-                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
+                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn btn-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                         <i class="bi bi-cloud-upload mr-2"></i>
                         Import CSV
                     </button>
                 @endif
 
                 @if (auth()->user()?->isAdmin())
-                    <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
+                    <a href="{{ route('users.create') }}" class="btn btn-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
                         <i class="bi bi-person-plus-fill mr-2"></i>
                         Create User
                     </a>

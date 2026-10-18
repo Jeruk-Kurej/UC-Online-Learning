@@ -5,9 +5,9 @@
             <i class="bi {{ $icon }} text-lg"></i>
         </div>
         <div>
-            <p class="text-[10px] font-black uppercase leading-tight tracking-widest text-gray-400">{{ $label }}</p>
+            <p class="text-xs font-bold leading-tight text-gray-600">{{ $label }}</p>
             <p class="{{ $valueClass }} mt-0.5 text-sm font-bold leading-tight text-gray-800 transition-colors">{{ $slot }}</p>
         </div>
     </div>
-    <i class="{{ $arrowClass }} bi bi-arrow-up-right text-sm text-gray-300 transition-colors"></i>
+    <i class="{{ $arrowClass }} bi bi-arrow-up-right text-sm text-gray-600 transition-colors"></i>
 </a>

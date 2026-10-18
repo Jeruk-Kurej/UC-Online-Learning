@@ -35,7 +35,7 @@
 
                     <div class="testimony-preview-body">
                         <div class="absolute -top-6 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-xl bg-uco-orange-500 text-white shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)]">
-                            <i class="fa-solid fa-quote-left text-lg"></i>
+                            <i class="bi bi-quote text-lg"></i>
                         </div>
 
                         <p class="testimony-preview-text" x-text="testimony || 'Your testimony will appear here...'"></p>
@@ -63,7 +63,7 @@
                         </div>
 
                         <div class="testimony-actions">
-                            <button type="submit" class="btn-uco btn-uco-primary">
+                            <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-file-earmark-check-fill text-base"></i>
                                 Save Testimony
                             </button>

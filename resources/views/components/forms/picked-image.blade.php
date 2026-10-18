@@ -6,7 +6,7 @@
         <img :src="fileUrl" class="{{ $imageClass }}">
     </div>
     <div class="flex flex-col gap-1.5">
-        <span class="text-xs font-bold uppercase tracking-wider text-gray-500" x-text="fileName">{{ $label }}</span>
+        <span class="text-xs font-bold text-gray-600" x-text="fileName">{{ $label }}</span>
         <button type="button" @click="clear()"
                 class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 transition-all hover:text-red-700">
             <i class="bi bi-x-circle text-sm"></i>

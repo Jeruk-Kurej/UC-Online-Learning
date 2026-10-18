@@ -6,14 +6,14 @@
     <a href="{{ route('users.show', $person) }}" class="absolute inset-0 z-10" aria-label="View {{ $person->name }} Profile"></a>
 
     {{-- --- Arrow Icon --- --}}
-    <div class="absolute right-4 top-4 z-10 text-gray-300 transition-colors group-hover/card:text-orange-500">
+    <div class="absolute right-4 top-4 z-10 text-gray-600 transition-colors group-hover/card:text-orange-500">
         <i class="bi bi-box-arrow-up-right text-xs"></i>
     </div>
 
     {{-- --- Section Title --- --}}
     <div class="pointer-events-none relative z-10 mb-6 flex items-center gap-2">
         <span class="h-6 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-b from-[#f7931e] to-[#fdb913]"></span>
-        <h4 class="text-base font-black uppercase tracking-[0.15em] text-gray-700">{{ $titleStart }} <span class="uco-text-gradient-orange">{{ $titleEnd }}</span></h4>
+        <h4 class="text-base font-bold text-gray-700">{{ $titleStart }} <span class="uco-text-gradient-orange">{{ $titleEnd }}</span></h4>
     </div>
 
     {{-- --- Header: Avatar & Name --- --}}
@@ -22,12 +22,12 @@
             @if ($person->profile_photo_thumb_url)
                 <x-premium-image :src="$person->profile_photo_thumb_url" :alt="$person->name" class="h-full w-full" />
             @else
-                <span class="select-none text-3xl font-black opacity-20">{{ $person->initial }}</span>
+                <span class="select-none text-3xl font-bold opacity-20">{{ $person->initial }}</span>
             @endif
         </div>
         <div class="min-w-0 flex-1">
-            <h2 class="truncate text-lg font-extrabold leading-tight tracking-tight text-gray-900 md:text-xl">{{ $person->name }}</h2>
-            <p class="mt-1 text-[11px] font-bold uppercase tracking-[0.1em] text-gray-400">{{ $status ?: 'Active' }}</p>
+            <h2 class="truncate text-lg font-bold leading-tight text-gray-900 md:text-xl">{{ $person->name }}</h2>
+            <p class="mt-1 text-xs font-bold text-gray-600">{{ $status ?: 'Active' }}</p>
         </div>
     </div>
 
@@ -35,18 +35,18 @@
 
     {{-- --- Academic Details --- --}}
     <div class="space-y-3">
-        <h3 class="mb-3 text-[11px] font-black uppercase tracking-[0.15em] text-gray-400">Academic Details</h3>
+        <h3 class="mb-3 text-xs font-bold text-gray-600">Academic Details</h3>
         <div class="flex items-center justify-between">
-            <span class="text-[13px] font-medium text-gray-500">Major</span>
-            <span class="text-[13px] font-bold text-gray-900">{{ $person->major ?: '-' }}</span>
+            <span class="text-xs font-medium text-gray-600">Major</span>
+            <span class="text-xs font-bold text-gray-900">{{ $person->major ?: '-' }}</span>
         </div>
         <div class="flex items-center justify-between">
-            <span class="text-[13px] font-medium text-gray-500">Join UC Online</span>
-            <span class="text-[13px] font-bold text-gray-900">{{ $person->year_of_enrollment ?: '-' }}</span>
+            <span class="text-xs font-medium text-gray-600">Join UC Online</span>
+            <span class="text-xs font-bold text-gray-900">{{ $person->year_of_enrollment ?: '-' }}</span>
         </div>
         <div class="flex items-center justify-between">
-            <span class="text-[13px] font-medium text-gray-500">Focus</span>
-            <span class="text-[13px] font-bold text-gray-900">{{ $career }}</span>
+            <span class="text-xs font-medium text-gray-600">Focus</span>
+            <span class="text-xs font-bold text-gray-900">{{ $career }}</span>
         </div>
     </div>
 
@@ -67,7 +67,7 @@
     @elseif ($person->hasContactDetails($withLinkedin))
         <div class="pointer-events-none relative z-10 my-5 h-px w-full bg-gray-100"></div>
         <div class="relative z-20 px-5 py-2 text-center">
-            <p class="text-[10px] font-bold uppercase leading-relaxed tracking-widest text-gray-400">
+            <p class="text-xs font-bold leading-relaxed text-gray-600">
                 <i class="bi bi-lock-fill mr-1"></i> Contact details hidden by user
             </p>
         </div>

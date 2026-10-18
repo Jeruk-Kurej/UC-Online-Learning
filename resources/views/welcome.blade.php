@@ -4,9 +4,6 @@
 <head>
     <x-layout.head>Universitas Ciputra Online</x-layout.head>
 
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=inter:400,500,600,700&display=swap" rel="stylesheet" />
-
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/pages/welcome.css'])
 
 </head>
@@ -24,7 +21,7 @@
                             <span class="text-xs font-semibold text-soft-gray-700">For UC Students & Alumni</span>
                         </div>
 
-                        <h1 class="text-5xl font-bold leading-tight tracking-tight text-soft-gray-900">
+                        <h1 class="text-5xl font-bold leading-tight text-soft-gray-900">
                             Business Portfolio<br>
                             for <span class="text-soft-gray-900">UC Online Learning Students</span>
                         </h1>
@@ -54,8 +51,8 @@
                         <div class="absolute bottom-0 left-0 h-32 w-32 rounded-tr-[4rem] bg-gradient-to-tr from-uco-yellow-100 to-uco-orange-100 opacity-40"></div>
 
                         <div class="relative z-10 mb-8">
-                            <h2 class="mb-1.5 text-3xl font-black tracking-tight text-gray-900">Sign in</h2>
-                            <p class="text-sm font-medium text-gray-500">Access your business hub</p>
+                            <h2 class="mb-1.5 text-3xl font-bold text-gray-900">Sign in</h2>
+                            <p class="text-sm font-medium text-gray-600">Access your business hub</p>
                         </div>
 
                         <form method="POST" action="/login" class="relative z-10 space-y-5">
@@ -84,7 +81,7 @@
                             </x-forms.field>
 
                             <button type="submit"
-                                    class="w-full rounded-[7px] bg-uco-orange-500 py-3 text-sm font-bold uppercase tracking-wide text-white shadow-sm transition-all duration-200 hover:bg-uco-orange-600">
+                                    class="w-full rounded-[7px] bg-uco-orange-500 py-3 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-uco-orange-600">
                                 Sign in to Dashboard
                             </button>
 
@@ -93,7 +90,7 @@
                                     <div class="w-full border-t border-soft-gray-200"></div>
                                 </div>
                                 <div class="relative flex justify-center text-xs">
-                                    <span class="bg-white/90 px-2 font-medium text-gray-400">or continue with</span>
+                                    <span class="bg-white/90 px-2 font-medium text-gray-600">or continue with</span>
                                 </div>
                             </div>
 
@@ -156,7 +153,7 @@
                     </div>
 
                     <div class="max-w-3xl">
-                        <h2 class="mb-4 text-xs font-black uppercase tracking-[0.2em] text-uco-orange-500">Project Overview</h2>
+                        <h2 class="mb-4 text-xs font-bold text-uco-orange-500">Project Overview</h2>
                         <h3 class="mb-6 text-3xl font-bold leading-tight text-soft-gray-900">
                             Empowering the next generation of <span class="text-uco-orange-600">Entrepreneurial Leaders</span>
                         </h3>

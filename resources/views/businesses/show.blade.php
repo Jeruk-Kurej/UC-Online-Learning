@@ -29,10 +29,10 @@
                         <div class="border border-soft-gray-100 bg-white shadow-lg sm:rounded-lg">
                             <div class="px-6 py-14 text-center">
                                 <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm">
-                                    <i class="bi bi-inbox text-3xl text-gray-300"></i>
+                                    <i class="bi bi-inbox text-3xl text-gray-600"></i>
                                 </div>
                                 <h4 class="mb-2 text-lg font-bold text-gray-900">Nothing to show yet</h4>
-                                <p class="mx-auto max-w-md text-sm text-gray-500">
+                                <p class="mx-auto max-w-md text-sm text-gray-600">
                                     This business hasn't added any products, gallery photos, or contact entries yet.
                                 </p>
                             </div>

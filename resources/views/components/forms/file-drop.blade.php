@@ -8,12 +8,12 @@
 
     <div x-show="!selected" class="form-file-container-custom group relative">
         <div class="flex items-center gap-3">
-            <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-100 bg-white text-gray-400 transition-all group-hover:text-blue-500">
+            <div class="flex h-8 w-8 items-center justify-center rounded-lg border border-gray-100 bg-white text-gray-600 transition-all group-hover:text-blue-500">
                 <i class="bi {{ $icon }} text-base"></i>
             </div>
             <div>
                 <span class="block text-sm font-semibold leading-tight text-gray-600 transition-colors group-hover:text-gray-900">{{ $prompt }}</span>
-                <span class="text-[10px] font-bold uppercase tracking-tight text-gray-400">{{ $formats }}</span>
+                <span class="text-xs font-bold text-gray-600">{{ $formats }}</span>
             </div>
         </div>
         <input type="file" name="{{ $name }}" id="{{ $name }}" accept="{{ $accept }}"

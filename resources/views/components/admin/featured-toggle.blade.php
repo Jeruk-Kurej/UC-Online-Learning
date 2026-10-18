@@ -9,10 +9,10 @@
                 'bg-gray-50 border-gray-100 text-gray-200 cursor-not-allowed' => !$visible,
                 'bg-uco-yellow-400 border-uco-yellow-500 text-white hover:bg-uco-yellow-500' =>
                     $visible && $featured,
-                'bg-white border-gray-200 text-gray-300 hover:text-uco-yellow-400 hover:border-uco-yellow-300' =>
+                'bg-white border-gray-200 text-gray-600 hover:text-uco-yellow-400 hover:border-uco-yellow-300' =>
                     $visible && !$featured,
             ])>
-        <i class="bi bi-star-fill text-[9px]"></i>
-        <x-ui.tooltip class="{{ $tipClass }} uppercase tracking-wider">{{ !$visible ? 'Need visible' : ($featured ? 'Unfeature' : 'Feature') }}</x-ui.tooltip>
+        <i class="bi bi-star-fill text-xs"></i>
+        <x-ui.tooltip class="{{ $tipClass }}">{{ !$visible ? 'Need visible' : ($featured ? 'Unfeature' : 'Feature') }}</x-ui.tooltip>
     </button>
 </form>

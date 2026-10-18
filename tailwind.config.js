@@ -20,36 +20,73 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                sans: ['"Source Sans 3"', ...defaultTheme.fontFamily.sans],
+                serif: ['"Source Serif 4"', ...defaultTheme.fontFamily.serif],
             },
+
+            // --- Type scale: nothing below 13px, body 16px ---
+            fontSize: {
+                xs: ['0.8125rem', '1.125rem'],
+                sm: ['0.9375rem', '1.375rem'],
+                base: ['1rem', '1.625rem'],
+                lg: ['1.125rem', '1.75rem'],
+                xl: ['1.25rem', '1.75rem'],
+                '2xl': ['1.5rem', '2rem'],
+                '3xl': ['1.875rem', '2.375rem'],
+                '4xl': ['2.25rem', '2.75rem'],
+                '5xl': ['3rem', '3.5rem'],
+            },
+
             colors: {
-                // UCO Orange Palette (Primary Accent)
+                // --- UC navy from the logo (#082848 is brand-900); links, buttons, header details ---
+                brand: {
+                    50: '#eef3f9',
+                    100: '#dbe6f2',
+                    200: '#b9cde4',
+                    300: '#8fadd0',
+                    400: '#5d85b5',
+                    500: '#2f5f98',
+                    600: '#174a80',
+                    700: '#0d3a6b',
+                    800: '#0a2f57',
+                    900: '#082848',
+                },
+                // --- UC gold from the logo: rules and small marks; use gold-700 for text on white ---
+                gold: {
+                    100: '#f6f1e2',
+                    300: '#d8caa0',
+                    500: '#a89868',
+                    700: '#7a6a2e',
+                },
+                // --- Page background and borders ---
+                canvas: '#f4f6f9',
+                line: '#d5dce5',
+
+                // --- Older palettes, still referenced by views that have not been reworked yet ---
                 'uco-orange': {
                     50: '#fff8f0',
                     100: '#ffeedd',
                     200: '#ffd9b3',
                     300: '#ffc088',
                     400: '#ffa85c',
-                    500: '#ff8c2e',  // Main Orange Accent
+                    500: '#ff8c2e',
                     600: '#f7931e',
                     700: '#e67300',
                     800: '#b85c00',
                     900: '#8a4500',
                 },
-                // UCO Yellow Palette (Secondary Accent)
                 'uco-yellow': {
                     50: '#fffef0',
                     100: '#fffbd6',
                     200: '#fff6ad',
                     300: '#fff085',
                     400: '#ffe95c',
-                    500: '#ffd633',  // Main Yellow Accent
+                    500: '#ffd633',
                     600: '#fdb913',
                     700: '#d99a00',
                     800: '#b37d00',
                     900: '#8c6100',
                 },
-                // Professional Base Colors
                 'soft-white': '#fafafa',
                 'soft-gray': {
                     50: '#f9fafb',
@@ -63,12 +100,6 @@ export default {
                     800: '#1f2937',
                     900: '#111827',
                 },
-            },
-            backgroundImage: {
-                // Gradient presets untuk UCO
-                'uco-gradient': 'linear-gradient(135deg, #f7931e 0%, #fdb913 100%)',
-                'uco-gradient-vertical': 'linear-gradient(to bottom, #f7931e 0%, #fdb913 100%)',
-                'uco-gradient-dark': 'linear-gradient(135deg, #ea580c 0%, #ca8a04 100%)',
             },
         },
     },

@@ -9,8 +9,8 @@
             <i class="bi {{ $icon }}"></i>
         </div>
         <div class="space-y-1">
-            <p class="text-lg font-black text-gray-900">{{ $title }}</p>
-            <p class="text-sm font-medium text-gray-500">{{ $slot }}</p>
+            <p class="text-lg font-bold text-gray-900">{{ $title }}</p>
+            <p class="text-sm font-medium text-gray-600">{{ $slot }}</p>
         </div>
     </div>
 </div>

@@ -11,17 +11,17 @@
             </div>
             <div class="relative z-10 mx-auto flex max-w-[1600px] flex-col gap-6 px-4 text-left sm:px-6 md:flex-row md:items-end md:justify-between lg:px-8">
                 <div class="space-y-2">
-                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-uco-orange-700">
+                    <span class="inline-flex items-center rounded-full border border-uco-orange-200 bg-uco-orange-50 px-4 py-1.5 text-xs font-bold text-uco-orange-700">
                         UCO Directory
                     </span>
-                    <h1 class="text-2xl font-extrabold text-gray-900 md:text-3xl">Business Directory</h1>
-                    <p class="mt-1 text-base text-gray-500">Explore businesses and innovations from our student and alumni network.</p>
+                    <h1 class="text-2xl font-bold text-gray-900 md:text-3xl">Business Directory</h1>
+                    <p class="mt-1 text-base text-gray-600">Explore businesses and innovations from our student and alumni network.</p>
                 </div>
 
                 @auth
                     <div class="flex items-center gap-3">
                         @if (auth()->user()->isAdmin())
-                            <span class="inline-flex items-center gap-1.5 rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-2 text-xs font-black text-yellow-700">
+                            <span class="inline-flex items-center gap-1.5 rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-2 text-xs font-bold text-yellow-700">
                                 <i class="bi bi-star-fill text-yellow-500"></i>
                                 {{ $featuredBusinessCount }} Featured
                             </span>

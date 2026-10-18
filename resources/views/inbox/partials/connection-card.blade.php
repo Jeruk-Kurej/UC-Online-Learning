@@ -6,7 +6,7 @@
                 @if ($partner->profile_photo_url)
                     <img src="{{ $partner->profile_photo_url }}" class="h-14 w-14 rounded-lg border border-gray-200 object-cover">
                 @else
-                    <div class="flex h-14 w-14 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 text-xl font-extrabold text-gray-500">
+                    <div class="flex h-14 w-14 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 text-xl font-bold text-gray-500">
                         {{ substr($partner->name, 0, 1) }}
                     </div>
                 @endif
@@ -18,7 +18,7 @@
                     </a>
                 </h3>
                 <p class="mt-0.5 text-xs font-medium text-gray-500">{{ $partner->major }}</p>
-                <span class="mt-1.5 inline-block rounded bg-orange-50 px-2 py-0.5 text-[10px] font-bold uppercase text-orange-700">
+                <span class="mt-1.5 inline-block rounded bg-orange-50 px-2 py-0.5 text-xs font-bold text-orange-700">
                     {{ $partner->current_status }}
                 </span>
             </div>
@@ -26,7 +26,7 @@
 
         @if ($partner->businesses->first())
             <div class="mb-4 rounded-lg border border-gray-100 bg-gray-50 p-3">
-                <span class="block text-[10px] font-bold uppercase tracking-wider text-gray-400">Venture / Business</span>
+                <span class="block text-xs font-bold text-gray-400">Venture / Business</span>
                 <span class="mt-0.5 block text-sm font-bold text-gray-800">{{ $partner->businesses->first()->name }}</span>
                 <span class="mt-0.5 block text-xs text-gray-500">{{ $partner->businesses->first()->city }}, {{ $partner->businesses->first()->province }}</span>
             </div>

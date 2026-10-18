@@ -13,9 +13,9 @@ class VentureCard extends Component
     // --- Look per list: owned businesses, businesses the person helps run, workplaces ---
 
     private const VARIANTS = [
-        'owned' => ['border' => 'hover:border-orange-200', 'title' => 'font-extrabold text-gray-900', 'accent' => 'group-hover:text-orange-600', 'footer' => '', 'link' => ''],
+        'owned' => ['border' => 'hover:border-orange-200', 'title' => 'font-bold text-gray-900', 'accent' => 'group-hover:text-orange-600', 'footer' => '', 'link' => ''],
         'member' => ['border' => 'hover:border-blue-200', 'title' => 'font-bold text-gray-950', 'accent' => 'group-hover:text-blue-600', 'footer' => '', 'link' => ''],
-        'company' => ['border' => 'hover:border-orange-200', 'title' => 'font-extrabold text-gray-900', 'accent' => 'group-hover:text-orange-600', 'footer' => 'gap-3', 'link' => 'flex-shrink-0'],
+        'company' => ['border' => 'hover:border-orange-200', 'title' => 'font-bold text-gray-900', 'accent' => 'group-hover:text-orange-600', 'footer' => 'gap-3', 'link' => 'flex-shrink-0'],
     ];
 
     public array $look;

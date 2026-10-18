@@ -11,18 +11,14 @@ use Illuminate\View\View;
  */
 class Field extends Component
 {
-    // --- Wrapper (only when the message is shown), label and message classes per form ---
+    // --- Wrapper, label and message classes per form (one look for all of them now) ---
 
     private const LOOKS = [
-        'business' => [
-            'wrapper' => 'relative pb-5',
-            'label' => 'form-label-custom',
-            'message' => 'absolute bottom-0 left-0 text-[10px] font-bold uppercase tracking-tight text-red-600',
-        ],
-        'work-profile' => ['wrapper' => '', 'label' => 'form-label-custom', 'message' => 'mt-1 text-xs font-medium text-red-600'],
-        'user' => ['wrapper' => '', 'label' => 'form-label-custom', 'message' => 'mt-1 text-sm text-red-600'],
-        'login' => ['wrapper' => '', 'label' => 'form-label-custom', 'message' => 'mt-2 text-xs font-medium text-red-600'],
-        'offering' => ['wrapper' => '', 'label' => 'mb-2 block text-sm font-medium text-gray-700', 'message' => 'mt-1 text-sm text-red-600'],
+        'business' => ['wrapper' => '', 'label' => 'field-label', 'message' => 'field-error'],
+        'work-profile' => ['wrapper' => '', 'label' => 'field-label', 'message' => 'field-error'],
+        'user' => ['wrapper' => '', 'label' => 'field-label', 'message' => 'field-error'],
+        'login' => ['wrapper' => '', 'label' => 'field-label', 'message' => 'field-error'],
+        'offering' => ['wrapper' => '', 'label' => 'field-label', 'message' => 'field-error'],
     ];
 
     public string $labelClass;

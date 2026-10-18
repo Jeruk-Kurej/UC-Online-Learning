@@ -13,7 +13,7 @@
     </div>
 
     <div class="flex min-w-0 flex-col text-left">
-        <span class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Directory</span>
+        <span class="text-xs font-bold text-gray-600">Directory</span>
         <span class="truncate text-xs font-bold transition-colors duration-300 sm:text-sm" :class="tabClass(@js($type), 'label')">{{ $label }}</span>
     </div>
 </a>

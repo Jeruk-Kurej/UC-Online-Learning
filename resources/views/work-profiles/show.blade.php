@@ -8,7 +8,7 @@
             <x-business.profile-heading :name="$company->name" :logo-url="$company->logo_url" fallback-icon="bi-building">
                 <x-slot:badges>
                     <span class="inline-flex items-center gap-1.5 rounded-xl bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
-                        <i class="bi bi-person-workspace text-[10px]"></i>
+                        <i class="bi bi-person-workspace text-xs"></i>
                         Intrapreneur
                     </span>
 
@@ -23,7 +23,7 @@
                     @auth
                         @if ($canManage)
                             <a href="{{ route('intrapreneurs.edit', $company) }}"
-                               class="btn-uco btn-uco-secondary flex-shrink-0">
+                               class="btn btn-secondary flex-shrink-0">
                                 <i class="bi bi-pencil-square"></i>
                                 <span class="hidden sm:inline">Edit Work Profile</span>
                                 <span class="sm:hidden">Edit</span>
@@ -43,7 +43,7 @@
                     <div class="p-4 sm:p-6 lg:p-8">
                         {{-- --- About Company --- --}}
                         <div class="mb-8">
-                            <h4 class="mb-3 text-sm font-bold uppercase tracking-wider text-soft-gray-900">About This Company</h4>
+                            <h4 class="mb-3 text-sm font-bold text-soft-gray-900">About This Company</h4>
                             <p class="w-full max-w-[1600px] text-base leading-relaxed text-soft-gray-700 2xl:max-w-[1720px]">
                                 {{ $company->job_description ?: 'No job description or company overview provided.' }}
                             </p>
@@ -79,14 +79,14 @@
                             <div class="flex items-center gap-3">
                                 <div class="h-8 w-1 flex-shrink-0 rounded-full bg-uco-orange-500"></div>
                                 <div>
-                                    <p class="mb-0.5 text-[11px] font-bold uppercase tracking-widest text-uco-orange-500">Career Highlights</p>
+                                    <p class="mb-0.5 text-xs font-bold text-uco-orange-500">Career Highlights</p>
                                     <h2 class="text-xl font-bold leading-tight text-gray-900">Achievements & Contributions</h2>
                                 </div>
                             </div>
                             @if ($canManage)
                                 <a
                                    href="{{ route('intrapreneurs.create_achievement', $company) }}"
-                                   class="btn-uco btn-uco-primary w-full text-center sm:w-auto">
+                                   class="btn btn-primary w-full text-center sm:w-auto">
                                     <i class="bi bi-plus-lg"></i>
                                     Add Achievement
                                 </a>
@@ -108,7 +108,7 @@
                                         @if ($canManage)
                                             <button
                                                     @click="deleteAchievement(index)"
-                                                    class="btn-uco btn-uco-danger btn-uco-sm opacity-0 transition-opacity group-hover:opacity-100"
+                                                    class="btn btn-danger btn-sm opacity-0 transition-opacity group-hover:opacity-100"
                                                     title="Delete Achievement">
                                                 <i class="bi bi-trash3-fill"></i>
                                             </button>
@@ -119,7 +119,7 @@
                                 {{-- --- Empty State --- --}}
                                 <template x-if="achievements.length === 0">
                                     <div class="flex items-center justify-center rounded-lg border border-dashed border-gray-200 bg-gray-50/50 px-4 py-6">
-                                        <span class="text-sm text-gray-500">No achievements added yet. Start adding milestones and contributions.</span>
+                                        <span class="text-sm text-gray-600">No achievements added yet. Start adding milestones and contributions.</span>
                                     </div>
                                 </template>
                             </div>
@@ -138,10 +138,10 @@
                         @if ($student->skills->isNotEmpty())
                             <div class="pointer-events-none relative z-10 my-5 h-px w-full bg-gray-100"></div>
                             <div>
-                                <h3 class="mb-4 text-[11px] font-black uppercase tracking-[0.15em] text-gray-400">Skills</h3>
+                                <h3 class="mb-4 text-xs font-bold text-gray-600">Skills</h3>
                                 <div class="flex flex-wrap gap-2">
                                     @foreach ($student->skills as $skill)
-                                        <span class="cursor-default rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-[10px] font-bold uppercase text-gray-600">
+                                        <span class="cursor-default rounded-xl border border-gray-100 bg-gray-50 px-3 py-1.5 text-xs font-bold text-gray-600">
                                             {{ $skill->name }}
                                         </span>
                                     @endforeach

@@ -6,7 +6,7 @@
                 <img src="{{ $logo }}" @if ($logoAlt) alt="{{ $logoAlt }}" @endif class="h-full w-full object-contain p-4 transition duration-500 group-hover:scale-105">
             @else
                 <div class="absolute inset-0 flex h-full w-full select-none items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 text-gray-200">
-                    <span class="text-4xl font-black tracking-tighter opacity-20">{{ substr($name, 0, 1) }}</span>
+                    <span class="text-4xl font-bold opacity-20">{{ substr($name, 0, 1) }}</span>
                 </div>
             @endif
         </div>

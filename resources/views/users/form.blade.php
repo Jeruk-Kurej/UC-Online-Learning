@@ -4,7 +4,7 @@
     @endpush
 
     <div class="mb-6 flex items-center gap-4">
-        <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn-uco btn-uco-secondary">
+        <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left"></i>
             Back
         </a>
@@ -188,7 +188,7 @@
                             </div>
                             <div class="min-w-0">
                                 <p class="max-w-[240px] truncate text-xs font-bold text-slate-700" x-text="fileName">Selected File</p>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PDF document selected</p>
+                                <p class="text-xs font-bold text-gray-600">PDF document selected</p>
                             </div>
                         </div>
                         <button type="button" @click="clear()"
@@ -235,10 +235,10 @@
 
         {{-- --- Action Buttons --- --}}
         <div class="flex items-center justify-between pb-10">
-            <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn-uco btn-uco-neutral">
+            <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn btn-secondary">
                 Cancel
             </a>
-            <button type="submit" class="btn-uco btn-uco-primary">
+            <button type="submit" class="btn btn-primary">
                 <i class="bi {{ $userToEdit ? 'bi-check-circle-fill' : 'bi-person-plus-fill' }}"></i>
                 {{ $userToEdit ? 'Update' : 'Create' }} User
             </button>

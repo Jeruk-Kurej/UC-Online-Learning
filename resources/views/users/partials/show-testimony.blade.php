@@ -3,7 +3,7 @@
     <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-2.5">
             <span class="h-6 w-1.5 flex-shrink-0 rounded-full bg-gradient-to-b from-[#f7931e] to-[#fdb913]"></span>
-            <h2 class="text-xl font-black leading-none tracking-tight text-gray-950">
+            <h2 class="text-xl font-bold leading-none text-gray-950">
                 Student <span class="uco-text-gradient-orange">Testimony</span>
             </h2>
         </div>
@@ -32,13 +32,13 @@
                 @if ($user->profile_photo_url)
                     <img src="{{ $user->profile_photo_url }}" class="h-10 w-10 rounded-full border-2 border-orange-400 object-cover shadow-sm">
                 @else
-                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 text-sm font-extrabold text-white shadow-sm">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-tr from-orange-500 to-amber-400 text-sm font-bold text-white shadow-sm">
                         {{ $user->initial }}
                     </div>
                 @endif
                 <div>
-                    <h4 class="text-sm font-extrabold leading-tight text-gray-900">{{ $user->name }}</h4>
-                    <p class="text-xs font-medium text-gray-500">
+                    <h4 class="text-sm font-bold leading-tight text-gray-900">{{ $user->name }}</h4>
+                    <p class="text-xs font-medium text-gray-600">
                         {{ $user->isIntrapreneur() ? 'Intrapreneur' : 'Entrepreneur' }} • {{ $user->major ?? 'Universitas Ciputra' }}
                     </p>
                 </div>

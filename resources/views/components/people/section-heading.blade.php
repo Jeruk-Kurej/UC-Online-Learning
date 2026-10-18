@@ -8,7 +8,7 @@
             'from-[#2563eb] to-[#60a5fa]' => $tone === 'blue',
             'from-[#f7931e] to-[#fdb913]' => $tone !== 'blue',
         ])></span>
-        <h2 class="text-xl font-black leading-none tracking-tight text-gray-950">{{ $start }} <span @class([
+        <h2 class="text-xl font-bold leading-none text-gray-950">{{ $start }} <span @class([
             'uco-text-gradient-blue' => $tone === 'blue',
             'uco-text-gradient-orange' => $tone !== 'blue',
         ])>{{ $end }}</span></h2>

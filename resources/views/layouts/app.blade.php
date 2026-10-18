@@ -4,17 +4,6 @@
 <head>
     <x-layout.head>Universitas Ciputra Online Learning - @yield('title', 'Dashboard')</x-layout.head>
 
-    {{-- --- Fonts --- --}}
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet" />
-
-    {{-- --- Bootstrap Icons --- --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    {{-- --- FontAwesome Icons --- --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
     {{-- --- Scripts --- --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
@@ -67,9 +56,6 @@
 
     @stack('scripts')
 
-    {{-- --- instant.page prefetching --- --}}
-    <script src="https://instant.page/5.2.0" type="module"
-            integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous"></script>
 </body>
 
 </html>
