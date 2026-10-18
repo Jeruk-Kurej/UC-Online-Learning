@@ -10,6 +10,6 @@
 }
 
 .ts-wrapper.focus .ts-control {
-    border-color: #111827 !important; /* Soft Gray 900 */
+    border-color: #111827 !important;
     box-shadow: 0 0 0 4px rgba(17, 24, 39, 0.05) !important;
 }

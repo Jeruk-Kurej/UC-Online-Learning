@@ -189,9 +189,6 @@ abstract class BusinessFormRequest extends FormRequest
         }
     }
 
-    /**
-     * Normalize rows from inline form arrays.
-     */
     private function normalizeInlineRows($rows, string $type): array
     {
         if (! is_array($rows)) {
@@ -238,9 +235,6 @@ abstract class BusinessFormRequest extends FormRequest
         return $normalized;
     }
 
-    /**
-     * Validate inline rows locally to populate errors.
-     */
     private function validateInlineRows(array $rows, string $type): array
     {
         $errors = [];

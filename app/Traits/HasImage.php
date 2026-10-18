@@ -9,9 +9,6 @@ use Illuminate\Support\Facades\Storage;
 
 trait HasImage
 {
-    /**
-     * Boot the trait to automatically delete Cloudinary images when models are deleted.
-     */
     public static function bootHasImage()
     {
         static::deleting(function ($model) {
@@ -28,9 +25,6 @@ trait HasImage
         });
     }
 
-    /**
-     * Delete an image from Cloudinary if the URL points to Cloudinary.
-     */
     public static function deleteCloudinaryImage(?string $url)
     {
         if (! $url || ! str_contains($url, 'cloudinary.com')) {
@@ -48,9 +42,6 @@ trait HasImage
         }
     }
 
-    /**
-     * Extract public ID from Cloudinary URL.
-     */
     public static function getCloudinaryPublicId(?string $url): ?string
     {
         if (! $url || ! str_contains($url, 'cloudinary.com')) {
@@ -137,9 +128,6 @@ trait HasImage
         return $fallback;
     }
 
-    /**
-     * Safely delete a file from local public storage or Cloudinary.
-     */
     public function deleteFileFromStorage(?string $pathOrUrl): void
     {
         if (! $pathOrUrl) {

@@ -1,15 +1,15 @@
 @layer components {
-    /* Standardized Buttons */
+    /* --- Standardized buttons: compact size and solid Bootstrap-style colours --- */
     .btn-uco {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         gap: 0.375rem !important;
-        border-radius: 4px !important; /* 4px small rounded, exactly like screenshot */
+        border-radius: 4px !important;
         font-weight: 600 !important;
         font-size: 13px !important;
         line-height: 1.5 !important;
-        padding: 6px 12px !important; /* compact size */
+        padding: 6px 12px !important;
         transition: background-color 150ms ease-in-out !important;
         border: none !important;
         cursor: pointer !important;
@@ -28,28 +28,28 @@
         border-radius: 4px !important;
     }
     .btn-uco-primary {
-        background-color: #198754 !important; /* Solid Bootstrap success green */
+        background-color: #198754 !important;
         color: #ffffff !important;
     }
     .btn-uco-primary:hover {
         background-color: #157347 !important;
     }
     .btn-uco-secondary {
-        background-color: #6c757d !important; /* Solid Bootstrap secondary gray */
+        background-color: #6c757d !important;
         color: #ffffff !important;
     }
     .btn-uco-secondary:hover {
         background-color: #5c636a !important;
     }
     .btn-uco-danger {
-        background-color: #dc3545 !important; /* Solid Bootstrap danger red */
+        background-color: #dc3545 !important;
         color: #ffffff !important;
     }
     .btn-uco-danger:hover {
         background-color: #bb2d3b !important;
     }
     .btn-uco-neutral {
-        background-color: #f8f9fa !important; /* Solid Bootstrap light gray */
+        background-color: #f8f9fa !important;
         border: 1px solid #dee2e6 !important;
         color: #212529 !important;
     }

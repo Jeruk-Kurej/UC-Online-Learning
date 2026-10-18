@@ -1,10 +1,10 @@
 @layer components {
-    /* Force page numbers to show on mobile viewports for Laravel Tailwind Pagination */
+    /* --- Pagination on every screen size: Laravel's Tailwind view hides the numbered pages below sm, these rules show them --- */
     .pagination-ajax nav > div:first-child {
-        display: none !important; /* Hide the simple 'Previous/Next' mobile fallback */
+        display: none !important;
     }
     .pagination-ajax nav > div:last-child {
-        display: flex !important; /* Force the desktop version containing page numbers to show */
+        display: flex !important;
         flex-direction: column !important;
         align-items: center !important;
         gap: 12px !important;
@@ -15,7 +15,7 @@
             justify-content: space-between !important;
         }
     }
-    /* Force all page numbers inside the inline-flex block to show on mobile */
+    /* --- Page number links stay visible on mobile --- */
     .pagination-ajax nav > div:last-child div:last-child > span {
         display: inline-flex !important;
     }

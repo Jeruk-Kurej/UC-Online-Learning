@@ -21,9 +21,6 @@ class BusinessController extends Controller
 {
     use QueuesImports;
 
-    /**
-     * Display a listing of businesses for administrative management.
-     */
     public function index(Request $request): View|Response
     {
         $viewType = $request->get('type') === 'intrapreneur' ? 'intrapreneur' : 'entrepreneur';
@@ -44,9 +41,6 @@ class BusinessController extends Controller
         ] + $this->listStats($viewType));
     }
 
-    /**
-     * Update business status (admin only).
-     */
     public function updateStatus(Request $request, Business $business): RedirectResponse
     {
         $status = $this->validatedStatus($request);
@@ -55,9 +49,6 @@ class BusinessController extends Controller
         return back()->with('success', 'Business status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
-    /**
-     * Update company status (admin only).
-     */
     public function updateCompanyStatus(Request $request, Company $company): RedirectResponse
     {
         $status = $this->validatedStatus($request);
@@ -66,9 +57,6 @@ class BusinessController extends Controller
         return back()->with('success', 'Company status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
-    /**
-     * Approve a business (admin only).
-     */
     public function approve(Business $business): RedirectResponse
     {
         $business->is_visible = true;
@@ -77,9 +65,6 @@ class BusinessController extends Controller
         return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
     }
 
-    /**
-     * Toggle the featured status of a business.
-     */
     public function toggleFeatured(Request $request, Business $business): RedirectResponse|JsonResponse
     {
         if ($business->approval_status !== 'approved') {
@@ -94,9 +79,6 @@ class BusinessController extends Controller
             : "\"{$business->name}\" removed from featured.");
     }
 
-    /**
-     * Delete a business.
-     */
     public function destroy(Business $business): RedirectResponse
     {
         $business->delete();
@@ -105,9 +87,6 @@ class BusinessController extends Controller
             ->with('success', 'Business deleted successfully.');
     }
 
-    /**
-     * Import businesses from CSV/Excel using auto-detected importer.
-     */
     public function import(Request $request): RedirectResponse|JsonResponse
     {
         $this->validate($request, [

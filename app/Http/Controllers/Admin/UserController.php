@@ -48,9 +48,6 @@ class UserController extends Controller
         ];
     }
 
-    /**
-     * Display a listing of users.
-     */
     public function index(Request $request)
     {
         $users = $this->filteredUsers($request);
@@ -104,9 +101,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new user.
-     */
     public function create()
     {
         $availableBusinesses = Business::with('user', 'category')->get();
@@ -120,9 +114,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created user in storage.
-     */
     public function store(StoreUserRequest $request)
     {
         $userData = $request->profileData() + [
@@ -151,9 +142,6 @@ class UserController extends Controller
             ->with('success', "Success! The profile for '{$newUser->name}' has been created.");
     }
 
-    /**
-     * Show the form for editing the specified user.
-     */
     public function edit(User $user)
     {
         $availableBusinesses = Business::with('user', 'category')
@@ -170,9 +158,6 @@ class UserController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified user in storage.
-     */
     public function update(UpdateUserRequest $request, User $user)
     {
         $userData = $request->profileData();
@@ -213,9 +198,6 @@ class UserController extends Controller
             ->with('success', "Success! The profile for '{$user->name}' has been updated.");
     }
 
-    /**
-     * Toggle the featured status of a user.
-     */
     public function toggleFeatured(Request $request, User $user)
     {
         if (! $user->is_visible && ! $user->is_featured) {
@@ -242,9 +224,6 @@ class UserController extends Controller
         return back()->with('success', "User '{$user->name}' has been {$status} featured list.");
     }
 
-    /**
-     * Toggle the visibility status of a user.
-     */
     public function toggleStatus(Request $request, User $user)
     {
         $newVisibility = ! $user->is_visible;
@@ -277,9 +256,6 @@ class UserController extends Controller
         return back()->with('success', "User '{$user->name}' has been {$status} successfully.");
     }
 
-    /**
-     * Import users from Excel file.
-     */
     public function import(Request $request)
     {
         $request->validate([

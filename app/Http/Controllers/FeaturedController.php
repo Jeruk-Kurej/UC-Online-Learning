@@ -10,17 +10,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-/**
- * Class FeaturedController
- *
- * Coordinates and retrieves showcase aggregates for the landing or featured ventures/students dashboard,
- * combining top entrepreneur/intrapreneur students, spotlights, dynamic category counts, and high-scoring AI-approved testimonies.
- */
 class FeaturedController extends Controller
 {
-    /**
-     * Display a showcase listing of featured students, ventures, and voices.
-     */
     public function index(Request $request): View
     {
         return view('featured.index', [

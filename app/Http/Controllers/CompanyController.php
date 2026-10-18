@@ -21,9 +21,6 @@ class CompanyController extends Controller
 {
     use Concerns\ResolvesRegionNames;
 
-    /**
-     * Display the specified intrapreneur (Company).
-     */
     public function show(Company $company): View
     {
         $company->load(['user', 'category']);
@@ -46,9 +43,6 @@ class CompanyController extends Controller
         ]);
     }
 
-    /**
-     * Show form to create a company work profile (Intrapreneur).
-     */
     public function create(): View
     {
         $categories = Category::all();
@@ -63,9 +57,6 @@ class CompanyController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created company work profile (Intrapreneur).
-     */
     public function store(CompanyRequest $request): RedirectResponse
     {
         $validated = $request->validated();
@@ -85,9 +76,6 @@ class CompanyController extends Controller
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile registered successfully!');
     }
 
-    /**
-     * Show form to edit a company work profile (Intrapreneur).
-     */
     public function edit(Company $company): View
     {
         abort_unless($company->canBeManagedBy(Auth::user()), 403);
@@ -103,9 +91,6 @@ class CompanyController extends Controller
         return view('work-profiles.edit', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
     }
 
-    /**
-     * Update a company work profile (Intrapreneur).
-     */
     public function update(Company $company, CompanyRequest $request): RedirectResponse
     {
         $validated = $request->validated();

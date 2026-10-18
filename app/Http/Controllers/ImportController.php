@@ -6,19 +6,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
-/**
- * Class ImportController
- *
- * Tracks background import process statistics (such as total, processed, successful, skipped rows)
- * and active session states during CSV/Excel file loading.
- */
 class ImportController extends Controller
 {
-    /**
-     * Track import progress by session ID.
-     *
-     * @param  string  $importId  Unique import identifier
-     */
     public function progress(string $importId): JsonResponse
     {
         $prefix = "import_{$importId}";
@@ -45,9 +34,6 @@ class ImportController extends Controller
         return new JsonResponse($progress);
     }
 
-    /**
-     * Check if there's an active import in the current session and return its ID.
-     */
     public function checkActive(Request $request): JsonResponse
     {
         $session = $request->session();
@@ -63,9 +49,6 @@ class ImportController extends Controller
         return new JsonResponse(['importId' => null]);
     }
 
-    /**
-     * Clear the active import session after completion or manual dismiss.
-     */
     public function clearActive(Request $request): JsonResponse
     {
         $request->session()->forget([

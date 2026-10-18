@@ -1,5 +1,5 @@
 @layer components {
-    /* TomSelect & Custom Form Stylings */
+    /* --- Tom Select and custom form styling --- */
     .ts-wrapper {
         width: 100% !important;
         display: block !important;
@@ -27,7 +27,7 @@
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
     }
 
-    /* Prevent double-border if form-input-custom is applied to the original select */
+    /* --- No second border when form-input-custom sits on the original select --- */
     .ts-wrapper.form-input-custom {
         border: none !important;
         height: auto !important;
@@ -66,7 +66,7 @@
         font-size: 14px !important;
     }
 
-    /* Selected Pill Tag Styling (Single & Multiple Selects) */
+    /* --- Selected pill tags (single and multiple selects) --- */
     .ts-control .item,
     .ts-wrapper.multi .ts-control > div,
     .ts-wrapper.multi .ts-control .item {

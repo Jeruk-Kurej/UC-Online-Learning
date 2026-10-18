@@ -16,17 +16,11 @@ class Collab extends Model
         'status',
     ];
 
-    /**
-     * Get the user who sent the collab request.
-     */
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    /**
-     * Get the user who received the collab request.
-     */
     public function recipient()
     {
         return $this->belongsTo(User::class, 'recipient_id');

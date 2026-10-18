@@ -10,17 +10,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-/**
- * Class UcTestimonyController
- *
- * Manages public listing of testimonies, user submit forms, administrative feature toggles,
- * and background approval processes.
- */
 class UcTestimonyController extends Controller
 {
-    /**
-     * Display a listing of testimonies for admin management.
-     */
     public function adminIndex(Request $request): View|Response
     {
         $search = trim((string) $request->get('search', ''));
@@ -57,9 +48,6 @@ class UcTestimonyController extends Controller
         return view('uc-testimonies.admin', compact('users', 'totalTestimonies', 'featuredTestimonies'));
     }
 
-    /**
-     * Display the authenticated user's testimony management page.
-     */
     public function my(): View
     {
         /** @var User $user */
@@ -70,9 +58,6 @@ class UcTestimonyController extends Controller
         ]);
     }
 
-    /**
-     * Store or update the authenticated user's testimony.
-     */
     public function store(Request $request): RedirectResponse
     {
         /** @var User $user */
@@ -92,9 +77,6 @@ class UcTestimonyController extends Controller
             ->with('success', 'Your testimony has been saved successfully!');
     }
 
-    /**
-     * Toggle the featured status of a testimony for the homepage.
-     */
     public function toggleFeatured(Request $request, User $user): JsonResponse
     {
         if (! $user->is_visible) {

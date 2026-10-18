@@ -7,11 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 class AiModerationService
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Main Analysis Method
-    |--------------------------------------------------------------------------
-    */
+    // --- Main Analysis Method ---
 
     public function analyze(string $content, int $rating = 0, string $customerName = ''): array
     {
@@ -55,11 +51,7 @@ class AiModerationService
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Prompt Building
-    |--------------------------------------------------------------------------
-    */
+    // --- Prompt Building ---
 
     private function buildPrompt(string $content, int $rating, string $customerName): string
     {
@@ -94,11 +86,7 @@ Respond with valid JSON only:
 PROMPT;
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Response Parsing
-    |--------------------------------------------------------------------------
-    */
+    // --- Response Parsing ---
 
     private function parseGeminiResponse(string $text, int $rating): array
     {
@@ -135,11 +123,7 @@ PROMPT;
         ];
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Fallback Analysis
-    |--------------------------------------------------------------------------
-    */
+    // --- Fallback Analysis ---
 
     private function fallbackAnalysis(string $content, int $rating): array
     {

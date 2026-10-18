@@ -10,9 +10,6 @@ use App\Support\GoogleDrive;
  */
 class UserProfileController extends Controller
 {
-    /**
-     * Display the specified user profile catalog.
-     */
     public function show($user)
     {
         if (! $user instanceof User) {

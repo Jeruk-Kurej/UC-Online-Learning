@@ -14,7 +14,7 @@
         object-fit: contain;
     }
 
-    /* No display: flex here. x-show drops the display value when it shows this element, so the old inline flex never applied. */
+    /* --- No display: flex on the initials: x-show drops the display value when it shows the element, so the old inline flex never applied --- */
     .photo-box__initials {
         width: 100%;
         height: 100%;

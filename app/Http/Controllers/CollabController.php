@@ -10,9 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CollabController extends Controller
 {
-    /**
-     * Send a Collab request to another user.
-     */
     public function store(User $user)
     {
         $sender = Auth::user();
@@ -53,9 +50,6 @@ class CollabController extends Controller
         return back()->with('success', 'Collab request sent successfully!');
     }
 
-    /**
-     * Accept a Collab request.
-     */
     public function accept(Collab $collab)
     {
         $user = Auth::user();
@@ -77,9 +71,6 @@ class CollabController extends Controller
         return back()->with('success', 'You are now connected with '.$collab->sender->name.'!');
     }
 
-    /**
-     * Reject a Collab request.
-     */
     public function reject(Collab $collab)
     {
         $user = Auth::user();

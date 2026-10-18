@@ -14,9 +14,6 @@ use Illuminate\View\View;
  */
 class CompanyAchievementController extends Controller
 {
-    /**
-     * Show the form for creating a new company achievement.
-     */
     public function create(Company $company): View
     {
         $this->authorizeManage($company);
@@ -24,9 +21,6 @@ class CompanyAchievementController extends Controller
         return view('work-profiles.add-achievement', compact('company'));
     }
 
-    /**
-     * Add achievement to a company.
-     */
     public function store(Company $company, Request $request): RedirectResponse|JsonResponse
     {
         $this->authorizeManage($company);
@@ -58,9 +52,6 @@ class CompanyAchievementController extends Controller
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Achievement added successfully!');
     }
 
-    /**
-     * Delete achievement from a company.
-     */
     public function destroy(Company $company, Request $request): RedirectResponse|JsonResponse
     {
         $this->authorizeManage($company);

@@ -1,4 +1,4 @@
-/* Custom UI/UX Enhancements */
+/* --- Custom UI/UX enhancements --- */
 .uco-ambient-glow {
     position: absolute;
     width: 500px;
@@ -61,7 +61,7 @@
     transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-/* Reusable Floating Background Shapes (Ada Kehidupan) */
+/* --- Reusable floating background shapes --- */
 .uco-floating-shape {
     position: absolute;
     pointer-events: none;
@@ -141,7 +141,7 @@
     }
 }
 
-/* Magnetic Buttons */
+/* --- Magnetic buttons --- */
 .uco-magnetic-btn {
     transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1);
     display: inline-flex;
@@ -163,7 +163,7 @@
     display: inline-block;
 }
 
-/* Outstanding Outline Background Typography */
+/* --- Outline background typography --- */
 .uco-outline-bg-text {
     position: absolute;
     top: -2.8rem;
@@ -199,7 +199,7 @@
     -webkit-text-stroke: 2.5px #8b5cf6;
 }
 
-/* Custom Shimmer Animations for Tactile Glass Cards */
+/* --- Shimmer animations for glass cards --- */
 @keyframes ucoShimmer {
     0% {
         transform: translateX(-150%) skewX(12deg);

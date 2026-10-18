@@ -28,9 +28,6 @@ class UploadImageToCloudinaryJob implements ShouldQueue
 
     protected $identifier;
 
-    /**
-     * Create a new job instance.
-     */
     public function __construct($model, string $column, string $url, string $folder, ?string $identifier)
     {
         $this->model = $model;
@@ -40,19 +37,11 @@ class UploadImageToCloudinaryJob implements ShouldQueue
         $this->identifier = $identifier;
     }
 
-    /**
-     * Get the middleware the job should pass through.
-     *
-     * @return array<int, object>
-     */
     public function middleware(): array
     {
         return [new RateLimited('image-uploads')];
     }
 
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
         $url = $this->cleanUrl($this->url);

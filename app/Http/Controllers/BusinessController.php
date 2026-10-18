@@ -29,9 +29,6 @@ class BusinessController extends Controller
 {
     use Concerns\ResolvesRegionNames;
 
-    /**
-     * Display a listing of the businesses.
-     */
     public function index(Request $request): View|Response
     {
         $viewType = $request->get('view', 'entrepreneur');
@@ -54,9 +51,6 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new business.
-     */
     public function create(): View
     {
         return view('businesses.form', [
@@ -71,9 +65,6 @@ class BusinessController extends Controller
         ]);
     }
 
-    /**
-     * Get regencies for a given province via AJAX.
-     */
     public function getRegencies(Request $request): JsonResponse
     {
         $provinceId = $request->get('province_id');
@@ -94,9 +85,6 @@ class BusinessController extends Controller
         return new JsonResponse($regencies);
     }
 
-    /**
-     * Display the specified business.
-     */
     public function show(Business $business): View
     {
         $business->load(['user', 'category', 'products', 'legalDocuments', 'certifications', 'members']);
@@ -144,9 +132,6 @@ class BusinessController extends Controller
         abort(404);
     }
 
-    /**
-     * Show the form for editing the specified business.
-     */
     public function edit(Business $business): View
     {
         $this->authorize('update', $business);
@@ -182,9 +167,6 @@ class BusinessController extends Controller
         return auth()->check() && auth()->user()->isAdmin() ? route('businesses.index') : route('businesses.my');
     }
 
-    /**
-     * Update the specified business.
-     */
     public function update(UpdateBusinessRequest $request, Business $business): RedirectResponse
     {
         $data = $request->businessData();
@@ -216,9 +198,6 @@ class BusinessController extends Controller
         return redirect()->route('businesses.show', $business)->with('success', 'Business updated successfully!');
     }
 
-    /**
-     * Display the authenticated user's businesses.
-     */
     public function my(): View
     {
         $user = Auth::user();
@@ -228,9 +207,6 @@ class BusinessController extends Controller
         return view('businesses.my', compact('myBusinesses', 'myCompanies'));
     }
 
-    /**
-     * Store a newly created business.
-     */
     public function store(StoreBusinessRequest $request): RedirectResponse
     {
         $data = $request->businessData();

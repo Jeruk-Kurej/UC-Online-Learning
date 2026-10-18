@@ -14,23 +14,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
-/**
- * Class ProfileController
- *
- * Handles user profile editing, updates, file uploading (profile photos and activity documents),
- * and account deletion processes.
- */
 class ProfileController extends Controller
 {
-    /**
-     * Retrieve the currently authenticated user as a typed User instance.
-     *
-     * @param  Request  $request  Current request instance
-     *
-     * @throws HttpException If unauthenticated
-     */
     private function getUser(Request $request): User
     {
         $user = $request->user();
@@ -41,11 +27,6 @@ class ProfileController extends Controller
         return $user;
     }
 
-    /**
-     * Show the profile edit form.
-     *
-     * @param  Request  $request  Current request instance
-     */
     public function edit(Request $request): RedirectResponse|View
     {
         $user = $this->getUser($request);
@@ -56,11 +37,6 @@ class ProfileController extends Controller
         return view('profile.edit', ['user' => $user]);
     }
 
-    /**
-     * Update the authenticated user's profile details.
-     *
-     * @param  ProfileUpdateRequest  $request  Form request with validation rules
-     */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $this->getUser($request);
