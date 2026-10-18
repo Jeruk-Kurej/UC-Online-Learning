@@ -11,6 +11,7 @@ use App\Models\Province;
 use App\Models\Regency;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
+use App\Services\UploadStorage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -241,7 +242,7 @@ class BusinessController extends Controller
     {
         app(ImageOptimizerService::class)->optimizeUploadedFile($file);
 
-        return $file->store('logos', 'public');
+        return app(UploadStorage::class)->store($file, 'logos');
     }
 
     private function syncMembers(Request $request, Business $business): void

@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\Province;
 use App\Models\Regency;
 use App\Services\ImageOptimizerService;
+use App\Services\UploadStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -124,8 +125,7 @@ class CompanyController extends Controller
     private function storeLogo(UploadedFile $file, string $name): string
     {
         app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-        $path = $file->storeAs('company-logos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
 
-        return '/storage/'.$path;
+        return app(UploadStorage::class)->store($file, 'company-logos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension());
     }
 }

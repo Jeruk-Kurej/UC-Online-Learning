@@ -10,6 +10,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 
 // --- World ---
@@ -107,8 +108,8 @@ test('a logo upload is stored on the public disk', function () {
     $this->actingAs($w['owner'])->post(route('businesses.store'), businessPayload($w['category'], ['logo' => UploadedFile::fake()->image('logo.png')]));
 
     $path = Business::where('name', 'Warung Baru')->firstOrFail()->getRawOriginal('logo_url');
-    expect($path)->toStartWith('logos/');
-    Storage::disk('public')->assertExists($path);
+    expect($path)->toStartWith('/storage/logos/');
+    Storage::disk('public')->assertExists(Str::after($path, '/storage/'));
 });
 
 test('an owner update cannot change featured, owner or visibility; an admin update can', function () {

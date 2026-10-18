@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 // --- World ---
 
@@ -153,8 +154,8 @@ test('store saves the type, the photo folder and shows the right message', funct
     expect($saved->type)->toBe($type)
         ->and($saved->business_id)->toBe($business->id)
         ->and($saved->photo_caption)->toBe('Caption')
-        ->and($saved->getRawOriginal('photo_url'))->toStartWith($folder.'/');
-    Storage::disk('public')->assertExists($saved->getRawOriginal('photo_url'));
+        ->and($saved->getRawOriginal('photo_url'))->toStartWith('/storage/'.$folder.'/');
+    Storage::disk('public')->assertExists(Str::after($saved->getRawOriginal('photo_url'), '/storage/'));
 })->with([
     'product' => ['businesses.products.store', 'product', 'products', 'product'],
     'service' => ['businesses.services.store', 'service', 'services', 'service'],
@@ -181,7 +182,7 @@ test('a new photo replaces the stored path on update', function (string $kind, s
         'photo' => UploadedFile::fake()->image('new.jpg'),
     ]))->assertSessionHasNoErrors();
 
-    expect($world[$kind]->fresh()->getRawOriginal('photo_url'))->toStartWith($folder.'/');
+    expect($world[$kind]->fresh()->getRawOriginal('photo_url'))->toStartWith('/storage/'.$folder.'/');
 })->with([['product', 'products'], ['service', 'services']]);
 
 // --- Price shown on the business page ---

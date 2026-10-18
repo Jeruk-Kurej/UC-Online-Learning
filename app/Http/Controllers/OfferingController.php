@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Business;
 use App\Models\Product;
 use App\Services\ImageOptimizerService;
+use App\Services\UploadStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -143,13 +144,13 @@ abstract class OfferingController extends Controller
     {
         app(ImageOptimizerService::class)->optimizeUploadedFile($photo);
 
-        return $photo->store($this->folder(), 'public');
+        return app(UploadStorage::class)->store($photo, $this->folder());
     }
 
     private function deletePhoto(Product $offering): void
     {
         if ($offering->getRawOriginal('photo_url')) {
-            Product::deleteCloudinaryImage($offering->getRawOriginal('photo_url'));
+            $offering->deleteFileFromStorage($offering->getRawOriginal('photo_url'));
         }
     }
 

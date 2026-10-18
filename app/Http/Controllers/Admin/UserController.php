@@ -11,6 +11,7 @@ use App\Models\Business;
 use App\Models\Province;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
+use App\Services\UploadStorage;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -130,8 +131,7 @@ class UserController extends Controller
 
         $document = $request->file('activities_doc_url');
         if ($document instanceof UploadedFile) {
-            $path = $document->storeAs('student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'.'.$document->getClientOriginalExtension(), 'public');
-            $userData['activities_doc_url'] = '/storage/'.$path;
+            $userData['activities_doc_url'] = app(UploadStorage::class)->store($document, 'student-activities', 'act_'.Str::slug($userData['name']).'_'.time().'.'.$document->getClientOriginalExtension());
         }
 
         $newUser = User::create($userData);
@@ -352,14 +352,13 @@ class UserController extends Controller
     }
 
     /**
-     * Compress and store a profile photo on the public disk; returns its /storage URL.
+     * Compress and store a profile photo (see UploadStorage); returns the value for the database.
      */
     private function storeProfilePhoto(UploadedFile $file, string $name): string
     {
         app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-        $path = $file->storeAs('profile-photos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
 
-        return '/storage/'.$path;
+        return app(UploadStorage::class)->store($file, 'profile-photos', Str::slug($name).'_'.time().'.'.$file->getClientOriginalExtension());
     }
 
     /**
@@ -384,8 +383,7 @@ class UserController extends Controller
             $files = $request->file('activities_docs');
             foreach (is_array($files) ? $files : [$files] as $file) {
                 if ($file instanceof UploadedFile) {
-                    $path = $file->storeAs('student-activities', 'act_'.Str::slug($name).'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
-                    $newUrls[] = '/storage/'.$path;
+                    $newUrls[] = app(UploadStorage::class)->store($file, 'student-activities', 'act_'.Str::slug($name).'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension());
                 }
             }
         }

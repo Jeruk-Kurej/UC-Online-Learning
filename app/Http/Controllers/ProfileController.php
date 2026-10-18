@@ -5,13 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
-use Illuminate\Filesystem\FilesystemAdapter;
+use App\Services\UploadStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -57,13 +56,8 @@ class ProfileController extends Controller
             $file = $request->file('profile_photo');
             if ($file instanceof UploadedFile) {
                 app(ImageOptimizerService::class)->optimizeUploadedFile($file);
-                /** @var FilesystemAdapter $publicDisk */
-                $publicDisk = Storage::disk('public');
                 $slug = Str::slug($user->name, '_');
-                $path = $file->storeAs('profile-photos', $slug.'_'.time().'.'.$file->getClientOriginalExtension(), 'public');
-                if (is_string($path)) {
-                    $user->profile_photo_url = $publicDisk->url($path);
-                }
+                $user->profile_photo_url = app(UploadStorage::class)->store($file, 'profile-photos', $slug.'_'.time().'.'.$file->getClientOriginalExtension());
             }
         }
 
@@ -82,16 +76,11 @@ class ProfileController extends Controller
 
         $newUrls = [];
         if ($request->hasFile('activities_files')) {
-            /** @var FilesystemAdapter $publicDisk */
-            $publicDisk = Storage::disk('public');
             $files = $request->file('activities_files');
             $files = is_array($files) ? $files : [$files];
             foreach ($files as $file) {
                 if ($file instanceof UploadedFile) {
-                    $path = $file->storeAs('student-activities', 'act_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension(), 'public');
-                    if (is_string($path)) {
-                        $newUrls[] = $publicDisk->url($path);
-                    }
+                    $newUrls[] = app(UploadStorage::class)->store($file, 'student-activities', 'act_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension());
                 }
             }
         }
