@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div data-user-admin class="users-wrapper mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8"
+    <div data-user-admin data-stats-url="{{ route('users.stats', [], false) }}" class="users-wrapper mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8"
          @start-import.window="showImportModal = false"
          @close-import-modal.window="showImportModal = false"
          x-data="userAdminList"
@@ -40,19 +40,19 @@
         {{-- --- Statistics --- --}}
         <div class="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
              @ajax-update-stats.window="refreshStats()">
-            <x-admin.stat-card class="delay-100">
+            <x-admin.stat-card class="delay-100" value-id="stat-total">
                 <x-slot:label>Total Users</x-slot:label>
                 {{ $totalUsers }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-150" tone="blue">
+            <x-admin.stat-card class="delay-150" tone="blue" value-id="stat-entrepreneurs">
                 <x-slot:label>Entrepreneurs</x-slot:label>
                 {{ $totalEntrepreneurs }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-200" tone="green">
+            <x-admin.stat-card class="delay-200" tone="green" value-id="stat-intrapreneurs">
                 <x-slot:label>Intrapreneurs</x-slot:label>
                 {{ $totalIntrapreneurs }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-[250ms]" tone="purple">
+            <x-admin.stat-card class="delay-[250ms]" tone="purple" value-id="stat-alumni">
                 <x-slot:label>Alumni</x-slot:label>
                 {{ $totalAlumni }}
             </x-admin.stat-card>
