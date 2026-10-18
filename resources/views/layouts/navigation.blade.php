@@ -40,6 +40,7 @@
                                 <x-nav.link look="dropdown" :href="route('businesses.admin')">Manage businesses</x-nav.link>
                                 <x-nav.link look="dropdown" :href="route('uc-testimonies.admin')">Manage testimonies</x-nav.link>
                                 <x-nav.link look="dropdown" :href="route('pages.edit', 'about')">Edit About page</x-nav.link>
+                                <x-nav.link look="dropdown" :href="route('profile.edit')">Change password</x-nav.link>
                             @else
                                 <x-nav.link look="dropdown" :href="route('profile.edit')">My profile</x-nav.link>
                                 <x-nav.link look="dropdown" :href="route('businesses.my')">My businesses</x-nav.link>
@@ -82,6 +83,7 @@
                         <x-nav.link look="account" :href="route('businesses.admin')" :active="request()->routeIs('businesses.admin')">Manage businesses</x-nav.link>
                         <x-nav.link look="account" :href="route('uc-testimonies.admin')" :active="request()->routeIs('uc-testimonies.admin')">Manage testimonies</x-nav.link>
                         <x-nav.link look="account" :href="route('pages.edit', 'about')" :active="request()->routeIs('pages.edit')">Edit About page</x-nav.link>
+                        <x-nav.link look="account" :href="route('profile.edit')" :active="request()->routeIs('profile.*')">Change password</x-nav.link>
                     @else
                         <x-nav.link look="account" :href="route('profile.edit')" :active="request()->routeIs('profile.*')">My profile</x-nav.link>
                         <x-nav.link look="account" :href="route('businesses.my')" :active="request()->routeIs('businesses.my')">My businesses</x-nav.link>

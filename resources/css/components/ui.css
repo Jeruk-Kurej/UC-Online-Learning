@@ -55,6 +55,11 @@
         @apply bg-red-100 text-red-800;
     }
 
+    /* --- Frame for a logo or photo: the initial sits inside, the image is laid over it --- */
+    .photo-frame {
+        @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-brand-50;
+    }
+
     /* --- Tabs: plain text with a gold underline on the open one --- */
     .tabs {
         @apply flex gap-6 overflow-x-auto border-b border-line;

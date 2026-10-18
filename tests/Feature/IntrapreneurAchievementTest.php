@@ -43,7 +43,7 @@ test('company owner can view add achievement form page', function () {
         ->get(route('intrapreneurs.create_achievement', $company));
 
     $response->assertStatus(200)
-        ->assertSee('Add New Achievement')
+        ->assertSee('Add an achievement')
         ->assertSee('Test Corp Form');
 });
 

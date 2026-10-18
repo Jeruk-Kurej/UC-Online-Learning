@@ -25,24 +25,24 @@
                 Account & Auth Info
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="name" label="Full Name" required>
+                <x-forms.field name="name" label="Full Name" required>
                     <input type="text" name="name" id="name" value="{{ old('name', $userToEdit?->name) }}" required
-                           class="form-input-custom @error('name') border-red-500 @enderror">
+                           class="field-input @error('name') !border-red-700 @enderror">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="email" label="Email Address" required>
+                <x-forms.field name="email" label="Email Address" required>
                     <input type="email" name="email" id="email" value="{{ old('email', $userToEdit?->email) }}" required
-                           class="form-input-custom @error('email') border-red-500 @enderror">
+                           class="field-input @error('email') !border-red-700 @enderror">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="role" label="Role" required>
+                <x-forms.field name="role" label="Role" required>
                     <select name="role" id="role" required class="block w-full">
                         <option value="user" {{ old('role', $userToEdit?->role) === 'user' ? 'selected' : '' }}>User</option>
                         <option value="admin" {{ old('role', $userToEdit?->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                 </x-forms.field>
 
-                <x-forms.field look="user" name="student_status" label="Student Status" required id="student_status_container">
+                <x-forms.field name="student_status" label="Student Status" required id="student_status_container">
                     <select name="student_status" id="student_status" data-tom-select="Select Status" required class="block w-full">
                         <option value="student aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
                         <option value="student non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
@@ -53,14 +53,14 @@
                     </select>
                 </x-forms.field>
 
-                <x-forms.field look="user" name="password" :label="$userToEdit ? 'Password (leave blank to keep existing)' : 'Password'" :required="!$userToEdit">
+                <x-forms.field name="password" :label="$userToEdit ? 'Password (leave blank to keep existing)' : 'Password'" :required="!$userToEdit">
                     <input type="password" name="password" id="password" @unless ($userToEdit) required @endunless
-                           class="form-input-custom @error('password') border-red-500 @enderror">
+                           class="field-input @error('password') !border-red-700 @enderror">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="password_confirmation" label="Confirm Password" :required="!$userToEdit" :show-error="false">
+                <x-forms.field name="password_confirmation" label="Confirm Password" :required="!$userToEdit" :show-error="false">
                     <input type="password" name="password_confirmation" id="password_confirmation" @unless ($userToEdit) required @endunless
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
             </div>
         </div>
@@ -70,39 +70,39 @@
                 Identity & Contact
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="prefix_title" label="Prefix Title" :show-error="false">
+                <x-forms.field name="prefix_title" label="Prefix Title" :show-error="false">
                     <input type="text" name="prefix_title" id="prefix_title" value="{{ old('prefix_title', $userToEdit?->prefix_title) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="suffix_title" label="Suffix Title" :show-error="false">
+                <x-forms.field name="suffix_title" label="Suffix Title" :show-error="false">
                     <input type="text" name="suffix_title" id="suffix_title" value="{{ old('suffix_title', $userToEdit?->suffix_title) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="personal_email" label="Personal Email">
+                <x-forms.field name="personal_email" label="Personal Email">
                     <input type="email" name="personal_email" id="personal_email" value="{{ old('personal_email', $userToEdit?->personal_email) }}"
-                           class="form-input-custom @error('personal_email') border-red-500 @enderror">
+                           class="field-input @error('personal_email') !border-red-700 @enderror">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="phone_number" label="Phone Number" :show-error="false">
+                <x-forms.field name="phone_number" label="Phone Number" :show-error="false">
                     <input type="tel" name="phone_number" id="phone_number" value="{{ old('phone_number', $userToEdit?->phone_number) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="mobile_number" label="Mobile Number" :show-error="false">
+                <x-forms.field name="mobile_number" label="Mobile Number" :show-error="false">
                     <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number', $userToEdit?->mobile_number) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="whatsapp" label="WhatsApp Number" :show-error="false">
+                <x-forms.field name="whatsapp" label="WhatsApp Number" :show-error="false">
                     <input type="tel" name="whatsapp" id="whatsapp" value="{{ old('whatsapp', $userToEdit?->whatsapp) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="linkedin" label="LinkedIn URL" :show-error="false">
+                <x-forms.field name="linkedin" label="LinkedIn URL" :show-error="false">
                     <input type="url" name="linkedin" id="linkedin" value="{{ old('linkedin', $userToEdit?->linkedin) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
                 {{-- --- Profile Photo --- --}}
@@ -134,27 +134,27 @@
                 Academic & Extra
             </h2>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="nis" label="NIS (Student ID)" :show-error="false">
+                <x-forms.field name="nis" label="NIS (Student ID)" :show-error="false">
                     <input type="text" name="nis" id="nis" value="{{ old('nis', $userToEdit?->nis) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="year_of_enrollment" label="Year of Enrollment" :show-error="false">
+                <x-forms.field name="year_of_enrollment" label="Year of Enrollment" :show-error="false">
                     <input type="text" name="year_of_enrollment" id="year_of_enrollment" value="{{ old('year_of_enrollment', $userToEdit?->year_of_enrollment) }}"
-                           class="form-input-custom" placeholder="e.g. 2023">
+                           class="field-input" placeholder="e.g. 2023">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="graduate_year" label="Graduate Year" :show-error="false">
+                <x-forms.field name="graduate_year" label="Graduate Year" :show-error="false">
                     <input type="text" name="graduate_year" id="graduate_year" value="{{ old('graduate_year', $userToEdit?->graduate_year) }}"
-                           class="form-input-custom" placeholder="e.g. 2027">
+                           class="field-input" placeholder="e.g. 2027">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="major" :label="$userToEdit ? 'Peminatan' : 'Major'" :show-error="false">
+                <x-forms.field name="major" :label="$userToEdit ? 'Peminatan' : 'Major'" :show-error="false">
                     <input type="text" name="major" id="major" value="{{ old('major', $userToEdit?->major) }}"
-                           class="form-input-custom">
+                           class="field-input">
                 </x-forms.field>
 
-                <x-forms.field look="user" name="current_status" label="Current Career Status" :show-error="false">
+                <x-forms.field name="current_status" label="Current Career Status" :show-error="false">
                     <select name="current_status" id="current_status" data-tom-select="Select Career Status" class="block w-full">
                         <option value="">Select Status</option>
                         <option value="Entrepreneur" {{ old('current_status', $userToEdit?->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
@@ -166,7 +166,7 @@
                 @if ($userToEdit)
                     <div class="relative md:col-span-2" x-data="activityFiles(@js($userToEdit->activity_files))">
                         <div class="mb-3 flex items-center justify-between">
-                            <label class="form-label-custom mb-0">Activities Documentation Files</label>
+                            <label class="field-label mb-0">Activities Documentation Files</label>
                             <x-files.add-files name="activities_docs" />
                         </div>
 
@@ -204,14 +204,14 @@
             </x-forms.file-drop>
             @endif
 
-            <x-forms.field look="user" name="testimony" label="Student Testimony" :show-error="false" class="md:col-span-2">
+            <x-forms.field name="testimony" label="Student Testimony" :show-error="false" class="md:col-span-2">
                 <textarea name="testimony" id="testimony" rows="3"
                           class="form-textarea-custom">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
             </x-forms.field>
 
-            <x-forms.field look="user" name="activities_caption" label="Activities Caption" :show-error="false" class="md:col-span-2">
+            <x-forms.field name="activities_caption" label="Activities Caption" :show-error="false" class="md:col-span-2">
                 <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit?->activities_caption) }}"
-                       class="form-input-custom" placeholder="e.g. Brief caption describing student activities">
+                       class="field-input" placeholder="e.g. Brief caption describing student activities">
             </x-forms.field>
         </div>
         </div>
@@ -221,7 +221,7 @@
                 Business Transfers & Assignments
             </h2>
             <div class="grid grid-cols-1 gap-6">
-                <x-forms.field look="user" name="owned_businesses" label="Owned Businesses to assign directly:" :show-error="false">
+                <x-forms.field name="owned_businesses" label="Owned Businesses to assign directly:" :show-error="false">
                     <select name="owned_businesses[]" id="owned_businesses" data-tom-select="Select Businesses" multiple class="block w-full">
                         @foreach ($availableBusinesses as $b)
                             <option value="{{ $b->id }}" {{ in_array($b->id, old('owned_businesses', $ownedBusinessIds)) ? 'selected' : '' }}>

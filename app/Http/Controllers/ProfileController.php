@@ -30,7 +30,7 @@ class ProfileController extends Controller
     {
         $user = $this->getUser($request);
         if ($user->isAdmin()) {
-            return Redirect::route('users.index');
+            return view('profile.account', ['user' => $user]);
         }
 
         return view('profile.edit', ['user' => $user]);

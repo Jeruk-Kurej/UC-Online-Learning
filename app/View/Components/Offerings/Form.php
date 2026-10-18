@@ -12,34 +12,14 @@ use Illuminate\View\View;
  */
 class Form extends Component
 {
-    // --- Look and copy per type (the two pages were styled separately) ---
+    // --- Example texts per type ---
 
-    private const TYPES = [
-        'product' => [
-            'header' => 'mb-8 flex items-center gap-4',
-            'back' => 'btn btn-secondary mb-4 sm:mb-0',
-            'title' => 'text-3xl font-bold text-soft-gray-900 ',
-            'subtitle' => 'text-sm text-soft-gray-600 mt-1',
-            'preview' => 'absolute inset-0 w-full h-full flex items-center justify-center',
-            'actions' => 'flex items-center justify-between pt-6 border-t-2 border-soft-gray-100',
-            'namePlaceholder' => 'e.g., Nasi Goreng Spesial',
-            'descriptionPlaceholder' => 'Describe your product...',
-            'pricePlaceholder' => '15000',
-        ],
-        'service' => [
-            'header' => 'mb-6 flex flex-col sm:flex-row sm:items-center gap-4',
-            'back' => 'btn btn-secondary',
-            'title' => 'text-2xl font-bold text-gray-900',
-            'subtitle' => 'text-sm text-gray-600',
-            'preview' => 'w-full h-full relative overflow-hidden flex items-center justify-center',
-            'actions' => 'flex items-center justify-between pt-6 border-t border-gray-200',
-            'namePlaceholder' => 'e.g., Web Development, Haircut, Delivery Service',
-            'descriptionPlaceholder' => 'Describe your service in detail...',
-            'pricePlaceholder' => '50000',
-        ],
+    private const EXAMPLES = [
+        'product' => ['name' => 'For example Nasi Goreng Spesial', 'description' => 'Describe your product.', 'price' => '15000'],
+        'service' => ['name' => 'For example Web development or haircut', 'description' => 'Describe your service in detail.', 'price' => '50000'],
     ];
 
-    public array $look;
+    public array $example;
 
     public string $noun;
 
@@ -53,7 +33,7 @@ class Form extends Component
         public ?Product $offering = null,
         public bool $photoRequired = false,
     ) {
-        $this->look = self::TYPES[$type];
+        $this->example = self::EXAMPLES[$type];
         $this->noun = ucfirst($type);
         $this->isEdit = $offering !== null;
         $this->selectedPriceType = $this->isEdit ? $this->editPriceType($offering) : old('price_type');

@@ -8,11 +8,11 @@
         <form method="POST" action="{{ route('login') }}" class="card mt-6 space-y-5">
             @csrf
 
-            <x-forms.field look="login" name="email" label="Email">
+            <x-forms.field name="email" label="Email">
                 <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus autocomplete="username" class="field-input @error('email') !border-red-700 @enderror">
             </x-forms.field>
 
-            <x-forms.field look="login" name="password" label="Password">
+            <x-forms.field name="password" label="Password">
                 <input id="password" type="password" name="password" required autocomplete="current-password" class="field-input @error('password') !border-red-700 @enderror">
             </x-forms.field>
 

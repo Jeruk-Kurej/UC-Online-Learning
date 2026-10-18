@@ -7,11 +7,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/css/pages/offering-form.css',
-                'resources/css/pages/work-profile-create.css',
-                'resources/css/pages/work-profile-edit.css',
                 'resources/css/pages/user-form.css',
-                'resources/css/pages/profile-edit.css',
                 'resources/css/pages/my-testimony.css',
                 'resources/css/vendor/tom-select.css',
             ],

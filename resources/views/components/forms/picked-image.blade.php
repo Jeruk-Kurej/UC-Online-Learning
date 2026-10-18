@@ -1,16 +1,12 @@
-{{-- --- Preview of the image picked in x-forms.file-drop (its "selection" slot), with a Clear Selection button --- --}}
-@props(['label', 'frameClass', 'imageClass'])
+{{-- --- Preview of the image picked in x-forms.file-drop (its "selection" slot), with a button to clear it --- --}}
+@props(['label'])
 
-<div x-show="selected" class="mb-3 flex items-center gap-4">
-    <div class="{{ $frameClass }}">
-        <img :src="fileUrl" class="{{ $imageClass }}">
-    </div>
-    <div class="flex flex-col gap-1.5">
-        <span class="text-xs font-bold text-gray-600" x-text="fileName">{{ $label }}</span>
-        <button type="button" @click="clear()"
-                class="inline-flex items-center gap-1.5 text-xs font-bold text-red-500 transition-all hover:text-red-700">
-            <i class="bi bi-x-circle text-sm"></i>
-            <span>Clear Selection</span>
-        </button>
+<div x-show="selected" class="flex items-center gap-4">
+    <span class="photo-frame h-20 w-20">
+        <img :src="fileUrl" alt="" class="absolute inset-0 h-full w-full bg-white object-contain">
+    </span>
+    <div class="space-y-2">
+        <p class="text-base text-gray-800" x-text="fileName">{{ $label }}</p>
+        <button type="button" @click="clear()" class="btn btn-secondary btn-sm">Remove</button>
     </div>
 </div>

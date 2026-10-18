@@ -1,62 +1,35 @@
 <x-app-layout>
+    @section('title', 'Add a work profile')
+
     @push('styles')
-        @vite('resources/css/pages/work-profile-create.css')
+        @vite('resources/css/vendor/tom-select.css')
     @endpush
 
-    <div class="mx-auto max-w-4xl px-4 py-8">
-        {{-- --- Header Section --- --}}
-        <div class="reveal-on-scroll mb-8 flex items-center gap-4">
-            <a href="{{ route('businesses.my') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i>
-                Back
-            </a>
-            <div class="flex-1">
-                <h1 class="text-3xl font-bold text-gray-900">Register Workplace</h1>
-                <p class="mt-1 text-sm text-gray-600">Showcase your corporate professional career within the UCO directory.</p>
-            </div>
-        </div>
+    <div class="mx-auto max-w-3xl space-y-6">
+        <x-ui.page-header title="Add a work profile" subtitle="Show where you work and what you do there. You do not need to own the company." />
 
-        {{-- --- Notice Banner --- --}}
-        <div class="reveal-on-scroll mb-8 rounded-xl border border-indigo-100 bg-indigo-50 p-4 text-left">
-            <p class="mb-1 flex items-center gap-1.5 text-xs font-bold text-indigo-800">
-                <i class="bi bi-info-circle-fill"></i>
-                Professional Career Listing
-            </p>
-            <p class="text-xs font-medium leading-relaxed text-indigo-700">
-                This form registers the company where you are employed. You do not need to own this business; this is used to present and catalog your accomplishments as a professional intrapreneur.
-            </p>
-        </div>
+        <form method="POST" action="{{ route('intrapreneurs.store') }}" enctype="multipart/form-data" class="space-y-6">
+            @csrf
 
-        <div class="reveal-on-scroll rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-            <form method="POST" action="{{ route('intrapreneurs.store') }}" enctype="multipart/form-data" class="space-y-6">
-                @csrf
+            <x-forms.section title="Your job">
+                @include('work-profiles.partials.fields')
 
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    @include('work-profiles.partials.fields')
+                <x-forms.field name="logo_url" label="Company logo (optional)" :show-error="false">
+                    <input type="file" name="logo_url" id="logo_url" accept="image/*" class="field-input @error('logo_url') !border-red-700 @enderror !h-auto py-2">
+                    @error('logo_url')
+                        <p class="field-error">{{ $message }}</p>
+                    @enderror
+                </x-forms.field>
 
-                    <x-forms.field look="work-profile" name="logo_url" label="Company Logo">
-                        <input type="file" name="logo_url" id="logo_url" accept="image/*"
-                               class="form-input-custom @error('logo_url') border-red-500 @enderror py-1.5">
-                    </x-forms.field>
+                <x-forms.field name="job_description" label="What you do" required class="md:col-span-2">
+                    <textarea name="job_description" id="job_description" rows="5" required class="field-input @error('job_description') !border-red-700 @enderror" placeholder="Describe your role, your daily work and what you have contributed.">{{ old('job_description') }}</textarea>
+                </x-forms.field>
+            </x-forms.section>
 
-                    <x-forms.field look="work-profile" name="job_description" label="Job Description & Responsibilities" required class="md:col-span-2">
-                        <textarea name="job_description" id="job_description" required
-                                  class="form-textarea-custom @error('job_description') border-red-500 @enderror"
-                                  placeholder="Describe your job roles, day-to-day operations, and career contributions...">{{ old('job_description') }}</textarea>
-                    </x-forms.field>
-                </div>
-
-                {{-- --- Action Buttons --- --}}
-                <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
-                    <a href="{{ route('businesses.my') }}" class="btn btn-secondary">
-                        Cancel
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle-fill"></i>
-                        Register Workplace
-                    </button>
-                </div>
-            </form>
-        </div>
+            <x-forms.actions>
+                <a href="{{ route('businesses.my') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Add work profile</button>
+            </x-forms.actions>
+        </form>
     </div>
 </x-app-layout>

@@ -1,55 +1,35 @@
 <x-app-layout>
+    @section('title', 'Edit work profile')
+
     @push('styles')
-        @vite('resources/css/pages/work-profile-edit.css')
+        @vite('resources/css/vendor/tom-select.css')
     @endpush
 
-    {{-- --- Header Section --- --}}
-    <div class="reveal-on-scroll mb-6 flex items-center gap-4">
-        <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i>
-            Back
-        </a>
-        <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-900">Edit Work Profile</h1>
-            <p class="mt-1 text-sm text-gray-600">Update your professional employment listings in the UCO directory.</p>
-        </div>
-    </div>
+    <div class="mx-auto max-w-3xl space-y-6">
+        <x-ui.page-header title="Edit work profile" :subtitle="$company->name" />
 
-    <div class="reveal-on-scroll rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
         <form method="POST" action="{{ route('intrapreneurs.update', $company) }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
 
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <x-forms.section title="Your job">
                 @include('work-profiles.partials.fields')
 
-                {{-- --- Logo Upload with Live Preview & Remove Option --- --}}
-                <x-forms.removable-image class="pb-5 md:col-span-2" label="Company Logo" name="logo_url" delete-name="delete_logo"
-                                         :url="$company->logo_url" :has-image="$company->has_logo" :initial="$company->initial" noun="Logo"
-                                         hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[120px] h-[120px] rounded-xl bg-[#f8fafc] border-[1.5px] border-[#e2e8f0] group shadow-sm flex items-center justify-center p-2"
-                                         actions-class="h-[120px]" image-class="" initials-class="uco-initials-bg">
+                <x-forms.removable-image class="md:col-span-2" label="Company logo" name="logo_url" delete-name="delete_logo" :url="$company->logo_url" :has-image="$company->has_logo" :initial="$company->initial" noun="Logo" hint="JPG, PNG or WEBP, up to 5 MB.">
                     @error('logo_url')
-                        <p class="mt-1 text-xs font-medium text-red-600">{{ $message }}</p>
+                        <p class="field-error">{{ $message }}</p>
                     @enderror
                 </x-forms.removable-image>
 
-                <x-forms.field look="work-profile" name="job_description" label="Job Description & Responsibilities" required class="md:col-span-2">
-                    <textarea name="job_description" id="job_description" rows="4" required
-                              class="form-input-custom @error('job_description') border-red-500 @enderror"
-                              placeholder="Describe your job roles, day-to-day operations, and career contributions...">{{ old('job_description', $company->job_description) }}</textarea>
+                <x-forms.field name="job_description" label="What you do" required class="md:col-span-2">
+                    <textarea name="job_description" id="job_description" rows="5" required class="field-input @error('job_description') !border-red-700 @enderror" placeholder="Describe your role, your daily work and what you have contributed.">{{ old('job_description', $company->job_description) }}</textarea>
                 </x-forms.field>
-            </div>
+            </x-forms.section>
 
-            {{-- --- Action Buttons --- --}}
-            <div class="mt-8 flex items-center justify-between border-t border-slate-100 pt-6">
-                <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">
-                    Cancel
-                </a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle-fill"></i>
-                    Save Changes
-                </button>
-            </div>
+            <x-forms.actions>
+                <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </x-forms.actions>
         </form>
     </div>
 </x-app-layout>
