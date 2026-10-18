@@ -2,7 +2,7 @@
 // Spread into a page's Alpine data: { ...ajaxList({ container: 'users-list-container' }), ...page specifics }.
 // The filters form is x-ref="filterForm"; the server answers X-Requested-With requests with the list partial.
 
-export default function ajaxList({ container, loadingKey = 'isSubmitting', revealItems = true, restoreOnBack = true }) {
+export default function ajaxList({ container, loadingKey = 'isSubmitting', restoreOnBack = true }) {
     return {
         [loadingKey]: false,
         debounceTimer: null,
@@ -42,9 +42,6 @@ export default function ajaxList({ container, loadingKey = 'isSubmitting', revea
                     const list = document.getElementById(container);
                     if (list) {
                         list.innerHTML = html;
-                        if (revealItems) {
-                            list.querySelectorAll('.reveal-on-scroll').forEach((el) => el.classList.add('is-visible'));
-                        }
                     }
                     if (pushState) window.history.pushState({}, '', url);
                     this[loadingKey] = false;

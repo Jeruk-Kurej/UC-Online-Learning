@@ -7,7 +7,7 @@ import showFeatured from '../lib/featured-button';
 import { readJsonOrThrow, sendJson } from '../lib/json-request';
 
 function testimonyAdminList() {
-    return ajaxList({ container: 'testimonies-list-container', revealItems: false });
+    return ajaxList({ container: 'testimonies-list-container' });
 }
 
 function toggleFeatured(url, buttonElement) {

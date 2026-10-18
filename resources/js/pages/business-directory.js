@@ -36,7 +36,7 @@ function businessDirectory(state) {
             this.selectedProvince = '';
             this.selectedCity = '';
             const form = this.$refs.filterForm;
-            form.querySelectorAll('input[type=text], select').forEach((el) => (el.value = ''));
+            form.querySelectorAll('input[type=search], input[type=text], select').forEach((el) => (el.value = ''));
             this.updateList();
         },
     };

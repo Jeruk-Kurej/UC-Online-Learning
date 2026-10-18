@@ -3,14 +3,6 @@
 @import 'tailwindcss/utilities';
 
 @import './base/document.css';
-@import './components/reveal.css';
-@import './components/hero.css';
-@import './components/surfaces.css';
 @import './components/forms.css';
 @import './components/ui.css';
 @import './components/buttons.css';
-@import './components/scrollbar.css';
-@import './components/pagination.css';
-@import './effects/word-rotate.css';
-@import './effects/decorations.css';
-@import './components/detail-layout.css';

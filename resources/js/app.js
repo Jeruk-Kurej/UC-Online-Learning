@@ -7,7 +7,6 @@ import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 import registerImageFallback from './lib/image-fallback';
 import registerPriceArrowKeys from './lib/price-arrow-keys';
-import revealOnScroll from './lib/reveal-on-scroll';
 import showToast from './lib/show-toast';
 import achievementList from './components/achievement-list';
 import activityFiles from './components/activity-files';
@@ -80,7 +79,6 @@ if (document.readyState === 'loading') {
 window.showToast = showToast;
 
 document.addEventListener('DOMContentLoaded', () => {
-    revealOnScroll();
     registerPriceArrowKeys();
 });
 
