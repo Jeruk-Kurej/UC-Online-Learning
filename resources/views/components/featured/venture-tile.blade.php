@@ -18,7 +18,10 @@
         <span class="mt-1 line-clamp-2 font-display text-xl font-bold leading-snug text-ink group-hover:underline">{{ $business->name }}</span>
         <span class="mt-2 line-clamp-3 text-base text-gray-700">{{ $business->unique_value_proposition ?? $business->description }}</span>
         @if ($business->public_owner)
-            <span class="mt-auto truncate pt-4 text-sm font-semibold text-brand-700">by {{ $business->public_owner->name }} &raquo;</span>
+            <span class="mt-auto flex items-center gap-2 pt-4">
+                <x-ui.thumb :src="$business->public_owner->has_profile_photo ? $business->public_owner->profile_photo_url : null" :name="$business->public_owner->name" size="h-9 w-9" round class="text-sm" />
+                <span class="min-w-0 truncate text-sm font-semibold text-brand-700">by {{ $business->public_owner->name }} &raquo;</span>
+            </span>
         @endif
     </span>
 </a>
