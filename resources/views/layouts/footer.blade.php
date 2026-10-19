@@ -8,7 +8,7 @@
             {{-- --- Who we are --- --}}
             <div>
                 <div class="flex items-center gap-3">
-                    <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-12 w-12 object-contain">
+                    <img src="{{ asset('images/logo-uco-128.webp') }}" alt="" class="h-12 w-12 object-contain">
                     <div>
                         <p class="font-display text-xl font-semibold">UC Online Learning</p>
                         <p class="text-sm text-gray-300">Student and alumni community</p>

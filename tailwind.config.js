@@ -20,8 +20,8 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
-                display: ['Poppins', ...defaultTheme.fontFamily.sans],
+                sans: ['Poppins', 'Poppins Fallback', ...defaultTheme.fontFamily.sans],
+                display: ['Poppins', 'Poppins Fallback', ...defaultTheme.fontFamily.sans],
             },
 
             // --- Type scale: nothing below 13px, body 16px (Poppins runs wide, so line heights stay generous) ---

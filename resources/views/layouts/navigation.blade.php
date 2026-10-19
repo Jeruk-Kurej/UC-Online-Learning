@@ -7,7 +7,7 @@
         <div class="flex h-16 items-center justify-between">
             {{-- --- Logo and name --- --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-10 w-10 object-contain">
+                <img src="{{ asset('images/logo-uco-128.webp') }}" alt="" class="h-10 w-10 object-contain">
                 <span class="font-display text-xl font-semibold text-brand-900">UC Online Learning</span>
             </a>
 

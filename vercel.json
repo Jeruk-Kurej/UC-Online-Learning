@@ -9,8 +9,8 @@
   }
 },
     "routes": [
-        { "src": "/build/(.*)", "dest": "/public/build/$1" },
-        { "src": "/images/(.*)", "dest": "/public/images/$1" },
+        { "src": "/build/(.*)", "headers": { "cache-control": "public, max-age=31536000, immutable" }, "dest": "/public/build/$1" },
+        { "src": "/images/(.*)", "headers": { "cache-control": "public, max-age=86400, stale-while-revalidate=604800" }, "dest": "/public/images/$1" },
         { "src": "/favicon.ico", "dest": "/public/favicon.ico" },
         { "src": "/robots.txt", "dest": "/public/robots.txt" },
         { "src": "/(.*)", "dest": "/api/index.php" }
