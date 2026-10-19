@@ -18,6 +18,8 @@ class CollabController extends Controller
             return back()->with('error', 'You cannot collab with yourself.');
         }
 
+        abort_unless($sender->canCollabWith($user), 403);
+
         $existing = Collab::between($sender->id, $user->id)->first();
 
         if ($existing) {

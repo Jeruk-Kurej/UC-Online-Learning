@@ -140,7 +140,7 @@ function smokeExpected(): array
         'user profile' => [200, 200, 200],
         'unknown profile' => [404, 404, 404],
         'profile edit' => [302, 200, 200],
-        'inbox' => [302, 200, 200],
+        'inbox' => [302, 200, 403],
         'inbox message' => [302, 200, 403],
         'my business' => [302, 200, 200],
         'my testimony' => [302, 200, 200],

@@ -18,12 +18,14 @@
                 <x-nav.link look="bar" :href="route('about')" :active="request()->routeIs('about')">About</x-nav.link>
 
                 @auth
-                    <a href="{{ route('inbox.index') }}" class="relative rounded-full p-2 text-gray-700 hover:bg-gray-100 hover:text-brand-900" aria-label="Inbox{{ $unreadInboxCount > 0 ? ', ' . $unreadInboxCount . ' unread' : '' }}">
-                        <i class="bi bi-bell text-xl" aria-hidden="true"></i>
-                        @if ($unreadInboxCount > 0)
-                            <span class="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-700 px-1 text-xs font-semibold text-white">{{ $unreadInboxCount }}</span>
-                        @endif
-                    </a>
+                    @unless ($authUser->isAdmin())
+                        <a href="{{ route('inbox.index') }}" class="relative rounded-full p-2 text-gray-700 hover:bg-gray-100 hover:text-brand-900" aria-label="Inbox{{ $unreadInboxCount > 0 ? ', ' . $unreadInboxCount . ' unread' : '' }}">
+                            <i class="bi bi-bell text-xl" aria-hidden="true"></i>
+                            @if ($unreadInboxCount > 0)
+                                <span class="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-700 px-1 text-xs font-semibold text-white">{{ $unreadInboxCount }}</span>
+                            @endif
+                        </a>
+                    @endunless
 
                     {{-- --- Account menu --- --}}
                     <div class="relative" x-data="{ open: false }" @click.away="open = false" @keydown.escape.window="open = false">

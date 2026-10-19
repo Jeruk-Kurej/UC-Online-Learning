@@ -333,6 +333,14 @@ class User extends Authenticatable
         return $this->hasMany(Collab::class, 'sender_id');
     }
 
+    /**
+     * Students and alumni connect with each other; admin accounts are staff and neither send nor receive collab requests.
+     */
+    public function canCollabWith(User $other): bool
+    {
+        return ! $this->isAdmin() && ! $other->isAdmin() && $this->id !== $other->id;
+    }
+
     public function collabStatusWith(?User $user)
     {
         if (! $user) {
