@@ -13,21 +13,21 @@ class Message extends Component
     // --- Look per type ---
 
     private const STYLES = [
-        'success' => ['border' => 'border-slate-100/90', 'badge' => 'bg-emerald-50 text-emerald-600 ring-4 ring-emerald-500/10', 'icon' => 'bi-check-circle-fill'],
-        'error' => ['border' => 'border-red-100/90', 'badge' => 'bg-red-50 text-red-600 ring-4 ring-red-500/10', 'icon' => 'bi-exclamation-triangle-fill'],
-        'status' => ['border' => 'border-slate-100/90', 'badge' => 'bg-blue-50 text-blue-600 ring-4 ring-blue-500/10', 'icon' => 'bi-info-circle-fill'],
-        'warning' => ['border' => 'border-slate-100/90', 'badge' => 'bg-yellow-50 text-yellow-600 ring-4 ring-yellow-500/10', 'icon' => 'bi-exclamation-circle-fill'],
+        'success' => ['class' => 'toast-success', 'icon' => 'bi-check-circle-fill', 'iconColor' => 'text-green-700'],
+        'error' => ['class' => 'toast-error', 'icon' => 'bi-exclamation-triangle-fill', 'iconColor' => 'text-red-700'],
+        'status' => ['class' => 'toast-info', 'icon' => 'bi-info-circle-fill', 'iconColor' => 'text-brand-600'],
+        'warning' => ['class' => 'toast-warning', 'icon' => 'bi-exclamation-circle-fill', 'iconColor' => 'text-amber-600'],
     ];
 
-    public string $border;
-
-    public string $badge;
+    public string $class;
 
     public string $icon;
 
+    public string $iconColor;
+
     public function __construct(public string $type, public string $message)
     {
-        ['border' => $this->border, 'badge' => $this->badge, 'icon' => $this->icon] = self::STYLES[$type];
+        ['class' => $this->class, 'icon' => $this->icon, 'iconColor' => $this->iconColor] = self::STYLES[$type];
     }
 
     public function render(): View

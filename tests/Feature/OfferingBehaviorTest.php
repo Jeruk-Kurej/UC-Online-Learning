@@ -48,8 +48,8 @@ test('create form redirects with an error when the business does not offer that 
 test('create forms open when the business offers that type', function () {
     ['owner' => $owner, 'business' => $business] = offeringWorld('both');
 
-    $this->actingAs($owner)->get(route('businesses.products.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'product')->assertSee('Add New Product');
-    $this->actingAs($owner)->get(route('businesses.services.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'service')->assertSee('Add New Service');
+    $this->actingAs($owner)->get(route('businesses.products.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'product')->assertSee('Add a product');
+    $this->actingAs($owner)->get(route('businesses.services.create', $business))->assertOk()->assertViewIs('offerings.form')->assertViewHas('type', 'service')->assertSee('Add a service');
 });
 
 // --- Edit views ---

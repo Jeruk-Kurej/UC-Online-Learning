@@ -7,7 +7,7 @@
     @elseif ($fallback)
         {{ $fallback }}
     @else
-        <div class="flex h-full w-full items-center justify-center text-slate-400">
+        <div class="flex h-full w-full items-center justify-center text-gray-600">
             <i class="bi bi-image text-xl"></i>
         </div>
     @endif

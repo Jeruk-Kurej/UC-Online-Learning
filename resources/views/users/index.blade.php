@@ -1,137 +1,106 @@
 <x-app-layout>
-    <div data-user-admin data-stats-url="{{ route('users.stats', [], false) }}" class="users-wrapper mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8"
-         @start-import.window="showImportModal = false"
-         @close-import-modal.window="showImportModal = false"
-         x-data="userAdminList"
-         @ajax-pagination.window="updateList($event.detail.url)">
+    @section('title', 'Manage users')
 
-        {{-- --- Page Header --- --}}
-        <x-ui.page-header badge="Admin Portal" title="User Management" subtitle="Manage student and alumni profiles synced from the central database.">
+    <div data-user-admin data-stats-url="{{ route('users.stats', [], false) }}" @start-import.window="showImportModal = false" @close-import-modal.window="showImportModal = false" x-data="userAdminList" @ajax-pagination.window="updateList($event.detail.url)">
+        <x-ui.page-header title="Manage users" subtitle="Students and alumni with a profile on the site.">
             <x-slot:actions>
-                <span class="inline-flex flex-grow select-none items-center justify-center gap-2.5 rounded-md border border-uco-yellow-200 bg-uco-yellow-50 px-3 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.02)] sm:flex-initial">
-                    <i class="bi bi-star-fill flex-shrink-0 text-sm text-uco-yellow-500"></i>
-                    <span class="flex flex-col gap-0.5">
-                        <span class="text-xs font-semibold leading-none text-uco-yellow-700">
-                            <span id="stat-featured-total">{{ $featuredUserCount }}</span> Featured
-                        </span>
-                        <span class="mt-0.5 text-[10px] font-bold leading-none text-uco-yellow-600/90">
-                            <span class="text-green-600" id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> Intra
-                            <span class="mx-0.5 text-uco-yellow-400">·</span>
-                            <span class="text-blue-600" id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> Entre
-                        </span>
-                    </span>
-                </span>
                 @if (auth()->user()?->isAdmin())
-                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
-                        <i class="bi bi-cloud-upload mr-2"></i>
-                        Import CSV
+                    <button id="btn-open-import-modal" type="button" @click="showImportModal = true" class="btn btn-secondary">
+                        <i class="bi bi-cloud-upload" aria-hidden="true"></i>
+                        Import from a file
                     </button>
-                @endif
-
-                @if (auth()->user()?->isAdmin())
-                    <a href="{{ route('users.create') }}" class="btn-uco btn-uco-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
-                        <i class="bi bi-person-plus-fill mr-2"></i>
-                        Create User
+                    <a href="{{ route('users.create') }}" class="btn btn-primary">
+                        <i class="bi bi-person-plus" aria-hidden="true"></i>
+                        Add a user
                     </a>
                 @endif
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- --- Statistics --- --}}
-        <div class="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
-             @ajax-update-stats.window="refreshStats()">
-            <x-admin.stat-card class="delay-100" value-id="stat-total">
-                <x-slot:label>Total Users</x-slot:label>
+        {{-- --- Numbers --- --}}
+        <div class="mb-3 grid grid-cols-2 gap-4 lg:grid-cols-4" @ajax-update-stats.window="refreshStats()">
+            <x-admin.stat-card value-id="stat-total">
+                <x-slot:label>All users</x-slot:label>
                 {{ $totalUsers }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-150" tone="blue" value-id="stat-entrepreneurs">
+            <x-admin.stat-card value-id="stat-entrepreneurs">
                 <x-slot:label>Entrepreneurs</x-slot:label>
                 {{ $totalEntrepreneurs }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-200" tone="green" value-id="stat-intrapreneurs">
+            <x-admin.stat-card value-id="stat-intrapreneurs">
                 <x-slot:label>Intrapreneurs</x-slot:label>
                 {{ $totalIntrapreneurs }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-[250ms]" tone="purple" value-id="stat-alumni">
+            <x-admin.stat-card value-id="stat-alumni">
                 <x-slot:label>Alumni</x-slot:label>
                 {{ $totalAlumni }}
             </x-admin.stat-card>
         </div>
+        <p class="mb-8 text-base text-gray-700">
+            Featured on the home page: <span id="stat-featured-total" class="font-semibold">{{ $featuredUserCount }}</span>
+            (<span id="stat-featured-entre">{{ $featuredEntrepreneurCount }}</span> entrepreneurs, <span id="stat-featured-intra">{{ $featuredIntrapreneurCount }}</span> intrapreneurs)
+        </p>
 
-        {{-- --- Filters & Search --- --}}
-        <div class="reveal-on-scroll mb-8 rounded-lg border border-gray-200 bg-white p-5 shadow-sm delay-300">
-            <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="space-y-4"
-                  @submit.prevent="updateList()">
+        {{-- --- Search and filters --- --}}
+        <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="card mb-6 space-y-3" @submit.prevent="updateList()">
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Name, email or student number" />
+                <x-ui.filter-reset />
+            </div>
 
-                {{-- --- Search & Reset Row --- --}}
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <x-ui.search-field class="w-full flex-1" value="{{ request('search') }}" placeholder="Search name, email, username, or NIS..." />
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <x-ui.filter-select id="sort_name" name="sort_name" aria-label="Sort by name" @change="updateList()">
+                    <option value="">Name: any order</option>
+                    <option value="asc" @selected(request('sort_name') === 'asc')>Name: A to Z</option>
+                    <option value="desc" @selected(request('sort_name') === 'desc')>Name: Z to A</option>
+                </x-ui.filter-select>
 
-                    <div class="flex w-full items-center gap-2 sm:w-auto">
-                        <x-ui.filter-reset class="flex-shrink-0" />
-                    </div>
-                </div>
+                <x-ui.filter-select id="sort_year" name="sort_year" aria-label="Sort by year joined" @change="updateList()">
+                    <option value="">Year joined: any order</option>
+                    <option value="desc" @selected(request('sort_year') === 'desc')>Year joined: newest first</option>
+                    <option value="asc" @selected(request('sort_year') === 'asc')>Year joined: oldest first</option>
+                </x-ui.filter-select>
 
-                {{-- --- Filters Row --- --}}
-                <div class="flex flex-wrap items-center gap-3">
-                    <x-ui.filter-select id="sort_name" name="sort_name" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Sort Name: Default</option>
-                        <option value="asc" @selected(request('sort_name') === 'asc')>A → Z</option>
-                        <option value="desc" @selected(request('sort_name') === 'desc')>Z → A</option>
-                    </x-ui.filter-select>
+                <x-ui.filter-select id="student_status" name="student_status" aria-label="Student status" @change="updateList()">
+                    <option value="">All student statuses</option>
+                    <option value="active" @selected(request('student_status') === 'active')>Active</option>
+                    <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
+                    <option value="cuti" @selected(request('student_status') === 'cuti')>On leave</option>
+                    <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
+                </x-ui.filter-select>
 
-                    <x-ui.filter-select id="sort_year" name="sort_year" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Student Year: Default</option>
-                        <option value="desc" @selected(request('sort_year') === 'desc')>Latest → Earliest</option>
-                        <option value="asc" @selected(request('sort_year') === 'asc')>Earliest → Latest</option>
-                    </x-ui.filter-select>
+                <x-ui.filter-select id="current_status" name="current_status" aria-label="Entrepreneur or intrapreneur" @change="updateList()">
+                    <option value="">Entrepreneurs and intrapreneurs</option>
+                    <option value="Entrepreneur" @selected(request('current_status') === 'Entrepreneur')>Entrepreneurs</option>
+                    <option value="Intrapreneur" @selected(request('current_status') === 'Intrapreneur')>Intrapreneurs</option>
+                </x-ui.filter-select>
 
-                    <x-ui.filter-select id="student_status" name="student_status" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Status: All</option>
-                        <option value="active" @selected(request('student_status') === 'active')>Aktif</option>
-                        <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
-                        <option value="cuti" @selected(request('student_status') === 'cuti')>Cuti</option>
-                        <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
-                    </x-ui.filter-select>
+                <x-ui.filter-select id="major" name="major" aria-label="Major" @change="updateList()">
+                    <option value="">All majors</option>
+                    @foreach ($availableMajors as $majorOption)
+                        <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
+                    @endforeach
+                </x-ui.filter-select>
 
-                    <x-ui.filter-select id="current_status" name="current_status" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Category: All</option>
-                        <option value="Entrepreneur" @selected(request('current_status') === 'Entrepreneur')>Entrepreneur</option>
-                        <option value="Intrapreneur" @selected(request('current_status') === 'Intrapreneur')>Intrapreneur</option>
-                    </x-ui.filter-select>
-
-                    <x-ui.filter-select id="major" name="major" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Major: All</option>
-                        @foreach ($availableMajors as $majorOption)
-                            <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
-                        @endforeach
-                    </x-ui.filter-select>
-
-                    <x-ui.filter-select id="year_of_enrollment" name="year_of_enrollment" @change="updateList()" class="min-w-[130px] flex-1 px-3 text-sm">
-                        <option value="">Year: All</option>
-                        @foreach ($availableEnrollmentYears as $yearOption)
-                            <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
-                        @endforeach
-                    </x-ui.filter-select>
-                </div>
-            </form>
-        </div>
+                <x-ui.filter-select id="year_of_enrollment" name="year_of_enrollment" aria-label="Year joined" @change="updateList()">
+                    <option value="">All years joined</option>
+                    @foreach ($availableEnrollmentYears as $yearOption)
+                        <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
+                    @endforeach
+                </x-ui.filter-select>
+            </div>
+        </form>
 
         @if ($errors->has('featured'))
-            <div class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
-                {{ $errors->first('featured') }}
-            </div>
+            <p class="mb-4 rounded-md border border-red-300 bg-red-50 px-4 py-3 text-base text-red-800">{{ $errors->first('featured') }}</p>
         @endif
 
-        {{-- --- Users List Container --- --}}
-        <div id="users-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
+        <div id="users-list-container" :class="{ 'pointer-events-none opacity-50': isSubmitting }" aria-live="polite">
             @include('users.partials.list')
         </div>
 
-        {{-- --- Import Modal --- --}}
-        <x-admin.import-modal title="Import Data" :action="route('users.import')" input-id="csv_file" name-id="file_name" />
+        <x-admin.import-modal title="Import users" :action="route('users.import')" input-id="csv_file" name-id="file_name" />
 
         @include('partials.import-progress')
     </div>
-
 </x-app-layout>

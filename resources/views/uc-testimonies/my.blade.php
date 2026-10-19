@@ -1,77 +1,36 @@
 <x-app-layout>
-    @section('title', 'My Testimony')
-    @push('styles')
-        @vite('resources/css/pages/my-testimony.css')
-    @endpush
+    @section('title', 'My testimony')
 
-    <div class="settings-page max-w-[1100px]">
+    <div class="mx-auto max-w-3xl space-y-6" x-data="{ testimony: @js($user->testimony ?? '') }">
+        <x-ui.page-header title="My testimony" subtitle="Tell others what UC Online Learning has meant for you. It shows on your profile." />
 
-        {{-- --- Header --- --}}
-        <div class="mb-[30px]">
-            <h1 class="settings-title">My Testimony</h1>
-            <p class="settings-subtitle">Share your experience at UCO and help others grow.</p>
-        </div>
+        <form action="{{ route('uc-testimonies.store') }}" method="POST" class="space-y-6">
+            @csrf
 
-        <div class="testimony-layout" x-data="{ testimony: @js($user->testimony ?? '') }">
+            <x-forms.section title="Your testimony" :grid="false">
+                <x-forms.field name="content" label="What was your experience?" required>
+                    <textarea name="content" id="content" rows="6" maxlength="255" x-model="testimony" required class="field-input @error('content') !border-red-700 @enderror"></textarea>
+                    <p class="field-hint" aria-live="polite"><span x-text="testimony.length"></span> of 255 characters</p>
+                </x-forms.field>
+            </x-forms.section>
 
-            {{-- --- Preview card --- --}}
-            <div class="testimony-preview">
-                <div class="testimony-preview-card">
-                    <div class="testimony-preview-photo">
-                        <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="h-full w-full" />
+            <x-forms.actions>
+                <button type="submit" class="btn btn-primary">Save testimony</button>
+            </x-forms.actions>
+        </form>
 
-                        <div class="testimony-shade"></div>
-
-                        <div class="testimony-preview-info">
-                            <h3 class="testimony-preview-name">{{ $user->name }}</h3>
-                            <p class="testimony-preview-role">
-                                {{ $user->current_status ?? 'Member' }} at UCO Community
-                            </p>
-                            <p class="testimony-preview-major">
-                                {{ $user->major ?? 'Student' }}
-                            </p>
-                        </div>
+        <section class="space-y-3" aria-labelledby="testimony-preview">
+            <h2 id="testimony-preview" class="section-heading">How it looks</h2>
+            <figure class="card">
+                <blockquote class="whitespace-pre-line text-lg text-gray-800" x-text="testimony ? '\u201C' + testimony + '\u201D' : 'Your testimony will appear here.'"></blockquote>
+                <figcaption class="mt-4 flex items-center gap-3 border-t border-line pt-4">
+                    <x-ui.thumb :src="$user->profile_photo_url" :name="$user->name" size="h-12 w-12" round class="text-lg" />
+                    <div>
+                        <p class="text-base font-semibold text-brand-900">{{ $user->name }}</p>
+                        <p class="text-sm text-gray-600">{{ $user->current_status ?? 'Member' }}</p>
                     </div>
-
-                    <div class="testimony-preview-body">
-                        <div class="absolute -top-6 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-xl bg-uco-orange-500 text-white shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)]">
-                            <i class="fa-solid fa-quote-left text-lg"></i>
-                        </div>
-
-                        <p class="testimony-preview-text" x-text="testimony || 'Your testimony will appear here...'"></p>
-                    </div>
-                </div>
-            </div>
-
-            {{-- --- Form --- --}}
-            <div class="flex-1">
-                <div class="settings-card">
-                    <form action="{{ route('uc-testimonies.store') }}" method="POST">
-                        @csrf
-
-                        <div class="mb-[25px]">
-                            <label class="testimony-label">Your Testimony</label>
-                            <textarea
-                                      name="content"
-                                      x-model="testimony"
-                                      class="testimony-input"
-                                      placeholder="What was your experience like at UCO?"
-                                      required></textarea>
-                            <div class="testimony-counter-row">
-                                <span class="testimony-counter" x-text="testimony.length + ' / 255'"></span>
-                            </div>
-                        </div>
-
-                        <div class="testimony-actions">
-                            <button type="submit" class="btn-uco btn-uco-primary">
-                                <i class="bi bi-file-earmark-check-fill text-base"></i>
-                                Save Testimony
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
+                </figcaption>
+            </figure>
+        </section>
     </div>
 </x-app-layout>

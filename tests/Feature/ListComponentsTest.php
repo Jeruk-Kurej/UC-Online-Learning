@@ -7,7 +7,7 @@ test('search field puts the class on its wrapper and everything else on the inpu
 
     expect($html)
         ->toContain('<div class="relative flex-1">')
-        ->toMatch('/<input type="text" name="search"[^>]*id="search"[^>]*value="abc"[^>]*placeholder="Find..."/')
+        ->toMatch('/<input type="search" name="search"[^>]*id="search"[^>]*value="abc"[^>]*placeholder="Find..."/')
         ->toContain('@input="submitDebounced()"');
 });
 
@@ -25,15 +25,8 @@ test('filter reset watches the loading flag it is given', function () {
         ->toContain('flex-shrink-0');
 });
 
-test('tooltip aligns to the centre or the right edge', function () {
-    expect((string) $this->blade('<x-ui.tooltip>Tip</x-ui.tooltip>'))->toContain('left-1/2 -translate-x-1/2 items-center');
-    expect((string) $this->blade('<x-ui.tooltip align="right" arrow-class="mr-2">Tip</x-ui.tooltip>'))
-        ->toContain('right-0 items-end')
-        ->toContain('mr-2 -mt-0.5');
-});
-
 test('featured toggle is disabled while the record is hidden', function () {
     $html = (string) $this->blade('<x-admin.featured-toggle action="/x" :visible="false" :featured="true" />');
 
-    expect($html)->toContain('disabled')->toContain('Need visible')->toContain('cursor-not-allowed');
+    expect($html)->toContain('disabled')->toContain('Only visible records can be featured')->toContain('aria-pressed="true"')->toContain('>Featured<');
 });

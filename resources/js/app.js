@@ -5,8 +5,8 @@ import registerAjaxPagination from './lib/ajax-pagination';
 import registerConfirmForm from './lib/confirm-form';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
+import registerImageFallback from './lib/image-fallback';
 import registerPriceArrowKeys from './lib/price-arrow-keys';
-import revealOnScroll from './lib/reveal-on-scroll';
 import showToast from './lib/show-toast';
 import achievementList from './components/achievement-list';
 import activityFiles from './components/activity-files';
@@ -46,10 +46,6 @@ Alpine.data('guestToasts', guestToasts);
 
 const alpinePageModules = [];
 
-if (document.querySelector('[data-featured-page]')) {
-    alpinePageModules.push(import('./pages/featured'));
-}
-
 if (document.querySelector('[data-business-admin]')) {
     alpinePageModules.push(import('./pages/business-admin'));
 }
@@ -83,13 +79,14 @@ if (document.readyState === 'loading') {
 window.showToast = showToast;
 
 document.addEventListener('DOMContentLoaded', () => {
-    revealOnScroll();
     registerPriceArrowKeys();
 });
 
 registerConfirmSubmit();
 registerAjaxPagination();
 registerConfirmForm();
+
+document.addEventListener('DOMContentLoaded', registerImageFallback);
 
 // --- Page modules without Alpine components ---
 

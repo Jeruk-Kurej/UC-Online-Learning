@@ -1,84 +1,57 @@
-<footer class="mt-16 border-t border-gray-200 bg-white">
-    {{-- --- Footer --- --}}
-    <div class="mx-auto max-w-[1600px] px-4 py-12 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 gap-8 md:grid-cols-12 lg:gap-12">
-            {{-- --- Column 1: About UCO (Span 4) --- --}}
-            <div class="md:col-span-5 lg:col-span-4">
-                <div class="mb-4 flex items-center gap-2.5">
-                    <img src="{{ asset('images/logo-uco.png') }}" alt="UCO Logo" class="h-10 w-10 object-contain">
+<footer class="mt-16 bg-ink text-white">
+    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
+            {{-- --- Who we are --- --}}
+            <div>
+                <div class="flex items-center gap-3">
+                    <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-12 w-12 object-contain">
                     <div>
-                        <h3 class="text-base font-bold text-gray-900">UC Online Learning</h3>
-                        <p class="text-xs text-gray-600">Student & Alumni Community</p>
+                        <p class="font-display text-xl font-semibold">UC Online Learning</p>
+                        <p class="text-sm text-gray-300">Student and alumni community</p>
                     </div>
                 </div>
-                <p class="max-w-sm text-sm leading-relaxed text-gray-600">
-                    Connecting students and alumni to build a stronger entrepreneurial community and foster business collaboration.
+                <p class="mt-4 max-w-sm text-base text-gray-200">
+                    A directory of the businesses and careers of Universitas Ciputra Online Learning students and alumni.
                 </p>
             </div>
 
-            {{-- --- Column 2: Quick Links (Span 3) --- --}}
-            <div class="md:col-span-3 lg:col-span-3 lg:col-start-6">
-                <h4 class="mb-4 text-sm font-medium text-gray-900">Quick Links</h4>
-                <ul class="space-y-2">
-                    <li>
-                        <a href="{{ route('featured') }}" class="text-sm text-gray-600 transition-colors hover:text-uco-orange-500">
-                            Featured
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('businesses.index') }}" class="text-sm text-gray-600 transition-colors hover:text-uco-orange-500">
-                            Business Directory</a>
-                    </li>
-                    <li>
-                        <a href="{{ route('about') }}" class="text-sm text-gray-600 transition-colors hover:text-uco-orange-500">
-                            About UCO
-                        </a>
-                    </li>
+            {{-- --- Pages --- --}}
+            <nav aria-label="Footer">
+                <p class="text-base font-semibold text-brand-300">Pages</p>
+                <ul class="mt-3 space-y-2 text-base">
+                    <li><a href="{{ route('featured') }}" class="text-gray-100 underline-offset-2 hover:underline">Featured</a></li>
+                    <li><a href="{{ route('businesses.index') }}" class="text-gray-100 underline-offset-2 hover:underline">Directory</a></li>
+                    <li><a href="{{ route('about') }}" class="text-gray-100 underline-offset-2 hover:underline">About</a></li>
                 </ul>
-            </div>
+            </nav>
 
-            {{-- --- Column 3: Contact (Span 4) --- --}}
-            <div class="md:col-span-4 lg:col-span-4">
-                <h4 class="mb-4 text-sm font-medium text-gray-900">Contact Us</h4>
-                <ul class="space-y-3 text-sm text-gray-600">
+            {{-- --- Contact --- --}}
+            <div>
+                <p class="text-base font-semibold text-brand-300">Contact</p>
+                <ul class="mt-3 space-y-3 text-base text-gray-100">
                     <li class="flex items-start gap-3">
-                        <i class="fa-solid fa-location-dot mt-0.5 h-4 w-4 flex-shrink-0 text-gray-900" aria-hidden="true"></i>
-                        <a href="https://www.google.com/maps/search/?api=1&query=Universitas+Ciputra+Surabaya" target="_blank" class="leading-relaxed transition-colors hover:text-uco-orange-500">UC Surabaya, CitraLand CBD Boulevard, Sambikerep, Surabaya</a>
+                        <i class="bi bi-geo-alt mt-0.5" aria-hidden="true"></i>
+                        <a href="https://www.google.com/maps/search/?api=1&query=Universitas+Ciputra+Surabaya" target="_blank" rel="noopener" class="underline-offset-2 hover:underline">UC Surabaya, CitraLand CBD Boulevard, Sambikerep, Surabaya</a>
                     </li>
                     <li class="flex items-center gap-3">
-                        <i class="fa-solid fa-envelope h-4 w-4 text-gray-900" aria-hidden="true"></i>
-                        <a href="mailto:pmb.online@ciputra.ac.id" class="transition-colors hover:text-uco-orange-500">pmb.online@ciputra.ac.id</a>
+                        <i class="bi bi-envelope" aria-hidden="true"></i>
+                        <a href="mailto:pmb.online@ciputra.ac.id" class="underline-offset-2 hover:underline">pmb.online@ciputra.ac.id</a>
                     </li>
                     <li class="flex items-center gap-3">
-                        <i class="fa-brands fa-whatsapp h-4 w-4 text-gray-900" aria-hidden="true"></i>
-                        <a href="https://wa.me/6281216300303" target="_blank" class="transition-colors hover:text-uco-orange-500">0812 16 300 303</a>
+                        <i class="bi bi-whatsapp" aria-hidden="true"></i>
+                        <a href="https://wa.me/6281216300303" target="_blank" rel="noopener" class="underline-offset-2 hover:underline">0812 16 300 303</a>
                     </li>
                 </ul>
 
-                {{-- --- Social Media Icons --- --}}
-                <div class="mt-6">
-                    <h5 class="mb-3 text-sm font-medium text-gray-900">Follow Us</h5>
-                    <div class="flex gap-2.5">
-                        <a href="https://www.facebook.com/uc.onlinelearning/" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-[#1877F2] hover:text-white">
-                            <i class="fa-brands fa-facebook-f"></i>
-                        </a>
-                        <a href="https://www.instagram.com/uc_onlinelearning/?hl=en" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-gradient-to-tr hover:from-yellow-400 hover:via-red-500 hover:to-purple-500 hover:text-white">
-                            <i class="fa-brands fa-instagram"></i>
-                        </a>
-                        <a href="https://www.tiktok.com/@uc_onlinelearning" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-black hover:text-white">
-                            <i class="fa-brands fa-tiktok"></i>
-                        </a>
-                        <a href="https://id.linkedin.com/company/universitas-ciputra-online" target="_blank" class="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-100 text-gray-600 transition-colors hover:bg-[#0A66C2] hover:text-white">
-                            <i class="fa-brands fa-linkedin-in"></i>
-                        </a>
-                    </div>
+                <div class="mt-5 flex gap-2">
+                    <a href="https://www.facebook.com/uc.onlinelearning/" target="_blank" rel="noopener" class="flex h-10 w-10 items-center justify-center rounded-md bg-white/10 text-lg hover:bg-white/20" aria-label="Facebook"><i class="bi bi-facebook" aria-hidden="true"></i></a>
+                    <a href="https://www.instagram.com/uc_onlinelearning/?hl=en" target="_blank" rel="noopener" class="flex h-10 w-10 items-center justify-center rounded-md bg-white/10 text-lg hover:bg-white/20" aria-label="Instagram"><i class="bi bi-instagram" aria-hidden="true"></i></a>
+                    <a href="https://www.tiktok.com/@uc_onlinelearning" target="_blank" rel="noopener" class="flex h-10 w-10 items-center justify-center rounded-md bg-white/10 text-lg hover:bg-white/20" aria-label="TikTok"><i class="bi bi-tiktok" aria-hidden="true"></i></a>
+                    <a href="https://id.linkedin.com/company/universitas-ciputra-online" target="_blank" rel="noopener" class="flex h-10 w-10 items-center justify-center rounded-md bg-white/10 text-lg hover:bg-white/20" aria-label="LinkedIn"><i class="bi bi-linkedin" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
 
-        {{-- --- Copyright - Center --- --}}
-        <div class="mt-8 border-t border-gray-200 pt-6 text-center">
-            <p class="text-sm text-gray-600">&copy; {{ date('Y') }} UCO Student & Alumni Platform. All rights reserved.</p>
-        </div>
+        <p class="mt-10 border-t border-white/20 pt-6 text-sm text-gray-300">&copy; {{ date('Y') }} Universitas Ciputra Online Learning</p>
     </div>
 </footer>

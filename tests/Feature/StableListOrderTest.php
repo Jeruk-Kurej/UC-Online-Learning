@@ -75,9 +75,15 @@ test('the inbox breaks ties by id', function () {
     expect(orderOfList('messages', 15, fn () => $this->actingAs($w['owner'])->get(route('inbox.index'))))->toEndWith('"created_at" desc, "id" desc');
 });
 
-test('the home page picks its top testimonies and categories in a fixed order', function () {
+test('the home page reads its featured testimonies in a fixed base order', function () {
     listWorld();
 
-    expect(orderOfList('users', 6, fn () => $this->get(route('featured'))))->toEndWith('"ai_score" desc, "created_at" desc, "id" desc')
-        ->and(orderOfList('categories', 8, fn () => $this->get(route('featured'))))->toEndWith('"businesses_count" desc, "name" asc, "id" asc');
+    $queries = [];
+    DB::listen(function ($query) use (&$queries) {
+        $queries[] = $query->sql;
+    });
+    $this->get(route('featured'));
+
+    $list = collect($queries)->first(fn (string $sql) => str_contains($sql, 'is_featured_testimony'));
+    expect($list)->not->toBeNull()->and($list)->toEndWith('order by "created_at" desc, "id" desc');
 });

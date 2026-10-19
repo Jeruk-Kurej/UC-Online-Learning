@@ -170,6 +170,14 @@ class Business extends Model
         return $this->members()->where('users.id', $user->id)->exists();
     }
 
+    /**
+     * Photo of the first product or service that has one, used as the picture of a featured venture.
+     */
+    public function getShowcasePhotoUrlAttribute(): ?string
+    {
+        return $this->products->first(fn (Product $offering) => $offering->has_photo)?->photo_url;
+    }
+
     public function getOfferingModeAttribute(): string
     {
         return $this->offering_type ?? 'product';

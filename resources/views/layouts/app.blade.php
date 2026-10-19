@@ -2,18 +2,7 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
-    <x-layout.head>Universitas Ciputra Online Learning - @yield('title', 'Dashboard')</x-layout.head>
-
-    {{-- --- Fonts --- --}}
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-          rel="stylesheet" />
-
-    {{-- --- Bootstrap Icons --- --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-    {{-- --- FontAwesome Icons --- --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <x-layout.head>@yield('title', 'UC Online Learning') | Universitas Ciputra Online Learning</x-layout.head>
 
     {{-- --- Scripts --- --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -21,44 +10,38 @@
     @stack('meta')
     @stack('styles')
 </head>
-{{-- --- Layout body: keep background subtle and readable --- --}}
 
-<body class="overflow-x-hidden bg-gray-50 font-sans antialiased">
+<body class="overflow-x-hidden">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-brand-900">Skip to content</a>
+
     <div class="flex min-h-screen flex-col">
         {{-- --- Navigation --- --}}
         @include('layouts.navigation')
 
-        {{-- --- Page Heading --- --}}
-        @isset($header)
-            <header class="border-b border-gray-200 bg-white shadow-sm">
-                <div class="mx-auto w-full max-w-[1600px] px-4 py-4 sm:px-6 lg:px-8">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
-
         {{-- --- Main Content --- --}}
-        <main class="flex-grow">
-            <div class="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8">
-                {{-- --- Global Toast Notifications --- --}}
-                <div class="pointer-events-none fixed right-6 top-6 z-50 flex flex-col items-end gap-3">
-                    @foreach (['success', 'error', 'status', 'warning'] as $flashType)
-                        @if (session($flashType))
-                            <x-flash.message :type="$flashType" :message="session($flashType)" />
-                        @endif
-                    @endforeach
-
-                    @if ($errors->any())
-                        <x-flash.errors />
+        <main id="main" class="flex-grow">
+            {{-- --- Messages over the page (session messages first, then the ones raised by scripts) --- --}}
+            <div class="toast-stack">
+                @foreach (['success', 'error', 'status', 'warning'] as $flashType)
+                    @if (session($flashType))
+                        <x-flash.message :type="$flashType" :message="session($flashType)" />
                     @endif
-                </div>
+                @endforeach
 
-                {{-- --- Local JS Toast Trigger --- --}}
+                @if ($errors->any())
+                    <x-flash.errors />
+                @endif
+
                 <x-flash.toast-stack />
-
-                {{-- --- Page Content --- --}}
-                {{ $slot }}
             </div>
+
+            @if ($bleed)
+                {{ $slot }}
+            @else
+                <div class="page">
+                    {{ $slot }}
+                </div>
+            @endif
         </main>
 
         {{-- --- Footer --- --}}
@@ -66,10 +49,6 @@
     </div>
 
     @stack('scripts')
-
-    {{-- --- instant.page prefetching --- --}}
-    <script src="https://instant.page/5.2.0" type="module"
-            integrity="sha384-jn7Qscg456X453Yc66mP3sQx50eFqL6z2J98D/c8w+xZ8L2r1n9Lh0I4Y5aW7V7m" crossorigin="anonymous"></script>
 </body>
 
 </html>

@@ -13,10 +13,10 @@ class Link extends Component
     // --- Classes per menu: always, when active, when not active ---
 
     private const LOOKS = [
-        'bar' => ['text-sm font-bold', 'text-soft-gray-900 border-b-2 border-uco-orange-500', 'text-soft-gray-600 hover:text-soft-gray-900'],
-        'menu' => ['block py-2.5 text-base font-bold', 'text-uco-orange-500', 'text-gray-800'],
-        'account' => ['block py-2 text-sm font-bold', 'text-uco-orange-500', 'text-gray-700'],
-        'dropdown' => ['block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50', '', ''],
+        'bar' => ['inline-flex h-16 items-center border-b-4 px-1 text-base font-medium', 'border-brand-500 font-semibold text-brand-900', 'border-transparent text-gray-700 hover:border-brand-200 hover:text-brand-900'],
+        'menu' => ['block rounded-md px-3 py-3 text-base font-medium', 'bg-brand-50 text-brand-900', 'text-gray-800 hover:bg-gray-100'],
+        'account' => ['block rounded-md px-3 py-3 text-base', 'bg-brand-50 font-medium text-brand-900', 'text-gray-800 hover:bg-gray-100'],
+        'dropdown' => ['block px-4 py-2.5 text-base text-gray-800 hover:bg-brand-50 hover:text-brand-900', '', ''],
     ];
 
     public string $linkClass;

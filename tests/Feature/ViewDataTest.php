@@ -66,7 +66,7 @@ test('region names read in title case', function () {
 
 test('navigation link marks the active section', function () {
     expect((string) $this->blade('<x-nav.link look="account" href="/inbox" :active="true">Inbox</x-nav.link>'))
-        ->toContain('class="text-uco-orange-500 block py-2 text-sm font-bold"');
+        ->toContain('class="bg-brand-50 font-medium text-brand-900 block rounded-md px-3 py-3 text-base"');
     expect((string) $this->blade('<x-nav.link look="dropdown" href="/inbox">Inbox</x-nav.link>'))
-        ->toContain('class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"');
+        ->toContain('class="block px-4 py-2.5 text-base text-gray-800 hover:bg-brand-50 hover:text-brand-900"');
 });

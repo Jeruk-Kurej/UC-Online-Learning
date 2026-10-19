@@ -9,49 +9,49 @@ export default function sectionBuilder(initialSections) {
 
         getSectionTypeName(type) {
             const names = {
-                hero: '🎯 Hero Header Banner',
-                feature_cards: '🚀 Feature Cards Grid',
-                stats_grid: '📊 Impact Stats Grid',
-                text_block: '📝 Text / FAQ Content Block',
-                cta_banner: '📣 Call-To-Action Banner',
+                hero: 'Page title',
+                feature_cards: 'Cards',
+                stats_grid: 'Numbers',
+                text_block: 'Text',
+                cta_banner: 'Call to action',
             };
-            return names[type] || 'Section Block';
+            return names[type] || 'Section';
         },
 
         addSection(type) {
             let newSec = { type: type };
             if (type === 'hero') {
-                newSec.badge = 'New Vision Tagline';
-                newSec.title = 'New Section Headline';
-                newSec.subtitle = 'Description paragraph text goes here.';
+                newSec.badge = '';
+                newSec.title = 'Title';
+                newSec.subtitle = 'Write a short text here.';
             } else if (type === 'feature_cards') {
-                newSec.badge = 'Category Tag';
-                newSec.title = 'Key Benefits & Pillars';
-                newSec.subtitle = 'Supporting explanation text for cards.';
+                newSec.badge = '';
+                newSec.title = 'Title';
+                newSec.subtitle = '';
                 newSec.cards = [
-                    { title: 'Feature 1', description: 'Description for feature card 1.', icon: 'bi-rocket-takeoff' },
-                    { title: 'Feature 2', description: 'Description for feature card 2.', icon: 'bi-people' },
+                    { title: 'First card', description: 'Write a short text here.', icon: 'bi-rocket-takeoff' },
+                    { title: 'Second card', description: 'Write a short text here.', icon: 'bi-people' },
                 ];
             } else if (type === 'stats_grid') {
-                newSec.title = 'Our Key Achievements';
+                newSec.title = 'Title';
                 newSec.items = [
-                    { number: '100+', label: 'Metric 1' },
-                    { number: '50+', label: 'Metric 2' },
+                    { number: '0', label: 'What it counts' },
+                    { number: '0', label: 'What it counts' },
                 ];
             } else if (type === 'text_block') {
-                newSec.heading = 'New Article Section';
-                newSec.content = 'Write your paragraph text here...';
+                newSec.heading = 'Heading';
+                newSec.content = 'Write the text here.';
             } else if (type === 'cta_banner') {
-                newSec.heading = 'Ready to get started?';
-                newSec.subtitle = 'Join our community today.';
-                newSec.primary_btn_text = 'Get Started';
-                newSec.secondary_btn_text = 'Learn More';
+                newSec.heading = 'Heading';
+                newSec.subtitle = 'Write a short text here.';
+                newSec.primary_btn_text = '';
+                newSec.secondary_btn_text = 'See the directory';
             }
             this.sections.push(newSec);
         },
 
         removeSection(idx) {
-            if (confirm('Are you sure you want to remove this section?')) {
+            if (confirm('Remove this section?')) {
                 this.sections.splice(idx, 1);
             }
         },
@@ -75,8 +75,8 @@ export default function sectionBuilder(initialSections) {
         addCard(secIdx) {
             if (!this.sections[secIdx].cards) this.sections[secIdx].cards = [];
             this.sections[secIdx].cards.push({
-                title: 'New Card Title',
-                description: 'Card description content...',
+                title: 'Card title',
+                description: 'Write a short text here.',
                 icon: 'bi-rocket-takeoff',
             });
         },
@@ -88,8 +88,8 @@ export default function sectionBuilder(initialSections) {
         addStat(secIdx) {
             if (!this.sections[secIdx].items) this.sections[secIdx].items = [];
             this.sections[secIdx].items.push({
-                number: '10+',
-                label: 'New Metric Label',
+                number: '0',
+                label: 'What it counts',
             });
         },
 
@@ -104,11 +104,11 @@ export default function sectionBuilder(initialSections) {
             })
                 .then((res) => res.json())
                 .then((data) => {
-                    alert('All section changes saved successfully!');
+                    window.showToast('The page is saved.', 'success');
                 })
                 .catch((err) => {
                     console.error(err);
-                    alert('Error saving section data.');
+                    window.showToast('The page could not be saved. Try again.', 'error');
                 });
         },
     };

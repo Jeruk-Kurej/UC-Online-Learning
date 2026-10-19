@@ -12,8 +12,8 @@ function editorSections($response): array
 
 test('the about page shows the default sections when no page exists', function () {
     $this->get('/about')->assertOk()
-        ->assertSee('Building the Future of Student &amp; Alumni Entrepreneurship', false)
-        ->assertSee('Rapid Launch')->assertSee('1200+')->assertSee('Ready to build your legacy?');
+        ->assertSee('About UC Online Learning')
+        ->assertSee('Find businesses and people')->assertDontSee('1200+')->assertDontSee('Get Started Now');
 });
 
 test('the about page and the editor use saved sections', function () {
@@ -21,7 +21,7 @@ test('the about page and the editor use saved sections', function () {
         ['type' => 'hero', 'badge' => 'Custom Badge', 'title' => 'Custom Hero Title', 'subtitle' => 'Custom subtitle'],
     ]]]);
 
-    $this->get('/about')->assertSee('Custom Hero Title')->assertDontSee('Rapid Launch');
+    $this->get('/about')->assertSee('Custom Hero Title')->assertDontSee('Find businesses and people');
 
     $admin = User::factory()->admin()->create();
     expect(editorSections($this->actingAs($admin)->get(route('pages.edit', $page))))
@@ -31,18 +31,19 @@ test('the about page and the editor use saved sections', function () {
 test('older pages saved with hero/pillars/stats/cta keys fill the default sections', function () {
     $page = Page::create(['slug' => 'about', 'title' => 'About', 'content_json' => [
         'hero' => ['title' => 'Legacy Hero'],
+        'stats' => ['title' => 'Legacy numbers', 'items' => [['number' => '1200+', 'label' => 'Graduated Founders']]],
         'cta' => ['heading' => 'Legacy CTA'],
     ]]);
 
-    $this->get('/about')->assertSee('Legacy Hero')->assertSee('Legacy CTA')->assertSee('Rapid Launch');
+    $this->get('/about')->assertSee('Legacy Hero')->assertSee('Legacy CTA')->assertSee('Find businesses and people');
 
     $admin = User::factory()->admin()->create();
     $sections = editorSections($this->actingAs($admin)->get(route('pages.edit', $page)));
     expect(array_column($sections, 'type'))->toBe(['hero', 'feature_cards', 'stats_grid', 'cta_banner'])
         ->and($sections[0]['title'])->toBe('Legacy Hero')
-        ->and($sections[0]['badge'])->toBe('About UC Online Learning')
+        ->and($sections[0]['badge'])->toBe('')
         ->and($sections[3]['heading'])->toBe('Legacy CTA')
-        ->and($sections[2]['items'][1])->toBe(['number' => '1200+', 'label' => 'Graduated Founders']);
+        ->and($sections[2]['items'][0])->toBe(['number' => '1200+', 'label' => 'Graduated Founders']);
 });
 
 test('an empty page uses the defaults in the editor', function () {
@@ -50,5 +51,5 @@ test('an empty page uses the defaults in the editor', function () {
     $admin = User::factory()->admin()->create();
 
     $sections = editorSections($this->actingAs($admin)->get(route('pages.edit', $page)));
-    expect(count($sections))->toBe(4)->and($sections[1]['cards'][0]['icon'])->toBe('bi-rocket-takeoff');
+    expect(count($sections))->toBe(2)->and($sections[1]['cards'][1]['icon'])->toBe('bi-rocket-takeoff');
 });

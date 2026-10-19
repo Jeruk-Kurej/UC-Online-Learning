@@ -20,55 +20,42 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+                display: ['Poppins', ...defaultTheme.fontFamily.sans],
             },
+
+            // --- Type scale: nothing below 13px, body 16px (Poppins runs wide, so line heights stay generous) ---
+            fontSize: {
+                xs: ['0.8125rem', '1.125rem'],
+                sm: ['0.9375rem', '1.375rem'],
+                base: ['1rem', '1.625rem'],
+                lg: ['1.125rem', '1.75rem'],
+                xl: ['1.25rem', '1.75rem'],
+                '2xl': ['1.5rem', '2rem'],
+                '3xl': ['1.875rem', '2.375rem'],
+                '4xl': ['2.25rem', '2.75rem'],
+                '5xl': ['3rem', '3.5rem'],
+            },
+
             colors: {
-                // UCO Orange Palette (Primary Accent)
-                'uco-orange': {
-                    50: '#fff8f0',
-                    100: '#ffeedd',
-                    200: '#ffd9b3',
-                    300: '#ffc088',
-                    400: '#ffa85c',
-                    500: '#ff8c2e',  // Main Orange Accent
-                    600: '#f7931e',
-                    700: '#e67300',
-                    800: '#b85c00',
-                    900: '#8a4500',
+                // --- UC orange (#ff8800 is brand-500, as on online.ciputra.ac.id). White text needs brand-700 or darker; text on brand-500 is ink ---
+                brand: {
+                    50: '#fff6ea',
+                    100: '#ffe5cc',
+                    200: '#ffd0a1',
+                    300: '#ffb34f',
+                    400: '#ff9a1f',
+                    500: '#ff8800',
+                    600: '#d97200',
+                    700: '#a65300',
+                    800: '#823f00',
+                    900: '#2b1604',
                 },
-                // UCO Yellow Palette (Secondary Accent)
-                'uco-yellow': {
-                    50: '#fffef0',
-                    100: '#fffbd6',
-                    200: '#fff6ad',
-                    300: '#fff085',
-                    400: '#ffe95c',
-                    500: '#ffd633',  // Main Yellow Accent
-                    600: '#fdb913',
-                    700: '#d99a00',
-                    800: '#b37d00',
-                    900: '#8c6100',
-                },
-                // Professional Base Colors
-                'soft-white': '#fafafa',
-                'soft-gray': {
-                    50: '#f9fafb',
-                    100: '#f3f4f6',
-                    200: '#e5e7eb',
-                    300: '#d1d5db',
-                    400: '#9ca3af',
-                    500: '#6b7280',
-                    600: '#4b5563',
-                    700: '#374151',
-                    800: '#1f2937',
-                    900: '#111827',
-                },
-            },
-            backgroundImage: {
-                // Gradient presets untuk UCO
-                'uco-gradient': 'linear-gradient(135deg, #f7931e 0%, #fdb913 100%)',
-                'uco-gradient-vertical': 'linear-gradient(to bottom, #f7931e 0%, #fdb913 100%)',
-                'uco-gradient-dark': 'linear-gradient(135deg, #ea580c 0%, #ca8a04 100%)',
+                // --- Dark grey of the UC footer and of text on orange ---
+                ink: '#222222',
+                // --- Page background and borders ---
+                canvas: '#f6f6f6',
+                line: '#dcdcdc',
             },
         },
     },

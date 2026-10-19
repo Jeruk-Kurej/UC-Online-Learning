@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business;
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,34 +11,46 @@ use Illuminate\View\View;
 
 class FeaturedController extends Controller
 {
+    // --- Every featured item is equal: the order changes once a day, so nobody stays first, and each section shows at most this many ---
+
+    private const SECTION_LIMIT = 6;
+
     public function index(Request $request): View
     {
         return view('featured.index', [
-            'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
-                ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
-                ->newestFirst()
-                ->get(),
-            'topEntrepreneurs' => $this->featuredStudents('entrepreneur')
-                ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
-                ->newestFirst()
-                ->get(),
-            'spotlightBusinesses' => Business::visible()
+            'heroHasPhoto' => file_exists(public_path('images/hero-uc.jpg')),
+            'featuredVentures' => Business::visible()
                 ->entrepreneur()
                 ->where('is_featured', true)
                 ->newestFirst()
-                ->with(['category', 'user', 'members'])
-                ->get(),
-            'categories' => Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
-                ->orderByDesc('businesses_count')
-                ->orderBy('name')
-                ->orderBy('id')
-                ->take(8)
-                ->get(),
-            'testimonies' => $this->communityTestimonies(),
+                ->with(['category', 'user', 'members', 'products'])
+                ->get()
+                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
+            'topEntrepreneurs' => $this->featuredStudents('entrepreneur')
+                ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
+                ->newestFirst()
+                ->get()
+                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
+            'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
+                ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
+                ->newestFirst()
+                ->get()
+                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
+            'testimonies' => $this->inDailyOrder($this->communityTestimonies()),
         ]);
     }
 
     // --- Home page sections ---
+
+    /**
+     * The same order all day, a different one tomorrow (sorted by a hash of the day and the id, so it does not depend on the PHP version or the database), cut to the section limit.
+     */
+    private function inDailyOrder(Collection $items): Collection
+    {
+        $day = now()->format('Ymd');
+
+        return $items->sortBy(fn ($item) => crc32($day.'-'.$item->getKey()))->take(self::SECTION_LIMIT)->values();
+    }
 
     /**
      * Admin-starred, visible students with a photo whose career status is $status.
@@ -55,7 +66,7 @@ class FeaturedController extends Controller
     }
 
     /**
-     * Testimonies picked for the home page (not tied to is_featured): AI-approved ones (score >= 80) first, then any
+     * Testimonies picked for the home page (not tied to is_featured): AI-approved ones (score >= 80) and any
      * visible testimony that was never scored.
      */
     private function communityTestimonies(): Collection
@@ -70,9 +81,7 @@ class FeaturedController extends Controller
                         $q2->whereNull('ai_score')->where('is_visible', true);
                     });
             })
-            ->orderByDesc('ai_score')
             ->newestFirst()
-            ->take(6)
             ->get();
     }
 }

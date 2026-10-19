@@ -1,70 +1,23 @@
-<div class="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-    @forelse($users as $user)
-        <div class="relative flex w-full max-w-[320px] flex-col overflow-hidden rounded-[20px] border border-gray-100 bg-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.05),0_10px_10px_-5px_rgba(0,0,0,0.01)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_30px_50px_rgba(0,0,0,0.08)]"
-             id="testimony-card-{{ $user->id }}">
-
-            {{-- --- Status Badge (Top Left) --- --}}
-            <div class="absolute left-4 top-4 z-20">
-                <span class="{{ $user->is_visible ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white' }} inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wider shadow-sm backdrop-blur-md">
-                    <span class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                    {{ $user->is_visible ? 'Active' : 'Inactive' }}
-                </span>
-            </div>
-
-            {{-- --- Featured Star Button (Top Right) --- --}}
-            <div class="absolute right-4 top-4 z-20">
-                <button type="button"
-                        data-user-id="{{ $user->id }}"
-                        data-featured="{{ $user->is_featured_testimony ? '1' : '0' }}"
-                        data-testimony-featured-toggle="{{ route('uc-testimonies.toggle-featured', $user, false) }}"
-                        title="{{ !$user->is_visible ? 'User must be visible to be featured' : ($user->is_featured_testimony ? 'Remove from featured' : 'Add to featured') }}"
-                        {{ !$user->is_visible ? 'disabled' : '' }}
-                        class="{{ !$user->is_visible ? 'bg-gray-200/90 border-gray-300 text-gray-400 cursor-not-allowed' : ($user->is_featured_testimony ? 'bg-[#ff8a00] border-[#ff8a00] text-white hover:bg-orange-600' : 'bg-white/90 border-gray-200 text-gray-400 hover:text-[#ff8a00] hover:border-[#ff8a00]') }} inline-flex h-10 w-10 items-center justify-center rounded-full border shadow-md transition-all duration-300 focus:outline-none">
-                    <i class="bi {{ $user->is_featured_testimony ? 'bi-star-fill' : 'bi-star' }} text-lg leading-none"></i>
-                </button>
-            </div>
-
-            {{-- --- Top Section: Image & Info --- --}}
-            <div class="relative h-[300px] w-full flex-shrink-0">
-                @if ($user->profile_photo_url)
-                    <x-premium-image :src="$user->profile_photo_url" :alt="$user->name" class="h-full w-full" />
-                @else
-                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-4xl font-black text-white">
-                        {{ $user->initial }}
-                    </div>
-                @endif
-
-                {{-- --- Overlay Gradient --- --}}
-                <div class="testimony-shade"></div>
-
-                {{-- --- Text Content on Image --- --}}
-                <div class="absolute bottom-[45px] left-5 right-5 text-white">
-                    <h3 class="mb-0.5 text-[18px] font-black leading-[1.2] tracking-[-0.5px]">{{ $user->name }}</h3>
-                    <p class="mb-0.5 text-[11px] font-semibold text-[#cbd5e1]">
-                        {{ $user->current_status ?? 'Member' }} at UCO Community
-                    </p>
-                    <p class="text-[9px] font-black uppercase tracking-[1px] text-[#ff8a00]">
-                        {{ $user->major ?? 'Student' }}
-                    </p>
+<div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+    @forelse ($users as $user)
+        <article class="card flex h-full flex-col gap-4" id="testimony-card-{{ $user->id }}">
+            <div class="flex items-start gap-4">
+                <x-ui.thumb :src="$user->profile_photo_url" :name="$user->name" size="h-14 w-14" round class="text-xl" />
+                <div class="min-w-0 flex-1">
+                    <a href="{{ route('users.show', $user) }}" class="block truncate text-lg font-semibold text-brand-900 hover:underline">{{ $user->name }}</a>
+                    <p class="truncate text-sm text-gray-600">{{ $user->current_status ?? 'Member' }}{{ $user->major ? ', ' . $user->major : '' }}</p>
+                    <p class="mt-1"><x-admin.visibility-badge :visible="$user->is_visible" /></p>
                 </div>
             </div>
 
-            {{-- --- Bottom Section: Testimony content --- --}}
-            <div class="relative flex flex-grow items-center justify-center rounded-b-[20px] bg-white px-5 pb-[25px] pt-[35px] text-center">
-                {{-- --- Quote Icon --- --}}
-                <div class="absolute -top-5 left-1/2 z-10 flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-xl bg-uco-orange-500 text-white shadow-[0_10px_15px_-3px_rgba(247,147,30,0.3)]">
-                    <i class="fa-solid fa-quote-left text-base"></i>
-                </div>
+            <blockquote class="flex-1 text-base text-gray-800">&ldquo;{{ Str::limit($user->testimony, 200) }}&rdquo;</blockquote>
 
-                <p class="m-0 text-[13px] font-semibold italic leading-[1.6] text-[#334155]">
-                    “{{ Str::limit($user->testimony, 200) }}”
-                </p>
+            <div class="border-t border-line pt-4">
+                <x-admin.featured-button type="button" :visible="$user->is_visible" :featured="$user->is_featured_testimony" data-user-id="{{ $user->id }}" data-testimony-featured-toggle="{{ route('uc-testimonies.toggle-featured', $user, false) }}" />
             </div>
-        </div>
+        </article>
     @empty
-        <div class="col-span-full py-16 text-center">
-            <p class="italic text-gray-400">No testimonies found.</p>
-        </div>
+        <x-ui.empty-state class="col-span-full" title="No testimonies found">Try a different search.</x-ui.empty-state>
     @endforelse
 </div>
 

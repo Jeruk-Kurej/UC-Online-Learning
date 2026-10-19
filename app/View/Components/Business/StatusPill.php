@@ -7,16 +7,16 @@ use Illuminate\View\Component;
 use Illuminate\View\View;
 
 /**
- * Solid status pill on a My Business card: approved, rejected, or waiting (pending / needs revision).
+ * Status badge on a My Business card: approved, rejected, or waiting (pending / needs revision).
  */
 class StatusPill extends Component
 {
     // --- Colour and icon per status (anything else counts as waiting) ---
 
     private const LOOKS = [
-        'approved' => ['bg-green-500 text-white', 'bi-check-circle-fill'],
-        'rejected' => ['bg-red-500 text-white', 'bi-x-circle-fill'],
-        'waiting' => ['bg-uco-orange-500 text-white', 'bi-hourglass-split'],
+        'approved' => ['badge-success', 'bi-check-circle'],
+        'rejected' => ['badge-danger', 'bi-x-circle'],
+        'waiting' => ['badge-warning', 'bi-hourglass-split'],
     ];
 
     public string $colorClass;

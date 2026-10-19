@@ -1,110 +1,58 @@
-{{-- --- Users Table --- --}}
-<div class="reveal-on-scroll overflow-x-auto rounded-xl border bg-white shadow-sm delay-[350ms]">
-    <table class="w-full text-left">
-        <thead class="border-b bg-gray-50">
+{{-- --- Users table (cards on phones) --- --}}
+<div class="card overflow-x-auto !p-0">
+    <table class="admin-table">
+        <thead>
             <tr>
                 <x-admin.th>Name</x-admin.th>
                 <x-admin.th>Email</x-admin.th>
-                <x-admin.th class="whitespace-nowrap">Status</x-admin.th>
-                <x-admin.th>Major</x-admin.th>
-                <x-admin.th class="whitespace-nowrap text-center">Flags</x-admin.th>
-                <x-admin.th class="whitespace-nowrap text-center">Biz</x-admin.th>
-                <x-admin.th class="w-px whitespace-nowrap text-right">Actions</x-admin.th>
+                <x-admin.th>Student status</x-admin.th>
+                <x-admin.th>Profile</x-admin.th>
+                <x-admin.th>Home page</x-admin.th>
+                <x-admin.th>Businesses</x-admin.th>
+                <x-admin.th>Actions</x-admin.th>
             </tr>
         </thead>
-        <tbody class="divide-y">
-            @forelse($users as $user)
-                <tr class="transition hover:bg-orange-50/30">
-
-                    {{-- --- Name + Avatar --- --}}
-                    <td class="max-w-[180px] px-4 py-3">
-                        <div class="flex items-center gap-2.5">
-                            <div class="h-8 w-8 flex-shrink-0 overflow-hidden rounded-sm">
-                                @if ($user->has_profile_photo)
-                                    <img src="{{ $user->profile_photo_url }}" alt="{{ $user->name }}" class="h-full w-full object-contain">
-                                @else
-                                    <div class="uco-initials-bg flex h-full w-full items-center justify-center text-xs font-black text-white">
-                                        {{ $user->initial }}
-                                    </div>
-                                @endif
-                            </div>
+        <tbody>
+            @forelse ($users as $user)
+                <tr>
+                    <td data-label="">
+                        <div class="flex min-w-0 items-center gap-3 text-left">
+                            <x-ui.thumb :src="$user->has_profile_photo ? $user->profile_photo_url : null" :name="$user->name" size="h-10 w-10" round class="text-base" />
                             <div class="min-w-0">
-                                <p class="truncate text-sm font-bold leading-tight text-gray-900">{{ $user->name }}</p>
-                                @if ($user->nis)
-                                    <p class="text-[10px] font-medium text-gray-400">{{ $user->nis }}</p>
+                                <p class="truncate font-semibold text-gray-900">{{ $user->name }}</p>
+                                @if ($user->major || $user->nis)
+                                    <p class="truncate text-sm text-gray-600">{{ collect([$user->major, $user->nis])->filter()->implode(', ') }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
-
-                    {{-- --- Email (truncated) --- --}}
-                    <td class="max-w-[180px] px-4 py-3">
-                        <span class="block truncate text-sm text-gray-500" title="{{ $user->email }}">{{ $user->email }}</span>
-                    </td>
-
-                    {{-- --- Student Status Badge --- --}}
-                    <td class="px-4 py-3">
-                        <span class="{{ $user->student_status === 'alumni' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }} rounded-md px-2 py-1 text-[10px] font-bold uppercase">
-                            {{ $user->student_status }}
-                        </span>
-                    </td>
-
-                    {{-- --- Major (truncated) --- --}}
-                    <td class="max-w-[120px] px-4 py-3">
-                        <span class="block truncate text-sm text-gray-500" title="{{ $user->major ?: '-' }}">{{ $user->major ?: '-' }}</span>
-                    </td>
-
-                    {{-- --- Flags: Visible dot + Featured star (combined column) --- --}}
-                    <td class="px-4 py-3">
-                        <div class="flex items-center justify-center gap-2">
-                            <x-admin.visibility-dot :visible="$user->is_visible" />
-                            <x-admin.featured-toggle :action="route('users.toggle-featured', $user)" :visible="$user->is_visible" :featured="$user->is_featured" />
-                        </div>
-                    </td>
-
-                    {{-- --- Businesses count --- --}}
-                    <td class="px-4 py-3 text-center">
-                        <span class="text-sm font-bold text-gray-700">{{ $user->businesses_count }}</span>
-                    </td>
-
-                    {{-- --- Actions: icon-only buttons with tooltips --- --}}
-                    <td class="w-px whitespace-nowrap px-4 py-3">
-                        <div class="flex items-center justify-end gap-1.5">
-                            {{-- --- View --- --}}
-                            <x-admin.icon-action :href="route('users.show', $user)" icon="bi-eye-fill" tip="View" />
-
+                    <td data-label="Email" class="md:min-w-[13rem]"><span class="break-all">{{ $user->email }}</span></td>
+                    <td data-label="Student status"><span class="badge {{ $user->student_status === 'alumni' ? 'badge-info' : 'badge-neutral' }}">{{ ucfirst((string) $user->student_status) }}</span></td>
+                    <td data-label="Profile"><x-admin.visibility-badge :visible="$user->is_visible" /></td>
+                    <td data-label="Home page"><x-admin.featured-toggle :action="route('users.toggle-featured', $user)" :visible="$user->is_visible" :featured="$user->is_featured" /></td>
+                    <td data-label="Businesses">{{ $user->businesses_count }}</td>
+                    <td data-label="Actions">
+                        <div class="flex flex-wrap justify-end gap-2 md:flex-nowrap">
+                            <a href="{{ route('users.show', $user) }}" class="btn btn-secondary btn-sm">View</a>
                             @if (auth()->user()?->isAdmin())
-                                {{-- --- Edit --- --}}
-                                <x-admin.icon-action :href="route('users.edit', $user)" variant="secondary" icon="bi-pencil-fill" tip="Edit" />
-
+                                <a href="{{ route('users.edit', $user) }}" class="btn btn-secondary btn-sm">Edit</a>
                                 @if (auth()->id() !== $user->id)
-                                    {{-- --- Disable / Enable --- --}}
-                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('users.toggle-status', $user) }}" method="POST">
                                         @csrf
-                                        <x-admin.icon-action type="submit" :variant="$user->is_visible ? 'danger' : 'success'"
-                                                             :icon="$user->is_visible ? 'bi-person-x-fill' : 'bi-person-check-fill'"
-                                                             :tip="$user->is_visible ? 'Disable' : 'Enable'" tip-align="right" arrow-class="mr-2" />
+                                        <button type="submit" class="btn btn-sm {{ $user->is_visible ? 'btn-danger-outline' : 'btn-secondary' }}">{{ $user->is_visible ? 'Hide' : 'Show' }}</button>
                                     </form>
                                 @endif
                             @endif
                         </div>
                     </td>
-
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="px-6 py-16 text-center">
-                        <div class="space-y-3">
-                            <p class="italic text-gray-400">
-                                {{ $hasActiveFilters ? 'No users matched your current filters.' : 'No users found.' }}
-                            </p>
-
-                            @if ($hasActiveFilters)
-                                <button type="button" @click="resetFilters()" class="inline-flex items-center rounded-xl bg-gray-100 px-4 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-200">
-                                    Clear all filters
-                                </button>
-                            @endif
-                        </div>
+                    <td colspan="7" class="!block px-6 py-12 text-center !text-base">
+                        <p class="text-gray-700">{{ $hasActiveFilters ? 'No users match your filters.' : 'No users yet.' }}</p>
+                        @if ($hasActiveFilters)
+                            <button type="button" @click="resetFilters()" class="btn btn-secondary mt-4">Clear filters</button>
+                        @endif
                     </td>
                 </tr>
             @endforelse

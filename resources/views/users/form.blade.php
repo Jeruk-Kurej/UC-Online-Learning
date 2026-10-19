@@ -1,247 +1,134 @@
 <x-app-layout>
+    @section('title', $userToEdit ? 'Edit ' . $userToEdit->name : 'Add a user')
+
     @push('styles')
-        @vite('resources/css/pages/user-form.css')
+        @vite('resources/css/vendor/tom-select.css')
     @endpush
 
-    <div class="mb-6 flex items-center gap-4">
-        <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn-uco btn-uco-secondary">
-            <i class="bi bi-arrow-left"></i>
-            Back
-        </a>
-        <div class="flex-1">
-            <h1 class="text-2xl font-bold text-gray-900">{{ $userToEdit ? 'Edit User' : 'Create New User' }}</h1>
-            <p class="text-sm text-gray-600">{{ $userToEdit ? 'Update user information' : 'Add a new user' }} strictly aligned with the new database columns</p>
-        </div>
-    </div>
+    <div class="mx-auto max-w-3xl space-y-6">
+        <x-ui.page-header :title="$userToEdit ? 'Edit user' : 'Add a user'" :subtitle="$userToEdit ? $userToEdit->name : 'Create an account for a student or alumnus.'" />
 
-    <form data-user-form data-enter-blurs method="POST" action="{{ $userToEdit ? route('users.update', $userToEdit) : route('users.store') }}" enctype="multipart/form-data" class="space-y-6">
-        @csrf
-        @if ($userToEdit)
-            @method('PUT')
-        @endif
+        <form data-user-form data-enter-blurs method="POST" action="{{ $userToEdit ? route('users.update', $userToEdit) : route('users.store') }}" enctype="multipart/form-data" class="space-y-6">
+            @csrf
+            @if ($userToEdit)
+                @method('PUT')
+            @endif
 
-        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
-                Account & Auth Info
-            </h2>
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="name" label="Full Name" required>
-                    <input type="text" name="name" id="name" value="{{ old('name', $userToEdit?->name) }}" required
-                           class="form-input-custom @error('name') border-red-500 @enderror">
-                </x-forms.field>
+            <x-forms.section title="Account">
+                <x-forms.input name="name" label="Full name" :value="$userToEdit?->name" required />
+                <x-forms.input name="email" label="Email" type="email" :value="$userToEdit?->email" required />
 
-                <x-forms.field look="user" name="email" label="Email Address" required>
-                    <input type="email" name="email" id="email" value="{{ old('email', $userToEdit?->email) }}" required
-                           class="form-input-custom @error('email') border-red-500 @enderror">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="role" label="Role" required>
+                <x-forms.field name="role" label="Role" required>
                     <select name="role" id="role" required class="block w-full">
                         <option value="user" {{ old('role', $userToEdit?->role) === 'user' ? 'selected' : '' }}>User</option>
                         <option value="admin" {{ old('role', $userToEdit?->role) === 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                 </x-forms.field>
 
-                <x-forms.field look="user" name="student_status" label="Student Status" required id="student_status_container">
-                    <select name="student_status" id="student_status" data-tom-select="Select Status" required class="block w-full">
-                        <option value="student aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student Aktif</option>
-                        <option value="student non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student non aktif' ? 'selected' : '' }}>Student Non Aktif</option>
-                        <option value="student cuti" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student cuti' ? 'selected' : '' }}>Student Cuti</option>
-                        <option value="alumni aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni aktif' ? 'selected' : '' }}>Alumni Aktif</option>
-                        <option value="alumni non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni non aktif' ? 'selected' : '' }}>Alumni Non Aktif</option>
-                        <option value="alumni cuti" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni cuti' ? 'selected' : '' }}>Alumni Cuti</option>
+                <x-forms.field name="student_status" label="Student status" required id="student_status_container">
+                    <select name="student_status" id="student_status" data-tom-select="Choose a status" required class="block w-full">
+                        <option value="student aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student aktif' ? 'selected' : '' }}>Student, active</option>
+                        <option value="student non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student non aktif' ? 'selected' : '' }}>Student, inactive</option>
+                        <option value="student cuti" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'student cuti' ? 'selected' : '' }}>Student, on leave</option>
+                        <option value="alumni aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni aktif' ? 'selected' : '' }}>Alumni, active</option>
+                        <option value="alumni non aktif" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni non aktif' ? 'selected' : '' }}>Alumni, inactive</option>
+                        <option value="alumni cuti" {{ old('student_status', $userToEdit ? $userToEdit->student_status : 'student aktif') === 'alumni cuti' ? 'selected' : '' }}>Alumni, on leave</option>
                     </select>
                 </x-forms.field>
 
-                <x-forms.field look="user" name="password" :label="$userToEdit ? 'Password (leave blank to keep existing)' : 'Password'" :required="!$userToEdit">
-                    <input type="password" name="password" id="password" @unless ($userToEdit) required @endunless
-                           class="form-input-custom @error('password') border-red-500 @enderror">
+                <x-forms.input name="password" id="password" type="password" :label="$userToEdit ? 'New password (leave empty to keep the current one)' : 'Password'" :required="!$userToEdit" autocomplete="new-password" />
+                <x-forms.field name="password_confirmation" label="Repeat password" :required="!$userToEdit" :show-error="false">
+                    <input type="password" name="password_confirmation" id="password_confirmation" @unless ($userToEdit) required @endunless autocomplete="new-password" class="field-input">
                 </x-forms.field>
+            </x-forms.section>
 
-                <x-forms.field look="user" name="password_confirmation" label="Confirm Password" :required="!$userToEdit" :show-error="false">
-                    <input type="password" name="password_confirmation" id="password_confirmation" @unless ($userToEdit) required @endunless
-                           class="form-input-custom">
-                </x-forms.field>
-            </div>
-        </div>
+            <x-forms.section title="Name and contact" id="identity_contact_section">
+                <x-forms.input name="prefix_title" label="Title before the name" :value="$userToEdit?->prefix_title" />
+                <x-forms.input name="suffix_title" label="Title after the name" :value="$userToEdit?->suffix_title" />
+                <x-forms.input name="personal_email" label="Personal email" type="email" :value="$userToEdit?->personal_email" />
+                <x-forms.input name="phone_number" label="Phone number" type="tel" :value="$userToEdit?->phone_number" />
+                <x-forms.input name="mobile_number" label="Mobile number" type="tel" :value="$userToEdit?->mobile_number" />
+                <x-forms.input name="whatsapp" label="WhatsApp number" type="tel" :value="$userToEdit?->whatsapp" />
+                <x-forms.input name="linkedin" label="LinkedIn address" type="url" :value="$userToEdit?->linkedin" wrapper-class="md:col-span-2" />
 
-        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="identity_contact_section">
-            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
-                Identity & Contact
-            </h2>
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="prefix_title" label="Prefix Title" :show-error="false">
-                    <input type="text" name="prefix_title" id="prefix_title" value="{{ old('prefix_title', $userToEdit?->prefix_title) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="suffix_title" label="Suffix Title" :show-error="false">
-                    <input type="text" name="suffix_title" id="suffix_title" value="{{ old('suffix_title', $userToEdit?->suffix_title) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="personal_email" label="Personal Email">
-                    <input type="email" name="personal_email" id="personal_email" value="{{ old('personal_email', $userToEdit?->personal_email) }}"
-                           class="form-input-custom @error('personal_email') border-red-500 @enderror">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="phone_number" label="Phone Number" :show-error="false">
-                    <input type="tel" name="phone_number" id="phone_number" value="{{ old('phone_number', $userToEdit?->phone_number) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="mobile_number" label="Mobile Number" :show-error="false">
-                    <input type="tel" name="mobile_number" id="mobile_number" value="{{ old('mobile_number', $userToEdit?->mobile_number) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="whatsapp" label="WhatsApp Number" :show-error="false">
-                    <input type="tel" name="whatsapp" id="whatsapp" value="{{ old('whatsapp', $userToEdit?->whatsapp) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="linkedin" label="LinkedIn URL" :show-error="false">
-                    <input type="url" name="linkedin" id="linkedin" value="{{ old('linkedin', $userToEdit?->linkedin) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                {{-- --- Profile Photo --- --}}
                 @if ($userToEdit)
-                    <x-forms.removable-image label="Profile Photo" name="profile_photo_url" delete-name="delete_profile_photo_url"
-                                             :url="$userToEdit->profile_photo_url" :initial="$userToEdit->initial" noun="Photo"
-                                             hint="JPG, PNG, WEBP — Max 5MB" box-class="w-[110px] h-[140px] group" actions-class="h-[140px]">
+                    <x-forms.removable-image class="md:col-span-2" label="Profile photo" name="profile_photo_url" delete-name="delete_profile_photo_url" :url="$userToEdit->profile_photo_url" :initial="$userToEdit->initial" noun="Photo" hint="JPG, PNG or WEBP, up to 5 MB.">
                         @error('profile_photo_url')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="field-error">{{ $message }}</p>
                         @enderror
                     </x-forms.removable-image>
                 @else
-                    <x-forms.file-drop label="Profile Photo" name="profile_photo_url" accept="image/*"
-                                       prompt="Upload or drop a photo" formats="JPG, PNG, WEBP">
+                    <x-forms.file-drop class="md:col-span-2" label="Profile photo" name="profile_photo_url" accept="image/*" prompt="Choose a photo or drop it here" formats="JPG, PNG or WEBP">
                         <x-slot:selection>
-                            <x-forms.picked-image label="Selected Photo" frame-class="h-20 w-16 flex-shrink-0 overflow-hidden rounded-sm"
-                                                  image-class="h-full w-full object-contain" />
+                            <x-forms.picked-image label="Selected photo" />
                         </x-slot:selection>
                         @error('profile_photo_url')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            <p class="field-error">{{ $message }}</p>
                         @enderror
                     </x-forms.file-drop>
                 @endif
-            </div>
-        </div>
+            </x-forms.section>
 
-        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="academic_extra_section">
-            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
-                Academic & Extra
-            </h2>
-            <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <x-forms.field look="user" name="nis" label="NIS (Student ID)" :show-error="false">
-                    <input type="text" name="nis" id="nis" value="{{ old('nis', $userToEdit?->nis) }}"
-                           class="form-input-custom">
-                </x-forms.field>
+            <x-forms.section title="Studies and activities" id="academic_extra_section">
+                <x-forms.input name="nis" label="Student number" :value="$userToEdit?->nis" />
+                <x-forms.input name="year_of_enrollment" label="Year joined" :value="$userToEdit?->year_of_enrollment" placeholder="For example 2023" />
+                <x-forms.input name="graduate_year" label="Year graduated" :value="$userToEdit?->graduate_year" placeholder="For example 2027" />
+                <x-forms.input name="major" label="Major" :value="$userToEdit?->major" />
 
-                <x-forms.field look="user" name="year_of_enrollment" label="Year of Enrollment" :show-error="false">
-                    <input type="text" name="year_of_enrollment" id="year_of_enrollment" value="{{ old('year_of_enrollment', $userToEdit?->year_of_enrollment) }}"
-                           class="form-input-custom" placeholder="e.g. 2023">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="graduate_year" label="Graduate Year" :show-error="false">
-                    <input type="text" name="graduate_year" id="graduate_year" value="{{ old('graduate_year', $userToEdit?->graduate_year) }}"
-                           class="form-input-custom" placeholder="e.g. 2027">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="major" :label="$userToEdit ? 'Peminatan' : 'Major'" :show-error="false">
-                    <input type="text" name="major" id="major" value="{{ old('major', $userToEdit?->major) }}"
-                           class="form-input-custom">
-                </x-forms.field>
-
-                <x-forms.field look="user" name="current_status" label="Current Career Status" :show-error="false">
-                    <select name="current_status" id="current_status" data-tom-select="Select Career Status" class="block w-full">
-                        <option value="">Select Status</option>
+                <x-forms.field name="current_status" label="Entrepreneur or intrapreneur" :show-error="false">
+                    <select name="current_status" id="current_status" data-tom-select="Choose one" class="block w-full">
+                        <option value="">Choose one</option>
                         <option value="Entrepreneur" {{ old('current_status', $userToEdit?->current_status) == 'Entrepreneur' ? 'selected' : '' }}>Entrepreneur</option>
                         <option value="Intrapreneur" {{ old('current_status', $userToEdit?->current_status) == 'Intrapreneur' ? 'selected' : '' }}>Intrapreneur</option>
                     </select>
                 </x-forms.field>
 
-                {{-- --- Activities Documentation Files --- --}}
                 @if ($userToEdit)
-                    <div class="relative md:col-span-2" x-data="activityFiles(@js($userToEdit->activity_files))">
-                        <div class="mb-3 flex items-center justify-between">
-                            <label class="form-label-custom mb-0">Activities Documentation Files</label>
+                    <div class="space-y-3 md:col-span-2" x-data="activityFiles(@js($userToEdit->activity_files))">
+                        <div class="flex flex-wrap items-center justify-between gap-3">
+                            <p class="field-label !mb-0">Activity files</p>
                             <x-files.add-files name="activities_docs" />
                         </div>
-
                         <x-files.activity-previews />
+                        @error('activities_docs')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
                     </div>
-                    @error('activities_docs')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-            </div>
-        @else
-            <x-forms.file-drop label="Activities Documentation File" name="activities_doc_url" accept=".pdf"
-                               prompt="Upload or drop a file" formats="PDF ONLY" icon="bi-folder2-open">
-                <x-slot:selection>
-                    <div x-show="selected"
-                         class="mb-3 flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3.5 shadow-sm">
-                        <div class="flex min-w-0 items-center gap-3">
-                            <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl border border-red-100 bg-red-50 text-red-500">
-                                <i class="bi bi-file-earmark-pdf-fill text-xl"></i>
+                @else
+                    <x-forms.file-drop class="md:col-span-2" label="Activity file" name="activities_doc_url" accept=".pdf" prompt="Choose a PDF or drop it here" formats="PDF only" icon="bi-file-earmark-pdf">
+                        <x-slot:selection>
+                            <div x-show="selected" class="mb-3 flex items-center justify-between gap-3 rounded-md border border-line bg-gray-50 p-3">
+                                <p class="min-w-0 truncate text-base text-gray-900" x-text="fileName">Selected file</p>
+                                <button type="button" @click="clear()" class="btn btn-secondary btn-sm">Remove</button>
                             </div>
-                            <div class="min-w-0">
-                                <p class="max-w-[240px] truncate text-xs font-bold text-slate-700" x-text="fileName">Selected File</p>
-                                <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">PDF document selected</p>
-                            </div>
-                        </div>
-                        <button type="button" @click="clear()"
-                                class="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-red-500 shadow-sm transition-colors hover:text-red-700"
-                                title="Clear Selection">
-                            <i class="bi bi-x-lg"></i>
-                        </button>
-                    </div>
-                </x-slot:selection>
-                @error('activities_doc_url')
-                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                @enderror
-            </x-forms.file-drop>
-            @endif
+                        </x-slot:selection>
+                        @error('activities_doc_url')
+                            <p class="field-error">{{ $message }}</p>
+                        @enderror
+                    </x-forms.file-drop>
+                @endif
 
-            <x-forms.field look="user" name="testimony" label="Student Testimony" :show-error="false" class="md:col-span-2">
-                <textarea name="testimony" id="testimony" rows="3"
-                          class="form-textarea-custom">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
-            </x-forms.field>
+                <x-forms.field name="testimony" label="Testimony" :show-error="false" class="md:col-span-2">
+                    <textarea name="testimony" id="testimony" rows="3" class="field-input">{{ old('testimony', $userToEdit?->testimony) }}</textarea>
+                </x-forms.field>
 
-            <x-forms.field look="user" name="activities_caption" label="Activities Caption" :show-error="false" class="md:col-span-2">
-                <input type="text" name="activities_caption" id="activities_caption" value="{{ old('activities_caption', $userToEdit?->activities_caption) }}"
-                       class="form-input-custom" placeholder="e.g. Brief caption describing student activities">
-            </x-forms.field>
-        </div>
-        </div>
+                <x-forms.input name="activities_caption" label="Caption for the activity photos" :value="$userToEdit?->activities_caption" wrapper-class="md:col-span-2" />
+            </x-forms.section>
 
-        <div class="rounded-xl border border-gray-100 bg-white p-6 shadow-sm" id="business_assignment_section">
-            <h2 class="mb-6 border-b-2 border-gray-100 pb-3 text-lg font-bold text-gray-900">
-                Business Transfers & Assignments
-            </h2>
-            <div class="grid grid-cols-1 gap-6">
-                <x-forms.field look="user" name="owned_businesses" label="Owned Businesses to assign directly:" :show-error="false">
-                    <select name="owned_businesses[]" id="owned_businesses" data-tom-select="Select Businesses" multiple class="block w-full">
+            <x-forms.section title="Businesses" hint="Add businesses to this user. This never takes a business away from anyone else who runs it." id="business_assignment_section" :grid="false">
+                <x-forms.field name="owned_businesses" label="Businesses to give to this user" :show-error="false">
+                    <select name="owned_businesses[]" id="owned_businesses" data-tom-select="Choose businesses" multiple class="block w-full">
                         @foreach ($availableBusinesses as $b)
-                            <option value="{{ $b->id }}" {{ in_array($b->id, old('owned_businesses', $ownedBusinessIds)) ? 'selected' : '' }}>
-                                {{ $b->name }} (Current owner: {{ $b->user->name ?? 'None' }})
-                            </option>
+                            <option value="{{ $b->id }}" {{ in_array($b->id, old('owned_businesses', $ownedBusinessIds)) ? 'selected' : '' }}>{{ $b->name }} (current owner: {{ $b->user->name ?? 'none' }})</option>
                         @endforeach
                     </select>
                 </x-forms.field>
-            </div>
-        </div>
+            </x-forms.section>
 
-        {{-- --- Action Buttons --- --}}
-        <div class="flex items-center justify-between pb-10">
-            <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn-uco btn-uco-neutral">
-                Cancel
-            </a>
-            <button type="submit" class="btn-uco btn-uco-primary">
-                <i class="bi {{ $userToEdit ? 'bi-check-circle-fill' : 'bi-person-plus-fill' }}"></i>
-                {{ $userToEdit ? 'Update' : 'Create' }} User
-            </button>
-        </div>
-    </form>
+            <x-forms.actions>
+                <a href="{{ $userToEdit ? route('users.show', $userToEdit) : route('users.index') }}" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">{{ $userToEdit ? 'Save changes' : 'Add user' }}</button>
+            </x-forms.actions>
+        </form>
+    </div>
 </x-app-layout>

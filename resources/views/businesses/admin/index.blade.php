@@ -1,168 +1,123 @@
 <x-app-layout>
-    <div data-business-admin class="mx-auto w-full max-w-[1600px] px-4 py-8"
-         @start-import.window="showImportModal = false"
-         @close-import-modal.window="showImportModal = false"
-         data-view-type="{{ $viewType ?? 'entrepreneur' }}"
-         x-data="businessAdminList"
-         x-init="viewType = $el.dataset.viewType || 'entrepreneur'"
-         @ajax-pagination.window="updateList($event.detail.url, true, true)">
-        <x-ui.page-header badge="Admin Portal" title="Business Management" subtitle="Review and manage business submissions from students.">
-            <x-slot:actions>
-                <span class="inline-flex flex-grow items-center justify-center gap-1.5 rounded-md border border-uco-yellow-200 bg-uco-yellow-50 px-3 py-2 text-xs font-semibold text-uco-yellow-700 sm:flex-initial">
-                    <i class="bi bi-star-fill text-uco-yellow-500"></i>
-                    <span><span class="featured-count">{{ $featuredBusinessesCount }}</span> Featured</span>
-                </span>
-                <button type="button" @click="showImportModal = true" class="btn-uco btn-uco-secondary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
-                    <i class="bi bi-cloud-upload mr-2"></i>
-                    Import CSV
-                </button>
+    @section('title', 'Manage businesses')
 
-                <a href="{{ route('businesses.create') }}" class="btn-uco btn-uco-primary flex-grow justify-center px-4 py-2 text-sm sm:flex-initial">
-                    <i class="bi bi-plus-lg mr-2"></i>
-                    Create Business
+    <div data-business-admin @start-import.window="showImportModal = false" @close-import-modal.window="showImportModal = false" data-view-type="{{ $viewType ?? 'entrepreneur' }}" x-data="businessAdminList" x-init="viewType = $el.dataset.viewType || 'entrepreneur'" @ajax-pagination.window="updateList($event.detail.url, true, true)">
+        <x-ui.page-header title="Manage businesses" subtitle="Review what students and alumni submit before it appears in the directory.">
+            <x-slot:actions>
+                <button type="button" @click="showImportModal = true" class="btn btn-secondary">
+                    <i class="bi bi-cloud-upload" aria-hidden="true"></i>
+                    Import from a file
+                </button>
+                <a href="{{ route('businesses.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                    Add a business
                 </a>
             </x-slot:actions>
         </x-ui.page-header>
 
-        {{-- --- Statistics --- --}}
-        <div class="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            <x-admin.stat-card class="delay-100">
+        {{-- --- Numbers --- --}}
+        <div class="mb-3 grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <x-admin.stat-card>
                 <x-slot:label>
-                    <span x-show="viewType === 'entrepreneur'">Total Businesses</span>
-                    <span x-show="viewType === 'intrapreneur'">Total Career Profiles</span>
+                    <span x-show="viewType === 'entrepreneur'">All businesses</span>
+                    <span x-show="viewType === 'intrapreneur'">All work profiles</span>
                 </x-slot:label>
                 {{ $totalBusinesses }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-150" tone="green">
+            <x-admin.stat-card>
                 <x-slot:label>
                     <span x-show="viewType === 'entrepreneur'">Approved</span>
-                    <span x-show="viewType === 'intrapreneur'">Active / Visible</span>
+                    <span x-show="viewType === 'intrapreneur'">Visible</span>
                 </x-slot:label>
                 {{ $approvedBusinesses }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-200" tone="amber">
+            <x-admin.stat-card>
                 <x-slot:label>
-                    <span x-show="viewType === 'entrepreneur'">Pending Approval</span>
+                    <span x-show="viewType === 'entrepreneur'">Waiting for approval</span>
                     <span x-show="viewType === 'intrapreneur'">Hidden</span>
                 </x-slot:label>
                 {{ $pendingBusinesses }}
             </x-admin.stat-card>
-            <x-admin.stat-card class="delay-[250ms]" tone="red">
-                <x-slot:label>
-                    <span x-show="viewType === 'entrepreneur'">Rejected / Revision</span>
-                    <span x-show="viewType === 'intrapreneur'">— N/A —</span>
-                </x-slot:label>
+            <x-admin.stat-card x-show="viewType === 'entrepreneur'">
+                <x-slot:label>Rejected or needs revision</x-slot:label>
                 {{ $rejectedBusinesses }}
             </x-admin.stat-card>
         </div>
+        <p class="mb-8 text-base text-gray-700" x-show="viewType === 'entrepreneur'">Featured on the home page: <span class="featured-count font-semibold">{{ $featuredBusinessesCount }}</span></p>
 
-        {{-- --- Filters & Search --- --}}
-        <div class="reveal-on-scroll mb-8 delay-300">
-            <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" @submit.prevent="updateList()">
-                {{-- --- Hidden type input (kept in sync by switchType()) --- --}}
-                <input type="hidden" name="type" :value="viewType">
+        {{-- --- Search and filters --- --}}
+        <form x-ref="filterForm" action="{{ route('businesses.admin') }}" method="GET" class="card mb-6 space-y-3" @submit.prevent="updateList()">
+            <input type="hidden" name="type" :value="viewType">
 
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <x-ui.search-field class="w-full flex-1" value="{{ $search }}"
-                                       ::placeholder="viewType === 'intrapreneur' ? 'Search company or owner name...' : 'Search business or owner name...'" />
+            <div class="flex flex-col gap-3 sm:flex-row">
+                <x-ui.search-field class="flex-1" value="{{ $search }}" ::placeholder="viewType === 'intrapreneur' ? 'Search by company or person' : 'Search by business or owner'" />
+                <x-ui.filter-reset />
+            </div>
 
-                    {{-- --- Filters & Reset Button --- --}}
-                    <div class="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <x-ui.filter-select x-model="viewType" aria-label="Type" @change="switchType($event.target.value)">
+                    <option value="entrepreneur">Businesses (entrepreneurs)</option>
+                    <option value="intrapreneur">Work profiles (intrapreneurs)</option>
+                </x-ui.filter-select>
 
-                        {{-- --- Type dropdown --- --}}
-                        <x-ui.filter-select x-model="viewType"
-                                            @change="switchType($event.target.value)" class="min-w-[175px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
-                            <option value="entrepreneur">Type: Entrepreneur</option>
-                            <option value="intrapreneur">Type: Intrapreneur</option>
-                        </x-ui.filter-select>
+                <x-ui.filter-select name="status" aria-label="Status" @change="updateList()">
+                    <option value="">All statuses</option>
+                    <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending approval</option>
+                    <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
+                    <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
+                    <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Needs revision</option>
+                </x-ui.filter-select>
 
-                        {{-- --- Status filter --- --}}
-                        <x-ui.filter-select name="status" @change="updateList()" class="min-w-[145px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
-                            <option value="">Status: All</option>
-                            <option value="pending" {{ ($status ?? '') === 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="approved" {{ ($status ?? '') === 'approved' ? 'selected' : '' }}>Approved</option>
-                            <option value="rejected" {{ ($status ?? '') === 'rejected' ? 'selected' : '' }}>Rejected</option>
-                            <option value="need_revision" {{ ($status ?? '') === 'need_revision' ? 'selected' : '' }}>Need Revision</option>
-                        </x-ui.filter-select>
+                <template x-if="viewType === 'entrepreneur'">
+                    <x-ui.filter-select name="featured" aria-label="Featured" @change="updateList()">
+                        <option value="">Featured or not</option>
+                        <option value="yes" {{ ($featured ?? '') === 'yes' ? 'selected' : '' }}>Featured</option>
+                        <option value="no" {{ ($featured ?? '') === 'no' ? 'selected' : '' }}>Not featured</option>
+                    </x-ui.filter-select>
+                </template>
+            </div>
+        </form>
 
-                        {{-- --- Featured filter (entrepreneur only) --- --}}
-                        <template x-if="viewType === 'entrepreneur'">
-                            <x-ui.filter-select name="featured" @change="updateList()" class="min-w-[145px] flex-1 cursor-pointer pl-3 pr-8 text-sm sm:flex-initial">
-                                <option value="">Featured: All</option>
-                                <option value="yes" {{ ($featured ?? '') === 'yes' ? 'selected' : '' }}>Featured</option>
-                                <option value="no" {{ ($featured ?? '') === 'no' ? 'selected' : '' }}>Not Featured</option>
-                            </x-ui.filter-select>
-                        </template>
-
-                        <x-ui.filter-reset class="flex-shrink-0" />
-                    </div>
-                </div>
-            </form>
-        </div>
-
-        <div id="businesses-admin-list-container" :class="isSubmitting ? 'opacity-50 pointer-events-none transition-opacity' : 'transition-opacity'">
+        <div id="businesses-admin-list-container" :class="{ 'pointer-events-none opacity-50': isSubmitting }" aria-live="polite">
             @include('businesses.admin.partials.list')
         </div>
 
-        {{-- --- Status Modal --- --}}
-        <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            <div class="flex min-h-screen items-end justify-center px-4 pb-20 pt-4 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" data-status-modal-close></div>
+        {{-- --- Status dialog --- --}}
+        <div id="statusModal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <div class="modal-backdrop" data-status-modal-close aria-hidden="true"></div>
+            <div class="relative flex min-h-full items-center justify-center p-4">
+                <form id="statusForm" method="POST" class="modal-panel space-y-5">
+                    @csrf
+                    <div>
+                        <h2 id="modal-title" class="card-title">Change status</h2>
+                        <p class="mt-1 text-base text-gray-600" id="businessNameDisplay"></p>
+                    </div>
 
-                <span class="hidden sm:inline-block sm:h-screen sm:align-middle" aria-hidden="true">&#8203;</span>
+                    <div>
+                        <label for="statusSelect" class="field-label">New status</label>
+                        <select name="status" id="statusSelect" data-status-select class="field-input">
+                            <option value="pending">Pending approval</option>
+                            <option value="approved">Approved</option>
+                            <option value="need_revision">Needs revision</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
 
-                <div class="inline-block transform overflow-hidden rounded-2xl bg-white text-left align-bottom shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:align-middle">
-                    <form id="statusForm" method="POST">
-                        @csrf
-                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                            <div class="sm:flex sm:items-start">
-                                <div class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
-                                    <i class="bi bi-gear-fill text-blue-600"></i>
-                                </div>
-                                <div class="mt-3 w-full text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <h3 class="text-lg font-bold leading-6 text-gray-900" id="modal-title">
-                                        Update Business Status
-                                    </h3>
-                                    <div class="mt-2">
-                                        <p class="mb-4 text-sm text-gray-500" id="businessNameDisplay"></p>
+                    <div id="reasonField" class="hidden">
+                        <label for="rejection_reason" class="field-label">Message to the owner</label>
+                        <textarea name="rejection_reason" id="rejection_reason" rows="3" class="field-input" placeholder="Say what to change, or why it was rejected."></textarea>
+                    </div>
 
-                                        <div class="mb-4">
-                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">New Status</label>
-                                            <select name="status" id="statusSelect" data-status-select
-                                                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold outline-none focus:ring-2 focus:ring-blue-500">
-                                                <option value="pending">Pending Approval</option>
-                                                <option value="approved">Approved</option>
-                                                <option value="need_revision">Need Revision</option>
-                                                <option value="rejected">Rejected</option>
-                                            </select>
-                                        </div>
-
-                                        <div id="reasonField" class="hidden">
-                                            <label class="mb-2 block text-[10px] font-black uppercase tracking-wider text-gray-400">Feedback / Reason</label>
-                                            <textarea name="rejection_reason" id="rejection_reason" rows="3"
-                                                      class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500"
-                                                      placeholder="Provide specific feedback or reason for rejection..."></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:items-center sm:gap-2 sm:px-6">
-                            <button type="submit" class="btn-uco btn-uco-primary w-full sm:w-auto">
-                                Save Changes
-                            </button>
-                            <button type="button" data-status-modal-close class="btn-uco btn-uco-neutral mt-3 w-full sm:mt-0 sm:w-auto">
-                                Cancel
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <x-forms.actions>
+                        <button type="button" data-status-modal-close class="btn btn-secondary">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save status</button>
+                    </x-forms.actions>
+                </form>
             </div>
         </div>
 
-        {{-- --- Import Modal --- --}}
         @if (auth()->user()?->isAdmin())
-            <x-admin.import-modal title="Import Businesses" :action="route('businesses.import')" input-id="biz_csv_file" name-id="biz_file_name" />
+            <x-admin.import-modal title="Import businesses" :action="route('businesses.import')" input-id="biz_csv_file" name-id="biz_file_name" />
         @endif
 
         @include('partials.import-progress')

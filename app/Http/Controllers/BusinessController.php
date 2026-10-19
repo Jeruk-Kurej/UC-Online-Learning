@@ -48,7 +48,6 @@ class BusinessController extends Controller
             'viewType' => $viewType,
             'availableProvinces' => $this->directoryLocations($viewType)->whereNotNull('province')->distinct()->pluck('province')->sort(),
             'directoryState' => $this->directoryState($request, $viewType),
-            'featuredBusinessCount' => Business::where('is_featured', true)->count(),
         ]);
     }
 
