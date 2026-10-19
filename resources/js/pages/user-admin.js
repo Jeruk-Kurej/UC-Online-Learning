@@ -1,7 +1,8 @@
-// --- Admin user list: filters and AJAX list, stats refresh after an import ---
+// --- Admin user list: filters and AJAX list, Hide/Show and Feature without a reload, stats refresh after changes and imports ---
 // Imported by app.js on pages with [data-user-admin]; Alpine starts after this module has run.
 
 import ajaxList from '../lib/ajax-list';
+import registerRowToggles from '../lib/row-toggle';
 
 // --- Counter element id → key in the stats JSON (Admin\UserController::stats) ---
 
@@ -38,3 +39,4 @@ function userAdminList() {
 }
 
 window.Alpine.data('userAdminList', userAdminList);
+registerRowToggles();
