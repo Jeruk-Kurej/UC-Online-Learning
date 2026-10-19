@@ -38,6 +38,19 @@ trait HasApprovalStatus
         $query->whereHas('user', fn ($q) => $q->where('is_visible', true));
     }
 
+    public function hasVisiblePeople(): bool
+    {
+        return (bool) $this->user?->is_visible;
+    }
+
+    /**
+     * The same rule as the visible scope, for one record: anyone may open it; otherwise only the people who manage it.
+     */
+    public function isPublic(): bool
+    {
+        return $this->is_visible && $this->approval_status === 'approved' && $this->hasVisiblePeople();
+    }
+
     // --- Admin decision: only approved items are visible; a reason is kept for rejections and revision requests ---
 
     public function hasReviewFeedback(): bool

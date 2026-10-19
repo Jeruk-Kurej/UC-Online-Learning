@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Models\User;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Rules shared by the register-business and edit-business forms.
@@ -77,7 +78,7 @@ abstract class BusinessFormRequest extends FormRequest
             'description' => 'required|string|max:1000',
             'category_id' => 'required|exists:categories,id',
             'business_mode' => 'required|in:product,service,both',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => [Rule::requiredIf(fn () => $this->user()->isAdmin()), 'nullable', 'exists:users,id'],
             'owner_ids' => 'nullable|array',
             'owner_ids.*' => 'integer|exists:users,id',
             'position' => 'nullable|string|max:255',

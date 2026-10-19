@@ -73,7 +73,7 @@ function approvedBusiness(User $owner, Category $category, array $overrides = []
 
 // --- Store and update ---
 
-test('a student business is stored hidden with mapped fields and resolved location names', function () {
+test('a student business is stored hidden with mapped fields and resolved location names; co-owners it sends are ignored', function () {
     $w = businessWorld();
 
     $this->actingAs($w['owner'])->post(route('businesses.store'), businessPayload($w['category'], ['owner_ids' => [$w['stranger']->id]]))
@@ -90,16 +90,24 @@ test('a student business is stored hidden with mapped fields and resolved locati
         ->and($business->instagram)->toBe('@warung')
         ->and($business->province)->toBe('JAWA TIMUR')
         ->and($business->city)->toBe('KOTA SURABAYA')
-        ->and($business->members()->pluck('users.id')->all())->toBe([$w['stranger']->id]);
+        ->and($business->approval_status)->toBe('pending')
+        ->and($business->members()->count())->toBe(0);
 });
 
-test('an admin business is stored visible with the admin message', function () {
+test('an admin business belongs to the student picked as owner, approved and visible', function () {
     $w = businessWorld();
 
     $this->actingAs($w['admin'])->post(route('businesses.store'), businessPayload($w['category'], ['name' => 'Admin Venture']))
+        ->assertSessionHasErrors('user_id');
+
+    $this->actingAs($w['admin'])->post(route('businesses.store'), businessPayload($w['category'], ['name' => 'Admin Venture', 'user_id' => $w['owner']->id, 'owner_ids' => [$w['stranger']->id]]))
         ->assertSessionHas('success', 'Business created successfully!');
 
-    expect(Business::where('name', 'Admin Venture')->value('is_visible'))->toBeTrue();
+    $business = Business::where('name', 'Admin Venture')->firstOrFail();
+    expect($business->user_id)->toBe($w['owner']->id)
+        ->and($business->is_visible)->toBeTrue()
+        ->and($business->approval_status)->toBe('approved')
+        ->and($business->members()->pluck('users.id')->all())->toBe([$w['stranger']->id]);
 });
 
 test('a logo upload is stored on the public disk', function () {
@@ -141,25 +149,31 @@ test('saving the edit form keeps a business featured', function () {
     $this->actingAs($w['owner'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Owner Edit']));
     expect($business->fresh()->is_featured)->toBeTrue();
 
-    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Edit']));
+    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Edit', 'user_id' => $w['owner']->id]));
     expect($business->fresh()->is_featured)->toBeTrue();
 
-    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Unfeature', 'is_featured' => 0]));
+    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], ['name' => 'Admin Unfeature', 'is_featured' => 0, 'user_id' => $w['owner']->id]));
     expect($business->fresh()->is_featured)->toBeFalse();
 });
 
-test('update syncs members and can delete the logo', function () {
+test('only an admin update changes the co-owners; an owner can delete the logo', function () {
     $w = businessWorld();
     $business = approvedBusiness($w['owner'], $w['category'], ['logo_url' => 'logos/old.png']);
-    $business->members()->attach($w['admin']->id);
+    $member = User::factory()->create();
+    $business->members()->attach($member->id);
 
     $this->actingAs($w['owner'])->put(route('businesses.update', $business), businessPayload($w['category'], [
-        'owner_ids' => [$w['stranger']->id], 'delete_logo' => 1,
+        'owner_ids' => [$w['stranger']->id, $w['admin']->id], 'delete_logo' => 1,
     ]));
 
     $business->refresh();
-    expect($business->members()->pluck('users.id')->all())->toBe([$w['stranger']->id])
+    expect($business->members()->pluck('users.id')->all())->toBe([$member->id])
         ->and($business->getRawOriginal('logo_url'))->toBeNull();
+
+    $this->actingAs($w['admin'])->put(route('businesses.update', $business), businessPayload($w['category'], [
+        'owner_ids' => [$w['stranger']->id], 'user_id' => $w['owner']->id,
+    ]));
+    expect($business->members()->pluck('users.id')->all())->toBe([$w['stranger']->id]);
 });
 
 test('a stranger cannot open the edit form or update', function () {
@@ -182,7 +196,7 @@ test('the edit form receives the cities of the saved province', function () {
 
 // --- Public pages ---
 
-test('a hidden business is only shown to owner, member, collab partner and admin', function () {
+test('a hidden business is only shown to owner, member and admin, not to the owner\'s connections', function () {
     $w = businessWorld();
     $business = approvedBusiness($w['owner'], $w['category'], ['approval_status' => 'pending', 'is_visible' => false]);
     $member = User::factory()->create();
@@ -194,7 +208,7 @@ test('a hidden business is only shown to owner, member, collab partner and admin
     $this->actingAs($w['stranger'])->get(route('businesses.show', $business))->assertNotFound();
     $this->actingAs($w['owner'])->get(route('businesses.show', $business))->assertOk();
     $this->actingAs($member)->get(route('businesses.show', $business))->assertOk();
-    $this->actingAs($partner)->get(route('businesses.show', $business))->assertOk();
+    $this->actingAs($partner)->get(route('businesses.show', $business))->assertNotFound();
     $this->actingAs($w['admin'])->get(route('businesses.show', $business))->assertOk();
 });
 
@@ -208,17 +222,22 @@ test('the showcase url resolves businesses first, then work profiles', function 
     $this->get('/business/nothing-here')->assertNotFound();
 });
 
-test('a hidden work profile is only shown to owner, collab partner and admin', function () {
+test('a hidden or unapproved work profile is only shown to owner and admin, not to the owner\'s connections', function () {
     $w = businessWorld();
     $company = Company::create(['user_id' => $w['owner']->id, 'name' => 'Quiet Employer', 'is_visible' => false]);
+    $pending = Company::create(['user_id' => $w['owner']->id, 'name' => 'Waiting Employer', 'is_visible' => true, 'approval_status' => 'pending']);
     $partner = User::factory()->create();
     Collab::create(['sender_id' => $w['owner']->id, 'recipient_id' => $partner->id, 'status' => 'accepted']);
 
     $this->get('/business/'.$company->slug)->assertNotFound();
     $this->actingAs($w['stranger'])->get('/business/'.$company->slug)->assertNotFound();
     $this->actingAs($w['owner'])->get('/business/'.$company->slug)->assertOk();
-    $this->actingAs($partner)->get('/business/'.$company->slug)->assertOk();
+    $this->actingAs($partner)->get('/business/'.$company->slug)->assertNotFound();
     $this->actingAs($w['admin'])->get('/business/'.$company->slug)->assertOk();
+
+    auth()->logout();
+    $this->get('/business/'.$pending->slug)->assertNotFound();
+    $this->actingAs($w['owner'])->get('/business/'.$pending->slug)->assertOk();
 });
 
 test('the directory filters by search, category and province and serves a partial over ajax', function () {
@@ -369,20 +388,22 @@ test('business import needs a file and queues the importer', function () {
 
 // --- Work profiles ---
 
-test('a student work profile is stored pending, an admin one approved, with title-cased location', function () {
+test('a student work profile is stored pending, an admin one approved for the student picked, with title-cased location', function () {
     $w = businessWorld();
     $payload = ['category_id' => $w['category']->id, 'position' => 'Staff', 'job_description' => 'Mengelola data penjualan.', 'province' => '35', 'city' => '3578'];
 
     $this->actingAs($w['owner'])->post(route('intrapreneurs.store'), $payload + ['name' => 'PT Student'])
         ->assertSessionHas('success', 'Work profile registered successfully!');
-    $this->actingAs($w['admin'])->post(route('intrapreneurs.store'), $payload + ['name' => 'PT Admin']);
+    $this->actingAs($w['admin'])->post(route('intrapreneurs.store'), $payload + ['name' => 'PT Admin'])->assertSessionHasErrors('user_id');
+    $this->actingAs($w['admin'])->post(route('intrapreneurs.store'), $payload + ['name' => 'PT Admin', 'user_id' => $w['admin']->id])->assertSessionHasErrors('user_id');
+    $this->actingAs($w['admin'])->post(route('intrapreneurs.store'), $payload + ['name' => 'PT Admin', 'user_id' => $w['stranger']->id]);
 
     $student = Company::where('name', 'PT Student')->firstOrFail();
     expect($student->approval_status)->toBe('pending')
         ->and($student->is_visible)->toBeTrue()
         ->and($student->province)->toBe('Jawa Timur')
         ->and($student->city)->toBe('Kota Surabaya');
-    expect(Company::where('name', 'PT Admin')->value('approval_status'))->toBe('approved');
+    expect(Company::where('name', 'PT Admin')->first()->only(['approval_status', 'user_id']))->toBe(['approval_status' => 'approved', 'user_id' => $w['stranger']->id]);
     $this->actingAs($w['owner'])->post(route('intrapreneurs.store'), ['name' => 'X'])->assertSessionHasErrors(['category_id', 'position', 'job_description']);
 });
 
