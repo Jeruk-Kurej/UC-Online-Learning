@@ -84,7 +84,7 @@ function smokeUris(array $w): array
     return [
         'home' => '/',
         'about' => '/about',
-        'featured' => '/featured',
+        'home' => '/',
         'business list' => '/business',
         'business list intrapreneur' => '/business?view=intrapreneur',
         'login' => '/login',
@@ -129,7 +129,7 @@ function smokeExpected(): array
     return [
         'home' => [302, 302, 302],
         'about' => [200, 200, 200],
-        'featured' => [200, 200, 200],
+        'home' => [200, 200, 200],
         'business list' => [200, 200, 200],
         'business list intrapreneur' => [200, 200, 200],
         'login' => [200, 302, 302],

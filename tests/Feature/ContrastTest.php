@@ -69,6 +69,8 @@ dataset('text pairs', [
     'muted text on page' => ['gray-600', 'canvas'],
     'muted text on card' => ['gray-600', 'white'],
     'hero search button' => ['ink', 'brand-500'],
+    'call to action on orange' => ['ink', 'brand-500'],
+    'button on orange' => ['white', 'ink'],
     'menu text' => ['gray-700', 'white'],
     'active menu text' => ['brand-900', 'white'],
     'orange accent text on white' => ['brand-700', 'white'],

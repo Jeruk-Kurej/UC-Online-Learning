@@ -19,7 +19,7 @@
             <nav aria-label="Footer">
                 <p class="text-base font-semibold text-brand-300">Pages</p>
                 <ul class="mt-3 space-y-2 text-base">
-                    <li><a href="{{ route('featured') }}" class="text-gray-100 underline-offset-2 hover:underline">Featured</a></li>
+                    <li><a href="{{ route('home') }}" class="text-gray-100 underline-offset-2 hover:underline">Home</a></li>
                     <li><a href="{{ route('businesses.index') }}" class="text-gray-100 underline-offset-2 hover:underline">Directory</a></li>
                     <li><a href="{{ route('about') }}" class="text-gray-100 underline-offset-2 hover:underline">About</a></li>
                 </ul>

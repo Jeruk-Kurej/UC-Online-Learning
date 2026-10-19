@@ -16,5 +16,5 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('featured', absolute: false));
+    $response->assertRedirect(route('home', absolute: false));
 });

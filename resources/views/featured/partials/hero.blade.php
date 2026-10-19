@@ -4,8 +4,8 @@
     'hero-photo' => $heroHasPhoto,
 ])>
     <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <h1 class="max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">Find the businesses and careers of Universitas Ciputra Online Learning alumni</h1>
-        <p class="mt-4 max-w-2xl text-lg text-gray-100">Look up a business or the person behind it, or see where our students and alumni work.</p>
+        <h1 class="max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">Find the businesses and careers of Universitas Ciputra Online Learning <span class="inline-block rounded-[50%] border-[3px] border-brand-500 px-4 pb-1">alumni</span></h1>
+        <p class="mt-4 max-w-2xl text-lg text-gray-100">Look up a <strong>business</strong> or the person behind it, or see where our students and alumni <strong>work</strong>.</p>
 
         <form action="{{ route('businesses.index') }}" method="GET" role="search" class="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-white/40 bg-white/10 p-1.5 pl-5 backdrop-blur-sm transition-colors focus-within:border-white focus-within:bg-white/20">
             <i class="bi bi-search text-lg text-white/80" aria-hidden="true"></i>

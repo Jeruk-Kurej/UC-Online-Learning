@@ -1,15 +1,18 @@
-@props(['title', 'lead' => null, 'href' => null, 'linkLabel' => null])
+@props(['title', 'accent' => null, 'lead' => null, 'href' => null, 'linkLabel' => null])
 
-<section {{ $attributes->class(['space-y-5']) }}>
-    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-b border-line pb-3">
+<section {{ $attributes->class(['space-y-6']) }}>
+    <div class="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
         <div>
-            <h2 class="section-heading">{{ $title }}</h2>
+            <h2 class="section-heading">{{ $title }}@if ($accent)
+                    <span class="text-brand-700">{{ $accent }}</span>
+                @endif
+            </h2>
             @if ($lead)
-                <p class="mt-1 text-base text-gray-600">{{ $lead }}</p>
+                <p class="mt-3 text-base text-gray-700">{{ $lead }}</p>
             @endif
         </div>
         @if ($href)
-            <a href="{{ $href }}" class="text-link">{{ $linkLabel }}</a>
+            <a href="{{ $href }}" class="text-link">{{ $linkLabel }} &raquo;</a>
         @endif
         @isset($action)
             {{ $action }}

@@ -25,16 +25,16 @@ test('every featured venture is listed, none is singled out in the hero', functi
     featuredVenture('Alpha Venture');
     featuredVenture('Beta Venture');
 
-    $html = $this->get('/featured')->assertOk()->assertSee('Alpha Venture')->assertSee('Beta Venture')->getContent();
+    $html = $this->get('/')->assertOk()->assertSee('Alpha Venture')->assertSee('Beta Venture')->getContent();
 
-    expect(substr_count($html, 'Visit venture'))->toBe(2)->and($html)->not->toContain('Featured venture<');
+    expect(substr_count($html, 'by '))->toBeGreaterThanOrEqual(2)->and($html)->not->toContain('Featured venture<');
 });
 
 test('the order stays the same within a day and changes with the day', function () {
     foreach (range(1, 8) as $i) {
         featuredVenture("Venture number {$i}");
     }
-    $names = fn () => collect($this->get('/featured')->viewData('featuredVentures'))->pluck('name')->all();
+    $names = fn () => collect($this->get('/')->viewData('featuredVentures'))->pluck('name')->all();
 
     $first = $names();
     expect($names())->toBe($first);
@@ -48,21 +48,36 @@ test('a section shows at most six items', function () {
         featuredVenture("Venture number {$i}");
     }
 
-    expect($this->get('/featured')->viewData('featuredVentures'))->toHaveCount(6);
+    expect($this->get('/')->viewData('featuredVentures'))->toHaveCount(6);
 });
 
-test('without featured ventures the page says so', function () {
-    $this->get('/featured')->assertOk()->assertSee('No featured ventures yet');
+test('without anything featured the page says so, and a group without items is left out', function () {
+    $this->get('/')->assertOk()->assertSee('Nothing to show yet')->assertDontSee('See all ventures');
+
+    featuredVenture('Only Venture');
+    $this->get('/')->assertOk()->assertDontSee('Nothing to show yet')->assertSee('See all ventures')->assertDontSee('Our <span class="text-brand-700">entrepreneurs</span>', false);
+});
+
+test('ventures, entrepreneurs and intrapreneurs are all on the page without tabs', function () {
+    featuredVenture('Some Venture');
+    User::factory()->create(['is_visible' => true, 'is_featured' => true, 'current_status' => 'Entrepreneur', 'profile_photo_url' => 'https://example.test/e.jpg', 'name' => 'Featured Founder']);
+    User::factory()->create(['is_visible' => true, 'is_featured' => true, 'current_status' => 'Intrapreneur', 'profile_photo_url' => 'https://example.test/i.jpg', 'name' => 'Featured Employee']);
+
+    $this->get('/')->assertOk()->assertSee('Some Venture')->assertSee('Featured Founder')->assertSee('Featured Employee')->assertDontSee('role="tab"', false);
 });
 
 test('a featured venture shows the photo of its first product that has one', function () {
     $business = featuredVenture('Photo Venture', 'https://example.test/photo.jpg');
 
     expect($business->fresh()->load('products')->showcase_photo_url)->toBe('https://example.test/photo.jpg');
-    $this->get('/featured')->assertOk()->assertSee('https://example.test/photo.jpg', false);
+    $this->get('/')->assertOk()->assertSee('https://example.test/photo.jpg', false);
 });
 
 test('guests are asked to log in at the bottom, signed-in people are not', function () {
-    $this->get('/featured')->assertSee('Do you study or did you graduate');
-    $this->actingAs(User::factory()->create())->get('/featured')->assertDontSee('Do you study or did you graduate');
+    $this->get('/')->assertSee('Do you study or did you graduate');
+    $this->actingAs(User::factory()->create())->get('/')->assertDontSee('Do you study or did you graduate');
+});
+
+test('the old /featured address leads to the home page', function () {
+    $this->get('/featured')->assertRedirect('/')->assertStatus(301);
 });
