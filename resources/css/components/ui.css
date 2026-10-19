@@ -4,6 +4,11 @@
         @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8;
     }
 
+    /* --- Wider shell for pages built around a table --- */
+    .page-wide {
+        @apply max-w-[96rem];
+    }
+
     .page-narrow {
         @apply mx-auto w-full max-w-3xl px-4 py-8 sm:px-6;
     }
@@ -66,7 +71,7 @@
         @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-brand-50;
     }
 
-    /* --- Admin tables: a table from tablet width up, one card per row on phones (cells carry data-label) --- */
+    /* --- Admin tables: a table from 1280px up, one card per row below it so nothing ever scrolls sideways (cells carry data-label) --- */
     .admin-table {
         @apply w-full text-left;
     }
@@ -83,7 +88,7 @@
         @apply border-t border-line;
     }
 
-    @media (max-width: 767px) {
+    @media (max-width: 1279px) {
         .admin-table thead {
             @apply sr-only;
         }

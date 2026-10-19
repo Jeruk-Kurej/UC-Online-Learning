@@ -1,5 +1,9 @@
 <footer class="mt-16 bg-ink text-white">
-    <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+    <div @class([
+        'mx-auto px-4 py-12 sm:px-6 lg:px-8',
+        'max-w-6xl' => !$wide,
+        'max-w-[96rem]' => $wide,
+    ])>
         <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
             {{-- --- Who we are --- --}}
             <div>

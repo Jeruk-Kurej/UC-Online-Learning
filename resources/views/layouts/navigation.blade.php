@@ -1,5 +1,9 @@
 <nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-line bg-white" aria-label="Main">
-    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div @class([
+        'mx-auto px-4 sm:px-6 lg:px-8',
+        'max-w-6xl' => !$wide,
+        'max-w-[96rem]' => $wide,
+    ])>
         <div class="flex h-16 items-center justify-between">
             {{-- --- Logo and name --- --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
@@ -69,7 +73,11 @@
 
     {{-- --- Menu on phones --- --}}
     <div id="mobile-menu" x-show="open" x-cloak class="border-t border-line bg-white md:hidden">
-        <div class="mx-auto max-w-6xl space-y-1 px-4 py-3">
+        <div @class([
+            'mx-auto space-y-1 px-4 py-3',
+            'max-w-6xl' => !$wide,
+            'max-w-[96rem]' => $wide,
+        ])>
             <x-nav.link look="menu" :href="route('home')" :active="request()->routeIs('home')">Home</x-nav.link>
             <x-nav.link look="menu" :href="route('businesses.index')" :active="request()->routeIs('businesses.index', 'businesses.show', 'intrapreneurs.show', 'showcase.resolve')">Directory</x-nav.link>
             <x-nav.link look="menu" :href="route('about')" :active="request()->routeIs('about')">About</x-nav.link>

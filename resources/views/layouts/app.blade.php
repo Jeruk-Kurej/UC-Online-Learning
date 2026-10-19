@@ -16,7 +16,7 @@
 
     <div class="flex min-h-screen flex-col">
         {{-- --- Navigation --- --}}
-        @include('layouts.navigation')
+        @include('layouts.navigation', ['wide' => $wide])
 
         {{-- --- Main Content --- --}}
         <main id="main" class="flex-grow">
@@ -38,14 +38,14 @@
             @if ($bleed)
                 {{ $slot }}
             @else
-                <div class="page">
+                <div @class(['page', 'page-wide' => $wide])>
                     {{ $slot }}
                 </div>
             @endif
         </main>
 
         {{-- --- Footer --- --}}
-        @include('layouts.footer')
+        @include('layouts.footer', ['wide' => $wide])
     </div>
 
     @stack('scripts')

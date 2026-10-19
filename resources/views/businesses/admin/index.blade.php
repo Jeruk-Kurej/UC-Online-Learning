@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout wide>
     @section('title', 'Manage businesses')
 
     <div data-business-admin @start-import.window="showImportModal = false" @close-import-modal.window="showImportModal = false" data-view-type="{{ $viewType ?? 'entrepreneur' }}" x-data="businessAdminList" x-init="viewType = $el.dataset.viewType || 'entrepreneur'" @ajax-pagination.window="updateList($event.detail.url, true, true)">

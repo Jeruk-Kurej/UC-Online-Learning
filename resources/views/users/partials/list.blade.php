@@ -26,7 +26,7 @@
                             </div>
                         </div>
                     </td>
-                    <td data-label="Email" class="md:min-w-[13rem]"><span class="break-all">{{ $user->email }}</span></td>
+                    <td data-label="Email"><span class="break-all">{{ $user->email }}</span></td>
                     <td data-label="Student status"><span class="badge {{ $user->student_status === 'alumni' ? 'badge-info' : 'badge-neutral' }}">{{ ucfirst((string) $user->student_status) }}</span></td>
                     <td data-label="Profile"><x-admin.visibility-badge :visible="$user->is_visible" /></td>
                     <td data-label="Home page"><x-admin.featured-toggle :action="route('users.toggle-featured', $user)" :visible="$user->is_visible" :featured="$user->is_featured" /></td>
