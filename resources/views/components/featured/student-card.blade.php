@@ -1,5 +1,5 @@
 {{-- --- Featured person: the portrait on its own, then name, studies and their venture or workplace below it on white --- --}}
-<a href="{{ route('users.show', $student) }}" class="group flex h-full flex-col overflow-hidden rounded-2xl border border-b-4 border-line border-b-brand-500 bg-white">
+<a href="{{ route('users.show', $student) }}" class="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-white transition-colors hover:border-brand-500">
     <span class="relative block aspect-square w-full shrink-0 overflow-hidden bg-gradient-to-br from-brand-400 to-brand-700">
         <span class="absolute inset-0 flex items-center justify-center text-7xl font-bold text-white/90" aria-hidden="true">{{ $student->initial }}</span>
         @if ($student->has_profile_photo)
