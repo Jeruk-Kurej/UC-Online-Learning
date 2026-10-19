@@ -42,7 +42,7 @@
                     <dl class="grid grid-cols-2 gap-5 md:grid-cols-4">
                         @foreach ($sec['items'] ?? [] as $st)
                             <div class="card">
-                                <dd class="font-serif text-3xl font-semibold text-brand-900">{{ $st['number'] ?? '' }}</dd>
+                                <dd class="font-display text-3xl font-semibold text-brand-900">{{ $st['number'] ?? '' }}</dd>
                                 <dt class="mt-1 text-base text-gray-700">{{ $st['label'] ?? '' }}</dt>
                             </div>
                         @endforeach

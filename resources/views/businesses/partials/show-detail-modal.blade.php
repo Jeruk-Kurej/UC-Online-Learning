@@ -16,7 +16,7 @@
         <div class="flex min-h-0 flex-col p-6 md:w-1/2">
             <div class="flex-1 space-y-4 overflow-y-auto">
                 <p><span class="badge badge-info" x-text="detailItem.type === 'service' ? 'Service' : 'Product'"></span></p>
-                <h2 id="detail-title" class="font-serif text-2xl font-semibold text-brand-900" x-text="detailItem.name"></h2>
+                <h2 id="detail-title" class="font-display text-2xl font-semibold text-brand-900" x-text="detailItem.name"></h2>
 
                 <div>
                     <p class="text-sm text-gray-600">Price</p>

@@ -1,4 +1,4 @@
-<div class="card overflow-hidden !p-0">
+<div class="card overflow-x-auto !p-0">
     <table class="admin-table">
         <thead>
             <tr>

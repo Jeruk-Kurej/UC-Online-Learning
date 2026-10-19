@@ -84,7 +84,7 @@ trait HasImage
     protected function resolveImage(?string $path, string $type = 'business'): string
     {
         $name = $this->name ?? 'UCO';
-        $fallback = 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=0D3A6B';
+        $fallback = 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=A65300';
 
         if (! $path) {
             return $fallback;

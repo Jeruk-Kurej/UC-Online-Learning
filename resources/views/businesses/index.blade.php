@@ -14,7 +14,7 @@
             <input type="hidden" name="view" :value="viewType">
 
             <div class="flex flex-col gap-3 sm:flex-row">
-                <x-ui.search-field class="flex-1" id="search" value="{{ request('search') }}" placeholder="Search by business or owner name" autocomplete="off" />
+                <x-ui.search-field class="flex-1" id="search" value="{{ request('search') }}" placeholder="Business or owner name" autocomplete="off" />
                 <x-ui.filter-reset loading="isLoading" />
             </div>
 

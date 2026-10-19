@@ -20,11 +20,11 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['"Source Sans 3"', ...defaultTheme.fontFamily.sans],
-                serif: ['"Source Serif 4"', ...defaultTheme.fontFamily.serif],
+                sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+                display: ['Poppins', ...defaultTheme.fontFamily.sans],
             },
 
-            // --- Type scale: nothing below 13px, body 16px ---
+            // --- Type scale: nothing below 13px, body 16px (Poppins runs wide, so line heights stay generous) ---
             fontSize: {
                 xs: ['0.8125rem', '1.125rem'],
                 sm: ['0.9375rem', '1.375rem'],
@@ -38,29 +38,24 @@ export default {
             },
 
             colors: {
-                // --- UC navy from the logo (#082848 is brand-900); links, buttons, header details ---
+                // --- UC orange (#ff8800 is brand-500, as on online.ciputra.ac.id). White text needs brand-700 or darker; text on brand-500 is ink ---
                 brand: {
-                    50: '#eef3f9',
-                    100: '#dbe6f2',
-                    200: '#b9cde4',
-                    300: '#8fadd0',
-                    400: '#5d85b5',
-                    500: '#2f5f98',
-                    600: '#174a80',
-                    700: '#0d3a6b',
-                    800: '#0a2f57',
-                    900: '#082848',
+                    50: '#fff6ea',
+                    100: '#ffe5cc',
+                    200: '#ffd0a1',
+                    300: '#ffb34f',
+                    400: '#ff9a1f',
+                    500: '#ff8800',
+                    600: '#d97200',
+                    700: '#a65300',
+                    800: '#823f00',
+                    900: '#2b1604',
                 },
-                // --- UC gold from the logo: rules and small marks; use gold-700 for text on white ---
-                gold: {
-                    100: '#f6f1e2',
-                    300: '#d8caa0',
-                    500: '#a89868',
-                    700: '#7a6a2e',
-                },
+                // --- Dark grey of the UC footer and of text on orange ---
+                ink: '#222222',
                 // --- Page background and borders ---
-                canvas: '#f4f6f9',
-                line: '#d5dce5',
+                canvas: '#f6f6f6',
+                line: '#dcdcdc',
             },
         },
     },

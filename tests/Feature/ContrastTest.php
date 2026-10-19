@@ -6,7 +6,7 @@ function tailwindColors(): array
 {
     $config = file_get_contents(base_path('tailwind.config.js'));
     $groups = [];
-    foreach (['brand', 'gold'] as $group) {
+    foreach (['brand'] as $group) {
         $start = strpos($config, $group.': {');
         $end = strpos($config, '}', $start);
         preg_match_all("/(\d{2,3}): '(#[0-9a-f]{6})'/i", substr($config, $start, $end - $start), $found, PREG_SET_ORDER);
@@ -15,9 +15,13 @@ function tailwindColors(): array
         }
     }
 
+    preg_match("/ink: '(#[0-9a-f]{6})'/i", $config, $ink);
+    preg_match("/canvas: '(#[0-9a-f]{6})'/i", $config, $canvas);
+
     return $groups + [
+        'ink' => $ink[1],
+        'canvas' => $canvas[1],
         'white' => '#ffffff',
-        'canvas' => '#f4f6f9',
         'gray-100' => '#f3f4f6',
         'gray-200' => '#e5e7eb',
         'gray-300' => '#d1d5db',
@@ -64,10 +68,12 @@ dataset('text pairs', [
     'body text on page' => ['gray-800', 'canvas'],
     'muted text on page' => ['gray-600', 'canvas'],
     'muted text on card' => ['gray-600', 'white'],
-    'link text' => ['brand-700', 'white'],
-    'gold text on white' => ['gold-700', 'white'],
-    'footer text' => ['gray-300', 'brand-900'],
-    'footer headings' => ['gold-300', 'brand-900'],
+    'text on the orange bar' => ['ink', 'brand-500'],
+    'bar button' => ['white', 'ink'],
+    'orange accent text on white' => ['brand-700', 'white'],
+    'link text on page' => ['brand-700', 'canvas'],
+    'footer text' => ['gray-300', 'ink'],
+    'footer headings' => ['brand-300', 'ink'],
     'active menu item' => ['brand-900', 'brand-50'],
     'info badge' => ['brand-800', 'brand-50'],
     'neutral badge' => ['gray-700', 'gray-100'],

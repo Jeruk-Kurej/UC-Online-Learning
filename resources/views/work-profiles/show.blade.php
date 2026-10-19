@@ -62,7 +62,7 @@
                     <ul class="space-y-3">
                         <template x-for="(item, index) in achievements" :key="index">
                             <li class="card flex items-start gap-4 !p-4">
-                                <i class="bi bi-trophy mt-1 text-xl text-gold-700" aria-hidden="true"></i>
+                                <i class="bi bi-trophy mt-1 text-xl text-brand-700" aria-hidden="true"></i>
                                 <p class="min-w-0 flex-1 text-base text-gray-800" x-text="item"></p>
                                 @if ($canManage)
                                     <button type="button" @click="deleteAchievement(index)" class="btn btn-danger btn-sm">Delete</button>

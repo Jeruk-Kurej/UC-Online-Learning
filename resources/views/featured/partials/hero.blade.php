@@ -1,7 +1,7 @@
 {{-- --- Home hero: what the site is and a search box for the directory --- --}}
-<section class="bg-brand-900 text-white">
+<section class="border-b-4 border-brand-500 bg-ink text-white">
     <div class="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20 lg:px-8">
-        <h1 class="max-w-3xl font-serif text-4xl font-semibold leading-tight sm:text-5xl">Find the businesses and careers of Universitas Ciputra Online Learning alumni</h1>
+        <h1 class="max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">Find the businesses and careers of Universitas Ciputra Online Learning alumni</h1>
         <p class="mt-4 max-w-2xl text-lg text-gray-200">Look up a business or the person behind it, or see where our students and alumni work.</p>
 
         <form action="{{ route('businesses.index') }}" method="GET" role="search" class="mt-8 flex max-w-2xl flex-col gap-2 rounded-lg bg-white p-2 sm:flex-row">

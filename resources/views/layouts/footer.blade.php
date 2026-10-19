@@ -1,4 +1,4 @@
-<footer class="mt-16 bg-brand-900 text-white">
+<footer class="mt-16 bg-ink text-white">
     <div class="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-10 md:grid-cols-3">
             {{-- --- Who we are --- --}}
@@ -6,7 +6,7 @@
                 <div class="flex items-center gap-3">
                     <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-12 w-12 object-contain">
                     <div>
-                        <p class="font-serif text-xl font-semibold">UC Online Learning</p>
+                        <p class="font-display text-xl font-semibold">UC Online Learning</p>
                         <p class="text-sm text-gray-300">Student and alumni community</p>
                     </div>
                 </div>
@@ -17,7 +17,7 @@
 
             {{-- --- Pages --- --}}
             <nav aria-label="Footer">
-                <p class="text-base font-semibold text-gold-300">Pages</p>
+                <p class="text-base font-semibold text-brand-300">Pages</p>
                 <ul class="mt-3 space-y-2 text-base">
                     <li><a href="{{ route('featured') }}" class="text-gray-100 underline-offset-2 hover:underline">Featured</a></li>
                     <li><a href="{{ route('businesses.index') }}" class="text-gray-100 underline-offset-2 hover:underline">Directory</a></li>
@@ -27,7 +27,7 @@
 
             {{-- --- Contact --- --}}
             <div>
-                <p class="text-base font-semibold text-gold-300">Contact</p>
+                <p class="text-base font-semibold text-brand-300">Contact</p>
                 <ul class="mt-3 space-y-3 text-base text-gray-100">
                     <li class="flex items-start gap-3">
                         <i class="bi bi-geo-alt mt-0.5" aria-hidden="true"></i>

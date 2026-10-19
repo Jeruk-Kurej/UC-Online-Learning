@@ -4,7 +4,7 @@
         <div class="flex items-center gap-4">
             <x-ui.thumb :src="$user->profile_photo_url" :name="$user->name" size="h-24 w-24" round class="text-4xl" />
             <div class="min-w-0">
-                <h1 class="break-words font-serif text-2xl font-semibold leading-tight text-brand-900">{{ $user->name }}</h1>
+                <h1 class="break-words font-display text-2xl font-semibold leading-tight text-brand-900">{{ $user->name }}</h1>
                 <p class="mt-1 text-base text-gray-600">{{ $user->isIntrapreneur() ? 'Intrapreneur' : 'Entrepreneur' }}</p>
             </div>
         </div>

@@ -10,7 +10,7 @@
 
     /* --- Page title block: serif title, one plain sentence, the main action on the right --- */
     .page-title {
-        @apply font-serif text-3xl font-semibold text-brand-900 sm:text-4xl;
+        @apply font-display text-3xl font-semibold text-brand-900 sm:text-4xl;
     }
 
     .page-lead {
@@ -27,7 +27,7 @@
     }
 
     .section-heading {
-        @apply font-serif text-2xl font-semibold text-brand-900;
+        @apply font-display text-2xl font-semibold text-brand-900;
     }
 
     /* --- Small status and category tags, sentence case --- */
@@ -66,11 +66,11 @@
     }
 
     .admin-table th {
-        @apply whitespace-nowrap bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700;
+        @apply whitespace-nowrap bg-gray-50 px-3 py-3 text-sm font-semibold text-gray-700;
     }
 
     .admin-table td {
-        @apply px-4 py-3 align-middle text-base text-gray-800;
+        @apply px-3 py-3 align-middle text-base text-gray-800;
     }
 
     .admin-table tbody tr {
@@ -123,7 +123,7 @@
     }
 
     .tab-active {
-        @apply border-gold-500 text-brand-900;
+        @apply border-brand-500 text-brand-900;
     }
 
     /* --- Links inside text --- */

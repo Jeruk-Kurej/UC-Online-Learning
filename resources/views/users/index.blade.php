@@ -44,7 +44,7 @@
         {{-- --- Search and filters --- --}}
         <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="card mb-6 space-y-3" @submit.prevent="updateList()">
             <div class="flex flex-col gap-3 sm:flex-row">
-                <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Search by name, email, username or student number" />
+                <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Name, email or student number" />
                 <x-ui.filter-reset />
             </div>
 

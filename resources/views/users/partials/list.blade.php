@@ -1,12 +1,11 @@
 {{-- --- Users table (cards on phones) --- --}}
-<div class="card overflow-hidden !p-0">
+<div class="card overflow-x-auto !p-0">
     <table class="admin-table">
         <thead>
             <tr>
                 <x-admin.th>Name</x-admin.th>
                 <x-admin.th>Email</x-admin.th>
                 <x-admin.th>Student status</x-admin.th>
-                <x-admin.th>Major</x-admin.th>
                 <x-admin.th>Profile</x-admin.th>
                 <x-admin.th>Home page</x-admin.th>
                 <x-admin.th>Businesses</x-admin.th>
@@ -21,15 +20,14 @@
                             <x-ui.thumb :src="$user->has_profile_photo ? $user->profile_photo_url : null" :name="$user->name" size="h-10 w-10" round class="text-base" />
                             <div class="min-w-0">
                                 <p class="truncate font-semibold text-gray-900">{{ $user->name }}</p>
-                                @if ($user->nis)
-                                    <p class="text-sm text-gray-600">{{ $user->nis }}</p>
+                                @if ($user->major || $user->nis)
+                                    <p class="truncate text-sm text-gray-600">{{ collect([$user->major, $user->nis])->filter()->implode(', ') }}</p>
                                 @endif
                             </div>
                         </div>
                     </td>
                     <td data-label="Email" class="md:min-w-[13rem]"><span class="break-all">{{ $user->email }}</span></td>
                     <td data-label="Student status"><span class="badge {{ $user->student_status === 'alumni' ? 'badge-info' : 'badge-neutral' }}">{{ ucfirst((string) $user->student_status) }}</span></td>
-                    <td data-label="Major">{{ $user->major ?: 'Not set' }}</td>
                     <td data-label="Profile"><x-admin.visibility-badge :visible="$user->is_visible" /></td>
                     <td data-label="Home page"><x-admin.featured-toggle :action="route('users.toggle-featured', $user)" :visible="$user->is_visible" :featured="$user->is_featured" /></td>
                     <td data-label="Businesses">{{ $user->businesses_count }}</td>
@@ -41,7 +39,7 @@
                                 @if (auth()->id() !== $user->id)
                                     <form action="{{ route('users.toggle-status', $user) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="btn btn-sm {{ $user->is_visible ? 'btn-danger-outline' : 'btn-secondary' }}">{{ $user->is_visible ? 'Hide profile' : 'Show profile' }}</button>
+                                        <button type="submit" class="btn btn-sm {{ $user->is_visible ? 'btn-danger-outline' : 'btn-secondary' }}">{{ $user->is_visible ? 'Hide' : 'Show' }}</button>
                                     </form>
                                 @endif
                             @endif
@@ -50,7 +48,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="!block px-6 py-12 text-center !text-base">
+                    <td colspan="7" class="!block px-6 py-12 text-center !text-base">
                         <p class="text-gray-700">{{ $hasActiveFilters ? 'No users match your filters.' : 'No users yet.' }}</p>
                         @if ($hasActiveFilters)
                             <button type="button" @click="resetFilters()" class="btn btn-secondary mt-4">Clear filters</button>
