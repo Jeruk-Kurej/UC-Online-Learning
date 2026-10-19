@@ -7,10 +7,11 @@
         <h1 class="max-w-3xl font-display text-4xl font-semibold leading-tight sm:text-5xl">Find the businesses and careers of Universitas Ciputra Online Learning alumni</h1>
         <p class="mt-4 max-w-2xl text-lg text-gray-100">Look up a business or the person behind it, or see where our students and alumni work.</p>
 
-        <form action="{{ route('businesses.index') }}" method="GET" role="search" class="mt-8 flex max-w-2xl flex-col gap-2 rounded-lg bg-white p-2 sm:flex-row">
+        <form action="{{ route('businesses.index') }}" method="GET" role="search" class="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-white/40 bg-white/10 p-1.5 pl-5 backdrop-blur-sm transition-colors focus-within:border-white focus-within:bg-white/20">
+            <i class="bi bi-search text-lg text-white/80" aria-hidden="true"></i>
             <label for="home-search" class="sr-only">Search the directory</label>
-            <input id="home-search" type="search" name="search" placeholder="Business or owner name" autocomplete="off" class="min-h-[2.75rem] flex-1 rounded-md border-0 bg-white px-3 text-base text-gray-900 placeholder:text-gray-500 focus:ring-0">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <input id="home-search" type="search" name="search" placeholder="Business or owner" autocomplete="off" class="min-h-[2.5rem] min-w-0 flex-1 appearance-none !border-0 !bg-transparent px-2 text-base text-white !shadow-none placeholder:text-white/75 focus:ring-0 focus-visible:outline-none [&::-webkit-search-cancel-button]:hidden">
+            <button type="submit" class="btn bg-brand-500 text-ink hover:bg-brand-400">Search</button>
         </form>
 
         <p class="mt-5 text-base text-gray-100">
