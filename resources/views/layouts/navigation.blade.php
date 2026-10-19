@@ -1,10 +1,10 @@
-<nav x-data="{ open: false }" class="sticky top-0 z-40 bg-brand-500" aria-label="Main">
+<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-t-4 border-line border-t-brand-500 bg-white" aria-label="Main">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             {{-- --- Logo and name --- --}}
             <a href="{{ route('home') }}" class="flex items-center gap-3">
                 <img src="{{ asset('images/logo-uco.png') }}" alt="" class="h-10 w-10 object-contain">
-                <span class="font-display text-xl font-semibold text-ink">UC Online Learning</span>
+                <span class="font-display text-xl font-semibold text-brand-900">UC Online Learning</span>
             </a>
 
             {{-- --- Links, bell and account on wide screens --- --}}
@@ -14,7 +14,7 @@
                 <x-nav.link look="bar" :href="route('about')" :active="request()->routeIs('about')">About</x-nav.link>
 
                 @auth
-                    <a href="{{ route('inbox.index') }}" class="relative rounded-full p-2 text-ink hover:bg-black/10" aria-label="Inbox{{ $unreadInboxCount > 0 ? ', ' . $unreadInboxCount . ' unread' : '' }}">
+                    <a href="{{ route('inbox.index') }}" class="relative rounded-full p-2 text-gray-700 hover:bg-gray-100 hover:text-brand-900" aria-label="Inbox{{ $unreadInboxCount > 0 ? ', ' . $unreadInboxCount . ' unread' : '' }}">
                         <i class="bi bi-bell text-xl" aria-hidden="true"></i>
                         @if ($unreadInboxCount > 0)
                             <span class="absolute -right-0.5 -top-0.5 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-700 px-1 text-xs font-semibold text-white">{{ $unreadInboxCount }}</span>
@@ -23,8 +23,8 @@
 
                     {{-- --- Account menu --- --}}
                     <div class="relative" x-data="{ open: false }" @click.away="open = false" @keydown.escape.window="open = false">
-                        <button type="button" @click="open = !open" class="flex items-center gap-2 rounded-full px-2 py-1.5 text-base text-ink hover:bg-black/10" :aria-expanded="open" aria-haspopup="true">
-                            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-white text-sm font-semibold text-ink">{{ $authUser->initial }}</span>
+                        <button type="button" @click="open = !open" class="flex items-center gap-2 rounded-full px-2 py-1.5 text-base text-gray-800 hover:bg-gray-100" :aria-expanded="open" aria-haspopup="true">
+                            <span class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-900">{{ $authUser->initial }}</span>
                             <span class="max-w-[10rem] truncate">{{ $authUser->name }}</span>
                             <i class="bi bi-chevron-down text-xs" aria-hidden="true"></i>
                         </button>
@@ -55,12 +55,12 @@
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-dark btn-sm">Log in</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary btn-sm">Log in</a>
                 @endauth
             </div>
 
             {{-- --- Menu button on phones --- --}}
-            <button type="button" @click="open = !open" class="flex items-center gap-2 rounded-full px-3 py-2 text-base font-medium text-ink hover:bg-black/10 md:hidden" :aria-expanded="open" aria-controls="mobile-menu">
+            <button type="button" @click="open = !open" class="flex items-center gap-2 rounded-full px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-100 md:hidden" :aria-expanded="open" aria-controls="mobile-menu">
                 <i class="bi" :class="open ? 'bi-x-lg' : 'bi-list'" aria-hidden="true"></i>
                 <span>Menu</span>
             </button>

@@ -20,10 +20,6 @@
         @apply border-red-700 bg-white text-red-800 hover:bg-red-50;
     }
 
-    .btn-dark {
-        @apply bg-ink text-white hover:bg-black;
-    }
-
     .btn-quiet {
         @apply bg-transparent text-brand-800 hover:bg-brand-50;
     }
