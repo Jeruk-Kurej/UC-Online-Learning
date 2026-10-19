@@ -4,9 +4,8 @@
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <title>{{ $slot }}</title>
-<link rel="icon" type="image/png" href="{{ asset('images/logo-uco.png') }}">
+<link rel="icon" type="image/png" href="{{ asset('images/logo-uco-64.png') }}">
 
-{{-- --- Fonts: Poppins, as on online.ciputra.ac.id; icons: Bootstrap Icons --- --}}
-<link rel="preconnect" href="https://fonts.bunny.net">
-<link href="https://fonts.bunny.net/css?family=poppins:400,500,600,700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+{{-- --- Fonts: Poppins and Bootstrap Icons come from this site (resources/css/base/fonts.css); the two weights used above the fold are preloaded --- --}}
+<link rel="preload" href="{{ Vite::asset('node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ Vite::asset('node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2') }}" as="font" type="font/woff2" crossorigin>

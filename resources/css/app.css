@@ -2,6 +2,7 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+@import './base/fonts.css';
 @import './base/document.css';
 @import './components/forms.css';
 @import './components/ui.css';

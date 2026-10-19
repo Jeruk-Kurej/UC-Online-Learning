@@ -6,7 +6,7 @@
             <input type="hidden" name="view" :value="viewType">
 
             {{-- --- Title band on the campus photo: the title, the switch between the two lists, then the search and the filters together --- --}}
-            <section class="hero-photo border-b-4 border-brand-500 bg-ink text-white">
+            <x-ui.photo-band>
                 <div class="mx-auto max-w-6xl px-4 pt-10 sm:px-6 sm:pt-12 lg:px-8">
                     <h1 class="font-display text-4xl font-semibold leading-tight sm:text-5xl">Directory</h1>
                     <p class="mt-3 max-w-2xl text-lg text-gray-100">Find the <strong>businesses</strong> and <strong>work profiles</strong> of our students and alumni.</p>
@@ -46,7 +46,7 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </x-ui.photo-band>
         </form>
 
         <div class="page">

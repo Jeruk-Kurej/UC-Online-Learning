@@ -1,0 +1,55 @@
+/* --- Poppins (latin) and Bootstrap Icons 1.11.3, served from this site so the first page view does not wait for two other hosts --- */
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../../../node_modules/@fontsource/poppins/files/poppins-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../../../node_modules/@fontsource/poppins/files/poppins-latin-500-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url('../../../node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../../../node_modules/@fontsource/poppins/files/poppins-latin-700-normal.woff2') format('woff2');
+}
+
+/* --- While Poppins loads, Arial is shown at Poppins' width and line height, so the text does not jump when the real font arrives --- */
+@font-face {
+    font-family: 'Poppins Fallback';
+    font-weight: 400 500;
+    src: local('Arial'), local('ArialMT');
+    size-adjust: 110.8%;
+    ascent-override: 94.8%;
+    descent-override: 31.6%;
+    line-gap-override: 9%;
+}
+
+@font-face {
+    font-family: 'Poppins Fallback';
+    font-weight: 600 700;
+    src: local('Arial Bold'), local('Arial-BoldMT');
+    size-adjust: 105.3%;
+    ascent-override: 99.7%;
+    descent-override: 33.2%;
+    line-gap-override: 9.5%;
+}

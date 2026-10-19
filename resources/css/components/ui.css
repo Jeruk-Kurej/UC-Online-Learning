@@ -120,13 +120,6 @@
         @apply relative w-full max-w-lg rounded-lg border border-line bg-white p-6 shadow-xl;
     }
 
-    /* --- Campus photo behind the home hero, under a dark layer so the white text stays readable --- */
-    .hero-photo {
-        background-image: linear-gradient(rgb(34 34 34 / 0.85), rgb(34 34 34 / 0.85)), url('/images/hero-uc.jpg');
-        background-position: center;
-        background-size: cover;
-    }
-
     /* --- Tabs: plain text with a gold underline on the open one --- */
     .tabs {
         @apply flex gap-6 overflow-x-auto border-b border-line;
