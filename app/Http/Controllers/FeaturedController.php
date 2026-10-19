@@ -14,6 +14,13 @@ class FeaturedController extends Controller
 {
     public function index(Request $request): View
     {
+        $spotlight = Business::visible()
+            ->entrepreneur()
+            ->where('is_featured', true)
+            ->newestFirst()
+            ->with(['category', 'user', 'members', 'products'])
+            ->get();
+
         return view('featured.index', [
             'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
                 ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
@@ -23,12 +30,8 @@ class FeaturedController extends Controller
                 ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
                 ->newestFirst()
                 ->get(),
-            'spotlightBusinesses' => Business::visible()
-                ->entrepreneur()
-                ->where('is_featured', true)
-                ->newestFirst()
-                ->with(['category', 'user', 'members'])
-                ->get(),
+            'heroVenture' => $spotlight->first(),
+            'moreVentures' => $spotlight->slice(1)->values(),
             'categories' => Category::withCount(['businesses' => fn ($q) => $q->where('is_visible', true)])
                 ->orderByDesc('businesses_count')
                 ->orderBy('name')
