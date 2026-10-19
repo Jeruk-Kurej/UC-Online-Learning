@@ -82,7 +82,7 @@ test('the home page reads its featured testimonies in a fixed base order', funct
     DB::listen(function ($query) use (&$queries) {
         $queries[] = $query->sql;
     });
-    $this->get(route('featured'));
+    $this->get(route('home'));
 
     $list = collect($queries)->first(fn (string $sql) => str_contains($sql, 'is_featured_testimony'));
     expect($list)->not->toBeNull()->and($list)->toEndWith('order by "created_at" desc, "id" desc');

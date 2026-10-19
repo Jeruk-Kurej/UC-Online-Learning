@@ -25,7 +25,7 @@ class AuthenticatedSessionController extends Controller
             session()->forget('url.intended');
         }
 
-        return redirect()->intended(route('featured', [], false));
+        return redirect()->intended(route('home', [], false));
     }
 
     /**

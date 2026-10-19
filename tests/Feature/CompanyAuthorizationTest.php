@@ -63,9 +63,9 @@ test('the achievement pages answer 200 or 403 by who asks, with the same JSON me
 test('guests are sent away from the work profile pages', function () {
     $w = companyActors();
 
-    $this->get(route('intrapreneurs.edit', $w['company']))->assertRedirect(route('featured'));
-    $this->put(route('intrapreneurs.update', $w['company']), $w['payload'])->assertRedirect(route('featured'));
-    $this->get(route('intrapreneurs.create_achievement', $w['company']))->assertRedirect(route('featured'));
+    $this->get(route('intrapreneurs.edit', $w['company']))->assertRedirect(route('home'));
+    $this->put(route('intrapreneurs.update', $w['company']), $w['payload'])->assertRedirect(route('home'));
+    $this->get(route('intrapreneurs.create_achievement', $w['company']))->assertRedirect(route('home'));
 });
 
 test('the testimony admin page and its featured toggle are for admins only', function () {

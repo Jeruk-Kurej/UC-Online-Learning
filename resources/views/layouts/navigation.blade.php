@@ -9,7 +9,7 @@
 
             {{-- --- Links, bell and account on wide screens --- --}}
             <div class="hidden items-center gap-6 md:flex">
-                <x-nav.link look="bar" :href="route('featured')" :active="request()->routeIs('featured')">Featured</x-nav.link>
+                <x-nav.link look="bar" :href="route('home')" :active="request()->routeIs('home')">Home</x-nav.link>
                 <x-nav.link look="bar" :href="route('businesses.index')" :active="request()->routeIs('businesses.index', 'businesses.show', 'intrapreneurs.show', 'showcase.resolve')">Directory</x-nav.link>
                 <x-nav.link look="bar" :href="route('about')" :active="request()->routeIs('about')">About</x-nav.link>
 
@@ -70,7 +70,7 @@
     {{-- --- Menu on phones --- --}}
     <div id="mobile-menu" x-show="open" x-cloak class="border-t border-line bg-white md:hidden">
         <div class="mx-auto max-w-6xl space-y-1 px-4 py-3">
-            <x-nav.link look="menu" :href="route('featured')" :active="request()->routeIs('featured')">Featured</x-nav.link>
+            <x-nav.link look="menu" :href="route('home')" :active="request()->routeIs('home')">Home</x-nav.link>
             <x-nav.link look="menu" :href="route('businesses.index')" :active="request()->routeIs('businesses.index', 'businesses.show', 'intrapreneurs.show', 'showcase.resolve')">Directory</x-nav.link>
             <x-nav.link look="menu" :href="route('about')" :active="request()->routeIs('about')">About</x-nav.link>
 

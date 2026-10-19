@@ -49,12 +49,14 @@ export default {
                     600: '#d97200',
                     700: '#a65300',
                     800: '#823f00',
-                    900: '#2b1604',
+                    900: '#222222',
                 },
                 // --- Dark grey of the UC footer and of text on orange ---
                 ink: '#222222',
                 // --- Page background and borders ---
                 canvas: '#f6f6f6',
+                // --- Light grey band between sections, as on the UC web ---
+                mist: '#ebebeb',
                 line: '#dcdcdc',
             },
         },

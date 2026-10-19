@@ -20,13 +20,11 @@ use Illuminate\Support\Facades\Route;
 
 // --- Public routes ---
 
-Route::get('/', function () {
-    return redirect('/featured');
-})->name('home');
+Route::redirect('/featured', '/', 301)->name('featured');
 
 Route::middleware(['throttle:showcase'])->group(function () {
+    Route::get('/', [FeaturedController::class, 'index'])->name('home');
     Route::get('/about', AboutController::class)->name('about');
-    Route::get('/featured', [FeaturedController::class, 'index'])->name('featured');
     Route::get('/business', [BusinessController::class, 'index'])->name('businesses.index');
     Route::get('/google-drive-image/{id}', [UserProfileController::class, 'proxyGoogleDriveImage'])->name('google-drive-image');
 });

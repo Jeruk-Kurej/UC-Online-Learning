@@ -1,31 +1,23 @@
-{{-- --- Featured venture: a picture first (a product photo, or the logo on an orange tint), then name, pitch and owner --- --}}
+{{-- --- Featured venture as a photo panel: a product photo (or the logo on orange), the name in white over a dark fade, an orange line at the foot --- --}}
 @props(['business'])
 
-<a href="{{ route('businesses.show', $business) }}" class="group flex h-full flex-col overflow-hidden rounded-lg border border-line bg-white text-gray-900 transition-colors hover:border-brand-500">
-    <span class="relative block aspect-[16/10] w-full overflow-hidden bg-brand-100">
-        <span class="absolute inset-0 flex items-center justify-center">
-            <x-ui.thumb :src="$business->logo_url" :name="$business->name" size="h-24 w-24" class="bg-white text-3xl" />
-        </span>
-        @if ($business->showcase_photo_url)
-            <img src="{{ $business->showcase_photo_url }}" alt="" data-thumb loading="lazy" class="absolute inset-0 h-full w-full bg-white object-cover" referrerpolicy="no-referrer">
-        @endif
+<a href="{{ route('businesses.show', $business) }}" class="group relative block aspect-[5/6] overflow-hidden rounded-2xl border-b-4 border-brand-500 bg-gradient-to-br from-brand-400 to-brand-700 text-white">
+    <span class="absolute inset-x-0 top-[22%] flex justify-center">
+        <x-ui.thumb :src="$business->logo_url" :name="$business->name" size="h-24 w-24" class="bg-white text-3xl" />
     </span>
+    @if ($business->showcase_photo_url)
+        <img src="{{ $business->showcase_photo_url }}" alt="" data-thumb loading="lazy" class="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" referrerpolicy="no-referrer">
+    @endif
+    <span class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent"></span>
 
-    <span class="flex flex-1 flex-col gap-2 p-5">
+    <span class="absolute inset-x-0 bottom-0 block p-5">
         @if ($business->category)
-            <span class="badge badge-info self-start">{{ $business->category->name }}</span>
+            <span class="mb-2 inline-block rounded bg-white/20 px-2 py-0.5 text-xs font-semibold backdrop-blur-sm">{{ $business->category->name }}</span>
         @endif
-        <span class="font-display text-xl font-semibold leading-snug text-brand-900 group-hover:underline">{{ $business->name }}</span>
-        <span class="line-clamp-2 text-base text-gray-700">{{ $business->unique_value_proposition ?? $business->description }}</span>
-
-        <span class="mt-auto flex items-center justify-between gap-3 border-t border-line pt-4">
-            @if ($business->public_owner)
-                <span class="flex min-w-0 items-center gap-2">
-                    <x-ui.thumb :src="$business->public_owner->has_profile_photo ? $business->public_owner->profile_photo_url : null" :name="$business->public_owner->name" size="h-8 w-8" round class="text-sm" />
-                    <span class="truncate text-sm font-medium text-gray-800">{{ $business->public_owner->name }}</span>
-                </span>
-            @endif
-            <span class="shrink-0 text-sm font-semibold text-brand-700">Visit venture</span>
-        </span>
+        <span class="block font-display text-2xl font-bold leading-tight">{{ $business->name }}</span>
+        <span class="mt-1 line-clamp-2 block text-sm text-white/90">{{ $business->unique_value_proposition ?? $business->description }}</span>
+        @if ($business->public_owner)
+            <span class="mt-3 block text-sm font-medium">by {{ $business->public_owner->name }} &raquo;</span>
+        @endif
     </span>
 </a>

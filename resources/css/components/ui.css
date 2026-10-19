@@ -26,8 +26,14 @@
         @apply text-xl font-semibold text-brand-900;
     }
 
+    /* --- Section title with the short orange rule UC puts under its headings --- */
     .section-heading {
         @apply font-display text-2xl font-semibold text-brand-900;
+    }
+
+    .section-heading::after {
+        content: '';
+        @apply mt-2 block h-1 w-12 rounded-full bg-brand-500;
     }
 
     /* --- Small status and category tags, sentence case --- */
