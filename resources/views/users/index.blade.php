@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout wide>
     @section('title', 'Manage users')
 
     <div data-user-admin data-stats-url="{{ route('users.stats', [], false) }}" @start-import.window="showImportModal = false" @close-import-modal.window="showImportModal = false" x-data="userAdminList" @ajax-pagination.window="updateList($event.detail.url)">

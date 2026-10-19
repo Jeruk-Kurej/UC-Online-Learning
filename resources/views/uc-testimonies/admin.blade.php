@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-app-layout wide>
     @section('title', 'Manage testimonies')
 
     <div data-testimony-admin x-data="testimonyAdminList" @ajax-pagination.window="updateList($event.detail.url, true, true)">
