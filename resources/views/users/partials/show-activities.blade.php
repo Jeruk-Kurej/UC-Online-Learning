@@ -6,7 +6,7 @@
             @foreach ($user->activity_gallery_urls as $url)
                 <li>
                     <button type="button" @click="open(@js($url))" class="block aspect-[4/3] w-full overflow-hidden rounded-md border border-line bg-gray-50 hover:border-brand-500" aria-label="View photo larger">
-                        <img src="{{ $url }}" alt="" loading="lazy" class="h-full w-full object-contain" referrerpolicy="no-referrer">
+                        <img src="{{ $url }}" alt="" data-thumb loading="lazy" class="h-full w-full object-contain" referrerpolicy="no-referrer">
                     </button>
                 </li>
             @endforeach

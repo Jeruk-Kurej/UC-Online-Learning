@@ -12,7 +12,7 @@
                         </a>
                     @else
                         <button type="button" @click="open(@js($cert['previewUrl']))" class="block aspect-[4/3] w-full overflow-hidden rounded-md border border-line bg-gray-50 hover:border-brand-500" aria-label="View certificate larger">
-                            <img src="{{ $cert['previewUrl'] }}" alt="" loading="lazy" class="h-full w-full object-contain">
+                            <img src="{{ $cert['previewUrl'] }}" alt="" data-thumb loading="lazy" class="h-full w-full object-contain">
                         </button>
                     @endif
                 </li>
