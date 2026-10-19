@@ -11,6 +11,7 @@ class InboxController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
+        abort_if($user->isAdmin(), 403, 'Admin accounts have no inbox.');
 
         $messages = $user->receivedMessages()->newestFirst()->paginate(15);
 
@@ -30,6 +31,8 @@ class InboxController extends Controller
 
     public function show(Request $request, Message $message)
     {
+        abort_if($request->user()->isAdmin(), 403, 'Admin accounts have no inbox.');
+
         if ($message->recipient_id !== $request->user()->id) {
             abort(403);
         }

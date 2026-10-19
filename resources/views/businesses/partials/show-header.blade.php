@@ -17,7 +17,7 @@
                     </a>
                 @endif
 
-                @if ($business->user_id && Auth::id() !== $business->user_id)
+                @if ($business->public_owner && Auth::user()->canCollabWith($business->public_owner))
                     @if ($collabStatus === 'accepted')
                         <span class="badge badge-success text-sm"><i class="bi bi-person-check" aria-hidden="true"></i> Connected with the owner</span>
                     @elseif ($collabStatus === 'pending')

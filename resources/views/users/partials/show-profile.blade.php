@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        @if (Auth::check() && (Auth::user()->isAdmin() || Auth::id() !== $user->id))
+        @if (Auth::check() && (Auth::user()->isAdmin() || Auth::user()->canCollabWith($user)))
             <div class="flex flex-wrap gap-2">
                 @if (Auth::user()->isAdmin())
                     <a href="{{ route('users.edit', $user) }}" class="btn btn-secondary btn-sm">
@@ -18,7 +18,7 @@
                     </a>
                 @endif
 
-                @if (Auth::id() !== $user->id)
+                @if (Auth::user()->canCollabWith($user))
                     @if ($collabStatus === 'accepted')
                         <span class="badge badge-success text-sm"><i class="bi bi-person-check" aria-hidden="true"></i> Connected</span>
                     @elseif ($collabStatus === 'pending')

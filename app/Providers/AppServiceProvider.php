@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('layouts.navigation', function ($view) {
             $view->with([
                 'authUser' => auth()->user(),
-                'unreadInboxCount' => auth()->check()
+                'unreadInboxCount' => auth()->check() && ! auth()->user()->isAdmin()
                     ? Message::where('recipient_id', auth()->id())->whereNull('read_at')->count()
                     : 0,
             ]);
