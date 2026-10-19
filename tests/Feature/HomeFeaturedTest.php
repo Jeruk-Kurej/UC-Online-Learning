@@ -4,7 +4,7 @@ use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
 
-// --- Home page: the first featured venture sits in the hero, the others below ---
+// --- Home page: every featured item is equal and the order changes daily ---
 
 function featuredVenture(string $name, ?string $photo = null): Business
 {
@@ -21,25 +21,38 @@ function featuredVenture(string $name, ?string $photo = null): Business
     return $business;
 }
 
-test('the hero shows the newest featured venture and the section lists the rest', function () {
-    featuredVenture('Older Venture');
-    $newest = featuredVenture('Newest Venture');
-    $newest->forceFill(['created_at' => now()->addMinute()])->save();
+test('every featured venture is listed, none is singled out in the hero', function () {
+    featuredVenture('Alpha Venture');
+    featuredVenture('Beta Venture');
 
-    $html = $this->get('/featured')->assertOk()->getContent();
+    $html = $this->get('/featured')->assertOk()->assertSee('Alpha Venture')->assertSee('Beta Venture')->getContent();
 
-    expect(strpos($html, 'Newest Venture'))->toBeLessThan(strpos($html, 'More featured ventures'))
-        ->and(strpos($html, 'More featured ventures'))->toBeLessThan(strpos($html, 'Older Venture'));
+    expect(substr_count($html, 'Visit venture'))->toBe(2)->and($html)->not->toContain('Featured venture<');
 });
 
-test('with a single featured venture the section below the hero is left out', function () {
-    featuredVenture('Only Venture');
+test('the order stays the same within a day and changes with the day', function () {
+    foreach (range(1, 8) as $i) {
+        featuredVenture("Venture number {$i}");
+    }
+    $names = fn () => collect($this->get('/featured')->viewData('featuredVentures'))->pluck('name')->all();
 
-    $this->get('/featured')->assertOk()->assertSee('Only Venture')->assertDontSee('More featured ventures');
+    $first = $names();
+    expect($names())->toBe($first);
+
+    $this->travel(1)->days();
+    expect($names())->not->toBe($first);
+});
+
+test('a section shows at most six items', function () {
+    foreach (range(1, 9) as $i) {
+        featuredVenture("Venture number {$i}");
+    }
+
+    expect($this->get('/featured')->viewData('featuredVentures'))->toHaveCount(6);
 });
 
 test('without featured ventures the page says so', function () {
-    $this->get('/featured')->assertOk()->assertSee('No featured ventures yet')->assertDontSee('Featured venture<', false);
+    $this->get('/featured')->assertOk()->assertSee('No featured ventures yet');
 });
 
 test('a featured venture shows the photo of its first product that has one', function () {
