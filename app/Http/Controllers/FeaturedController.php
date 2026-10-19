@@ -18,7 +18,6 @@ class FeaturedController extends Controller
     public function index(Request $request): View
     {
         return view('featured.index', [
-            'heroHasPhoto' => file_exists(public_path('images/hero-uc.jpg')),
             'featuredVentures' => Business::visible()
                 ->entrepreneur()
                 ->where('is_featured', true)

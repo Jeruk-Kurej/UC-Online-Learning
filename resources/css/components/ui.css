@@ -135,6 +135,19 @@
         @apply hover:border-gray-300 hover:text-brand-900;
     }
 
+    /* --- Two-way switch on a dark band: the open side is filled orange --- */
+    .segmented {
+        @apply inline-flex rounded-full border border-white/40 bg-white/10 p-1 backdrop-blur-sm;
+    }
+
+    .segment {
+        @apply rounded-full px-6 py-2.5 text-base font-semibold text-white transition-colors hover:bg-white/15;
+    }
+
+    .segment-active {
+        @apply bg-brand-500 text-ink hover:bg-brand-500;
+    }
+
     .tab-active {
         @apply border-brand-500 text-brand-900;
     }

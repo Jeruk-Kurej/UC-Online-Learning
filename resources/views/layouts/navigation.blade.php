@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-t-4 border-line border-t-brand-500 bg-white" aria-label="Main">
+<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-line bg-white" aria-label="Main">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
             {{-- --- Logo and name --- --}}

@@ -4,7 +4,7 @@
     <div class="page space-y-14">
         <x-featured.group :items="$featuredVentures" title="Our" accent="ventures" lead="Businesses run by our students and alumni." :href="route('businesses.index', ['view' => 'entrepreneur'])" link-label="See all ventures">
             @foreach ($featuredVentures as $venture)
-                <x-featured.venture-tile :business="$venture" />
+                <x-business.card :business="$venture" :href="route('businesses.show', $venture)" />
             @endforeach
         </x-featured.group>
 
