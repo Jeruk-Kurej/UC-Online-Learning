@@ -15,4 +15,12 @@ abstract class Controller
     {
         return (bool) request()->user()?->isAdmin();
     }
+
+    /**
+     * Where Cancel on a business or work profile form leads: the admin list for admins, "my businesses" for everyone else.
+     */
+    protected function venturesHomeUrl(): string
+    {
+        return $this->currentUserIsAdmin() ? route('businesses.admin') : route('businesses.my');
+    }
 }

@@ -56,12 +56,12 @@ class BusinessController extends Controller
         return view('businesses.form', [
             'business' => null,
             'categories' => Category::all(),
-            'users' => User::where('role', '!=', 'admin')->orderBy('name')->get(),
+            'users' => User::nonAdmins()->orderBy('name')->get(),
             'provinces' => Province::orderBy('name')->get(),
             'selectedProvinceId' => null,
             'availableCities' => collect(),
             'memberIds' => [],
-            'cancelUrl' => $this->formCancelUrl(),
+            'cancelUrl' => $this->venturesHomeUrl(),
         ]);
     }
 
@@ -89,20 +89,13 @@ class BusinessController extends Controller
     {
         $business->load(['user', 'category', 'products', 'legalDocuments', 'certifications', 'members']);
 
-        $isOwner = auth()->id() === $business->user_id;
-        $isCoOwner = auth()->check() && $business->members->contains(auth()->id());
-        $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($business->user) === 'accepted';
-        $isAdmin = auth()->user()?->isAdmin();
+        $canManage = auth()->check() && $business->canBeManagedBy(auth()->user());
 
-        $isBusinessVisible = $business->is_visible && $business->approval_status === 'approved' && $business->hasVisiblePeople();
-
-        if (! $isBusinessVisible && ! $isOwner && ! $isCoOwner && ! $isCollabPartner && ! $isAdmin) {
-            abort(404);
-        }
+        abort_unless($business->isPublic() || $canManage, 404);
 
         return view('businesses.show', [
             'business' => $business,
-            'canManageBusiness' => auth()->check() && $business->canBeManagedBy(auth()->user()),
+            'canManageBusiness' => $canManage,
             'collabStatus' => auth()->check() && $business->user_id && auth()->id() !== $business->user_id ? auth()->user()->collabStatusWith($business->public_owner) : null,
             'showRevenue' => Gate::allows('update', $business),
             'offersProducts' => in_array($business->offering_mode, ['product', 'both']),
@@ -139,7 +132,7 @@ class BusinessController extends Controller
         $business->load(['user', 'category', 'products', 'members', 'legalDocuments', 'certifications']);
 
         $categories = Category::all();
-        $users = User::where('role', '!=', 'admin')->orderBy('name')->get();
+        $users = User::nonAdmins()->orderBy('name')->get();
         $provinces = Province::orderBy('name')->get();
 
         $selectedProvinceId = Province::where('name', $business->province)->first()?->id;
@@ -155,16 +148,8 @@ class BusinessController extends Controller
             'selectedProvinceId' => $selectedProvinceId,
             'availableCities' => $availableCities,
             'memberIds' => $business->members()->pluck('users.id')->toArray(),
-            'cancelUrl' => $this->formCancelUrl(),
+            'cancelUrl' => $this->venturesHomeUrl(),
         ]);
-    }
-
-    /**
-     * Where Back / Cancel on the business form leads: the admin list for admins, "my businesses" for everyone else.
-     */
-    private function formCancelUrl(): string
-    {
-        return auth()->check() && auth()->user()->isAdmin() ? route('businesses.index') : route('businesses.my');
     }
 
     public function update(UpdateBusinessRequest $request, Business $business): RedirectResponse
@@ -209,16 +194,14 @@ class BusinessController extends Controller
 
     public function store(StoreBusinessRequest $request): RedirectResponse
     {
-        $data = $request->businessData();
-        $data['user_id'] = Auth::id();
-        $data['type'] = 'entrepreneur';
+        $isAdmin = $this->currentUserIsAdmin();
 
-        // --- Businesses created by students stay hidden until an admin approves them ---
-        if (! $this->currentUserIsAdmin()) {
-            $data['is_visible'] = false;
-        } else {
-            $data['is_visible'] = true;
-        }
+        // --- A student registers their own business and it waits for approval; an admin registers it for the student picked as owner, approved ---
+        $data = $request->businessData();
+        $data['user_id'] = $isAdmin ? $data['user_id'] : Auth::id();
+        $data['type'] = 'entrepreneur';
+        $data['is_visible'] = $isAdmin;
+        $data['approval_status'] = $isAdmin ? 'approved' : 'pending';
 
         if ($request->hasFile('logo')) {
             $data['logo_url'] = $this->storeLogo($request->file('logo'));
@@ -228,11 +211,11 @@ class BusinessController extends Controller
 
         $this->syncMembers($request, $business);
 
-        $message = $this->currentUserIsAdmin()
-            ? 'Business created successfully!'
-            : 'Business submitted for approval! An admin will review it soon.';
+        if ($isAdmin) {
+            return redirect()->route('businesses.show', $business)->with('success', 'Business created successfully!');
+        }
 
-        return redirect()->route('businesses.my')->with('success', $message);
+        return redirect()->route('businesses.my')->with('success', 'Business submitted for approval! An admin will review it soon.');
     }
 
     // --- Form helpers ---
@@ -244,9 +227,12 @@ class BusinessController extends Controller
         return app(UploadStorage::class)->store($file, 'logos');
     }
 
+    /**
+     * Only admins choose who runs a business with its owner; an owner cannot add or remove people through the form.
+     */
     private function syncMembers(Request $request, Business $business): void
     {
-        if ($request->has('owner_ids')) {
+        if ($this->currentUserIsAdmin() && $request->has('owner_ids')) {
             $business->members()->sync((array) $request->input('owner_ids'));
         }
     }

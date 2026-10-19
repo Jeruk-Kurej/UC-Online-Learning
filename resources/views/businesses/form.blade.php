@@ -74,8 +74,8 @@
 
             @if (auth()->check() && auth()->user()->isAdmin())
                 <x-forms.section title="Owners">
-                    <x-forms.field name="user_id" label="Main owner" :show-error="false">
-                        <select name="user_id" id="user_id" data-tom-select="Choose the main owner" class="block w-full">
+                    <x-forms.field name="user_id" label="Main owner" required>
+                        <select name="user_id" id="user_id" data-tom-select="Choose the main owner" required class="block w-full">
                             <option value="">Choose the main owner</option>
                             @foreach ($users as $ownerUser)
                                 <option value="{{ $ownerUser->id }}" {{ old('user_id', $business?->user_id) == $ownerUser->id ? 'selected' : '' }}>{{ $ownerUser->name }} ({{ $ownerUser->email }})</option>

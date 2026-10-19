@@ -26,8 +26,21 @@
                 </x-forms.field>
             </x-forms.section>
 
+            @if (auth()->user()->isAdmin())
+                <x-forms.section title="Owner">
+                    <x-forms.field name="user_id" label="Student" required class="md:col-span-2">
+                        <select name="user_id" id="user_id" data-tom-select="Choose the student" required class="block w-full">
+                            <option value="">Choose the student</option>
+                            @foreach ($owners as $ownerUser)
+                                <option value="{{ $ownerUser->id }}" {{ old('user_id') == $ownerUser->id ? 'selected' : '' }}>{{ $ownerUser->name }} ({{ $ownerUser->email }})</option>
+                            @endforeach
+                        </select>
+                    </x-forms.field>
+                </x-forms.section>
+            @endif
+
             <x-forms.actions>
-                <a href="{{ route('businesses.my') }}" class="btn btn-secondary">Cancel</a>
+                <a href="{{ $cancelUrl }}" class="btn btn-secondary">Cancel</a>
                 <button type="submit" class="btn btn-primary">Add work profile</button>
             </x-forms.actions>
         </form>

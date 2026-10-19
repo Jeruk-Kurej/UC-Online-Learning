@@ -6,6 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class ProfileUpdateRequest extends FormRequest
 {
+    /**
+     * The password changes only through the password form (it asks for the current one), the testimony only through My testimony.
+     */
     public function rules(): array
     {
         return [
@@ -21,7 +24,6 @@ class ProfileUpdateRequest extends FormRequest
             'current_status' => ['nullable', 'string', 'max:255'],
             'year_of_enrollment' => ['nullable', 'string', 'max:50'],
             'graduate_year' => ['nullable', 'string', 'max:50'],
-            'testimony' => ['nullable', 'string'],
             'activities_caption' => ['nullable', 'string'],
             'profile_photo' => ['nullable', 'image', 'max:10240'],
             'delete_profile_photo' => ['nullable', 'boolean'],
@@ -30,7 +32,6 @@ class ProfileUpdateRequest extends FormRequest
             'activities_files.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:50120'],
             'delete_activities_files' => ['nullable', 'array'],
             'delete_activities_files.*' => ['string'],
-            'password' => ['nullable', 'confirmed', 'min:8'],
         ];
     }
 }

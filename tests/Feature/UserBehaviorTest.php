@@ -258,10 +258,11 @@ test('user import needs a file and queues the importer', function () {
 
 // --- Public profile ---
 
-test('a profile opens by slug or by id and hides invisible businesses', function () {
+test('a profile opens by slug or by id and lists only approved, visible businesses', function () {
     $w = userWorld();
-    Business::create(['user_id' => $w['student']->id, 'name' => 'Shown Biz', 'is_visible' => true]);
-    Business::create(['user_id' => $w['student']->id, 'name' => 'Hidden Biz', 'is_visible' => false]);
+    Business::create(['user_id' => $w['student']->id, 'name' => 'Shown Biz', 'is_visible' => true, 'approval_status' => 'approved']);
+    Business::create(['user_id' => $w['student']->id, 'name' => 'Hidden Biz', 'is_visible' => false, 'approval_status' => 'approved']);
+    Business::create(['user_id' => $w['student']->id, 'name' => 'Waiting Biz', 'is_visible' => true, 'approval_status' => 'pending']);
 
     $response = $this->get('/'.$w['student']->slug)->assertOk()->assertViewIs('users.show');
     expect($response->viewData('user')->businesses->pluck('name')->all())->toBe(['Shown Biz']);

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\Province;
 use App\Models\Regency;
+use App\Models\User;
 use App\Services\ImageOptimizerService;
 use App\Services\UploadStorage;
 use Illuminate\Http\RedirectResponse;
@@ -26,21 +27,14 @@ class CompanyController extends Controller
     {
         $company->load(['user', 'category']);
 
-        $isOwner = auth()->id() === $company->user_id;
-        $isCollabPartner = auth()->check() && auth()->user()->collabStatusWith($company->user) === 'accepted';
-        $isAdmin = auth()->user()?->isAdmin();
+        $canManage = auth()->check() && $company->canBeManagedBy(auth()->user());
 
-        $isUserVisible = $company->user?->is_visible ?? true;
-        $isCompanyVisible = $company->is_visible && $isUserVisible;
-
-        if (! $isCompanyVisible && ! $isOwner && ! $isCollabPartner && ! $isAdmin) {
-            abort(404);
-        }
+        abort_unless($company->isPublic() || $canManage, 404);
 
         return view('work-profiles.show', [
             'company' => $company,
             'student' => $company->user,
-            'canManage' => auth()->check() && $company->canBeManagedBy(auth()->user()),
+            'canManage' => $canManage,
         ]);
     }
 
@@ -55,6 +49,8 @@ class CompanyController extends Controller
             'provinces' => $provinces,
             'selectedProvinceId' => null,
             'availableCities' => collect(),
+            'owners' => $this->currentUserIsAdmin() ? User::nonAdmins()->orderBy('name')->get() : collect(),
+            'cancelUrl' => $this->venturesHomeUrl(),
         ]);
     }
 
@@ -62,10 +58,13 @@ class CompanyController extends Controller
     {
         $validated = $request->validated();
 
+        $isAdmin = $this->currentUserIsAdmin();
+
+        // --- A student adds their own work profile and it waits for approval; an admin adds it for the student picked as owner, approved ---
         $data = $validated;
-        $data['user_id'] = Auth::id();
+        $data['user_id'] = $isAdmin ? $validated['user_id'] : Auth::id();
         $data['is_visible'] = true;
-        $data['approval_status'] = Auth::user()->isAdmin() ? 'approved' : 'pending';
+        $data['approval_status'] = $isAdmin ? 'approved' : 'pending';
 
         $logo = $request->file('logo_url');
         if ($logo instanceof UploadedFile) {

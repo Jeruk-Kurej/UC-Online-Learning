@@ -134,6 +134,13 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    /**
+     * Matches the column default, so a person created in this request already counts as visible before it is read back.
+     */
+    protected $attributes = [
+        'is_visible' => true,
+    ];
+
     protected function casts(): array
     {
         return [
@@ -334,11 +341,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Students and alumni connect with each other; admin accounts are staff and neither send nor receive collab requests.
+     * Students and alumni connect with each other while both profiles are visible; admin accounts are staff and neither send nor receive collab requests.
      */
     public function canCollabWith(User $other): bool
     {
-        return ! $this->isAdmin() && ! $other->isAdmin() && $this->id !== $other->id;
+        return ! $this->isAdmin() && ! $other->isAdmin() && $this->id !== $other->id && $this->is_visible && $other->is_visible;
     }
 
     public function collabStatusWith(?User $user)
@@ -380,6 +387,11 @@ class User extends Authenticatable
     }
 
     // --- Scopes ---
+
+    public function scopeNonAdmins($query)
+    {
+        return $query->where('role', '!=', 'admin');
+    }
 
     public function scopeWithTestimony($query)
     {

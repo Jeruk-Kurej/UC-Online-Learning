@@ -9,7 +9,6 @@ use App\Services\UploadStorage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -41,7 +40,7 @@ class ProfileController extends Controller
         $user = $this->getUser($request);
         $validated = $request->validated();
 
-        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'password', 'show_contact_details'])->toArray());
+        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'show_contact_details'])->toArray());
 
         $user->show_contact_details = $request->boolean('show_contact_details');
 
@@ -87,10 +86,6 @@ class ProfileController extends Controller
 
         $finalUrls = array_merge($existingUrls, $newUrls);
         $user->activities_doc_url = $finalUrls ?: null;
-
-        if ($request->filled('password')) {
-            $user->password = Hash::make($request->input('password'));
-        }
 
         $user->save();
 

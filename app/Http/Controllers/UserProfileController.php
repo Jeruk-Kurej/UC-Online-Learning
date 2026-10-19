@@ -16,17 +16,16 @@ class UserProfileController extends Controller
             $user = User::where('slug', $user)->orWhere('id', $user)->firstOrFail();
         }
 
+        // --- A hidden person, or an admin account, has no public profile; the person and admins still open it ---
+        $viewer = auth()->user();
+        abort_unless(($user->is_visible && ! $user->isAdmin()) || $viewer?->is($user) || $viewer?->isAdmin(), 404);
+
+        // --- The lists show what the public may open: approved and visible ventures only ---
         $user->load([
-            'businesses' => function ($query) {
-                $query->where('is_visible', true)->with('category');
-            },
-            'memberOfBusinesses' => function ($query) use ($user) {
-                $query->where('is_visible', true)
-                    ->where('businesses.user_id', '!=', $user->id)
-                    ->with('category');
-            },
+            'businesses' => fn ($query) => $query->visible()->with('category'),
+            'memberOfBusinesses' => fn ($query) => $query->visible()->where('businesses.user_id', '!=', $user->id)->with('category'),
             'skills',
-            'companies.category',
+            'companies' => fn ($query) => $query->visible()->with('category'),
         ]);
 
         return view('users.show', [
