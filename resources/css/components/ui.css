@@ -71,6 +71,18 @@
         @apply relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-md border border-line bg-brand-50;
     }
 
+    /* --- A thumbnail that is still downloading shows a calm grey pulse, so loading is not mistaken for no photo (which keeps the orange letter); no motion for people who ask for less --- */
+    img[data-thumb][data-loading] {
+        background-color: theme('colors.mist');
+        animation: skeleton-pulse 1.4s ease-in-out infinite;
+    }
+
+    @keyframes skeleton-pulse {
+        50% {
+            background-color: theme('colors.canvas');
+        }
+    }
+
     /* --- Admin tables: a table from 1280px up, one card per row below it so nothing ever scrolls sideways (cells carry data-label) --- */
     .admin-table {
         @apply w-full text-left;

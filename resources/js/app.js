@@ -6,6 +6,7 @@ import registerConfirmForm from './lib/confirm-form';
 import registerConfirmSubmit from './lib/confirm-submit';
 import registerEnterBlurs from './lib/enter-blurs';
 import registerImageFallback from './lib/image-fallback';
+import registerImageLoading from './lib/image-loading';
 import registerPriceArrowKeys from './lib/price-arrow-keys';
 import showToast from './lib/show-toast';
 import achievementList from './components/achievement-list';
@@ -86,7 +87,10 @@ registerConfirmSubmit();
 registerAjaxPagination();
 registerConfirmForm();
 
-document.addEventListener('DOMContentLoaded', registerImageFallback);
+document.addEventListener('DOMContentLoaded', () => {
+    registerImageFallback();
+    registerImageLoading();
+});
 
 // --- Page modules without Alpine components ---
 
