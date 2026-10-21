@@ -123,7 +123,8 @@ abstract class BusinessFormRequest extends FormRequest
             $validator->errors()->add('owner_ids', 'An admin account cannot own or run a business. Choose a student.');
         }
 
-        if ($this->filled('user_id') && User::find($this->input('user_id'))?->isAdmin()) {
+        $userId = $this->input('user_id');
+        if (is_scalar($userId) && $userId !== '' && User::find($userId)?->isAdmin()) {
             $validator->errors()->add('user_id', 'An admin account cannot own or run a business. Choose a student.');
         }
     }

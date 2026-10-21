@@ -14,6 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 function userWorld(): array
 {
     Storage::fake('public');
+    Storage::fake('local');
     $pdo = DB::connection()->getPdo();
     $pdo->sqliteCreateFunction('REGEXP', fn ($pattern, $value) => (int) preg_match('/'.$pattern.'/', (string) $value), 2);
 

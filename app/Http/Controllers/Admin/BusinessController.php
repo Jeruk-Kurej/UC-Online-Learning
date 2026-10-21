@@ -35,9 +35,9 @@ class BusinessController extends Controller
         return view('businesses.admin.index', [
             'businesses' => $businesses,
             'viewType' => $viewType,
-            'status' => $request->get('status'),
-            'search' => $request->get('search'),
-            'featured' => $request->get('featured'),
+            'status' => $this->textInput($request, 'status'),
+            'search' => $this->textInput($request, 'search'),
+            'featured' => $this->textInput($request, 'featured'),
         ] + $this->listStats($viewType));
     }
 
@@ -68,7 +68,7 @@ class BusinessController extends Controller
 
         return $this->reply($request, $business->is_featured
             ? "\"{$business->name}\" is now featured."
-            : "\"{$business->name}\" removed from featured.");
+            : "\"{$business->name}\" removed from featured.", extra: ['is_featured' => $business->is_featured]);
     }
 
     public function import(Request $request): RedirectResponse|JsonResponse
@@ -106,7 +106,7 @@ class BusinessController extends Controller
             ? Company::with(['user', 'category'])
             : Business::with(['user', 'category'])->entrepreneur();
 
-        if ($status = $request->get('status')) {
+        if ($status = $this->textInput($request, 'status')) {
             $query->where('approval_status', $status);
         }
 
@@ -114,7 +114,7 @@ class BusinessController extends Controller
             $query->where('is_featured', $request->get('featured') === 'yes');
         }
 
-        if ($search = $request->get('search')) {
+        if ($search = $this->textInput($request, 'search')) {
             $query->where(function ($q) use ($search, $viewType) {
                 $q->where('name', 'LIKE', "%{$search}%");
                 if ($viewType === 'intrapreneur') {
@@ -160,10 +160,10 @@ class BusinessController extends Controller
     /**
      * JSON for the list's fetch calls, a redirect with a flash message otherwise.
      */
-    private function reply(Request $request, string $message, bool $success = true): RedirectResponse|JsonResponse
+    private function reply(Request $request, string $message, bool $success = true, array $extra = []): RedirectResponse|JsonResponse
     {
         if ($request->ajax() || $request->wantsJson()) {
-            return new JsonResponse(['success' => $success, 'message' => $message], $success ? 200 : 422);
+            return new JsonResponse(['success' => $success, 'message' => $message] + $extra, $success ? 200 : 422);
         }
 
         return $success ? back()->with('success', $message) : back()->withErrors(['approval' => $message]);

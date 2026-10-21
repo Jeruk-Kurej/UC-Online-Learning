@@ -17,11 +17,11 @@
 
         <form x-ref="filterForm" action="{{ route('uc-testimonies.admin') }}" method="GET" class="card mb-6 space-y-3" @submit.prevent="updateList()">
             <div class="flex flex-col gap-3 sm:flex-row">
-                <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Search by name or by what the testimony says" />
+                <x-ui.search-field class="flex-1" value="{{ $filters['search'] }}" placeholder="Search by name or by what the testimony says" />
                 <x-ui.filter-select id="featured" name="featured" aria-label="Featured" class="sm:w-56" @change="updateList()">
                     <option value="">Featured or not</option>
-                    <option value="1" @selected(request('featured') === '1')>Featured</option>
-                    <option value="0" @selected(request('featured') === '0')>Not featured</option>
+                    <option value="1" @selected($filters['featured'] === '1')>Featured</option>
+                    <option value="0" @selected($filters['featured'] === '0')>Not featured</option>
                 </x-ui.filter-select>
                 <x-ui.filter-reset />
             </div>

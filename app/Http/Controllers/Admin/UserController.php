@@ -63,6 +63,7 @@ class UserController extends Controller
         $featuredStats = $this->getFeaturedUserStats();
 
         return view('users.index', [
+            'filters' => $this->textInputs($request, ['search', 'sort_name', 'sort_year', 'student_status', 'current_status', 'major', 'year_of_enrollment']),
             'users' => $users,
             'totalUsers' => $totalUsers,
             'totalEntrepreneurs' => $totalEntrepreneurs,
@@ -300,13 +301,13 @@ class UserController extends Controller
 
     private function filteredUsers(Request $request): LengthAwarePaginator
     {
-        $search = trim((string) $request->get('search', ''));
+        $search = trim($this->textInput($request, 'search'));
         $sortName = in_array($request->get('sort_name'), ['asc', 'desc'], true) ? $request->get('sort_name') : null;
         $sortYear = in_array($request->get('sort_year'), ['asc', 'desc'], true) ? $request->get('sort_year') : null;
         $studentStatus = in_array($request->get('student_status'), ['active', 'inactive', 'cuti', 'alumni'], true) ? $request->get('student_status') : null;
-        $currentStatus = $request->get('current_status');
-        $major = $request->get('major');
-        $yearOfEnrollment = $request->get('year_of_enrollment');
+        $currentStatus = $this->textInput($request, 'current_status');
+        $major = $this->textInput($request, 'major');
+        $yearOfEnrollment = $this->textInput($request, 'year_of_enrollment');
 
         $query = User::withCount('businesses')
             ->nonAdmins()

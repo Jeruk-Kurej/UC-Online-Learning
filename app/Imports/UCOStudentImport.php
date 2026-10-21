@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Support\StartingPassword;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToArray;
@@ -340,9 +341,16 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
         return "[UCOStudentImport] Started: ~{$total} rows";
     }
 
+    /**
+     * A queued import logs this from a copy of the importer made before any row was read, so its own counters are 0;
+     * the shared progress counters (what the progress card shows) hold the real numbers.
+     */
     protected function completedLogLine(): string
     {
-        return "[UCOStudentImport] Done: {$this->successCount} ok, {$this->skippedCount} skipped";
+        $success = $this->importId ? (int) Cache::get("import_{$this->importId}_success", 0) : $this->successCount;
+        $skipped = $this->importId ? (int) Cache::get("import_{$this->importId}_skipped", 0) : $this->skippedCount;
+
+        return "[UCOStudentImport] Done: {$success} ok, {$skipped} skipped";
     }
 
     protected function skippedLogLine(string $reason): string

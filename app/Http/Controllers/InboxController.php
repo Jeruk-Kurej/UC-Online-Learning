@@ -13,7 +13,7 @@ class InboxController extends Controller
         $user = $request->user();
         abort_if($user->isAdmin(), 403, 'Admin accounts have no inbox.');
 
-        $messages = $user->receivedMessages()->newestFirst()->paginate(15);
+        $messages = $user->receivedMessages()->with('sender')->newestFirst()->paginate(15);
 
         $sentCollabs = $user->sentCollabs()->with(['recipient'])->latest()->get();
 
@@ -22,7 +22,10 @@ class InboxController extends Controller
                 $q->where('sender_id', $user->id)
                     ->orWhere('recipient_id', $user->id);
             })
-            ->with(['sender', 'recipient'])
+            ->with([
+                'sender.businesses' => fn ($businesses) => $businesses->visible(),
+                'recipient.businesses' => fn ($businesses) => $businesses->visible(),
+            ])
             ->latest()
             ->get();
 

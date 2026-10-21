@@ -227,6 +227,14 @@ class User extends Authenticatable
         return storage_image_url($this->profile_photo_url, ['width' => 150, 'height' => 150, 'crop' => 'thumb']);
     }
 
+    /**
+     * The address to write to: the personal email when the person gave one, otherwise the login email.
+     */
+    public function getContactEmailAttribute(): string
+    {
+        return $this->personal_email ?: (string) $this->email;
+    }
+
     public function getLinkedinUrlAttribute(): ?string
     {
         if (! $this->linkedin) {

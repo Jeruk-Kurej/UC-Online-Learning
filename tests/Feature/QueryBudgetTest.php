@@ -2,7 +2,9 @@
 
 use App\Models\Business;
 use App\Models\Category;
+use App\Models\Collab;
 use App\Models\Company;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -19,11 +21,11 @@ function budgetVenture(string $name, string $province, string $city, bool $featu
     return $business;
 }
 
-function queriesOf(string $path): int
+function queriesOf(string $path, ?User $as = null): int
 {
     DB::flushQueryLog();
     DB::enableQueryLog();
-    test()->get($path)->assertOk();
+    ($as ? test()->actingAs($as) : test())->get($path)->assertOk();
 
     return count(DB::getQueryLog());
 }
@@ -61,4 +63,20 @@ test('the directory filters list a province or city once, whatever its case or t
 
     $selected = $this->get('/business?province=jawa%20timur')->viewData('directoryState');
     expect($selected['availableCities']->all())->toBe(['Kota Surabaya']);
+});
+
+test('the inbox runs the same number of queries for three messages and connections as for twelve', function () {
+    $inbox = function (int $n) {
+        $me = User::factory()->create();
+        foreach (range(1, $n) as $i) {
+            $other = User::factory()->create(['whatsapp' => '0812'.$i]);
+            budgetVenture("Inbox Venture {$i}-{$n}", 'Jawa Timur', 'Kota Surabaya', false)->update(['user_id' => $other->id]);
+            Collab::create(['sender_id' => $other->id, 'recipient_id' => $me->id, 'status' => 'accepted']);
+            Message::create(['sender_id' => $other->id, 'recipient_id' => $me->id, 'subject' => 'Hi', 'body' => 'Hi', 'type' => 'collab_invite']);
+        }
+
+        return queriesOf('/inbox', $me);
+    };
+
+    expect($inbox(12))->toBe($inbox(3));
 });

@@ -15,9 +15,9 @@ class PasswordController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validateWithBag('updatePassword', [
-            'current_password' => self::needsCurrentPassword() ? ['required', 'current_password'] : ['nullable'],
-            'password' => ['required', Password::defaults(), 'confirmed', function (string $attribute, string $value, \Closure $fail) {
-                if (StartingPassword::matches($value)) {
+            'current_password' => self::needsCurrentPassword() ? ['bail', 'required', 'string', 'current_password'] : ['nullable'],
+            'password' => ['bail', 'required', 'string', Password::defaults(), 'confirmed', function (string $attribute, mixed $value, \Closure $fail) {
+                if (is_string($value) && StartingPassword::matches($value)) {
                     $fail('Choose a password of your own, not the starting password.');
                 }
             }],

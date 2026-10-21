@@ -37,6 +37,10 @@ test('views put no Blade directive inside a component tag, where Blade leaves it
     expect(viewsMatching('/<x-[\w.:-]+\b[^>]*@(js|json|class|if|php)\b/s'))->toBe([]);
 });
 
+test('views never call init() from x-init: Alpine already runs a component\'s init(), so it would run twice', function () {
+    expect(viewsMatching('/x-init="\\s*init\\(\\)\\s*"/'))->toBe([]);
+});
+
 test('views have no @php blocks', function () {
     expect(viewsMatching('/@php\b/'))->toBe([]);
 });

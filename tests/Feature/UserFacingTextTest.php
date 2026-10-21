@@ -90,3 +90,17 @@ test('a person with private contacts is told so on their own page instead of see
 
     $this->actingAs($person)->get('/'.$person->slug)->assertDontSee('0812777')->assertSee('Your contact details are private')->assertSee('Change this in My profile');
 });
+
+test('a connection card shows the partner\'s contacts and links only a public business', function () {
+    $me = User::factory()->create();
+    $partner = User::factory()->create(['whatsapp' => '0812333', 'show_contact_details' => false, 'personal_email' => 'partner@example.test']);
+    Collab::create(['sender_id' => $partner->id, 'recipient_id' => $me->id, 'status' => 'accepted']);
+    textBusiness($partner, 'pending', ['name' => 'Waiting Venture']);
+
+    $this->actingAs($me)->get(route('inbox.index'))
+        ->assertSee('wa.me/0812333', false)->assertSee('mailto:partner@example.test', false)
+        ->assertDontSee('Waiting Venture')->assertDontSee('keeps their contact details private');
+
+    textBusiness($partner, 'approved', ['name' => 'Open Venture']);
+    $this->actingAs($me)->get(route('inbox.index'))->assertSee('Open Venture');
+});

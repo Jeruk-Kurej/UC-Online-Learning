@@ -1,4 +1,4 @@
-<div x-data="sharedImportManager()" x-init="init()" data-check-url="{{ route('import.check', [], false) }}" data-progress-url="{{ route('import.progress', ['sessionId' => '__ID__'], false) }}" data-clear-url="{{ route('import.clear', [], false) }}" @start-import.window="uploadImportFile($event.detail)" class="relative">
+<div x-data="sharedImportManager()" data-check-url="{{ route('import.check', [], false) }}" data-progress-url="{{ route('import.progress', ['sessionId' => '__ID__'], false) }}" data-clear-url="{{ route('import.clear', [], false) }}" @start-import.window="uploadImportFile($event.detail)" class="relative">
 
     {{-- --- Small card while an import runs --- --}}
     <div x-show="visible" x-cloak class="card fixed inset-x-4 bottom-4 z-50 space-y-3 !p-4 shadow-lg sm:left-auto sm:right-6 sm:w-80" role="status">
