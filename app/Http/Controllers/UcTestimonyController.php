@@ -14,8 +14,8 @@ class UcTestimonyController extends Controller
 {
     public function adminIndex(Request $request): View|Response
     {
-        $search = trim((string) $request->get('search', ''));
-        $featured = $request->get('featured');
+        $search = trim($this->textInput($request, 'search'));
+        $featured = $this->textInput($request, 'featured');
 
         $query = User::withTestimony();
 
@@ -46,7 +46,12 @@ class UcTestimonyController extends Controller
                 ->header('Vary', 'X-Requested-With');
         }
 
-        return view('uc-testimonies.admin', compact('users', 'totalTestimonies', 'featuredTestimonies'));
+        return view('uc-testimonies.admin', [
+            'users' => $users,
+            'totalTestimonies' => $totalTestimonies,
+            'featuredTestimonies' => $featuredTestimonies,
+            'filters' => $this->textInputs($request, ['search', 'featured']),
+        ]);
     }
 
     public function my(): View

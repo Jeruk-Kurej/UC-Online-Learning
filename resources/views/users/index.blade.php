@@ -44,48 +44,48 @@
         {{-- --- Search and filters --- --}}
         <form x-ref="filterForm" action="{{ route('users.index') }}" method="GET" class="card mb-6 space-y-3" @submit.prevent="updateList()">
             <div class="flex flex-col gap-3 sm:flex-row">
-                <x-ui.search-field class="flex-1" value="{{ request('search') }}" placeholder="Name, email or student number" />
+                <x-ui.search-field class="flex-1" value="{{ $filters['search'] }}" placeholder="Name, email or student number" />
                 <x-ui.filter-reset />
             </div>
 
             <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <x-ui.filter-select id="sort_name" name="sort_name" aria-label="Sort by name" @change="updateList()">
                     <option value="">Name: any order</option>
-                    <option value="asc" @selected(request('sort_name') === 'asc')>Name: A to Z</option>
-                    <option value="desc" @selected(request('sort_name') === 'desc')>Name: Z to A</option>
+                    <option value="asc" @selected($filters['sort_name'] === 'asc')>Name: A to Z</option>
+                    <option value="desc" @selected($filters['sort_name'] === 'desc')>Name: Z to A</option>
                 </x-ui.filter-select>
 
                 <x-ui.filter-select id="sort_year" name="sort_year" aria-label="Sort by year joined" @change="updateList()">
                     <option value="">Year joined: any order</option>
-                    <option value="desc" @selected(request('sort_year') === 'desc')>Year joined: newest first</option>
-                    <option value="asc" @selected(request('sort_year') === 'asc')>Year joined: oldest first</option>
+                    <option value="desc" @selected($filters['sort_year'] === 'desc')>Year joined: newest first</option>
+                    <option value="asc" @selected($filters['sort_year'] === 'asc')>Year joined: oldest first</option>
                 </x-ui.filter-select>
 
                 <x-ui.filter-select id="student_status" name="student_status" aria-label="Student status" @change="updateList()">
                     <option value="">All student statuses</option>
-                    <option value="active" @selected(request('student_status') === 'active')>Active</option>
-                    <option value="inactive" @selected(request('student_status') === 'inactive')>Inactive</option>
-                    <option value="cuti" @selected(request('student_status') === 'cuti')>On leave</option>
-                    <option value="alumni" @selected(request('student_status') === 'alumni')>Alumni</option>
+                    <option value="active" @selected($filters['student_status'] === 'active')>Active</option>
+                    <option value="inactive" @selected($filters['student_status'] === 'inactive')>Inactive</option>
+                    <option value="cuti" @selected($filters['student_status'] === 'cuti')>On leave</option>
+                    <option value="alumni" @selected($filters['student_status'] === 'alumni')>Alumni</option>
                 </x-ui.filter-select>
 
                 <x-ui.filter-select id="current_status" name="current_status" aria-label="Entrepreneur or intrapreneur" @change="updateList()">
                     <option value="">Entrepreneurs and intrapreneurs</option>
-                    <option value="Entrepreneur" @selected(request('current_status') === 'Entrepreneur')>Entrepreneurs</option>
-                    <option value="Intrapreneur" @selected(request('current_status') === 'Intrapreneur')>Intrapreneurs</option>
+                    <option value="Entrepreneur" @selected($filters['current_status'] === 'Entrepreneur')>Entrepreneurs</option>
+                    <option value="Intrapreneur" @selected($filters['current_status'] === 'Intrapreneur')>Intrapreneurs</option>
                 </x-ui.filter-select>
 
                 <x-ui.filter-select id="major" name="major" aria-label="Major" @change="updateList()">
                     <option value="">All majors</option>
                     @foreach ($availableMajors as $majorOption)
-                        <option value="{{ $majorOption }}" @selected(request('major') === $majorOption)>{{ $majorOption }}</option>
+                        <option value="{{ $majorOption }}" @selected($filters['major'] === $majorOption)>{{ $majorOption }}</option>
                     @endforeach
                 </x-ui.filter-select>
 
                 <x-ui.filter-select id="year_of_enrollment" name="year_of_enrollment" aria-label="Year joined" @change="updateList()">
                     <option value="">All years joined</option>
                     @foreach ($availableEnrollmentYears as $yearOption)
-                        <option value="{{ $yearOption }}" @selected(request('year_of_enrollment') === $yearOption)>{{ $yearOption }}</option>
+                        <option value="{{ $yearOption }}" @selected($filters['year_of_enrollment'] === $yearOption)>{{ $yearOption }}</option>
                     @endforeach
                 </x-ui.filter-select>
             </div>

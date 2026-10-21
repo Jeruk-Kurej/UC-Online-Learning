@@ -33,7 +33,7 @@ class BusinessController extends Controller
 
     public function index(Request $request): View|Response
     {
-        $viewType = $request->get('view', 'entrepreneur');
+        $viewType = $this->textInput($request, 'view', 'entrepreneur');
 
         $businesses = $this->directoryQuery($request, $viewType)->newestFirst()->paginate(6)->withQueryString();
 
@@ -55,6 +55,7 @@ class BusinessController extends Controller
             'viewType' => $viewType,
             'availableProvinces' => $this->uniqueNames($locations->pluck('province'))->sort(),
             'directoryState' => $this->directoryState($request, $viewType, $locations),
+            'filters' => $this->textInputs($request, ['search', 'category']),
         ]);
     }
 
@@ -75,7 +76,7 @@ class BusinessController extends Controller
 
     public function getRegencies(Request $request): JsonResponse
     {
-        $provinceId = $request->get('province_id');
+        $provinceId = $this->textInput($request, 'province_id');
         if (! $provinceId) {
             return new JsonResponse([]);
         }
@@ -268,16 +269,16 @@ class BusinessController extends Controller
             ? Company::visible()->with(['user'])
             : Business::visible()->with(['user', 'members', 'products'])->entrepreneur();
 
-        if ($search = $request->get('search')) {
+        if ($search = $this->textInput($request, 'search')) {
             $query->where(fn (Builder $matches) => $this->searchDirectory($matches, $search, $viewType));
         }
-        if ($category = $request->get('category')) {
+        if ($category = $this->textInput($request, 'category')) {
             $query->where('category_id', $category);
         }
-        if ($city = $request->get('city')) {
+        if ($city = $this->textInput($request, 'city')) {
             $query->where('city', 'LIKE', "%{$city}%");
         }
-        if ($province = $request->get('province')) {
+        if ($province = $this->textInput($request, 'province')) {
             $query->where('province', 'LIKE', "%{$province}%");
         }
 
@@ -329,21 +330,21 @@ class BusinessController extends Controller
      */
     private function directoryState(Request $request, string $viewType, SupportCollection $locations): array
     {
-        $selectedProvince = $request->get('province');
+        $selectedProvince = $this->textInput($request, 'province');
         $cityRows = $selectedProvince
             ? $locations->filter(fn ($row) => self::sameName($row->province) === self::sameName($selectedProvince))
             : $locations;
 
         return [
             'viewType' => $viewType,
-            'isPending' => $request->get('status') === 'pending',
+            'isPending' => $this->textInput($request, 'status') === 'pending',
             'provinceCityMap' => $locations
                 ->filter(fn ($row) => $row->province !== null && $row->city !== null)
                 ->groupBy('province')
                 ->map(fn ($items) => $items->pluck('city')->sort()->values())
                 ->toArray(),
             'selectedProvince' => (string) $selectedProvince,
-            'selectedCity' => (string) $request->get('city'),
+            'selectedCity' => $this->textInput($request, 'city'),
             'availableCities' => $this->uniqueNames($cityRows->pluck('city'))->sort()->values(),
         ];
     }

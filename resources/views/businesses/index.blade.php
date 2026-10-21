@@ -1,7 +1,7 @@
 <x-app-layout bleed>
     @section('title', 'Business Directory')
 
-    <div data-business-directory x-data="businessDirectory(@js($directoryState))" x-init="init()" @ajax-pagination.window="updateList($event.detail.url, true, true)">
+    <div data-business-directory x-data="businessDirectory(@js($directoryState))" @ajax-pagination.window="updateList($event.detail.url, true, true)">
         <form x-ref="filterForm" action="{{ route('businesses.index') }}" method="GET" @submit.prevent="updateList()">
             <input type="hidden" name="view" :value="viewType">
 
@@ -18,7 +18,7 @@
 
                     <div class="mt-4 space-y-3 pb-10 sm:pb-12">
                         <div class="flex flex-col gap-3 sm:flex-row">
-                            <x-ui.search-field glass class="flex-1" id="search" value="{{ request('search') }}" placeholder="Search by business or owner name" autocomplete="off" />
+                            <x-ui.search-field glass class="flex-1" id="search" value="{{ $filters['search'] }}" placeholder="Search by business or owner name" autocomplete="off" />
                             <x-ui.filter-reset loading="isLoading" class="!border-white/60 !bg-transparent !text-white hover:!bg-white/10" />
                         </div>
 
@@ -26,7 +26,7 @@
                             <x-ui.filter-select glass name="category" aria-label="Category" @change="submitDebounced()">
                                 <option value="">All categories</option>
                                 @foreach ($categories as $type)
-                                    <option value="{{ $type->id }}" {{ request('category') == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                    <option value="{{ $type->id }}" {{ $filters['category'] == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
                                 @endforeach
                             </x-ui.filter-select>
 

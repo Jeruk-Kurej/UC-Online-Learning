@@ -12,16 +12,14 @@
         <p class="text-base text-gray-800"><a href="{{ route('businesses.show', $partner->businesses->first()->slug) }}" class="text-link">{{ $partner->businesses->first()->name }}</a></p>
     @endif
 
+    {{-- --- Connected people see each other's contact details (the accept screen says so) --- --}}
     <div class="mt-auto flex flex-wrap gap-2 border-t border-line pt-4">
-        @if ($partner->show_contact_details)
-            @if ($partner->whatsapp)
-                <a href="{{ $partner->whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm flex-1"><i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp</a>
-            @endif
-            @if ($partner->personal_email)
-                <a href="mailto:{{ $partner->personal_email }}" class="btn btn-secondary btn-sm flex-1"><i class="bi bi-envelope" aria-hidden="true"></i> Email</a>
-            @endif
-        @else
-            <p class="text-sm text-gray-600"><i class="bi bi-lock" aria-hidden="true"></i> This person keeps their contact details private.</p>
+        @if ($partner->whatsapp)
+            <a href="{{ $partner->whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm flex-1"><i class="bi bi-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+        @endif
+        <a href="mailto:{{ $partner->contact_email }}" class="btn btn-secondary btn-sm flex-1"><i class="bi bi-envelope" aria-hidden="true"></i> Email</a>
+        @if ($partner->linkedin)
+            <a href="{{ $partner->linkedin_url }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm flex-1"><i class="bi bi-linkedin" aria-hidden="true"></i> LinkedIn</a>
         @endif
     </div>
 </article>

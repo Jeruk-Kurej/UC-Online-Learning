@@ -31,6 +31,8 @@ class ConfirmablePasswordController extends Controller
             abort(401, 'Unauthenticated.');
         }
 
+        $request->validate(['password' => ['required', 'string']]);
+
         if (! Auth::guard('web')->validate([
             'email' => $user->email,
             'password' => $request->input('password'),

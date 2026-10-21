@@ -4,6 +4,11 @@ use App\Models\Business;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
+// --- Uploads go to a fake disk, so a test run leaves no files in storage/app/public ---
+
+beforeEach(fn () => Storage::fake('public'));
 
 test('business owner can create, edit and delete products', function () {
     $owner = User::factory()->create();

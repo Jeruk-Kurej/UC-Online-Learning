@@ -52,33 +52,40 @@ class CompanyAchievementController extends Controller
         return redirect()->route('intrapreneurs.show', $company)->with('success', 'Achievement added successfully!');
     }
 
+    /**
+     * Deletes the achievement at `index`, but only when it still reads `text`: a second tab or a stale page must not delete the item that moved into its place.
+     */
     public function destroy(Company $company, Request $request): RedirectResponse|JsonResponse
     {
         $this->authorizeManage($company);
 
         $this->validate($request, [
             'index' => 'required|integer|min:0',
+            'text' => 'nullable|string',
         ]);
 
         $achievements = $company->achievements_list;
         $index = (int) $request->input('index');
+        $expected = $request->input('text');
+        $found = isset($achievements[$index]) && ($expected === null || $achievements[$index] === $expected);
 
-        if (isset($achievements[$index])) {
+        if ($found) {
             unset($achievements[$index]);
-            $updated = empty($achievements) ? null : implode("\n", array_map(fn ($item) => '- '.$item, $achievements));
-            $company->achievement = $updated;
+            $company->achievement = empty($achievements) ? null : implode("\n", array_map(fn ($item) => '- '.$item, $achievements));
             $company->save();
         }
 
+        $message = $found ? 'Achievement deleted successfully!' : 'This list changed in the meantime. Nothing was deleted; check the list and try again.';
+
         if ($request->ajax() || $request->wantsJson()) {
             return new JsonResponse([
-                'success' => true,
-                'message' => 'Achievement deleted successfully!',
+                'success' => $found,
+                'message' => $message,
                 'achievements' => $company->achievements_list ?? [],
             ]);
         }
 
-        return back()->with('success', 'Achievement deleted successfully!');
+        return back()->with($found ? 'success' : 'error', $message);
     }
 
     // --- Access ---

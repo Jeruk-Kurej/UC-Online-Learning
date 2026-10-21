@@ -18,6 +18,7 @@ use Maatwebsite\Excel\Facades\Excel;
 function businessWorld(): array
 {
     Storage::fake('public');
+    Storage::fake('local');
     // --- The IndoRegion migrations index `id` instead of making it a primary key, which SQLite ---
     // --- Refuses as a foreign-key target. Recreate the two tables with primary keys for this test ---
     foreach (['villages', 'districts', 'regencies', 'provinces'] as $table) {
@@ -316,9 +317,9 @@ test('featured toggle answers json and refuses unapproved businesses', function 
     $pending = approvedBusiness($w['owner'], $w['category'], ['name' => 'Pending One', 'approval_status' => 'pending']);
 
     $this->actingAs($w['admin'])->postJson(route('businesses.toggle-featured', $business))
-        ->assertExactJson(['success' => true, 'message' => '"Approved Venture" is now featured.']);
+        ->assertExactJson(['success' => true, 'message' => '"Approved Venture" is now featured.', 'is_featured' => true]);
     $this->actingAs($w['admin'])->postJson(route('businesses.toggle-featured', $business))
-        ->assertExactJson(['success' => true, 'message' => '"Approved Venture" removed from featured.']);
+        ->assertExactJson(['success' => true, 'message' => '"Approved Venture" removed from featured.', 'is_featured' => false]);
     $this->actingAs($w['admin'])->postJson(route('businesses.toggle-featured', $pending))
         ->assertStatus(422)->assertJson(['success' => false]);
     $this->actingAs($w['admin'])->post(route('businesses.toggle-featured', $pending))
