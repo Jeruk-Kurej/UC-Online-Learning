@@ -16,8 +16,6 @@ use Illuminate\Support\Facades\DB;
 class IndoRegionProvinceSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
-     *
      * @deprecated
      *
      * @return void

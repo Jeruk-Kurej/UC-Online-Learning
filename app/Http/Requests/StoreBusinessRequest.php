@@ -15,9 +15,4 @@ class StoreBusinessRequest extends BusinessFormRequest
     {
         return 10240;
     }
-
-    protected function inlineTypes(): array
-    {
-        return ['product', 'service'];
-    }
 }

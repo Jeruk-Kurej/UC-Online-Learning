@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\UserImportTemplate;
 use App\Http\Controllers\Concerns\QueuesImports;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreUserRequest;
@@ -35,7 +34,7 @@ class UserController extends Controller
     private function getFeaturedUserStats(): array
     {
         $row = User::query()
-            ->where('role', '!=', 'admin')
+            ->nonAdmins()
             ->where('is_featured', true)
             ->selectRaw('COUNT(*) as total')
             ->selectRaw("SUM(CASE WHEN LOWER(current_status) = 'intrapreneur' THEN 1 ELSE 0 END) as intrapreneurs")
@@ -295,14 +294,6 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Download Excel template for user import.
-     */
-    public function downloadTemplate()
-    {
-        return (new UserImportTemplate)->download();
-    }
-
     // --- Form helpers ---
 
     // --- User list filters and sorting ---
@@ -318,7 +309,7 @@ class UserController extends Controller
         $yearOfEnrollment = $request->get('year_of_enrollment');
 
         $query = User::withCount('businesses')
-            ->where('role', '!=', 'admin')
+            ->nonAdmins()
             ->when($search !== '', function ($q) use ($search) {
                 $q->where(function ($innerQuery) use ($search) {
                     $innerQuery->where('name', 'LIKE', "%{$search}%")
@@ -344,10 +335,10 @@ class UserController extends Controller
     private function userCounts(): array
     {
         return [
-            'total' => User::where('role', '!=', 'admin')->count(),
-            'entrepreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
-            'intrapreneurs' => User::where('role', '!=', 'admin')->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
-            'alumni' => User::where('role', '!=', 'admin')->where('student_status', 'alumni')->count(),
+            'total' => User::nonAdmins()->count(),
+            'entrepreneurs' => User::nonAdmins()->whereRaw('LOWER(current_status) = ?', ['entrepreneur'])->count(),
+            'intrapreneurs' => User::nonAdmins()->whereRaw('LOWER(current_status) = ?', ['intrapreneur'])->count(),
+            'alumni' => User::nonAdmins()->where('student_status', 'alumni')->count(),
         ];
     }
 

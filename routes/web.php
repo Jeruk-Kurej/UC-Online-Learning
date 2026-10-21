@@ -93,7 +93,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::get('/business', [AdminBusinessController::class, 'index'])->name('businesses.admin');
     Route::post('/business/{business}/status', [AdminBusinessController::class, 'updateStatus'])->name('businesses.update-status');
     Route::post('/intrapreneurs/{company}/status', [AdminBusinessController::class, 'updateCompanyStatus'])->name('intrapreneurs.update-status');
-    Route::post('/business/{business}/approve', [AdminBusinessController::class, 'approve'])->name('businesses.approve');
 
     Route::get('/testimonies', [UcTestimonyController::class, 'adminIndex'])->name('uc-testimonies.admin');
     Route::post('/testimonies/{user:id}/toggle-featured', [UcTestimonyController::class, 'toggleFeatured'])->name('uc-testimonies.toggle-featured');

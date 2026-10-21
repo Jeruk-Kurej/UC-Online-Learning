@@ -16,26 +16,11 @@ class UpdateBusinessRequest extends BusinessFormRequest
         return 20480;
     }
 
-    protected function inlineTypes(): array
-    {
-        return ['product'];
-    }
-
     protected function logoFlagRules(): array
     {
         return [
             'delete_logo' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean',
-        ];
-    }
-
-    protected function documentRemovalRules(): array
-    {
-        return [
-            'remove_legal_docs' => 'nullable|array',
-            'remove_certifications' => 'nullable|array',
-            'remove_legal_document' => 'nullable|boolean',
-            'remove_certification' => 'nullable|boolean',
         ];
     }
 

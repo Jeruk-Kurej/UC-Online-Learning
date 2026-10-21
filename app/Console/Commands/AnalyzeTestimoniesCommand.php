@@ -9,22 +9,15 @@ use Illuminate\Console\Command;
 class AnalyzeTestimoniesCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'ai:analyze-testimonies';
 
     /**
-     * The console command description.
-     *
      * @var string
      */
     protected $description = 'Analyze existing testimonies that do not have an AI sentiment score.';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(AiModerationService $aiService)
     {
         $users = User::whereNotNull('testimony')
