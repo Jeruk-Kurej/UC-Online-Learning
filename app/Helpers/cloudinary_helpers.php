@@ -3,6 +3,16 @@
 use Cloudinary\Cloudinary;
 use Illuminate\Support\Facades\Storage;
 
+if (! function_exists('is_full_image_url')) {
+    /**
+     * An address that is already complete (another site, Cloudinary, or inline data) and must be used as it is.
+     */
+    function is_full_image_url(string $path): bool
+    {
+        return str_starts_with($path, 'http://') || str_starts_with($path, 'https://') || str_starts_with($path, 'data:');
+    }
+}
+
 if (! function_exists('cloudinary_url')) {
     /**
      * Generate a Cloudinary transformed URL for a stored public id.
@@ -16,7 +26,7 @@ if (! function_exists('cloudinary_url')) {
             return null;
         }
 
-        if (str_starts_with($publicId, 'http://') || str_starts_with($publicId, 'https://') || str_starts_with($publicId, 'data:')) {
+        if (is_full_image_url($publicId)) {
             return $publicId;
         }
 
@@ -66,6 +76,10 @@ if (! function_exists('storage_image_url')) {
     {
         if (! $path) {
             return null;
+        }
+
+        if (is_full_image_url($path)) {
+            return $path;
         }
 
         $preset = null;

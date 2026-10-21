@@ -49,32 +49,34 @@
             </section>
 
             @if ($company->achievement || $canManage)
-                <x-ui.section title="Achievements" x-data="achievementList(@js($company->achievements_list), @js(route('intrapreneurs.delete_achievement', $company)))">
-                    @if ($canManage)
-                        <x-slot:action>
-                            <a href="{{ route('intrapreneurs.create_achievement', $company) }}" class="btn btn-primary btn-sm">
-                                <i class="bi bi-plus-lg" aria-hidden="true"></i>
-                                Add achievement
-                            </a>
-                        </x-slot:action>
-                    @endif
+                <div x-data="achievementList(@js($company->achievements_list), @js(route('intrapreneurs.delete_achievement', $company, false)))">
+                    <x-ui.section title="Achievements">
+                        @if ($canManage)
+                            <x-slot:action>
+                                <a href="{{ route('intrapreneurs.create_achievement', $company) }}" class="btn btn-primary btn-sm">
+                                    <i class="bi bi-plus-lg" aria-hidden="true"></i>
+                                    Add achievement
+                                </a>
+                            </x-slot:action>
+                        @endif
 
-                    <ul class="space-y-3">
-                        <template x-for="(item, index) in achievements" :key="index">
-                            <li class="card flex items-start gap-4 !p-4">
-                                <i class="bi bi-trophy mt-1 text-xl text-brand-700" aria-hidden="true"></i>
-                                <p class="min-w-0 flex-1 text-base text-gray-800" x-text="item"></p>
-                                @if ($canManage)
-                                    <button type="button" @click="deleteAchievement(index)" class="btn btn-danger btn-sm">Delete</button>
-                                @endif
-                            </li>
+                        <ul class="space-y-3">
+                            <template x-for="(item, index) in achievements" :key="index">
+                                <li class="card flex items-start gap-4 !p-4">
+                                    <i class="bi bi-trophy mt-1 text-xl text-brand-700" aria-hidden="true"></i>
+                                    <p class="min-w-0 flex-1 text-base text-gray-800" x-text="item"></p>
+                                    @if ($canManage)
+                                        <button type="button" @click="deleteAchievement(index)" class="btn btn-danger btn-sm">Delete</button>
+                                    @endif
+                                </li>
+                            </template>
+                        </ul>
+
+                        <template x-if="achievements.length === 0">
+                            <x-ui.empty-state title="No achievements yet">Add milestones and contributions from this job.</x-ui.empty-state>
                         </template>
-                    </ul>
-
-                    <template x-if="achievements.length === 0">
-                        <x-ui.empty-state title="No achievements yet">Add milestones and contributions from this job.</x-ui.empty-state>
-                    </template>
-                </x-ui.section>
+                    </x-ui.section>
+                </div>
             @endif
         </div>
 

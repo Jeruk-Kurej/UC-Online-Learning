@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Business;
+use App\Models\Company;
 use App\Models\Product;
 use App\Models\User;
 
@@ -36,11 +37,27 @@ test('the order stays the same within a day and changes with the day', function 
     }
     $names = fn () => collect($this->get('/')->viewData('featuredVentures'))->pluck('name')->all();
 
+    $this->travelTo('2026-10-20 09:00');
     $first = $names();
+    $this->travelTo('2026-10-20 21:00');
     expect($names())->toBe($first);
 
-    $this->travel(1)->days();
-    expect($names())->not->toBe($first);
+    $orders = collect(range(1, 6))->map(function (int $day) use ($names) {
+        $this->travelTo(now()->addDay());
+
+        return implode(',', $names());
+    });
+    expect($orders->unique())->toHaveCount(6)->and($orders->all())->not->toContain(implode(',', $first));
+});
+
+test('an intrapreneur card on the home page names only an approved work profile', function () {
+    $student = User::factory()->create(['is_featured' => true, 'current_status' => 'Intrapreneur', 'profile_photo_url' => 'https://example.test/p.jpg']);
+    Company::create(['user_id' => $student->id, 'name' => 'Waiting Employer', 'is_visible' => true, 'approval_status' => 'pending']);
+
+    $this->get('/')->assertOk()->assertSee($student->name)->assertDontSee('Waiting Employer');
+
+    Company::create(['user_id' => $student->id, 'name' => 'Approved Employer', 'is_visible' => true, 'approval_status' => 'approved']);
+    $this->get('/')->assertOk()->assertSee('Approved Employer')->assertDontSee('Waiting Employer');
 });
 
 test('a section shows at most six items', function () {
