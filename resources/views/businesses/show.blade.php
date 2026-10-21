@@ -3,6 +3,10 @@
     <div data-business-show x-data="businessShowPage">
         @include('businesses.partials.show-header')
 
+        @if ($showReviewNotice)
+            <x-business.review-notice class="mb-8" :item="$business" noun="business" />
+        @endif
+
         <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
             {{-- --- Main column --- --}}
             <div class="min-w-0 space-y-10 lg:col-span-2">

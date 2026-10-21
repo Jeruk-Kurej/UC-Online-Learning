@@ -32,18 +32,17 @@ test('contacts show when the person allows it or the viewer is an admin', functi
         ->and((new User(['linkedin' => 'budi']))->hasContactDetails(withLinkedin: false))->toBeFalse();
 });
 
-test('focus label falls back to the role, then a dash', function () {
-    expect((new User(['current_status' => 'Entrepreneur']))->focus_label)->toBe('Entrepreneur')
-        ->and((new User(['role' => 'student']))->focus_label)->toBe('Student')
-        ->and((new User)->focus_label)->toBe('-');
+test('the public status reads Student or Alumni', function () {
+    expect((new User(['student_status' => 'alumni']))->display_status)->toBe('Alumni')
+        ->and((new User(['student_status' => 'student non aktif']))->display_status)->toBe('Student')
+        ->and((new User)->display_status)->toBe('Student');
 });
 
-test('business website and type labels', function () {
+test('business website labels', function () {
     $business = new Business(['website' => 'kopi.id', 'type' => 'entrepreneur']);
 
     expect($business->website_url)->toBe('https://kopi.id')
         ->and((new Business(['website' => 'https://kopi.id']))->website_label)->toBe('kopi.id')
-        ->and($business->type_label)->toBe('Entrepreneur')
         ->and($business->isEntrepreneur())->toBeTrue();
 });
 

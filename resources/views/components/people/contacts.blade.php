@@ -13,6 +13,16 @@
             <x-people.contact-link :href="$person->linkedin_url" icon="bi-linkedin" label="LinkedIn" new-tab>{{ $person->linkedin }}</x-people.contact-link>
         @endif
     </div>
+@elseif ($person->hasContactDetails($withLinkedin) && auth()->user()?->is($person))
+    <p class="border-t border-line pt-4 text-sm text-gray-600">
+        <i class="bi bi-lock" aria-hidden="true"></i> Your contact details are private: visitors do not see them, the people you accepted a collab with do.
+        <a href="{{ route('profile.edit') }}" class="text-link">Change this in My profile</a>
+    </p>
 @elseif ($person->hasContactDetails($withLinkedin))
-    <p class="border-t border-line pt-4 text-sm text-gray-600"><i class="bi bi-lock" aria-hidden="true"></i> This person keeps their contact details private.</p>
+    <p class="border-t border-line pt-4 text-sm text-gray-600">
+        <i class="bi bi-lock" aria-hidden="true"></i> This person keeps their contact details private.
+        @if (auth()->check() && auth()->user()->canCollabWith($person))
+            Once they accept a collab request from you, you can see them.
+        @endif
+    </p>
 @endif

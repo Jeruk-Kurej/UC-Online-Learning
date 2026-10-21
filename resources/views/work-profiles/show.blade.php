@@ -23,6 +23,10 @@
         </x-slot:actions>
     </x-business.profile-heading>
 
+    @if ($showReviewNotice)
+        <x-business.review-notice class="mb-8" :item="$company" noun="work profile" />
+    @endif
+
     <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-3">
         {{-- --- Main column --- --}}
         <div class="min-w-0 space-y-10 lg:col-span-2">
@@ -43,7 +47,7 @@
                         <x-ui.fact label="Working here since">{{ $company->year_started_working }}</x-ui.fact>
                     @endif
                     @if ($company->company_scale)
-                        <x-ui.fact label="Company size">{{ $company->company_scale }}</x-ui.fact>
+                        <x-ui.fact label="Company size">{{ $company->company_scale_label }}</x-ui.fact>
                     @endif
                 </dl>
             </section>

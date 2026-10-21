@@ -236,11 +236,6 @@ class User extends Authenticatable
         return str_starts_with($this->linkedin, 'http') ? $this->linkedin : 'https://linkedin.com/in/'.$this->linkedin;
     }
 
-    public function getFocusLabelAttribute(): string
-    {
-        return $this->current_status ?: (ucfirst((string) $this->role) ?: '-');
-    }
-
     public function getRoleLabelAttribute(): string
     {
         return match ($this->role ?? '') {
@@ -449,10 +444,14 @@ class User extends Authenticatable
     }
 
     /**
-     * Contacts show when the person allows it; admins always see them.
+     * Contacts show when the person allows it, to the people they accepted a collab with (accepting says so), and always to admins.
      */
     public function contactsVisibleTo(?User $viewer): bool
     {
-        return (bool) ($this->show_contact_details || $viewer?->isAdmin());
+        if ($this->show_contact_details || $viewer?->isAdmin()) {
+            return true;
+        }
+
+        return $viewer !== null && $this->collabStatusWith($viewer) === 'accepted';
     }
 }

@@ -56,13 +56,13 @@ class Product extends Model
 
     public function getPriceTextAttribute(): string
     {
-        return $this->price_type === 'customize' ? 'Customize by Order' : 'Price Unspecified';
+        return $this->price_type === 'customize' ? 'Price depends on the order' : 'Ask for the price';
     }
 
     public function getPriceTypeLabelAttribute(): ?string
     {
         return match ($this->price_type) {
-            'fixed' => 'Fixed Price',
+            'fixed' => 'Fixed price',
             'negotiable' => 'Negotiable',
             default => null,
         };

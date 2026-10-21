@@ -72,7 +72,7 @@ test('without anything featured the page says so, and a group without items is l
     $this->get('/')->assertOk()->assertSee('Nothing to show yet')->assertDontSee('See all ventures');
 
     featuredVenture('Only Venture');
-    $this->get('/')->assertOk()->assertDontSee('Nothing to show yet')->assertSee('See all ventures')->assertDontSee('Our <span class="text-brand-700">entrepreneurs</span>', false);
+    $this->get('/')->assertOk()->assertDontSee('Nothing to show yet')->assertSee('See all ventures')->assertDontSee('Our entrepreneurs');
 });
 
 test('ventures, entrepreneurs and intrapreneurs are all on the page without tabs', function () {

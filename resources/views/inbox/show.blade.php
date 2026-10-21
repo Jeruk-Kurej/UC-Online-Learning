@@ -19,7 +19,7 @@
                         <x-ui.thumb :src="$message->sender->profile_photo_url" :name="$message->sender->name" size="h-14 w-14" round class="text-xl" />
                         <div class="min-w-0">
                             <a href="{{ route('users.show', $message->sender) }}" class="block text-lg font-semibold text-brand-900 hover:underline">{{ $message->sender->name }}</a>
-                            <p class="text-sm text-gray-600">{{ $message->sender->current_status }}. {{ $message->sender->email }}</p>
+                            <p class="text-sm text-gray-600">{{ $message->sender->current_status }}</p>
                         </div>
                     </div>
                     <a href="{{ route('users.show', $message->sender) }}" class="btn btn-secondary btn-sm">View profile</a>
@@ -49,15 +49,16 @@
                                 <button type="submit" class="btn btn-secondary">Decline</button>
                             </form>
                         </div>
+                        <p class="mt-3 text-sm text-gray-600">If you accept, you and {{ $message->sender->name }} can see each other's WhatsApp, email and LinkedIn.</p>
                     @elseif ($collab->status === 'accepted')
                         <div class="mt-4 space-y-3">
                             <p class="text-base font-semibold text-green-800"><i class="bi bi-check-circle" aria-hidden="true"></i> You are connected with {{ $message->sender->name }}.</p>
                             <div class="flex flex-wrap gap-2">
-                                @if ($message->sender->show_contact_details && $message->sender->whatsapp)
+                                @if ($message->sender->whatsapp && $message->sender->contactsVisibleTo(auth()->user()))
                                     <a href="{{ $message->sender->whatsapp_link }}" target="_blank" rel="noopener" class="btn btn-secondary btn-sm"><i class="bi bi-whatsapp" aria-hidden="true"></i> Message on WhatsApp</a>
                                 @endif
-                                @if ($message->sender->businesses->first())
-                                    <a href="{{ route('businesses.show', $message->sender->businesses->first()->slug) }}" class="btn btn-secondary btn-sm">View their business</a>
+                                @if ($senderBusiness)
+                                    <a href="{{ route('businesses.show', $senderBusiness) }}" class="btn btn-secondary btn-sm">View their business</a>
                                 @endif
                             </div>
                         </div>

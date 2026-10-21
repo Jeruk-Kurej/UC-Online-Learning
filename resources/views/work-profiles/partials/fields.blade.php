@@ -26,9 +26,9 @@
 <x-forms.field name="company_scale" label="Company size">
     <select name="company_scale" id="company_scale" data-tom-select="Choose a size" class="field-input @error('company_scale') !border-red-700 @enderror">
         <option value="">Choose a size</option>
-        <option value="Perusahaan swasta lokal/regional" {{ old('company_scale', $company?->company_scale) === 'Perusahaan swasta lokal/regional' ? 'selected' : '' }}>Private company, local or regional</option>
-        <option value="Perusahaan swasta nasional" {{ old('company_scale', $company?->company_scale) === 'Perusahaan swasta nasional' ? 'selected' : '' }}>Private company, national</option>
-        <option value="Perusahaan swasta multinasional/internasional" {{ old('company_scale', $company?->company_scale) === 'Perusahaan swasta multinasional/internasional' ? 'selected' : '' }}>International or state-owned company</option>
+        @foreach ($companyScales as $scale => $scaleLabel)
+            <option value="{{ $scale }}" {{ old('company_scale', $company?->company_scale) === $scale ? 'selected' : '' }}>{{ $scaleLabel }}</option>
+        @endforeach
     </select>
 </x-forms.field>
 

@@ -2,7 +2,7 @@
 <section class="bg-mist" aria-labelledby="stories-title">
     <div class="page space-y-6 !py-12">
         <div>
-            <h2 id="stories-title" class="section-heading">Stories <span class="text-brand-700">from our community</span></h2>
+            <h2 id="stories-title" class="section-heading">Stories from our community</h2>
             <p class="mt-3 text-base text-gray-700">What students and alumni say about their time at UC Online Learning.</p>
         </div>
 

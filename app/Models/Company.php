@@ -11,6 +11,15 @@ class Company extends Model
 {
     use HasFactory, \App\Traits\HasImage, \App\Traits\HasLogo, \App\Traits\HasSlug, \App\Traits\HasApprovalStatus, \App\Traits\HasInitial, \App\Traits\OrdersNewestFirst;
 
+    /**
+     * Company size answers as the Google Form stores them, with the label people read.
+     */
+    public const SCALES = [
+        'Perusahaan swasta lokal/regional' => 'Private company, local or regional',
+        'Perusahaan swasta nasional' => 'Private company, national',
+        'Perusahaan swasta multinasional/internasional' => 'Multinational or international company',
+    ];
+
     protected $fillable = [
         'user_id',
         'category_id',
@@ -42,6 +51,11 @@ class Company extends Model
     }
 
     // --- Accessors ---
+
+    public function getCompanyScaleLabelAttribute(): ?string
+    {
+        return self::SCALES[$this->company_scale] ?? $this->company_scale;
+    }
 
     public function getAchievementsListAttribute(): array
     {

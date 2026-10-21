@@ -2,19 +2,19 @@
     @include('featured.partials.hero')
 
     <div class="page space-y-14">
-        <x-featured.group :items="$featuredVentures" title="Our" accent="ventures" lead="Businesses run by our students and alumni." :href="route('businesses.index', ['view' => 'entrepreneur'])" link-label="See all ventures">
+        <x-featured.group :items="$featuredVentures" title="Our ventures" lead="Businesses run by our students and alumni." :href="route('businesses.index', ['view' => 'entrepreneur'])" link-label="See all ventures">
             @foreach ($featuredVentures as $venture)
                 <x-business.card :business="$venture" :href="route('businesses.show', $venture)" />
             @endforeach
         </x-featured.group>
 
-        <x-featured.group :items="$topEntrepreneurs" title="Our" accent="entrepreneurs" lead="Students and alumni who run their own ventures.">
+        <x-featured.group :items="$topEntrepreneurs" title="Our entrepreneurs" lead="Students and alumni who run their own ventures.">
             @foreach ($topEntrepreneurs as $student)
                 <x-featured.student-card :student="$student" type="entre" />
             @endforeach
         </x-featured.group>
 
-        <x-featured.group :items="$topIntrapreneurs" title="Our" accent="intrapreneurs" lead="Students and alumni building their careers inside companies." :href="route('businesses.index', ['view' => 'intrapreneur'])" link-label="See all work profiles">
+        <x-featured.group :items="$topIntrapreneurs" title="Our intrapreneurs" lead="Students and alumni building their careers inside companies." :href="route('businesses.index', ['view' => 'intrapreneur'])" link-label="See all work profiles">
             @foreach ($topIntrapreneurs as $student)
                 <x-featured.student-card :student="$student" type="intra" />
             @endforeach

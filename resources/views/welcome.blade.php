@@ -3,7 +3,7 @@
 
     <div class="mx-auto w-full max-w-md px-4 py-12 sm:py-16">
         <h1 class="page-title">Log in</h1>
-        <p class="page-lead">Use the account of your UC Online Learning profile.</p>
+        <p class="page-lead">Use the email address the UC Online Learning team has for you, or your Google account with that address.</p>
 
         <form method="POST" action="{{ route('login') }}" class="card mt-6 space-y-5">
             @csrf

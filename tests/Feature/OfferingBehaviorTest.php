@@ -193,17 +193,17 @@ test('an offering shows a number only for fixed or negotiable prices', function 
     expect($price(['price' => '15000', 'price_type' => 'fixed']))
         ->shows_price->toBeTrue()
         ->formatted_price->toBe('15.000')
-        ->price_type_label->toBe('Fixed Price');
+        ->price_type_label->toBe('Fixed price');
     expect($price(['price' => '2500000', 'price_type' => 'negotiable']))
         ->formatted_price->toBe('2.500.000')
         ->price_type_label->toBe('Negotiable');
     expect($price(['price' => '15000', 'price_type' => 'customize']))
         ->shows_price->toBeFalse()
         ->formatted_price->toBeNull()
-        ->price_text->toBe('Customize by Order')
+        ->price_text->toBe('Price depends on the order')
         ->price_type_label->toBeNull();
     expect($price(['price' => null, 'price_type' => 'unspecified']))
         ->shows_price->toBeFalse()
-        ->price_text->toBe('Price Unspecified')
+        ->price_text->toBe('Ask for the price')
         ->has_photo->toBeFalse();
 });

@@ -43,7 +43,7 @@
             @if ($user->year_of_enrollment)
                 <x-ui.fact label="Joined UC Online">{{ $user->year_of_enrollment }}</x-ui.fact>
             @endif
-            <x-ui.fact label="Focus" class="capitalize">{{ $user->focus_label }}</x-ui.fact>
+            <x-ui.fact label="Status">{{ $user->display_status }}</x-ui.fact>
         </dl>
 
         <x-people.contacts :person="$user" />

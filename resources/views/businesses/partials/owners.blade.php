@@ -1,5 +1,5 @@
 {{-- --- Business page side column: the owner and the other people who run it --- --}}
-<x-people.profile-card :person="$owner" title="Business owner" :status="$owner->student_status" :career="$owner->current_status" />
+<x-people.profile-card :person="$owner" title="Business owner" :status="$owner->display_status" :career="$owner->current_status" />
 
 @if ($coOwners->isNotEmpty())
     <section class="card">

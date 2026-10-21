@@ -213,11 +213,6 @@ class Business extends Model
         return $this->website ? preg_replace('#^https?://#', '', $this->website) : null;
     }
 
-    public function getTypeLabelAttribute(): string
-    {
-        return ucfirst($this->type ?? 'Entrepreneur');
-    }
-
     public function isEntrepreneur(): bool
     {
         return strtolower($this->type ?? '') === 'entrepreneur';

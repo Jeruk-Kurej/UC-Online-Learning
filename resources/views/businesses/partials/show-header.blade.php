@@ -3,7 +3,7 @@
 
 <x-business.profile-heading :name="$business->name" :logo-url="$business->logo_url">
     <x-slot:badges>
-        <span class="badge badge-info">{{ $business->type_label }}</span>
+        <span class="badge badge-info">Business</span>
         <x-business.mode-badge :mode="$business->offering_mode" />
     </x-slot:badges>
 
