@@ -59,8 +59,10 @@ return [
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
+            // --- DB_PERSISTENT=true keeps the connection open between requests of a warm server (saves opening it, about 60 ms on Vercel); off unless set ---
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (defined('Pdo\Mysql::ATTR_SSL_CA') ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', false),
             ]) : [],
         ],
 
