@@ -114,9 +114,13 @@ class CompanyController extends Controller
             $data['slug'] = $company->freshSlugFor($validated['name']);
         }
 
-        $company->update($this->resolveRegionNames($data, titleCase: true));
+        $resubmission = $company->resubmissionBy($request->user());
 
-        return redirect()->route('intrapreneurs.show', $company)->with('success', 'Work profile updated successfully!');
+        $company->update(array_merge($this->resolveRegionNames($data, titleCase: true), $resubmission));
+
+        return redirect()->route('intrapreneurs.show', $company)->with('success', $resubmission
+            ? 'Work profile updated and sent to the admin team for another review.'
+            : 'Work profile updated successfully!');
     }
 
     // --- Form helpers ---

@@ -2,6 +2,8 @@
 
 namespace App\Traits;
 
+use App\Models\User;
+
 trait HasApprovalStatus
 {
     // --- Accessors ---
@@ -56,6 +58,16 @@ trait HasApprovalStatus
     public function hasReviewFeedback(): bool
     {
         return in_array($this->status, ['rejected', 'need_revision']) && $this->rejection_reason;
+    }
+
+    /**
+     * A student who saves an item the admin team sent back for revision hands it in again (pending, feedback cleared); an admin edit keeps the decision, and an approved or rejected item keeps its status.
+     */
+    public function resubmissionBy(User $editor): array
+    {
+        return ! $editor->isAdmin() && $this->approval_status === 'need_revision'
+            ? ['approval_status' => 'pending', 'rejection_reason' => null]
+            : [];
     }
 
     public function applyApprovalStatus(string $status, ?string $reason): void

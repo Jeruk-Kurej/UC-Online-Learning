@@ -157,11 +157,11 @@ abstract class BusinessFormRequest extends FormRequest
             ->all();
 
         if (! empty($selectedOwnerIds) && User::whereIn('id', $selectedOwnerIds)->where('role', 'admin')->exists()) {
-            $validator->errors()->add('owner_ids', 'Admin UCO tidak boleh menjadi owner business.');
+            $validator->errors()->add('owner_ids', 'An admin account cannot own or run a business. Choose a student.');
         }
 
         if ($this->filled('user_id') && User::find($this->input('user_id'))?->isAdmin()) {
-            $validator->errors()->add('user_id', 'Admin UCO tidak boleh menjadi owner business.');
+            $validator->errors()->add('user_id', 'An admin account cannot own or run a business. Choose a student.');
         }
     }
 

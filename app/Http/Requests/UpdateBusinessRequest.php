@@ -39,19 +39,23 @@ class UpdateBusinessRequest extends BusinessFormRequest
         ];
     }
 
-    // --- A business cannot switch to services only while it still has products ---
+    // --- A business cannot drop a kind of offering it still has: services only while products exist, or products only while services exist ---
 
     protected function checkBeforeSharedRules($validator): void
     {
         $business = $this->route('business');
-
         $mode = $this->input('business_mode');
-        $hasProducts = $business->products()->count() > 0;
 
-        if ($mode !== $business->offering_type) {
-            if ($mode === 'service' && $hasProducts) {
-                $validator->errors()->add('business_mode', 'Cannot change to Service Only while products exist. Delete products first or choose "Product & Service".');
-            }
+        if ($mode === $business->offering_type) {
+            return;
+        }
+
+        if ($mode === 'service' && $business->products()->where('type', 'product')->exists()) {
+            $validator->errors()->add('business_mode', 'This business still has products. Delete them first, or choose "Products and services".');
+        }
+
+        if ($mode === 'product' && $business->products()->where('type', 'service')->exists()) {
+            $validator->errors()->add('business_mode', 'This business still has services. Delete them first, or choose "Products and services".');
         }
     }
 }
