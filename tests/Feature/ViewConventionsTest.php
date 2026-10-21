@@ -33,6 +33,10 @@ test('views have no inline event handlers', function () {
     expect(viewsMatching('/\son[a-z]+\s*=\s*["\']/i'))->toBe([]);
 });
 
+test('views put no Blade directive inside a component tag, where Blade leaves it as plain text', function () {
+    expect(viewsMatching('/<x-[\w.:-]+\b[^>]*@(js|json|class|if|php)\b/s'))->toBe([]);
+});
+
 test('views have no @php blocks', function () {
     expect(viewsMatching('/@php\b/'))->toBe([]);
 });

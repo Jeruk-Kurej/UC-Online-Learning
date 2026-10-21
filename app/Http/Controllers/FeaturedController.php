@@ -31,7 +31,7 @@ class FeaturedController extends Controller
                 ->get()
                 ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
             'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
-                ->with(['companies' => fn ($q) => $q->where('is_visible', true)->with('category')])
+                ->with(['companies' => fn ($q) => $q->visible()->with('category')])
                 ->newestFirst()
                 ->get()
                 ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
@@ -43,12 +43,13 @@ class FeaturedController extends Controller
 
     /**
      * The same order all day, a different one tomorrow (sorted by a hash of the day and the id, so it does not depend on the PHP version or the database), cut to the section limit.
+     * md5, not crc32: crc32 is linear, so changing only the date shifts every hash the same way and the order barely moves from one day to the next.
      */
     private function inDailyOrder(Collection $items): Collection
     {
         $day = now()->format('Ymd');
 
-        return $items->sortBy(fn ($item) => crc32($day.'-'.$item->getKey()))->take(self::SECTION_LIMIT)->values();
+        return $items->sortBy(fn ($item) => md5($day.'-'.$item->getKey()))->take(self::SECTION_LIMIT)->values();
     }
 
     /**
