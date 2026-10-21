@@ -43,6 +43,7 @@ class GoogleAuthController extends Controller
 
         Auth::login($user, true);
         $request->session()->regenerate();
+        $request->session()->put('signed_in_with_google', true);
 
         return redirect()->route('home');
     }

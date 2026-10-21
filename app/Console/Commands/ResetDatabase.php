@@ -11,6 +11,7 @@ use App\Models\Skill;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class ResetDatabase extends Command
 {
@@ -88,7 +89,7 @@ class ResetDatabase extends Command
         $admin = User::create([
             'name' => 'Admin UCO',
             'email' => 'admin@uco.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make(config('accounts.seed_password') ?: Str::random(40)),
             'role' => 'admin',
             'email_verified_at' => now(),
         ]);
@@ -96,7 +97,7 @@ class ResetDatabase extends Command
 
         $this->newLine();
         $this->info('✅ Database reset complete!');
-        $this->info('📧 Admin login: admin@uco.com / password: password');
+        $this->info('📧 Admin login: admin@uco.com, with the password from SEED_PASSWORD (a random one when it is not set)');
 
         return 0;
     }

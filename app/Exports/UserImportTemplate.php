@@ -18,7 +18,7 @@ class UserImportTemplate
         'name' => 'John Doe',
         'email' => 'john.doe@example.com',
         'username' => 'johndoe',
-        'password' => 'password123',
+        'password' => '(not used: imported accounts sign in with Google first)',
         'role' => 'student',
         'is_active' => '1',
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Models\User;
 use App\Services\ImageOptimizerService;
@@ -28,11 +29,13 @@ class ProfileController extends Controller
     public function edit(Request $request): RedirectResponse|View
     {
         $user = $this->getUser($request);
+        $needsCurrentPassword = PasswordController::needsCurrentPassword();
+
         if ($user->isAdmin()) {
-            return view('profile.account', ['user' => $user]);
+            return view('profile.account', ['user' => $user, 'needsCurrentPassword' => $needsCurrentPassword]);
         }
 
-        return view('profile.edit', ['user' => $user]);
+        return view('profile.edit', ['user' => $user, 'needsCurrentPassword' => $needsCurrentPassword]);
     }
 
     public function update(ProfileUpdateRequest $request): RedirectResponse
