@@ -310,15 +310,6 @@ test('admin status update sets approval, reason and visibility', function () {
     $this->actingAs($w['owner'])->post(route('businesses.update-status', $business), ['status' => 'approved'])->assertForbidden();
 });
 
-test('admin approve makes a business visible', function () {
-    $w = businessWorld();
-    $business = approvedBusiness($w['owner'], $w['category'], ['is_visible' => false]);
-
-    $this->actingAs($w['admin'])->post(route('businesses.approve', $business))
-        ->assertSessionHas('success', 'Business "Approved Venture" has been approved and is now visible.');
-    expect($business->fresh()->is_visible)->toBeTrue();
-});
-
 test('featured toggle answers json and refuses unapproved businesses', function () {
     $w = businessWorld();
     $business = approvedBusiness($w['owner'], $w['category']);

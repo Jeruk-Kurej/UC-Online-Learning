@@ -9,22 +9,15 @@ use Illuminate\Console\Command;
 class SendTestCollabInvite extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'inbox:test-collab {recipient_email} {--sender_email=}';
 
     /**
-     * The console command description.
-     *
      * @var string
      */
     protected $description = 'Send a test collaboration invite to a user';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $recipientEmail = $this->argument('recipient_email');

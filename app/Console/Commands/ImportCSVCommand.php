@@ -12,22 +12,15 @@ use Maatwebsite\Excel\Facades\Excel;
 class ImportCSVCommand extends Command
 {
     /**
-     * The name and signature of the console command.
-     *
      * @var string
      */
     protected $signature = 'uco:import-csv';
 
     /**
-     * The console command description.
-     *
      * @var string
      */
     protected $description = 'Import Entrepreneur and Intrapreneur CSV responses from Data_to_import folder';
 
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $this->info('Starting CSV import process...');

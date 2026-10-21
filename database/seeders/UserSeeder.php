@@ -9,9 +9,6 @@ use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Seed the users table.
-     */
     public function run(): void
     {
         $this->command->info('🔄 Seeding Users...');

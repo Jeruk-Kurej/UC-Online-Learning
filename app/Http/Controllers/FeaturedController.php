@@ -66,7 +66,7 @@ class FeaturedController extends Controller
         return User::query()
             ->where('is_visible', true)
             ->where('is_featured', true)
-            ->where('role', '!=', 'admin')
+            ->nonAdmins()
             ->whereNotNull('profile_photo_url')
             ->whereRaw('LOWER(current_status) IN (?, ?)', ['entrepreneur', 'intrapreneur']);
     }

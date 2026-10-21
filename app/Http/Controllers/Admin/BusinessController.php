@@ -57,14 +57,6 @@ class BusinessController extends Controller
         return back()->with('success', 'Company status updated to '.ucfirst(str_replace('_', ' ', (string) $status)));
     }
 
-    public function approve(Business $business): RedirectResponse
-    {
-        $business->is_visible = true;
-        $business->save();
-
-        return back()->with('success', "Business \"{$business->name}\" has been approved and is now visible.");
-    }
-
     public function toggleFeatured(Request $request, Business $business): RedirectResponse|JsonResponse
     {
         if ($business->approval_status !== 'approved') {

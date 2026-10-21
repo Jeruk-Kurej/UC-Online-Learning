@@ -41,18 +41,7 @@
                                 <p class="truncate text-base font-medium text-gray-900">{{ $authUser->email }}</p>
                             </div>
 
-                            @if ($authUser->isAdmin())
-                                <x-nav.link look="dropdown" :href="route('users.index')">Manage users</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('businesses.admin')">Manage businesses</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('uc-testimonies.admin')">Manage testimonies</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('pages.edit', 'about')">Edit About page</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('profile.edit')">Change password</x-nav.link>
-                            @else
-                                <x-nav.link look="dropdown" :href="route('profile.edit')">My profile</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('businesses.my')">My businesses</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('uc-testimonies.my')">My testimony</x-nav.link>
-                                <x-nav.link look="dropdown" :href="route('inbox.index')">Inbox</x-nav.link>
-                            @endif
+                            <x-nav.account-links look="dropdown" :user="$authUser" />
 
                             <form method="POST" action="{{ route('logout') }}" class="border-t border-line">
                                 @csrf
@@ -88,18 +77,7 @@
                 <div class="mt-3 border-t border-line pt-3">
                     <p class="px-3 pb-1 text-sm text-gray-600">Signed in as {{ $authUser->name }}</p>
 
-                    @if ($authUser->isAdmin())
-                        <x-nav.link look="account" :href="route('users.index')" :active="request()->routeIs('users.*')">Manage users</x-nav.link>
-                        <x-nav.link look="account" :href="route('businesses.admin')" :active="request()->routeIs('businesses.admin')">Manage businesses</x-nav.link>
-                        <x-nav.link look="account" :href="route('uc-testimonies.admin')" :active="request()->routeIs('uc-testimonies.admin')">Manage testimonies</x-nav.link>
-                        <x-nav.link look="account" :href="route('pages.edit', 'about')" :active="request()->routeIs('pages.edit')">Edit About page</x-nav.link>
-                        <x-nav.link look="account" :href="route('profile.edit')" :active="request()->routeIs('profile.*')">Change password</x-nav.link>
-                    @else
-                        <x-nav.link look="account" :href="route('profile.edit')" :active="request()->routeIs('profile.*')">My profile</x-nav.link>
-                        <x-nav.link look="account" :href="route('businesses.my')" :active="request()->routeIs('businesses.my')">My businesses</x-nav.link>
-                        <x-nav.link look="account" :href="route('uc-testimonies.my')" :active="request()->routeIs('uc-testimonies.my')">My testimony</x-nav.link>
-                        <x-nav.link look="account" :href="route('inbox.index')" :active="request()->routeIs('inbox.*')">Inbox{{ $unreadInboxCount > 0 ? ' (' . $unreadInboxCount . ' new)' : '' }}</x-nav.link>
-                    @endif
+                    <x-nav.account-links look="account" :user="$authUser" :inbox-label="'Inbox' . ($unreadInboxCount > 0 ? ' (' . $unreadInboxCount . ' new)' : '')" />
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
