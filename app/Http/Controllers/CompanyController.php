@@ -49,6 +49,7 @@ class CompanyController extends Controller
             'provinces' => $provinces,
             'selectedProvinceId' => null,
             'availableCities' => collect(),
+            'selectedCityId' => null,
             'owners' => $this->currentUserIsAdmin() ? User::nonAdmins()->orderBy('name')->get() : collect(),
             'cancelUrl' => $this->venturesHomeUrl(),
         ]);
@@ -83,12 +84,19 @@ class CompanyController extends Controller
         $categories = Category::all();
         $provinces = Province::orderBy('name')->get();
 
-        $selectedProvinceId = Province::where('name', $company->province)->first()?->id;
+        $selectedProvinceId = $this->selectedProvinceId($company->province);
         $availableCities = $selectedProvinceId
             ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
             : collect();
 
-        return view('work-profiles.edit', compact('company', 'categories', 'provinces', 'selectedProvinceId', 'availableCities'));
+        return view('work-profiles.edit', [
+            'company' => $company,
+            'categories' => $categories,
+            'provinces' => $provinces,
+            'selectedProvinceId' => $selectedProvinceId,
+            'availableCities' => $availableCities,
+            'selectedCityId' => $this->selectedCityId($availableCities, $company->city),
+        ]);
     }
 
     public function update(Company $company, CompanyRequest $request): RedirectResponse
@@ -121,6 +129,15 @@ class CompanyController extends Controller
         return redirect()->route('intrapreneurs.show', $company)->with('success', $resubmission
             ? 'Work profile updated and sent to the admin team for another review.'
             : 'Work profile updated successfully!');
+    }
+
+    public function destroy(Company $company): RedirectResponse
+    {
+        abort_unless($company->canBeManagedBy(Auth::user()), 403);
+
+        $company->delete();
+
+        return redirect()->to($this->venturesHomeUrl())->with('success', "\"{$company->name}\" was deleted.");
     }
 
     // --- Form helpers ---

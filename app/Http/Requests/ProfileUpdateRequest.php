@@ -32,6 +32,12 @@ class ProfileUpdateRequest extends FormRequest
             'activities_files.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:50120'],
             'delete_activities_files' => ['nullable', 'array'],
             'delete_activities_files.*' => ['string'],
+
+            'skills' => ['nullable', 'string', 'max:1000'],
+            'certification_files' => ['nullable', 'array'],
+            'certification_files.*' => ['file', 'mimes:pdf,jpeg,png,jpg,webp', 'max:10240'],
+            'delete_certification_files' => ['nullable', 'array'],
+            'delete_certification_files.*' => ['string'],
         ];
     }
 }

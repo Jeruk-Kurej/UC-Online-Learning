@@ -18,4 +18,9 @@ class BusinessPolicy
     {
         return $business->canBeManagedBy($user);
     }
+
+    public function delete(User $user, Business $business): bool
+    {
+        return $user->isAdmin() || $business->user_id === $user->id;
+    }
 }

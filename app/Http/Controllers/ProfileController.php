@@ -40,7 +40,7 @@ class ProfileController extends Controller
         $user = $this->getUser($request);
         $validated = $request->validated();
 
-        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'show_contact_details'])->toArray());
+        $user->fill(collect($validated)->except(['profile_photo', 'cv_file', 'activities_files', 'delete_activities_files', 'certification_files', 'delete_certification_files', 'skills', 'show_contact_details'])->toArray());
 
         $user->show_contact_details = $request->boolean('show_contact_details');
 
@@ -60,35 +60,42 @@ class ProfileController extends Controller
             }
         }
 
-        $existingUrls = $user->activities_doc_url;
+        $activities = $this->syncUploadedFiles($request, $user, $user->activities_doc_url, 'activities_files', 'delete_activities_files', 'student-activities', 'act');
+        $user->activities_doc_url = $activities ?: null;
 
-        if ($request->has('delete_activities_files')) {
-            $toDelete = (array) $request->input('delete_activities_files');
-            foreach ($toDelete as $urlToDelete) {
-                if (($key = array_search($urlToDelete, $existingUrls)) !== false) {
-                    $user->deleteFileFromStorage($urlToDelete);
-                    unset($existingUrls[$key]);
-                }
-            }
-            $existingUrls = array_values($existingUrls);
-        }
-
-        $newUrls = [];
-        if ($request->hasFile('activities_files')) {
-            $files = $request->file('activities_files');
-            $files = is_array($files) ? $files : [$files];
-            foreach ($files as $file) {
-                if ($file instanceof UploadedFile) {
-                    $newUrls[] = app(UploadStorage::class)->store($file, 'student-activities', 'act_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension());
-                }
-            }
-        }
-
-        $finalUrls = array_merge($existingUrls, $newUrls);
-        $user->activities_doc_url = $finalUrls ?: null;
+        $certificates = $this->syncUploadedFiles($request, $user, $user->certification_urls, 'certification_files', 'delete_certification_files', 'student-certificates', 'cert');
+        $user->expertise_certification_url = $certificates ? implode(';', $certificates) : null;
 
         $user->save();
 
+        if ($request->has('skills')) {
+            $user->syncSkillNames($validated['skills'] ?? null);
+        }
+
         return Redirect::route('profile.edit')->with('success', 'Profile updated!');
+    }
+
+    // --- Uploaded documents: drop the ones marked for removal (and their files), then add the newly picked ones ---
+
+    private function syncUploadedFiles(Request $request, User $user, array $existing, string $filesField, string $deleteField, string $folder, string $prefix): array
+    {
+        $toDelete = (array) $request->input($deleteField, []);
+        $kept = [];
+        foreach ($existing as $url) {
+            if (in_array($url, $toDelete, true)) {
+                $user->deleteFileFromStorage($url);
+            } else {
+                $kept[] = $url;
+            }
+        }
+
+        $files = $request->file($filesField, []);
+        foreach (is_array($files) ? $files : [$files] as $file) {
+            if ($file instanceof UploadedFile) {
+                $kept[] = app(UploadStorage::class)->store($file, $folder, $prefix.'_'.$user->id.'_'.time().'_'.Str::random(5).'.'.$file->getClientOriginalExtension());
+            }
+        }
+
+        return $kept;
     }
 }

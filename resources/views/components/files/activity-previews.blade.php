@@ -1,6 +1,8 @@
-{{-- --- Previews for the activityFiles Alpine component: existing files (mark or keep) and newly picked files --- --}}
+{{-- --- Previews for the activityFiles Alpine component: existing files (mark or keep) and newly picked files; $deleteName carries the removed addresses --- --}}
+@props(['deleteName' => 'delete_activities_files'])
+
 <template x-for="url in deletedFiles" :key="url">
-    <input type="hidden" name="delete_activities_files[]" :value="url">
+    <input type="hidden" name="{{ $deleteName }}[]" :value="url">
 </template>
 
 {{-- --- Existing files --- --}}

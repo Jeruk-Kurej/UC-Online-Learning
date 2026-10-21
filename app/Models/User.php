@@ -182,19 +182,29 @@ class User extends Authenticatable
 
     public function getActivityFilesAttribute(): array
     {
-        return collect($this->activities_doc_url)->map(function (string $url) {
-            $name = basename(parse_url($url, PHP_URL_PATH) ?? $url);
-            $previewUrl = null;
+        return array_map(fn (string $url) => $this->describeUploadedFile($url), array_values($this->activities_doc_url));
+    }
 
-            if (GoogleDrive::isDriveUrl($url)) {
-                $id = GoogleDrive::fileId($url);
-                $previewUrl = $id ? GoogleDrive::thumbnailUrl($id, 'w400') : null;
-            } elseif (in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
-                $previewUrl = $url;
-            }
+    public function getEditableCertificationFilesAttribute(): array
+    {
+        return array_map(fn (string $url) => $this->describeUploadedFile($url), $this->certification_urls);
+    }
 
-            return ['url' => $url, 'previewUrl' => $previewUrl, 'name' => $name];
-        })->values()->all();
+    // --- A stored file as the upload lists of the profile forms show it: its address, an image preview when there is one, and its name ---
+
+    private function describeUploadedFile(string $url): array
+    {
+        $name = basename(parse_url($url, PHP_URL_PATH) ?? $url);
+        $previewUrl = null;
+
+        if (GoogleDrive::isDriveUrl($url)) {
+            $id = GoogleDrive::fileId($url);
+            $previewUrl = $id ? GoogleDrive::thumbnailUrl($id, 'w400') : null;
+        } elseif (in_array(strtolower(pathinfo($name, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+            $previewUrl = $url;
+        }
+
+        return ['url' => $url, 'previewUrl' => $previewUrl, 'name' => $name];
     }
 
     public function getInitialsAttribute(): string
@@ -260,15 +270,21 @@ class User extends Authenticatable
         })->values()->all();
     }
 
-    public function getCertificationFilesAttribute(): array
+    /**
+     * Certificate addresses, stored as one text separated by ";" (the import writes commas too).
+     */
+    public function getCertificationUrlsAttribute(): array
     {
         if (! $this->expertise_certification_url) {
             return [];
         }
 
-        $urls = array_filter(array_map('trim', preg_split('/[;,]+/', $this->expertise_certification_url)));
+        return array_values(array_filter(array_map('trim', preg_split('/[;,]+/', $this->expertise_certification_url))));
+    }
 
-        return array_values(array_map(fn (string $url) => $this->describeCertificationFile($url), $urls));
+    public function getCertificationFilesAttribute(): array
+    {
+        return array_map(fn (string $url) => $this->describeCertificationFile($url), $this->certification_urls);
     }
 
     // --- How a certification link is previewed: Drive and PDF files as documents, Cloudinary PDFs as their JPG rendering ---
@@ -323,6 +339,25 @@ class User extends Authenticatable
     public function skills()
     {
         return $this->belongsToMany(Skill::class, 'user_skill')->withTimestamps();
+    }
+
+    public function getSkillListAttribute(): string
+    {
+        return $this->skills->pluck('name')->implode(', ');
+    }
+
+    /**
+     * Replace the person's skills with the comma-separated names, found by name or created like the import does.
+     */
+    public function syncSkillNames(?string $list): void
+    {
+        $names = collect(preg_split('/[,;]+/', (string) $list))
+            ->map(fn (string $name) => trim($name))
+            ->filter(fn (string $name) => $name !== '' && mb_strlen($name) <= 100)
+            ->unique(fn (string $name) => mb_strtolower($name))
+            ->take(30);
+
+        $this->skills()->sync($names->map(fn (string $name) => Skill::firstOrCreate(['name' => $name])->id)->all());
     }
 
     public function memberOfBusinesses()

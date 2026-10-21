@@ -28,8 +28,14 @@
 
             <x-forms.actions>
                 <a href="{{ route('intrapreneurs.show', $company) }}" class="btn btn-secondary">Cancel</a>
+                <button type="button" data-confirm-submit="delete-work-profile-form" data-confirm-message="Delete the work profile at {{ $company->name }}? This cannot be undone." class="btn btn-danger">Delete work profile</button>
                 <button type="submit" class="btn btn-primary">Save changes</button>
             </x-forms.actions>
+        </form>
+
+        <form id="delete-work-profile-form" action="{{ route('intrapreneurs.destroy', $company) }}" method="POST" class="hidden">
+            @csrf
+            @method('DELETE')
         </form>
     </div>
 </x-app-layout>

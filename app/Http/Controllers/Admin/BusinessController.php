@@ -79,14 +79,6 @@ class BusinessController extends Controller
             : "\"{$business->name}\" removed from featured.");
     }
 
-    public function destroy(Business $business): RedirectResponse
-    {
-        $business->delete();
-
-        return redirect()->route('businesses.index')
-            ->with('success', 'Business deleted successfully.');
-    }
-
     public function import(Request $request): RedirectResponse|JsonResponse
     {
         $this->validate($request, [

@@ -34,24 +34,11 @@
         </x-forms.section>
 
         <x-forms.section :title="$noun . ' photo'" :grid="false">
-            <div x-data="photoPicker(@js($offering?->photo_url))" class="space-y-4">
-                <div class="flex items-center gap-4">
-                    <span class="photo-frame h-32 w-32">
-                        <i x-show="!hasPhoto" class="bi bi-image text-3xl text-gray-500" aria-hidden="true"></i>
-                        <img x-show="hasPhoto" :src="previewUrl" alt="" class="absolute inset-0 h-full w-full bg-white object-contain" referrerpolicy="no-referrer">
-                    </span>
-                    <div class="space-y-2">
-                        <p class="text-sm text-gray-600">
-                            {{ $photoRequired ? 'Required.' : 'Optional.' }} JPG, PNG or WEBP, up to 10 MB.
-                        </p>
-                        <button type="button" @click="triggerUpload()" class="btn btn-secondary btn-sm" x-text="hasPhoto ? 'Change photo' : 'Choose a photo'"></button>
-                    </div>
-                </div>
-                <input type="file" name="photo" id="photo" accept="image/*" class="sr-only" @change="handleFileChange($event)">
+            <x-forms.removable-image label="Photo" name="photo" delete-name="delete_photo" :url="$offering?->photo_url" :has-image="$offering?->has_photo" icon="bi-image" noun="Photo" :removable="$photoRemovable" :hint="$photoHint">
                 @error('photo')
                     <p class="field-error">{{ $message }}</p>
                 @enderror
-            </div>
+            </x-forms.removable-image>
 
             <x-forms.input name="photo_caption" label="Photo caption (optional)" :value="$offering?->photo_caption" placeholder="A short description of the photo" />
         </x-forms.section>

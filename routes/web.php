@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/business', [BusinessController::class, 'store'])->name('businesses.store');
     Route::get('/business/{business}/edit', [BusinessController::class, 'edit'])->name('businesses.edit');
     Route::put('/business/{business}', [BusinessController::class, 'update'])->name('businesses.update');
+    Route::delete('/business/{business}', [BusinessController::class, 'destroy'])->name('businesses.destroy');
     Route::get('/api/regencies', [BusinessController::class, 'getRegencies'])->name('api.regencies');
 
     Route::get('/my-testimony', [UcTestimonyController::class, 'my'])->name('uc-testimonies.my');
@@ -75,6 +76,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/intrapreneurs', [CompanyController::class, 'store'])->name('intrapreneurs.store');
     Route::get('/intrapreneurs/{company}/edit', [CompanyController::class, 'edit'])->name('intrapreneurs.edit');
     Route::put('/intrapreneurs/{company}', [CompanyController::class, 'update'])->name('intrapreneurs.update');
+    Route::delete('/intrapreneurs/{company}', [CompanyController::class, 'destroy'])->name('intrapreneurs.destroy');
 });
 
 // --- Admin routes ---
@@ -87,7 +89,6 @@ Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->group(functio
     Route::post('/users/{user}/toggle-status', [AdminUserController::class, 'toggleStatus'])->name('users.toggle-status');
 
     Route::post('/business/import', [AdminBusinessController::class, 'import'])->name('businesses.import');
-    Route::delete('/business/{business}', [AdminBusinessController::class, 'destroy'])->name('businesses.destroy');
     Route::post('/business/{business}/toggle-featured', [AdminBusinessController::class, 'toggleFeatured'])->name('businesses.toggle-featured');
     Route::get('/business', [AdminBusinessController::class, 'index'])->name('businesses.admin');
     Route::post('/business/{business}/status', [AdminBusinessController::class, 'updateStatus'])->name('businesses.update-status');

@@ -5,6 +5,7 @@
 export default function removablePhoto(initialUrl = '', hasInitialPhoto = null) {
     return {
         initialUrl: initialUrl || '',
+        initialHasPhoto: hasInitialPhoto ?? Boolean(initialUrl),
         previewUrl: initialUrl || '',
         hasPhoto: hasInitialPhoto ?? Boolean(initialUrl),
         photoDeleted: false,
@@ -23,7 +24,7 @@ export default function removablePhoto(initialUrl = '', hasInitialPhoto = null) 
         cancelNew() {
             this.$refs.photoInput.value = '';
             this.newPhotoSelected = false;
-            this.hasPhoto = Boolean(this.initialUrl);
+            this.hasPhoto = this.initialHasPhoto;
             this.photoDeleted = false;
             this.previewUrl = this.initialUrl;
         },
