@@ -86,6 +86,9 @@ abstract class OfferingController extends Controller
         if ($request->hasFile('photo')) {
             $this->deletePhoto($offering);
             $validated['photo_url'] = $this->storePhoto($request->file('photo'));
+        } elseif ($request->boolean('delete_photo') && ! $this->photoRequiredOnCreate()) {
+            $this->deletePhoto($offering);
+            $validated['photo_url'] = null;
         }
 
         $offering->fill($validated);

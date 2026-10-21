@@ -34,4 +34,4 @@
 
 <x-forms.input name="year_started_working" label="Year you started working here" type="number" :value="$company?->year_started_working" min="1900" max="{{ date('Y') + 1 }}" placeholder="For example 2021" />
 
-<x-forms.region-fields :provinces="$provinces" :cities="$availableCities" :selected-province-id="$selectedProvinceId" :record="$company" />
+<x-forms.region-fields :provinces="$provinces" :cities="$availableCities" :selected-province-id="$selectedProvinceId" :selected-city-id="$selectedCityId" :record="$company" />

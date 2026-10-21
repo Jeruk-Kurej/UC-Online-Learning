@@ -60,6 +60,7 @@ class BusinessController extends Controller
             'provinces' => Province::orderBy('name')->get(),
             'selectedProvinceId' => null,
             'availableCities' => collect(),
+            'selectedCityId' => null,
             'memberIds' => [],
             'cancelUrl' => $this->venturesHomeUrl(),
         ]);
@@ -135,7 +136,7 @@ class BusinessController extends Controller
         $users = User::nonAdmins()->orderBy('name')->get();
         $provinces = Province::orderBy('name')->get();
 
-        $selectedProvinceId = Province::where('name', $business->province)->first()?->id;
+        $selectedProvinceId = $this->selectedProvinceId($business->province);
         $availableCities = $selectedProvinceId
             ? Regency::where('province_id', $selectedProvinceId)->orderBy('name')->get()
             : collect();
@@ -147,6 +148,7 @@ class BusinessController extends Controller
             'provinces' => $provinces,
             'selectedProvinceId' => $selectedProvinceId,
             'availableCities' => $availableCities,
+            'selectedCityId' => $this->selectedCityId($availableCities, $business->city),
             'memberIds' => $business->members()->pluck('users.id')->toArray(),
             'cancelUrl' => $this->venturesHomeUrl(),
         ]);
@@ -185,6 +187,15 @@ class BusinessController extends Controller
         return redirect()->route('businesses.show', $business)->with('success', $resubmission
             ? 'Business updated and sent to the admin team for another review.'
             : 'Business updated successfully!');
+    }
+
+    public function destroy(Business $business): RedirectResponse
+    {
+        $this->authorize('delete', $business);
+
+        $business->deleteWithOfferings();
+
+        return redirect()->to($this->venturesHomeUrl())->with('success', "\"{$business->name}\" was deleted.");
     }
 
     public function my(): View

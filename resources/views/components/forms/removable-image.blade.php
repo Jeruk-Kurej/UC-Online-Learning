@@ -1,5 +1,5 @@
-{{-- --- Image field with preview, initial fallback and replace / remove / undo (removablePhoto Alpine component); the slot holds the error line --- --}}
-@props(['label', 'name', 'deleteName', 'url', 'hasImage' => null, 'initial', 'noun', 'hint'])
+{{-- --- Image field with preview, initial (or icon) fallback and replace / remove / undo (removablePhoto Alpine component); the slot holds the error line; removable="false" hides Remove for a photo that must stay --- --}}
+@props(['label', 'name', 'deleteName', 'url', 'hasImage' => null, 'initial' => '', 'icon' => null, 'noun', 'hint', 'removable' => true])
 
 <div {{ $attributes->class(['relative']) }} x-data="removablePhoto(@js($url), @js($hasImage))">
     <span class="field-label">{{ $label }}</span>
@@ -7,7 +7,13 @@
 
     <div class="flex items-center gap-4">
         <span class="photo-frame h-24 w-24 text-3xl font-semibold text-brand-800">
-            <span x-show="!hasPhoto || photoDeleted" aria-hidden="true">{{ $initial }}</span>
+            <span x-show="!hasPhoto || photoDeleted" aria-hidden="true">
+                @if ($icon)
+                    <i class="bi {{ $icon }} text-3xl text-gray-500"></i>
+                @else
+                    {{ $initial }}
+                @endif
+            </span>
             <img :src="previewUrl" alt="" x-show="hasPhoto && !photoDeleted" class="absolute inset-0 h-full w-full bg-white object-contain" referrerpolicy="no-referrer">
         </span>
 
@@ -19,12 +25,14 @@
                     <input type="file" name="{{ $name }}" id="{{ $name }}" accept="image/*" class="sr-only" x-ref="photoInput" @change="pick($event)">
                 </label>
 
-                <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
-                    <button type="button" @click="photoDeleted = true" class="btn btn-secondary btn-sm">Remove {{ strtolower($noun) }}</button>
-                </template>
-                <template x-if="photoDeleted">
-                    <button type="button" @click="photoDeleted = false" class="btn btn-secondary btn-sm">Keep {{ strtolower($noun) }}</button>
-                </template>
+                @if ($removable)
+                    <template x-if="hasPhoto && !photoDeleted && !newPhotoSelected">
+                        <button type="button" @click="photoDeleted = true" class="btn btn-secondary btn-sm">Remove {{ strtolower($noun) }}</button>
+                    </template>
+                    <template x-if="photoDeleted">
+                        <button type="button" @click="photoDeleted = false" class="btn btn-secondary btn-sm">Keep {{ strtolower($noun) }}</button>
+                    </template>
+                @endif
                 <template x-if="newPhotoSelected">
                     <button type="button" @click="cancelNew()" class="btn btn-secondary btn-sm">Cancel change</button>
                 </template>

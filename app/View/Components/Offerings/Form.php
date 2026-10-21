@@ -25,6 +25,10 @@ class Form extends Component
 
     public bool $isEdit;
 
+    public bool $photoRemovable;
+
+    public string $photoHint;
+
     public ?string $selectedPriceType;
 
     public function __construct(
@@ -36,6 +40,9 @@ class Form extends Component
         $this->example = self::EXAMPLES[$type];
         $this->noun = ucfirst($type);
         $this->isEdit = $offering !== null;
+        // --- A product photo is optional and can be removed; a service keeps the photo it was created with ---
+        $this->photoRemovable = $type === 'product';
+        $this->photoHint = ($photoRequired ? 'Required.' : 'Optional.').' JPG, PNG or WEBP, up to 10 MB.';
         $this->selectedPriceType = $this->isEdit ? $this->editPriceType($offering) : old('price_type');
     }
 

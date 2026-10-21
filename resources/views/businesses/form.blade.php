@@ -59,7 +59,7 @@
             </x-forms.section>
 
             <x-forms.section title="Location and contact">
-                <x-forms.region-fields select-class="block w-full" :provinces="$provinces" :cities="$availableCities" :selected-province-id="$selectedProvinceId" :record="$business" />
+                <x-forms.region-fields select-class="block w-full" :provinces="$provinces" :cities="$availableCities" :selected-province-id="$selectedProvinceId" :selected-city-id="$selectedCityId" :record="$business" />
 
                 <x-forms.field name="address" label="Full address" :show-error="false" class="md:col-span-2">
                     <textarea name="address" id="address" rows="2" class="field-input">{{ old('address', $business?->address) }}</textarea>
@@ -70,6 +70,16 @@
                 <x-forms.input name="email" label="Email" type="email" :value="$business?->email" />
                 <x-forms.input name="website" label="Website" type="url" :value="$business?->website" placeholder="https://..." />
                 <x-forms.input name="instagram_handle" label="Instagram username" :value="$business?->instagram" />
+            </x-forms.section>
+
+            <x-forms.section title="Business details" hint="Optional. Shown on the business page, except the revenue, which only the people who run the business and the admin team see.">
+                <x-forms.input name="employee_count" label="Team size" type="number" min="0" :value="$business?->employee_count" placeholder="Number of people" />
+                <x-forms.input name="customer_base_size" label="Customers" type="number" min="0" :value="$business?->customer_base_size" placeholder="About how many" />
+                <x-forms.input name="target_market" label="Target market" :value="$business?->target_market" placeholder="For example students in Surabaya" />
+                <x-forms.input name="business_scale" label="Size of business" :value="$business?->business_scale" placeholder="For example micro or small" />
+                <x-forms.input name="business_legality" label="Business permit" :value="$business?->business_legality" placeholder="For example NIB" />
+                <x-forms.input name="product_legality" label="Product permit" :value="$business?->product_legality" placeholder="For example PIRT or halal" />
+                <x-forms.input name="revenue_range" label="Revenue" :value="$business?->revenue_range" placeholder="For example Rp 10 to 50 million a month" wrapper-class="md:col-span-2" />
             </x-forms.section>
 
             @if (auth()->check() && auth()->user()->isAdmin())
@@ -95,8 +105,22 @@
 
             <x-forms.actions>
                 <a href="{{ $cancelUrl }}" class="btn btn-secondary">Cancel</a>
+                @if ($business)
+                    @can('delete', $business)
+                        <button type="button" data-confirm-submit="delete-business-form" data-confirm-message="Delete {{ $business->name }} with all its products and services? This cannot be undone." class="btn btn-danger">Delete business</button>
+                    @endcan
+                @endif
                 <button type="submit" class="btn btn-primary">{{ $business ? 'Save changes' : 'Register business' }}</button>
             </x-forms.actions>
         </form>
+
+        @if ($business)
+            @can('delete', $business)
+                <form id="delete-business-form" action="{{ route('businesses.destroy', $business) }}" method="POST" class="hidden">
+                    @csrf
+                    @method('DELETE')
+                </form>
+            @endcan
+        @endif
     </div>
 </x-app-layout>

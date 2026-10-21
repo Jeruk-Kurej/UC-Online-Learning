@@ -157,6 +157,15 @@ class Business extends Model
             ->values();
     }
 
+    /**
+     * Products and services go one by one so their photos leave Cloudinary too (the database cascade would skip that).
+     */
+    public function deleteWithOfferings(): void
+    {
+        $this->products->each->delete();
+        $this->delete();
+    }
+
     public function canBeManagedBy(User $user): bool
     {
         if ($user->isAdmin()) {

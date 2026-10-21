@@ -334,13 +334,13 @@ test('featured toggle answers json and refuses unapproved businesses', function 
         ->assertSessionHasErrors('approval');
 });
 
-test('admin delete removes the business and returns to the directory', function () {
+test('admin delete removes the business and returns to the admin list', function () {
     $w = businessWorld();
     $business = approvedBusiness($w['owner'], $w['category']);
 
     $this->actingAs($w['admin'])->delete(route('businesses.destroy', $business))
-        ->assertRedirect(route('businesses.index'))
-        ->assertSessionHas('success', 'Business deleted successfully.');
+        ->assertRedirect(route('businesses.admin'))
+        ->assertSessionHas('success', '"Approved Venture" was deleted.');
     expect(Business::find($business->id))->toBeNull();
 });
 

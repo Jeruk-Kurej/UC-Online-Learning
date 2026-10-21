@@ -45,11 +45,23 @@
                 <x-forms.input name="graduate_year" label="Year you graduated" :value="$user->graduate_year" />
             </x-forms.section>
 
+            <x-forms.section title="Skills" :grid="false">
+                <x-forms.input name="skills" label="Your skills" :value="$user->skill_list" hint="Separate them with commas, for example Marketing, Excel, Public speaking." />
+            </x-forms.section>
+
+            <x-forms.section title="Certificates" hint="Photos and PDFs of your certificates, shown on your profile." :grid="false">
+                <div class="space-y-4" x-data="activityFiles(@js($user->editable_certification_files))">
+                    <x-files.add-files name="certification_files" />
+                    <x-files.activity-previews delete-name="delete_certification_files" />
+                </div>
+            </x-forms.section>
+
             <x-forms.section title="Activity documents" hint="Photos and PDFs of your activities, shown on your profile." :grid="false">
                 <div class="space-y-4" x-data="activityFiles(@js($user->activity_files))">
                     <x-files.add-files name="activities_files" />
                     <x-files.activity-previews />
                 </div>
+                <x-forms.input name="activities_caption" label="Caption for the activity photos" :value="$user->activities_caption" placeholder="For example Speaker at the 2025 UC Startup Day" />
             </x-forms.section>
 
             <x-forms.actions>
