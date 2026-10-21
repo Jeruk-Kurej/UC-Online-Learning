@@ -9,12 +9,12 @@ use App\Models\LegalDocument;
 use App\Models\Product;
 use App\Models\Skill;
 use App\Models\User;
+use App\Support\StartingPassword;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
@@ -244,7 +244,7 @@ class FormResponseImport implements ShouldQueue, SkipsEmptyRows, ToModel, WithCh
         } else {
             $user = User::create(array_merge($userData, [
                 'email' => $email,
-                'password' => Hash::make('password123'),
+                'password' => StartingPassword::hash(),
             ]));
         }
 

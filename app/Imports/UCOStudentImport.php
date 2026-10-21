@@ -4,8 +4,8 @@ namespace App\Imports;
 
 use App\Models\Category;
 use App\Models\User;
+use App\Support\StartingPassword;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Concerns\ToArray;
@@ -212,7 +212,7 @@ class UCOStudentImport implements ShouldQueue, ToArray, WithChunkReading, WithEv
         } else {
             $user = User::create(array_merge($userData, [
                 'email' => $loginEmail,
-                'password' => Hash::make('password123'),
+                'password' => StartingPassword::hash(),
             ]));
         }
 

@@ -1,4 +1,4 @@
-{{-- --- Change password: works without e-mail, asks for the current password first --- --}}
+{{-- --- Change password: works without e-mail; asks for the current password, except right after a Google sign-in ($needsCurrentPassword) --- --}}
 <form method="POST" action="{{ route('password.update') }}" id="password" class="card space-y-5">
     @csrf
     @method('PUT')
@@ -9,12 +9,16 @@
     </div>
 
     <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-        <x-forms.field name="current_password" label="Current password" class="md:col-span-2" :show-error="false">
-            <input type="password" name="current_password" id="current_password" autocomplete="current-password" required class="field-input @error('current_password', 'updatePassword') !border-red-700 @enderror">
-            @error('current_password', 'updatePassword')
-                <p class="field-error">{{ $message }}</p>
-            @enderror
-        </x-forms.field>
+        @if ($needsCurrentPassword)
+            <x-forms.field name="current_password" label="Current password" class="md:col-span-2" :show-error="false">
+                <input type="password" name="current_password" id="current_password" autocomplete="current-password" required class="field-input @error('current_password', 'updatePassword') !border-red-700 @enderror">
+                @error('current_password', 'updatePassword')
+                    <p class="field-error">{{ $message }}</p>
+                @enderror
+            </x-forms.field>
+        @else
+            <p class="text-base text-gray-700 md:col-span-2">You logged in with Google, so you can choose a new password without typing the current one.</p>
+        @endif
 
         <x-forms.field name="password" for="password-new" label="New password" :show-error="false">
             <input type="password" name="password" id="password-new" autocomplete="new-password" required class="field-input @error('password', 'updatePassword') !border-red-700 @enderror">

@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
@@ -15,12 +16,14 @@ class UserSeeder extends Seeder
     {
         $this->command->info('🔄 Seeding Users...');
 
+        $password = Hash::make(config('accounts.seed_password') ?: Str::random(40));
+
         // --- Admin User ---
         User::firstOrCreate([
             'email' => 'admin@uco.com',
         ], [
             'name' => 'Admin UCO',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'admin',
             'is_visible' => true,
             'email_verified_at' => now(),
@@ -31,7 +34,7 @@ class UserSeeder extends Seeder
             'email' => 'student@uco.com',
         ], [
             'name' => 'Student UCO',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'user',
             'student_status' => 'active',
             'is_visible' => true,
@@ -43,7 +46,7 @@ class UserSeeder extends Seeder
             'email' => 'alumni@uco.com',
         ], [
             'name' => 'Alumni UCO',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'user',
             'student_status' => 'alumni',
             'is_visible' => true,
@@ -55,7 +58,7 @@ class UserSeeder extends Seeder
             'email' => 'budi@uco.com',
         ], [
             'name' => 'Budi Santoso',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'user',
             'student_status' => 'active',
             'major' => 'Business Management',
@@ -69,7 +72,7 @@ class UserSeeder extends Seeder
             'email' => 'siti@uco.com',
         ], [
             'name' => 'Siti Aminah',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'user',
             'student_status' => 'active',
             'major' => 'Information Technology',
@@ -83,7 +86,7 @@ class UserSeeder extends Seeder
             'email' => 'agus@uco.com',
         ], [
             'name' => 'Agus Wijaya',
-            'password' => Hash::make('password'),
+            'password' => $password,
             'role' => 'user',
             'student_status' => 'alumni',
             'major' => 'Creative Arts',
