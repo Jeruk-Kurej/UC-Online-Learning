@@ -44,8 +44,8 @@ class CollabController extends Controller
         Message::create([
             'sender_id' => $sender->id,
             'recipient_id' => $user->id,
-            'subject' => 'Collab Request from '.$sender->name,
-            'body' => $sender->name.' would like to connect and collab with you on UC Online Learning.',
+            'subject' => 'Collab request from '.$sender->name,
+            'body' => $sender->name.' would like to connect with you on UC Online Learning. Open the request to accept or decline it.',
             'type' => 'collab_invite',
         ]);
 
@@ -65,8 +65,8 @@ class CollabController extends Controller
         Message::create([
             'sender_id' => $user->id,
             'recipient_id' => $collab->sender_id,
-            'subject' => 'Collab Request Accepted',
-            'body' => $user->name.' has accepted your collab request! You are now connected.',
+            'subject' => 'Collab request accepted',
+            'body' => $user->name.' accepted your collab request. You are now connected and can see each other\'s contact details.',
             'type' => 'collab_accepted',
         ]);
 

@@ -35,6 +35,7 @@ class CompanyController extends Controller
             'company' => $company,
             'student' => $company->user,
             'canManage' => $canManage,
+            'showReviewNotice' => $canManage && ! $company->isPublic(),
         ]);
     }
 
@@ -50,6 +51,7 @@ class CompanyController extends Controller
             'selectedProvinceId' => null,
             'availableCities' => collect(),
             'selectedCityId' => null,
+            'companyScales' => Company::SCALES,
             'owners' => $this->currentUserIsAdmin() ? User::nonAdmins()->orderBy('name')->get() : collect(),
             'cancelUrl' => $this->venturesHomeUrl(),
         ]);
@@ -96,6 +98,7 @@ class CompanyController extends Controller
             'selectedProvinceId' => $selectedProvinceId,
             'availableCities' => $availableCities,
             'selectedCityId' => $this->selectedCityId($availableCities, $company->city),
+            'companyScales' => Company::SCALES,
         ]);
     }
 

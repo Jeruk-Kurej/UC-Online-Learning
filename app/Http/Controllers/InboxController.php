@@ -43,6 +43,10 @@ class InboxController extends Controller
             ? Collab::where('sender_id', $message->sender_id)->where('recipient_id', $request->user()->id)->first()
             : null;
 
-        return view('inbox.show', compact('message', 'collab'));
+        return view('inbox.show', [
+            'message' => $message,
+            'collab' => $collab,
+            'senderBusiness' => $message->sender?->businesses()->visible()->first(),
+        ]);
     }
 }

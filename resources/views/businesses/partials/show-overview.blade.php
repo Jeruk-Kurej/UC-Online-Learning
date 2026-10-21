@@ -7,7 +7,7 @@
 
     <dl class="divide-y divide-line border-y border-line">
         @can('update', $business)
-            <x-ui.fact label="Revenue"><i class="bi bi-lock" aria-hidden="true"></i> {{ $business->revenue_range ?? 'Not provided' }} <span class="text-sm text-gray-600">(only you can see this)</span></x-ui.fact>
+            <x-ui.fact label="Revenue"><i class="bi bi-lock" aria-hidden="true"></i> {{ $business->revenue_range ?? 'Not provided' }} <span class="text-sm text-gray-600">(not shown to visitors)</span></x-ui.fact>
         @endcan
         @if ($business->established_date)
             <x-ui.fact label="Founded">{{ $business->established_date->format('F Y') }}</x-ui.fact>
@@ -55,6 +55,12 @@
                     <x-people.contact-link :href="'mailto:' . $business->email" icon="bi-envelope" label="Email">{{ $business->email }}</x-people.contact-link>
                 @endif
             </div>
+        </div>
+    @elseif ($canManageBusiness)
+        <div class="rounded-lg border border-dashed border-line p-4">
+            <p class="text-base font-semibold text-gray-900">No contact details yet</p>
+            <p class="mt-1 text-base text-gray-700">Customers cannot reach this business from its page. Add a WhatsApp number, an email, a website or an Instagram username.</p>
+            <a href="{{ route('businesses.edit', $business) }}" class="text-link mt-2 inline-block">Add contact details</a>
         </div>
     @endif
 </section>

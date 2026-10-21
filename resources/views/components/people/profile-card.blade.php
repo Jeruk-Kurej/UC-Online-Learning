@@ -8,7 +8,7 @@
         <x-ui.thumb :src="$person->profile_photo_thumb_url" :name="$person->name" size="h-16 w-16" round class="text-2xl" />
         <div class="min-w-0 flex-1">
             <a id="person-{{ $person->id }}" href="{{ route('users.show', $person) }}" class="block truncate text-lg font-semibold text-brand-900 hover:underline">{{ $person->name }}</a>
-            <p class="text-sm text-gray-600">{{ ucfirst($status ?: 'active') }}</p>
+            <p class="text-sm text-gray-600">{{ $status }}</p>
         </div>
     </div>
 

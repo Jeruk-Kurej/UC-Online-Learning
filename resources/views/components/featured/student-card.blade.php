@@ -19,7 +19,7 @@
                     <x-ui.thumb :src="$highlight->logo_url" :name="$highlight->name" size="h-10 w-10" class="text-base" />
                     <span class="min-w-0">
                         <span class="block truncate text-sm font-semibold text-gray-900">{{ $highlight->name }}</span>
-                        <span class="block truncate text-xs text-gray-700">{{ $isIntra ? ($highlight->position ?: 'Works here') : ($highlight->category?->name ?: 'Venture') }}</span>
+                        <span class="block truncate text-sm text-gray-700">{{ $isIntra ? ($highlight->position ?: 'Works here') : ($highlight->category?->name ?: 'Venture') }}</span>
                     </span>
                 </span>
             </span>

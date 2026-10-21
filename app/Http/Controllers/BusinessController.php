@@ -97,6 +97,7 @@ class BusinessController extends Controller
         return view('businesses.show', [
             'business' => $business,
             'canManageBusiness' => $canManage,
+            'showReviewNotice' => $canManage && ! $business->isPublic(),
             'collabStatus' => auth()->check() && $business->user_id && auth()->id() !== $business->user_id ? auth()->user()->collabStatusWith($business->public_owner) : null,
             'showRevenue' => Gate::allows('update', $business),
             'offersProducts' => in_array($business->offering_mode, ['product', 'both']),

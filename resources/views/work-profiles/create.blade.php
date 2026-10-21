@@ -14,12 +14,14 @@
             <x-forms.section title="Your job">
                 @include('work-profiles.partials.fields')
 
-                <x-forms.field name="logo_url" label="Company logo (optional)" :show-error="false">
-                    <input type="file" name="logo_url" id="logo_url" accept="image/*" class="field-input @error('logo_url') !border-red-700 @enderror !h-auto py-2">
+                <x-forms.file-drop class="md:col-span-2" label="Company logo (optional)" name="logo_url" accept="image/*" prompt="Choose a logo or drop it here" formats="JPG, PNG or WEBP, up to 5 MB">
+                    <x-slot:selection>
+                        <x-forms.picked-image label="Selected logo" />
+                    </x-slot:selection>
                     @error('logo_url')
                         <p class="field-error">{{ $message }}</p>
                     @enderror
-                </x-forms.field>
+                </x-forms.file-drop>
 
                 <x-forms.field name="job_description" label="What you do" required class="md:col-span-2">
                     <textarea name="job_description" id="job_description" rows="5" required class="field-input @error('job_description') !border-red-700 @enderror" placeholder="Describe your role, your daily work and what you have contributed.">{{ old('job_description') }}</textarea>
