@@ -18,6 +18,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -37,17 +38,23 @@ class BusinessController extends Controller
         $businesses = $this->directoryQuery($request, $viewType)->newestFirst()->paginate(6)->withQueryString();
 
         if ($request->ajax()) {
+            Category::attachTo($businesses->getCollection());
+
             return response()
                 ->view('businesses.partials.list', compact('businesses', 'viewType'))
                 ->header('Vary', 'X-Requested-With');
         }
 
+        $categories = Category::all();
+        Category::attachTo($businesses->getCollection(), $categories);
+        $locations = $this->directoryLocations($viewType);
+
         return view('businesses.index', [
             'businesses' => $businesses,
-            'categories' => Category::all(),
+            'categories' => $categories,
             'viewType' => $viewType,
-            'availableProvinces' => $this->directoryLocations($viewType)->whereNotNull('province')->distinct()->pluck('province')->sort(),
-            'directoryState' => $this->directoryState($request, $viewType),
+            'availableProvinces' => $this->uniqueNames($locations->pluck('province'))->sort(),
+            'directoryState' => $this->directoryState($request, $viewType, $locations),
         ]);
     }
 
@@ -258,8 +265,8 @@ class BusinessController extends Controller
     private function directoryQuery(Request $request, string $viewType): Builder
     {
         $query = $viewType === 'intrapreneur'
-            ? Company::visible()->with(['user', 'category'])
-            : Business::visible()->with(['user', 'members', 'category', 'products'])->entrepreneur();
+            ? Company::visible()->with(['user'])
+            : Business::visible()->with(['user', 'members', 'products'])->entrepreneur();
 
         if ($search = $request->get('search')) {
             $query->where(fn (Builder $matches) => $this->searchDirectory($matches, $search, $viewType));
@@ -294,38 +301,50 @@ class BusinessController extends Controller
         }
     }
 
-    // --- Directory filters ---
+    // --- Directory filters: one query for every distinct (province, city) of the visible ventures; names compare as MySQL did (case and trailing spaces ignored, the first spelling kept) ---
 
-    private function directoryLocations(string $viewType): Builder
+    private function directoryLocations(string $viewType): SupportCollection
     {
-        return $viewType === 'intrapreneur' ? Company::visible() : Business::visible();
+        $query = $viewType === 'intrapreneur' ? Company::visible() : Business::visible();
+
+        return $query->where(fn (Builder $located) => $located->whereNotNull('province')->orWhereNotNull('city'))
+            ->select('province', 'city')
+            ->distinct()
+            ->toBase()
+            ->get();
+    }
+
+    private function uniqueNames(SupportCollection $names): SupportCollection
+    {
+        return $names->filter(fn ($name) => $name !== null)->unique(fn (string $name) => self::sameName($name));
+    }
+
+    private static function sameName(?string $name): string
+    {
+        return mb_strtolower(rtrim((string) $name));
     }
 
     /**
      * Initial state of the directory's Alpine component (tabs, province → city dropdown).
      */
-    private function directoryState(Request $request, string $viewType): array
+    private function directoryState(Request $request, string $viewType, SupportCollection $locations): array
     {
-        $cityQuery = $this->directoryLocations($viewType)->whereNotNull('city');
-        if ($request->get('province')) {
-            $cityQuery->where('province', $request->get('province'));
-        }
+        $selectedProvince = $request->get('province');
+        $cityRows = $selectedProvince
+            ? $locations->filter(fn ($row) => self::sameName($row->province) === self::sameName($selectedProvince))
+            : $locations;
 
         return [
             'viewType' => $viewType,
             'isPending' => $request->get('status') === 'pending',
-            'provinceCityMap' => $this->directoryLocations($viewType)
-                ->whereNotNull('province')
-                ->whereNotNull('city')
-                ->select('province', 'city')
-                ->distinct()
-                ->get()
+            'provinceCityMap' => $locations
+                ->filter(fn ($row) => $row->province !== null && $row->city !== null)
                 ->groupBy('province')
                 ->map(fn ($items) => $items->pluck('city')->sort()->values())
                 ->toArray(),
-            'selectedProvince' => (string) $request->get('province'),
+            'selectedProvince' => (string) $selectedProvince,
             'selectedCity' => (string) $request->get('city'),
-            'availableCities' => $cityQuery->distinct()->pluck('city')->sort()->values(),
+            'availableCities' => $this->uniqueNames($cityRows->pluck('city'))->sort()->values(),
         ];
     }
 }
