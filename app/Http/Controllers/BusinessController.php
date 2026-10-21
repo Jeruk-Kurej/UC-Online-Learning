@@ -175,12 +175,16 @@ class BusinessController extends Controller
             $data['logo_url'] = $this->storeLogo($request->file('logo'));
         }
 
-        $business->fill($this->resolveRegionNames($data));
+        $resubmission = $business->resubmissionBy($request->user());
+
+        $business->fill(array_merge($this->resolveRegionNames($data), $resubmission));
         $business->save();
 
         $this->syncMembers($request, $business);
 
-        return redirect()->route('businesses.show', $business)->with('success', 'Business updated successfully!');
+        return redirect()->route('businesses.show', $business)->with('success', $resubmission
+            ? 'Business updated and sent to the admin team for another review.'
+            : 'Business updated successfully!');
     }
 
     public function my(): View

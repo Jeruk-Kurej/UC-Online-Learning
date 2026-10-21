@@ -3,7 +3,7 @@
 namespace App\Traits;
 
 /**
- * Logo of a Business or Company: always a URL (the UI-Avatars placeholder when there is no logo).
+ * Logo of a Business or Company: always a URL (the drawn placeholder when there is no logo).
  * Needs HasImage.
  */
 trait HasLogo

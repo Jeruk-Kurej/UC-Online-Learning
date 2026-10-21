@@ -70,21 +70,36 @@ trait HasImage
     }
 
     /**
-     * Whether a resolved image URL is a real image rather than the UI-Avatars fallback.
+     * Whether a resolved image URL is a real image rather than the placeholder below.
      */
     protected function isRealImage(?string $url): bool
     {
-        return $url && ! str_contains($url, 'ui-avatars.com');
+        return $url && ! str_contains($url, rawurlencode(self::PLACEHOLDER_MARK));
+    }
+
+    // --- Placeholder: the first letter on brand orange, drawn here so no name is sent to another site ---
+
+    private const PLACEHOLDER_MARK = 'data-placeholder="uco"';
+
+    protected function placeholderImage(): string
+    {
+        $initial = e(mb_strtoupper(mb_substr(trim((string) $this->name), 0, 1)) ?: 'U');
+
+        return 'data:image/svg+xml,'.rawurlencode(
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" '.self::PLACEHOLDER_MARK.'>'
+            .'<rect width="64" height="64" fill="#a65300"/>'
+            .'<text x="32" y="32" dy=".35em" text-anchor="middle" font-family="Arial, sans-serif" font-size="30" font-weight="600" fill="#ffffff">'.$initial.'</text>'
+            .'</svg>'
+        );
     }
 
     /**
      * Resolve image URL handling Google Drive, Local Storage, and External URLs.
-     * Fallback to UI-Avatars if no valid image found.
+     * Falls back to the placeholder when there is no usable image (an old UI-Avatars address counts as none).
      */
     protected function resolveImage(?string $path, string $type = 'business'): string
     {
-        $name = $this->name ?? 'UCO';
-        $fallback = 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=A65300';
+        $fallback = $this->placeholderImage();
 
         if (! $path) {
             return $fallback;
@@ -93,7 +108,7 @@ trait HasImage
         $path = preg_replace('/<br\s*\/?>/i', ' ', $path);
         $path = trim(strip_tags($path));
 
-        if (! $path) {
+        if (! $path || str_contains($path, 'ui-avatars.com')) {
             return $fallback;
         }
 

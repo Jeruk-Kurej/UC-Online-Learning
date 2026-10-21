@@ -31,11 +31,15 @@ Route::middleware(['throttle:showcase'])->group(function () {
 
 // --- Authenticated routes ---
 
-Route::middleware(['auth', 'verified'])->group(function () {
+// --- Import progress: only admins import, so only admins read it (same addresses as before, no /admin prefix) ---
+
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::get('/import-progress/check', [ImportController::class, 'checkActive'])->name('import.check');
     Route::get('/import-progress/{sessionId}', [ImportController::class, 'progress'])->name('import.progress');
     Route::post('/clear-active-import', [ImportController::class, 'clearActive'])->name('import.clear');
+});
 
+Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 

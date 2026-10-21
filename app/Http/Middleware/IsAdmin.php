@@ -14,14 +14,14 @@ class IsAdmin
     {
         if (! Auth::check()) {
             return redirect()->guest(route('login'))
-                ->with('error', 'Sesi login Anda telah berakhir. Silakan login kembali.');
+                ->with('error', 'Your session has ended. Please log in again.');
         }
 
         /** @var User $user */
         $user = Auth::user();
 
         if (! $user->isAdmin()) {
-            abort(403, 'Hanya Administrator yang dapat mengakses halaman ini.');
+            abort(403, 'Only admins can open this page.');
         }
 
         return $next($request);
