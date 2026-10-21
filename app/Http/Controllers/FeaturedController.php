@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Business;
+use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,24 +18,29 @@ class FeaturedController extends Controller
 
     public function index(Request $request): View
     {
+        $ventures = Business::visible()
+            ->entrepreneur()
+            ->where('is_featured', true)
+            ->newestFirst()
+            ->with(['user', 'members', 'products'])
+            ->get();
+
+        $students = $this->featuredStudents()
+            ->with([
+                'businesses' => fn ($q) => $q->visible()->entrepreneur(),
+                'companies' => fn ($q) => $q->visible(),
+            ])
+            ->newestFirst()
+            ->get();
+        $entrepreneurs = $students->filter(fn (User $student) => $this->hasStatus($student, 'entrepreneur'))->values();
+        $intrapreneurs = $students->filter(fn (User $student) => $this->hasStatus($student, 'intrapreneur'))->values();
+
+        Category::attachTo($ventures->concat($entrepreneurs->pluck('businesses')->flatten())->concat($intrapreneurs->pluck('companies')->flatten()));
+
         return view('featured.index', [
-            'featuredVentures' => Business::visible()
-                ->entrepreneur()
-                ->where('is_featured', true)
-                ->newestFirst()
-                ->with(['category', 'user', 'members', 'products'])
-                ->get()
-                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
-            'topEntrepreneurs' => $this->featuredStudents('entrepreneur')
-                ->with(['businesses' => fn ($q) => $q->visible()->entrepreneur()->with('category')])
-                ->newestFirst()
-                ->get()
-                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
-            'topIntrapreneurs' => $this->featuredStudents('intrapreneur')
-                ->with(['companies' => fn ($q) => $q->visible()->with('category')])
-                ->newestFirst()
-                ->get()
-                ->pipe(fn (Collection $items) => $this->inDailyOrder($items)),
+            'featuredVentures' => $this->inDailyOrder($ventures),
+            'topEntrepreneurs' => $this->inDailyOrder($entrepreneurs),
+            'topIntrapreneurs' => $this->inDailyOrder($intrapreneurs),
             'testimonies' => $this->inDailyOrder($this->communityTestimonies()),
         ]);
     }
@@ -53,16 +59,24 @@ class FeaturedController extends Controller
     }
 
     /**
-     * Admin-starred, visible students with a photo whose career status is $status.
+     * Admin-starred, visible students with a photo who are entrepreneurs or intrapreneurs (one query for both sections).
      */
-    private function featuredStudents(string $status): Builder
+    private function featuredStudents(): Builder
     {
         return User::query()
             ->where('is_visible', true)
             ->where('is_featured', true)
             ->where('role', '!=', 'admin')
             ->whereNotNull('profile_photo_url')
-            ->whereRaw('LOWER(current_status) = ?', [$status]);
+            ->whereRaw('LOWER(current_status) IN (?, ?)', ['entrepreneur', 'intrapreneur']);
+    }
+
+    /**
+     * The same test MySQL ran in the query before: lower case, trailing spaces ignored.
+     */
+    private function hasStatus(User $student, string $status): bool
+    {
+        return mb_strtolower(rtrim((string) $student->current_status)) === $status;
     }
 
     /**
