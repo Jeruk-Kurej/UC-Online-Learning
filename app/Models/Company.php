@@ -50,6 +50,13 @@ class Company extends Model
         ];
     }
 
+    // --- Addresses: businesses and work profiles both live at /business/{slug} ---
+
+    protected static function slugSharedWith(): array
+    {
+        return [Business::class];
+    }
+
     // --- Accessors ---
 
     public function getCompanyScaleLabelAttribute(): ?string

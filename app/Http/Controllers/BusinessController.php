@@ -116,7 +116,7 @@ class BusinessController extends Controller
     }
 
     /**
-     * Resolve /showcase/{slug} to either a Business or a Company.
+     * Resolve /business/{slug} to either a Business or a Company.
      *
      * @param  string  $slug
      */

@@ -66,6 +66,13 @@ class Business extends Model
         ];
     }
 
+    // --- Addresses: businesses and work profiles both live at /business/{slug} ---
+
+    protected static function slugSharedWith(): array
+    {
+        return [Company::class];
+    }
+
     // --- Accessors ---
 
     // --- Model events ---
